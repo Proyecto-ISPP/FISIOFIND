@@ -1,0 +1,116 @@
+/**
+ * CSS files with the .module.css suffix will be treated as CSS modules
+ * and scoped locally.
+ */
+
+ .heroBanner {
+  padding: 4rem 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.containerImage {
+  display: flex;
+  flex-direction: column; /* Asegura que los elementos estén en columna */
+  align-items: center; /* Centra horizontalmente */
+  justify-content: center; /* Centra verticalmente */
+  width: 100%;
+}
+
+.heroImage {
+  max-width: 20%;
+  height: auto;
+}
+
+.card,
+a {
+  text-decoration: none;
+  color: var(--ifm-text-color);
+}
+
+.card:hover,
+a:hover {
+  text-decoration: none;
+  color: #606770;
+  border-color: #cda569;
+  box-shadow: 0 3px 6px 0 rgb(0 0 0 / 20%);
+  cursor: pointer;
+}
+
+nav a {
+  text-decoration: initial;
+  color: initial;
+}
+
+nav a:hover {
+  border-color: initial;
+  box-shadow: initial;
+}
+
+.cardContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 10px;
+}
+
+.cardMember {
+  padding: 1rem;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  max-width: 270px;
+  margin-top: 10px;
+}
+
+.meetUs {
+  padding: 4rem 1rem;
+}
+
+.meetUs h4 {
+  margin-top: 2rem;
+}
+
+.tag {
+  display: inline-block;
+  margin-right: 5px;
+  margin-top: 5px;
+  padding: 2px 8px;
+  border: 1px solid #007bff;
+  color: #007bff;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.deploy {
+  padding: 4rem 1rem;
+}
+
+.deploy li > p {
+  margin-left: 1rem;
+}
+
+.importantDocuments {
+  padding: 4rem 1rem;
+}
+
+@media screen and (max-width: 996px) {
+  .heroBanner {
+    padding: 2rem;
+  }
+
+  .containerImage {
+    flex-direction: column;
+  }
+
+  .heroImage {
+    max-width: 50%;
+    height: auto;
+  }
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

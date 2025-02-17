@@ -1,0 +1,8 @@
+{
+    "label": "Informes de horas",
+    "position": 20,
+    "link": {
+        "type": "generated-index",
+        "description": "¿Qué apartado deseas consultar?"
+    }
+}
