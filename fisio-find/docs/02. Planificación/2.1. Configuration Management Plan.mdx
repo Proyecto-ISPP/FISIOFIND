@@ -12,7 +12,7 @@ titlepage-rule-color: "1C1C1C"
 titlepage-rule-height: 0
 colorlinks: true
 linkcolor: blue
-titlepage-background: "../.backgrounds/background1V.pdf"                            
+titlepage-background: "../../.backgrounds/background1V.pdf"                            
 header-left: "PLAN DE GESTIÓN DE LA CONFIGURACIÓN"                  # CHANGE IF NEEDED
 header-right: "04/02/2025"                                          # CHANGE IF NEEDED
 footer-left: "FISIO FIND"
@@ -35,28 +35,6 @@ monofont: "Noto Sans Mono"
   FISIO FIND  -  PLAN DE GESTIÓN DE LA CONFIGURACIÓN
 </h1>
 
-<br></br>
-
-**ÍNDICE**
-- [1. NORMAS Y PROCEDIMIENTOS APLICABLES](#1-normas-y-procedimientos-aplicables)
-- [2. ELEMENTOS CONFIGURABLES](#2-elementos-configurables)
-- [3. HERRAMIENTAS A UTILIZAR](#3-herramientas-a-utilizar)
-- [4. CONTROL Y POLÍTICA DE VERSIONADO](#4-control-y-política-de-versionado)
-  - [4.1. VERSIONADO DE DOCUMENTACIÓN Y REGISTROS](#41-versionado-de-documentación-y-registros)
-  - [4.2. HU, TAREAS Y ACTIVIDADES](#42-hu-tareas-y-actividades)
-  - [4.3. CONTROL DEL TIEMPO](#43-control-del-tiempo)
-  - [4.4. VERSIONADO DE CÓDIGO FUENTE EN GIT Y GITHUB](#44-versionado-de-código-fuente-en-git-y-github)
-  - [4.5. SOLICITUDES DE CAMBIO (REGISTRO DE CAMBIOS)](#45-solicitudes-de-cambio-registro-de-cambios)
-- [5. ESTRATEGIA DE RAMAS](#5-estrategia-de-ramas)
-- [6. ESTÁNDARES DE CODIFICACIÓN](#6-estándares-de-codificación)
-  - [6.1. BACKEND](#61-python-backend)
-  - [6.2. FRONTEND](#62-javascript-frontend)
-- [7. ORGANIZACIÓN DE LA DOCUMENTACIÓN](#7-organización-de-la-documentación)
-- [8. CONCLUSIÓN](#8-conclusión)
-<!-- COMMENT WHEN EXPORTING TO PDF -->
-
-<br></br>
-
 ---
 
 **Ficha del documento**
@@ -68,10 +46,6 @@ monofont: "Noto Sans Mono"
 - **Fecha de Creación:** 04/02/2025  
 
 - **Versión:** v2.2
-
-<br></br>
-
-<br></br>
 
 ---
 
@@ -86,23 +60,12 @@ monofont: "Noto Sans Mono"
 
 
 
-<br></br>
-
-<!-- \newpage -->
-
-<br></br>
-
-
-# **1. NORMAS Y PROCEDIMIENTOS APLICABLES**
+## 1. NORMAS Y PROCEDIMIENTOS APLICABLES
 
 Este plan contiene la información sobre cómo el equipo de trabajo realizará el seguimiento y control del cambio durante el desarrollo del proyecto, además de cómo se llevará a cabo el control de versiones a lo largo del mismo.
 
-<br></br>
 
-<br></br>
-
-
-# **2. ELEMENTOS CONFIGURABLES**
+## 2. ELEMENTOS CONFIGURABLES
 
 Los elementos configurables del proyecto incluyen aquellos artefactos y entregables que pueden estar sujetos a modificaciones durante el desarrollo. Cada uno de estos elementos tendrá un identificador único, y se someterá a control de versiones.
 
@@ -114,14 +77,8 @@ Los elementos configurables del proyecto incluyen aquellos artefactos y entregab
 
 4. **Tareas**: las fechas y condiciones para la entrega de los principales entregables de cada Sprint también serán elementos configurables.
 
-<br></br>
 
-<br></br>
-
-<!-- \newpage -->
-
-
-# **3. HERRAMIENTAS A UTILIZAR**
+## 3. HERRAMIENTAS A UTILIZAR
 
 | Tecnología | Elementos Configurables | Descripción |
 |------------|--------------------------|-------------|
@@ -131,16 +88,10 @@ Los elementos configurables del proyecto incluyen aquellos artefactos y entregab
 | Git        | Código fuente             | Control de versiones del código fuente. |
 | GitHub     | Código fuente, Hitos, HU  | Gestión del desarrollo colaborativo. |
 
-<br></br>
 
-<br></br>
+## 4. CONTROL y POLÍTICA DE VERSIONADO
 
-<!-- \newpage -->
-
-
-# **4. CONTROL y POLÍTICA DE VERSIONADO**
-
-## **4.1. Versionado de Documentación y Registros**
+### 4.1. Versionado de Documentación y Registros
 Se sigue un esquema de versionado semántico:  
 
 - **Mayor:** Cambios significativos en el contenido (reestructuración o nueva sección).
@@ -152,7 +103,7 @@ Se sigue un esquema de versionado semántico:
 Ejemplo de versionado: `v1.2` (vMayor.Menor)
 
 
-## **4.2. HU, tareas y actividades**
+### 4.2. HU, tareas y actividades
 Cada historia de usuario y caso de uso tiene un identificador único asignado tras su creación.
 
 Cambios importantes en la descripción o criterios de aceptación de una HU se anotan y actualizaremos la versión. Se seguirá un versionado similar al visto en el punto anterior. La versión de cada elemento se añadirá en un campo específico que encontraremos en su tabla.
@@ -186,7 +137,7 @@ La nomenclatura a seguir para los distintos requisitos, CU e HU se con un esquem
 
 
 
-## **4.3.  Control del tiempo**
+### 4.3.  Control del tiempo
 *Clockify* no tiene control de versiones explícito, pero el seguimiento se realiza registrando las entradas de tiempo y las tareas completadas para cada miembro del equipo siguiendo la misma nomenclatura que las tareas del *GitHub Project*.
 
 Las tareas se numeran en orden cronológico y deben incluir un identificador único en el formato `#XX`.
@@ -197,7 +148,7 @@ creado. Esto ayudará evaluar mejor el desempeño y el tiempo empleado en las ta
 
 Ejemplo de versionado: `Realización de ventana de inicio de sesión #53`.
 
-## **4.4. Versionado de Código Fuente en Git y GitHub**
+### 4.4. Versionado de Código Fuente en Git y GitHub
 
 ***Estructura de Ramas***
 - **`main`** → Producción
@@ -249,7 +200,7 @@ El **pie** del mensaje puede incluir:
 
 Se recomienda encarecidamente usar **. Closes #XX** al final de un commit cuando éste sirva para cerrar una *Issue*, para hacer los commits y las Issues lo más trazable posible.
 
-<br></br>
+
 
 ***Ejemplo de mensaje de commit***
 
@@ -262,20 +213,13 @@ BREAKING CHANGE: The login API now requires a JWT token instead of a cookie-base
 ```
 
 
-## **4.5. Solicitudes de cambio (Registro de cambios)**
+## 4.5. Solicitudes de cambio (Registro de cambios)
 Los registros se mantienen como archivos en formato *Markdown*. Cada cambio, HU o caso de uso tiene un identificador único (ejemplo: HU-001, CU-003). Cambios aprobados se reflejan en el historial de cambios del documento correspondiente actualizando su versión acorde a lo mencionado anteriormente.
 
 Para las solicitudes de cambio formales, se deberá seguir la plantilla ubicada en el ***Plan De Gestión Del Cambio***.
 
-<br></br>
 
-<br></br>
-
-
-<!-- \newpage -->
-
-
-# **5. ESTRATEGIA DE RAMAS**
+## 5. ESTRATEGIA DE RAMAS
 
 La estrategia de ramas se basa en **Git Flow** con algunas modificaciones para garantizar un desarrollo ágil y seguro.
 
@@ -298,25 +242,20 @@ La estrategia de ramas se basa en **Git Flow** con algunas modificaciones para g
   3. Fusionar la rama de hotfix con `main` y `develop`.
 
 
-<br></br>
+
 
 ***Revisión de las Pull Requests***
 Una vez acabada una tarea, se creará una Pull Request y se tendrá que notificar al resto de miembros del equipo, para que, con la mayor brevedad posible, un miembro la revise y dé feedback (aprobándola o solicitando cambios).
 
 Se recomienda encarecidamente **no aprobar una Pull Request si no se han pasado los checks a la hora de ejecutar los workflows correspondientes**, para no arrastrar errores.
 
-<br></br>
-
-<br></br>
-
-<!-- \newpage -->
 
 
-# **6. ESTÁNDARES DE CODIFICACIÓN**
+## 6. ESTÁNDARES DE CODIFICACIÓN
 
 Para garantizar la consistencia, legibilidad y mantenibilidad del código, seguiremos estándares de codificación reconocidos en la industria para Python (backend) y JavaScript (frontend). A continuación, se detallan las prácticas recomendadas y ejemplos ilustrativos.
 
-## **6.1. Python (Backend)**
+### 6.1. Python (Backend)
 
 #### **1. Nombrado**
 - **Positivo**:
@@ -415,7 +354,7 @@ except:
     print("Ocurrió un error")
 ```
 
-## **6.2. JavaScript (Frontend)**
+### 6.2. JavaScript (Frontend)
 
 #### **1. Nombrado**
 - **Positivo**:
@@ -509,18 +448,12 @@ fetch('https://api.example.com/data')
 
 Todos estos ejemplos son una muestra de los más importantes que tendremos en cuenta (que quiere decir que no tenemos en cuenta el estandar al 100%), es responsabilidad de cada miembro del grupo adherirse a los estándares de código para garantizar un trabajo correcto.
 
-<br></br>
 
-<br></br>
-
-<!-- \newpage -->
-
-
-# **7. ORGANIZACIÓN DE LA DOCUMENTACIÓN**
+## 7. ORGANIZACIÓN DE LA DOCUMENTACIÓN
 
 Se han establecido dos canales principales para el almacenamiento y contron de la documentación: el repositorio del proyecto en **GitHub**, y una carpeta compartida en **OneDrive**. Estas unidades de almacenamento tendrán usos bastante diferenciados, y se orfanizarán de la siguiente forma:
 
-## **7.1. OneDrive**
+### 7.1. OneDrive
 
 En esta carpeta compartida a todos los miembros del grupo se almacenarán archivos y documentos que NO son entregables del proyecto. Son, por ejemplo, vídeos, hojas de cálculo, documentación de consulta, material de clase, etc. Se ha decidido utilizar la siguiente estructura: 
 
@@ -542,7 +475,7 @@ En esta carpeta compartida a todos los miembros del grupo se almacenarán archiv
         └── [Esta carpeta ayudará al equipo de QA a organizar los informes de rendimiento del equipo, almacenarán un registro del trabajo realizado cada semana por parte de cada miembro del equipo.]
 ```
 
-## **7.2. Repositorio de GitHub**
+### 7.2. Repositorio de GitHub
 
 En la carpeta `docs` del repositorio del proyecto se almacenará toda la documentación necesaria para los entregables del proyecto. Aquí entran: documentación ágil (sprint plannig, retrospective, review), acuerdos grupales (acuerdo de compromiso, acuerdo de uso de IA), actas de reuniones, planes, registros de requisitos, reportes y la base de conocimiento. Se ha decidido seguir la siguiente estructura:
 
@@ -598,10 +531,10 @@ En la carpeta `docs` del repositorio del proyecto se almacenará toda la documen
 Toda la documentación deberá seguir en todo momento la **política de versionado y control** especificada en el punto 4 de este documento, y además deberá atenerse al ***Plan de Gestión del Cambio***.
 
 
-# **8. CONCLUSIÓN**
+## 8. CONCLUSIÓN
 Este documento define las políticas de gestión de configuración del proyecto **FISIO FIND**. Es crucial que estas buenas prácticas sean aplicadas por todos los miembros del equipo a lo largo de todo el proyecto para procurar un orden, trazabilidad y, en resumen, una buena calidad en el desarrollo y resultado del producto.
 
-<br></br>
 
-<br></br>
+
+
 
