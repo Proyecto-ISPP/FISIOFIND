@@ -1,0 +1,147 @@
+---
+title: "COMMITMENT AGREEMENT"                             # CHANGE IF NEEDED
+subtitle: "FISIO FIND - Grupo 6 - #DP"
+author: [Benjamín Ignacio Maureira Flores, Daniel Alors Romero, Miguel Encina Martínez, Francisco Mateo Villalba]
+date: "19/02/2025"                                        # CHANGE IF NEEDED
+subject: "ISPP"
+lang: "es"
+toc: true
+titlepage: true
+titlepage-text-color: "1C1C1C"
+titlepage-rule-color: "1C1C1C"
+titlepage-rule-height: 0
+colorlinks: true
+linkcolor: FISIO FIND
+titlepage-background: "../.backgrounds/background1V.pdf"  # CHANGE IF NEEDED
+header-left: "01-02_work-evaluation-report"                       # CHANGE IF NEEDED
+header-right: "19/02/2025"                                # CHANGE IF NEEDED
+footer-left: "FISIO FIND"
+documentclass: scrartcl
+classoption: "table"
+mainfont: "Noto Sans"
+sansfont: "Noto Sans"
+monofont: "Noto Sans Mono"
+---
+
+<!-- COMMENT THIS WHEN EXPORTING TO PDF -->
+<p align="center">
+  <img src="../.img/Logo_FisioFind_Verde_sin_fondo.PNG" alt="Logo FisioFind" width="300" />
+</p>
+
+<h1 align="center" style="font-size: 30px; font-weight: bold;">
+  FISIO FIND  -  COMMITMENT AGREEMENT
+</h1>
+
+---
+
+**Ficha del documento**
+
+- **Nombre del Proyecto:** FISIO FIND
+
+- **Número de Grupo:** Grupo QA
+
+- **Entregable:** #DP
+
+- **Miembros del grupo:** Benjamín Ignacio Maureira Flores, Daniel Alors Romero, Miguel Encina Martínez, Francisco Mateo Villalba
+
+- **Autores:** Benjamín Ignacio Maureira Flores, Daniel Alors Romero, Miguel Encina Martínez, Francisco Mateo Villalba
+
+- **Fecha de Creación:** 19/02/2025  
+
+- **Versión:** v1.0
+
+<br>
+
+---
+
+<!-- \newpage  -->
+
+**Historial de modificaciones**
+
+| Fecha      | Versión | Realizada por | Descripción de los cambios |
+|------------|---------|--------------|----------------------------|
+| 03/02/2025 | v1.0    |  Benjamín Ignacio Maureira Flores, Daniel Alors Romero, Miguel Encina Martínez, Francisco Mateo Villalba | Evaluación de todos los miembros |
+
+<br>
+
+<!-- \newpage  -->
+
+<br>
+
+# Evaluación del Desempeño del Equipo  
+
+## Tabla de Evaluación  
+
+| Alumno                            | Dedicación | Compensación | Disponibilidad | Compromiso | Prácticas | Valoración Final |
+|-----------------------------------|------------|--------------|----------------|------------|-----------|------------------|
+| Antonio Macías Ferrera            | 30%*       | X            | 10%            | 30%        | 30%       | E                |
+| Alberto Carmona Sicre             | 30%        | X            | 10%            | 30%        | 30%       | E                |
+| Daniel Fernández Caballero        | 30%        | X            | 10%            | 30%        | 30%       | E                |
+| Daniel Tortorici Bartús           | 30%*       | X            | 10%            | 30%        | 30%       | E                |
+| Daniel Alors Romero               | 30%        | X            | 10%            | 30%        | 30%       | E                |
+| Daniel Ruiz López                 | 30%        | X            | 10%            | 30%        | 30%       | E                |
+| Delfín Santana Rubio              | 30%        | X            | 10%            | 30%        | 30%       | E                |
+| Francisco Capote García           | 30%        | X            | 10%            | 30%        | 30%       | E                |
+| Francisco Mateos Villarejo        | 30%        | X            | 10%            | 30%        | 30%       | E                |
+| Guadalupe Ridruejo Pineda         | 30%*       | X            | 10%            | 30%        | 30%       | E                |
+| Julen Redondo Pacheco             | 30%*       | X            | 10%            | 30%        | 30%       | E                |
+| Miguel Encina Martínez            | 30%        | X            | 10%            | 30%        | 30%       | E                |
+| Pablo Fernández Pérez             | 30%        | X            | 10%            | 30%        | 30%       | E                |
+| Ramón Gavira Sánchez              | 30%        | X            | 10%            | 30%        | 30%       | E                |
+| Rafael Pulido Cifuentes           | 30%        | X            | 10%            | 30%        | 30%       | E                |
+| Benjamín Ignacio Maureira Flores  | 30%*       | X            | 10%            | 30%        | 30%       | E                |
+| Daniel Vela Camacho               | 30%        | X            | 10%            | 30%        | 30%       | E                |
+
+---
+
+## Primer Caso (Cuando se cumplen las horas y tareas mínimas semanales)  
+
+En este escenario, la **Compensación de tiempo no aplica**. Por lo tanto, el peso de cada aspecto en la valoración semanal queda distribuido de la siguiente forma:  
+
+- **Dedicación de tiempo (30%)**  
+  Consiste en invertir un mínimo de 10 horas de trabajo a la semana, registradas correctamente (por ejemplo, mediante Clockify). Este criterio evalúa la constancia y la cantidad de tiempo que cada miembro dedica al proyecto y a las tareas asignadas.  
+  - Si un integrante no alcanza las 10 horas por una mala asignación de tareas, se debe verificar la causa y, de confirmarse, se considerará la semana como cumplida si se informa al encargado de asignar tareas.  
+
+- **Horario de disponibilidad (10%)**  
+  Evalúa el cumplimiento del horario acordado para responder mensajes, participar en reuniones y estar disponible para el equipo.  
+
+- **Compromiso y realización de tareas (30%)**  
+  Valora si las tareas asignadas se completan en los plazos establecidos. Si no se cumplen, se espera una justificación oportuna.  
+
+- **Prácticas de equipo (30%)**  
+  Evalúa la colaboración y el seguimiento de las pautas de trabajo en grupo (reuniones periódicas, comunicación fluida y uso de herramientas colaborativas).  
+
+---
+
+## Segundo Caso (Cuando NO se cumplen las horas y tareas mínimas semanales)  
+
+En este escenario, la **Compensación de tiempo sí aplica**, y la ponderación de cada criterio se ajusta así:  
+
+- **Dedicación de tiempo (15%)**  
+  Evalúa la cantidad de tiempo dedicado al proyecto. Si la semana anterior no se cumplieron las 10 horas mínimas, su peso se reduce y se habilita la compensación de tiempo.  
+
+- **Compensación de tiempo (15%)**  
+  Evalúa si, aunque no se haya cumplido inicialmente con las horas previstas, la persona ha recuperado el tiempo faltante posteriormente.  
+
+- **Horario de disponibilidad (10%)**  
+  Mantiene el mismo peso que en el primer caso y mide la puntualidad y respeto del horario de colaboración.  
+
+- **Compromiso y realización de las tareas (30%)**  
+  Evalúa la capacidad de completar las tareas dentro de los plazos o justificar su no realización.  
+
+- **Prácticas de equipo (30%)**  
+  Evalúa la participación y colaboración con el grupo siguiendo las directrices establecidas.  
+
+---
+
+## Niveles de Cumplimiento  
+
+Los porcentajes obtenidos en cada aspecto se clasifican en los siguientes niveles:  
+
+- **Excelente (E):** 90% – 100%  
+- **Bueno (B):** 70% – 89%  
+- **Regular (R):** 50% – 69%  
+- **Deficiente (D):** 0% – 49%  
+
+Estos niveles permiten identificar el grado de compromiso y desempeño de cada integrante según su cumplimiento en horas trabajadas, tareas realizadas y participación en el equipo.  
+
