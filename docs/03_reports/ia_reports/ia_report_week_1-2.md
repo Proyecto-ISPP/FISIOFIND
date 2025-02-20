@@ -20,15 +20,7 @@ documentclass: scrartcl
 classoption: "table"  
 ---
 
-<!-- COMMENT THIS WHEN EXPORTING TO PDF -->
-<p align="center">
-  <img src="../../.img/Logo_FisioFind_Verde_sin_fondo.PNG" alt="Logo FisioFind" width="300" />
-</p>
 
-<h1 align="center" style="font-size: 30px; font-weight: bold;">
-FISIO FIND - INFORME DE IA (31/02/25 - 14/02/25)
-</h1>
-<!-- COMMENT THIS WHEN EXPORTING TO PDF -->
 
 <br>
 
