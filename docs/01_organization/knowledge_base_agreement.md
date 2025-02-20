@@ -92,8 +92,8 @@ monofont: "Noto Sans Mono"
 Este acuerdo establece las normas, responsabilidades, directrices y procedimientos para la gestión, uso, mantenimiento y actualización de la **Base de Conocimiento (Knowledge Base)** en el contexto del proyecto **FISIO FIND**. La Base de Conocimiento es un recurso estratégico para la organización, diseñado para centralizar, organizar y compartir información relevante, promoviendo la eficiencia, la colaboración y la toma de decisiones informadas.  
 
 Actualmente, las bases de conocimiento se encuentran en las siguientes enlaces:
-- Base de conocimiento grupal(de toda la clase): [https://bcc-three.vercel.app/](https://fisiofind.vercel.app/)
-- Base de conocimiento propia(específicamente nuestro grupo de trabajo de FISIO FIND): [https://bcc-three.vercel.app/](https://fisiofind.vercel.app/)
+- Base de conocimiento grupal(de toda la clase): [https://bcc-three.vercel.app/](https://bcc-three.vercel.app/)
+- Base de conocimiento propia(específicamente nuestro grupo de trabajo de FISIO FIND): [https://fisiofind.vercel.app/](https://fisiofind.vercel.app/)
 
 <br>
 
