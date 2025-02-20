@@ -55,7 +55,7 @@ classoption: "table"
 
 - **Fecha de Creación:** 16/02/2025  
 
-- **Versión:** v1.5
+- **Versión:** v1.6
 
 <br>
 
@@ -71,6 +71,7 @@ classoption: "table"
 | 18/02/2025 | v1.3    | Julen Redondo Pacheco          | Añadidos más riesgos |
 | 18/02/2025 | v1.4    | Delfín Santana Rubio          | Modificación del título de RIG-001 por feedback de pull request |
 | 19/02/2025 | v1.5    | Delfín Santana Rubio          | Cambiado estilo de las tablas para que se genere correctamente el pdf y añadido nuevo riesgo |
+| 20/02/2025 | v1.6    | Delfín Santana Rubio          | Explicadas mejor consecuencias de riesgos |
 
 <br>
 
@@ -97,8 +98,8 @@ En este documento se detallan cada uno de los riesgos contemplados en el proyect
 
 | **RIG-002** | **Surgen nuevas necesidades para los fisioterapeutas**  |  
 | --- | --- |
-| **Versión** | V1.1 |
-| **Descripción** | Podría surgir la necesidad de incorporar nuevas herramientas para mejorar las consultas telemáticas. |
+| **Versión** | V1.2 |
+| **Descripción** | Podría surgir la necesidad de incorporar nuevas herramientas para mejorar las consultas telemáticas. Esto podría causar la necesidad de gastar recursos en desarrollar la nueva funcionalidad. |
 | **Clasificación** | Requisitos |
 | **Probabilidad** | 5 |
 | **Impacto** | 7 |
@@ -109,8 +110,8 @@ En este documento se detallan cada uno de los riesgos contemplados en el proyect
 
 | **RIG-003** | **Competidores**  |  
 | --- | --- |
-| **Versión** | V1.1 |
-| **Descripción** | Los competidores pueden desarrollar funcionalidades similares a las de FISIO FIND, reduciendo nuestra ventaja competitiva. |
+| **Versión** | V1.2 |
+| **Descripción** | Los competidores pueden desarrollar funcionalidades similares a las de FISIO FIND, reduciendo nuestra ventaja competitiva y probablemente nuestro número de clientes. |
 | **Clasificación** | Externos |
 | **Probabilidad** | 5 |
 | **Impacto** | 8 |
@@ -121,8 +122,8 @@ En este documento se detallan cada uno de los riesgos contemplados en el proyect
 
 | **RIG-004** | **Problemas al implementar un requisito novedoso**  |  
 | --- | --- |
-| **Versión** | V1.0 |
-| **Descripción** | Existe la posibilidad de que alguna de las herramientas o funcionalidades que quiere implementar el equipo de FISIO FIND sea suficientemente difícil de implementar como para que ocurra un retraso en una entrega o no pueda implementarse.  |
+| **Versión** | V1.1 |
+| **Descripción** | Existe la posibilidad de que alguna de las herramientas o funcionalidades que quiere implementar el equipo de FISIO FIND sea suficientemente difícil de implementar como para que ocurra un retraso en una entrega o no pueda implementarse. De no poderse implementar las funcionalidades, podríamos perder aquello que nos diferencia de nuestros competidores. |
 | **Clasificación** | Técnicos |
 | **Probabilidad** | 3 |
 | **Impacto** | 6 |
@@ -133,8 +134,8 @@ En este documento se detallan cada uno de los riesgos contemplados en el proyect
 
 | **RIG-005** | **El usuario no entiende la interfaz**  |  
 | --- | --- |
-| **Versión** | V1.0 |
-| **Descripción** | Existe la posibilidad de que el usuario no sepa utilizar la aplicación.  |
+| **Versión** | V1.1 |
+| **Descripción** | Existe la posibilidad de que el usuario no sepa utilizar la aplicación. Esto podría causar que el cliente no quiera contratarnos, o que contrate los servicios de nuestra competencia. |
 | **Clasificación** | Externos |
 | **Probabilidad** | 3 |
 | **Impacto**| 5 |
@@ -145,8 +146,8 @@ En este documento se detallan cada uno de los riesgos contemplados en el proyect
 
 | **RIG-006** | **Los medios para comprobar que un fisioterapeuta está colegiado dejan de estar disponibles**  |  
 | --- | --- |
-| **Versión** | V1.0 |
-| **Descripción** | Existe la posibilidad de que los medios que FISIO FIND utiliza para comprobar si un fisioterapeuta esté o no colegiado dejen de estar disponibles. Actualmente, esto se comprueba a través de las webs públicas de los colegiados. Si una nueva ley de protección impidiera que estas páginas fueran públicas, nuestros mecanismos para verificar la colegiación de un fisioterapeuta quedarían inoperativos.  |
+| **Versión** | V1.1 |
+| **Descripción** | Existe la posibilidad de que los medios que FISIO FIND utiliza para comprobar si un fisioterapeuta esté o no colegiado dejen de estar disponibles. Actualmente, esto se comprueba a través de las webs públicas de los colegiados. Si una nueva ley de protección impidiera que estas páginas fueran públicas, nuestros mecanismos para verificar la colegiación de un fisioterapeuta quedarían inoperativos(haciendo que no podamos verificar que un fisioterapeuta esté colegiado o no).  |
 | **Clasificación** | Técnicos |
 | **Probabilidad** | 1 |
 | **Impacto** | 9 |
@@ -169,7 +170,7 @@ En este documento se detallan cada uno de los riesgos contemplados en el proyect
 
 | **RIG-008** | **Problemas con la interoperabilidad entre plataformas**  |  
 | --- | --- |
-| **Versión** | V1.0 |
+| **Versión** | V1.1 |
 | **Descripción** | Existe el riesgo de que la aplicación no funcione correctamente en todos los dispositivos o plataformas para los que se ha diseñado, afectando la experiencia del usuario y reduciendo la adopción de la aplicación.  |
 | **Clasificación** | Técnicos |
 | **Probabilidad** | 2 |
@@ -181,8 +182,8 @@ En este documento se detallan cada uno de los riesgos contemplados en el proyect
 
 | **RIG-009** | **Cambios en estándares web o de sistemas operativos**  |  
 | --- | --- |
-| **Versión** | V1.0 |
-| **Descripción** | Existe el riesgo de que surjan cambios en los estándares web o en sistemas operativos, lo que puede afectar la compatibilidad de la aplicación.  |
+| **Versión** | V1.1 |
+| **Descripción** | Existe el riesgo de que surjan cambios en los estándares web o en sistemas operativos, lo que puede afectar la compatibilidad de la aplicación. Esto afectaría a la experiencia del usuario y reduciendo la adopción de la aplicación. |
 | **Clasificación** | Técnicos |
 | **Probabilidad** | 1 |
 | **Impacto** | 7|
@@ -193,8 +194,8 @@ En este documento se detallan cada uno de los riesgos contemplados en el proyect
 
 | **RIG-010** | **Problemas de escalabilidad**  |  
 | --- | --- |
-| **Versión** | V1.0 |
-| **Descripción** | Si la cantidad de usuarios de la aplicación crece rápidamente, la infraestructura podría no soportar la demanda, provocando tiempos de carga lentos o caídas del sistema.  |
+| **Versión** | V1.1 |
+| **Descripción** | Si la cantidad de usuarios de la aplicación crece rápidamente, la infraestructura podría no soportar la demanda, provocando tiempos de carga lentos o caídas del sistema. Esto afectaría a la experiencia del usuario y reduciendo la adopción de la aplicación. |
 | **Clasificación** | Técnicos |
 | **Probabilidad** | 5 |
 | **Impacto** | 8 |
@@ -205,8 +206,8 @@ En este documento se detallan cada uno de los riesgos contemplados en el proyect
 
 | **RIG-011** | **Dependencia de APIs externas**  |  
 | --- | --- |
-| **Versión** | V1.0 |
-| **Descripción** | Si las APIs que se plantean utilizar dejasen de estar operativas o subiese su precio, las funcionalidades que las utilicen se verían afectadas.  |
+| **Versión** | V1.1 |
+| **Descripción** | Si las APIs que se plantean utilizar dejasen de estar operativas o subiese su precio, las funcionalidades que las utilicen se verían afectadas. Esto podría tener un impacto en los costes o en las funcionalidades.  |
 | **Clasificación** | Externos |
 | **Probabilidad** | 2 |
 | **Impacto** | 8 |
