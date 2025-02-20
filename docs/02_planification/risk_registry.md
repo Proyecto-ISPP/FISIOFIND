@@ -171,7 +171,7 @@ En este documento se detallan cada uno de los riesgos contemplados en el proyect
 | **RIG-008** | **Problemas con la interoperabilidad entre plataformas**  |  
 | --- | --- |
 | **Versión** | V1.1 |
-| **Descripción** | Existe el riesgo de que la aplicación no funcione correctamente en todos los dispositivos o plataformas para los que se ha diseñado, afectando la experiencia del usuario y reduciendo la adopción de la aplicación.  |
+| **Descripción** | Existe el riesgo de que la aplicación no funcione correctamente en todos los dispositivos o plataformas para los que se ha diseñado, afectando a la experiencia del usuario y reduciendo la adopción de la aplicación.  |
 | **Clasificación** | Técnicos |
 | **Probabilidad** | 2 |
 | **Impacto** | 6 |
