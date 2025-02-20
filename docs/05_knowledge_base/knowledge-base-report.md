@@ -88,7 +88,7 @@ classoption: "table"
 | 20/02/2025 | v1.1    | Daniel Vela Camacho  | Correción del índice y adición del epígrafe que recopila acciones correctivas de la primera semana |
 | 20/02/2025 | v1.2    | Delfín Santana Rubio | Añadidas acciones tomadas por feedback de día 14/02 | 
 | 20/02/2025 | v1.3    | Daniel Vela Camacho | Mejorada la redacción en los epígrafes y corregido el índice | 
-| 20/02/2025 | v1.4    | Añadido link a base de conocimiento grupal | 
+| 20/02/2025 | v1.4    | Delfín Santana Rubio | Añadido link a base de conocimiento grupal | 
 
 
 <br>
