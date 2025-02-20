@@ -38,19 +38,20 @@ classoption: "table"
 3. [CONTRIBUCIONES DEL EQUIPO](#3-contribuciones-del-equipo)
 4. [ACCIONES TOMADAS A PARTIR DEL FEEDBACK](#4-acciones-tomadas-a-partir-del-feedback)
     - 4.1 [Análisis y Decisiones tomadas tras el Feedback del 07/02/2025](#41-análisis-y-decisiones-tomadas-tras-el-feedback-del-07022025)
-      - 4.1.1 [Evaluación de viabilidad del proyecto](#411-evaluación-de-viabilidad-del-proyecto)
-      - 4.1.2 [Redirección del proyecto](#412-redirección-del-proyecto)
-      - 4.1.3 [Estrategia de validación con usuarios piloto](#413-estrategia-de-validación-con-usuarios-piloto)
-    - 4.1 [Análisis y Decisiones tomadas tras el Feedback del 14/02/2025](#41-análisis-y-decisiones-tomadas-tras-el-feedback-del-14022025)
-      - 4.2.1 [Visión clara de las herramientas especializadas](#421-visión-clara-de-las-herramientas-especializadas)
-      - 4.2.2 [Respuesta efectiva al feedback recibido y cambio de idea anterior](#421-respuesta-efectiva-al-feedback-recibido-y-cambio-de-idea-anterior)
-      - 4.2.3 [Calidad visual de la presentación y de los mockups y otro feedback positivo](#423-calidad-visual-de-la-presentación-y-de-los-mockups-y-otro-feedback-positivo)
-      - 4.2.4 [Costos](#424-costos)
-      - 4.2.5 [Riesgos](#425-riesgos)
-      - 4.2.6 [Inicio efectivo](#426-inicio-efectivo)
-      - 4.2.7 [Mejora en la visión corporativa y listado del equipo y habilidades](#427-mejora-en-la-visión-corporativa-y-listado-del-equipo-y-habilidades)
-      - 4.2.8 [Actualización del CA](#428-actualizacion-del-ca)
-      - 4.2.9 [Tiempo y número de diapositivas en presentaciones](#429-tiempo-y-numero-de-diapositivas-en-presentaciones)
+        - 4.1.1 [Evaluación de viabilidad del proyecto](#411-evaluación-de-viabilidad-del-proyecto)
+        - 4.1.2 [Redirección del proyecto](#412-redirección-del-proyecto)
+        - 4.1.3 [Estrategia de validación con usuarios piloto](#413-estrategia-de-validación-con-usuarios-piloto)
+    - 4.2 [Resumen de Mejoras Tras el Feedback (14/02/2025)](#resumen-de-mejoras-tras-el-feedback-14022025)
+        - 4.2.1 [Visión clara de las herramientas especializadas](#421-visión-clara-de-las-herramientas-especializadas)
+        - 4.2.2 [Respuesta efectiva al feedback recibido y cambio de idea anterior](#422-respuesta-efectiva-al-feedback-recibido-y-cambio-de-idea-anterior)
+        - 4.2.3 [Calidad visual de la presentación y de los mockups y otro feedback positivo](#423-calidad-visual-de-la-presentación-y-de-los-mockups-y-otro-feedback-positivo)
+        - 4.2.4 [Costos](#424-costos)
+        - 4.2.5 [Riesgos](#425-riesgos)
+        - 4.2.6 [Inicio efectivo](#426-inicio-efectivo)
+        - 4.2.7 [Mejora en la visión corporativa y listado del equipo y habilidades](#427-mejora-en-la-visión-corporativa-y-listado-del-equipo-y-habilidades)
+        - 4.2.8 [Actualización del CA](#428-actualización-del-ca)
+        - 4.2.9 [Tiempo y número de diapositivas en presentaciones](#429-tiempo-y-número-de-diapositivas-en-presentaciones)
+
 <!-- COMMENT WHEN EXPORTING TO PDF -->
 
 <br>
@@ -72,7 +73,7 @@ classoption: "table"
 
 - **Fecha de Creación:** 20/02/2025  
 
-- **Versión:** v1.1
+- **Versión:** v1.2
 
 <br>
 
@@ -86,6 +87,8 @@ classoption: "table"
 | 20/02/2025 | v1.0    | Delfín Santana Rubio | Creación del reporte de base de conocimiento. |
 | 20/02/2025 | v1.1    | Daniel Vela Camacho  | Correción del índice y adición del epígrafe que recopila acciones correctivas de la primera semana |
 | 20/02/2025 | v1.2    | Delfín Santana Rubio | Añadidas acciones tomadas por feedback de día 14/02 | 
+| 20/02/2025 | v1.3    | Daniel Vela Camacho | Mejorada la redacción en los epígrafes y corregido el índice | 
+
 
 <br>
 
@@ -140,48 +143,54 @@ Para la gestión de los usuarios piloto, se realizó una encuesta dirigida a fis
 
 Con esta información, se busca optimizar el desarrollo del nuevo proyecto y asegurar una mayor viabilidad en el mercado.
 
-## 4.2. Análisis y Decisiones tomadas tras el Feedback del 14/02/2025
+# Resumen de Mejoras Tras el Feedback (14/02/2025)
 
-Tras el _feedback_ recibido en la sesión del 14/02/2025, se tomaron medidas para mejorar en aquellos aspectos de la presentación que se nos indicaron fallos, y también se tomaron medidas para seguir haciéndolo bien en aquellos puntos que se nos felicitó.
+Tras el _feedback_ recibido en la sesión del 14/02/2025, se tomaron medidas para mejorar aquellos aspectos de la presentación que presentaban fallos, al mismo tiempo que se reforzaron los puntos que fueron elogiados.
 
-### 4.2.1. Visión clara de las herramientas especializadas
-Se tuvo en cuenta la recomendación de mostrar en la presentación las herramientas que va a implementar FISIO FIND.
+## 4.2.1. Visión clara de las herramientas especializadas
 
-### 4.2.2. Respuesta efectiva al feedback recibido y cambio de idea anterior
-En el feedback del 14/02 se indicó que no era necesario decir que habíamos cambiado de idea. Por este motivo, en la siguiente presentación no lo haremos.
+- Se tuvo en cuenta la recomendación de mostrar en la presentación las herramientas que implementará FISIO FIND.
 
-Por otro lado, se nos felicitó por tener una respuesta al feedback tan clara. Sin embargo, hemos decidido para la presentación de evaluación no incluir una presentación dedicada exclusivamente al feedback.
+## 4.2.2. Respuesta efectiva al feedback recibido y cambio de idea anterior
 
-### 4.2.3. Calidad visual de la presentación y de los mockups y otro feedback positivo
-Se nos felicitó por la calidad de nuestra presentación y de nuestros mockups. De este modo, se decidió tomar la presentación y los mockups hechos como referencia para nuevas presentaciones y mockups.
+- En el feedback del 14/02 se indicó que no era necesario mencionar que habíamos cambiado de idea, por lo que en la siguiente presentación no lo haremos.
+- Aunque se nos felicitó por la claridad de nuestra respuesta al feedback, se ha decidido no dedicar una presentación exclusiva a este tema en la evaluación.
 
-Por otro lado, también se nos felicitó por el análisis de costos y de competidores, por lo que se decidió tomar el trabajo anterior en estas áreas como referencia para el futuro. Es decir, también se nos indicó que había áreas de mejora en los costos, por lo que se entiende el nuevo trabajo que se haga sobre los costos como un incremento, no como trabajo desde 0.
+## 4.2.3. Calidad visual de la presentación y de los mockups y otro feedback positivo
 
-### 4.2.4 Costos
-Se nos indicó que debíamos de hacer mejoras en el área de costos. De este modo, en la semana antes de la evaluación se dedicaron recursos a mejorar en este área. Entre otras cosas, se ha mejorado en los siguientes aspectos:
-- Se ha mejorado en el desglose por meses
-- Se ha mejorado en la especificación de coste por recurso.
-- Se ha mejorado en la consideración del soporte posterior. 
-  - También se ha tenido en cuenta la versión de Github Enterprise. 
+- Se nos felicitó por la calidad de la presentación y de los mockups, y se decidió utilizar el material realizado como referencia para futuras presentaciones.
+- También se destacó el análisis de costos y de competidores. Se usará el trabajo previo en estas áreas como referencia para futuras mejoras, considerando que cualquier actualización en costos se entiende como un incremento, y no como un trabajo desde cero.
 
-Todo esto se ha registrado en un documento.
+## 4.2.4. Costos
 
-### 4.2.5. Riesgos
-Se indicó que se debía de hacer un mejor análisis de riesgos. De este modo, se han dedicado más recursos a desarrollar el Plan de Gestión de Riesgos y el Registro de Riesgos. 
+Se nos indicó la necesidad de mejorar en el área de costos, por lo que, en la semana previa a la evaluación, se dedicaron recursos a optimizarla. Entre las mejoras realizadas se encuentran:
 
-### 4.2.6. Inicio efectivo
-Del feedback recibido de otros grupos, se ha decidido comenzar la siguiente presentación utilizando la técnica de inicio efectivo de contar una historia. Además, se pretende también utilizar esto mismo para mostrar los mockups. 
+- **Desglose por meses:** Se ha detallado mejor.
+- **Especificación de coste por recurso:** Se ha mejorado la precisión.
+- **Soporte posterior:** Se ha incluido la consideración de la versión de Github Enterprise.
 
-### 4.2.7. Mejora en la visión corporativa y listado del equipo y habilidades
-Se mandado la tarea de tomarnos una foto todos con la misma ropa y el mismo fondo para así poder mostrarla.
+_Todo lo anterior ha quedado registrado en un documento._
 
-Además, se creó un nuevo documento de recursos humanos para listar el equipo y sus habilidades.
+## 4.2.5. Riesgos
 
-### 4.2.8. Actualización del CA
-Se revisó el CA para comprobar las penalizaciones relacionadas con el compromiso de las tareas y las responsabilidades a partir de las recomendaciones generales que se dieron en clase. Se llegó a la conclusión de que no hacía falta modificación.
+- Se destacó la necesidad de un análisis más profundo de riesgos. En consecuencia, se han asignado mayores recursos para desarrollar tanto el **Plan de Gestión de Riesgos** como el **Registro de Riesgos**.
 
-### 4.2.9. Tiempo y número de diapositivas en presentaciones
-Se tomó nota y se tomaron medidas(hacer la siguiente presentación con esto en cuenta) para que la siguiente presentación tuviera la longitud esperada:
-- Menos de 40 diapositivas
-- Terminar en el último minuto
+## 4.2.6. Inicio efectivo
+
+- A partir del feedback de otros grupos, se ha decidido iniciar la siguiente presentación utilizando la técnica de contar una historia. Esta técnica también se aplicará para la presentación de los mockups.
+
+## 4.2.7. Mejora en la visión corporativa y listado del equipo y habilidades
+
+- Se asignó la tarea de tomar una foto grupal en la que todos vistamos la misma ropa y utilicemos el mismo fondo, con el fin de presentarla.
+- Se creó un nuevo documento de recursos humanos para listar al equipo y sus habilidades.
+
+## 4.2.8. Actualización del CA
+
+- Se revisó el CA para verificar las penalizaciones relacionadas con el compromiso de las tareas y las responsabilidades, siguiendo las recomendaciones generales impartidas en clase. Se concluyó que no era necesaria ninguna modificación.
+
+## 4.2.9. Tiempo y número de diapositivas en presentaciones
+
+- Se tomó nota para que la próxima presentación cumpla con los siguientes requisitos:
+  - Menos de 40 diapositivas.
+  - Conclusión en el último minuto.
 
