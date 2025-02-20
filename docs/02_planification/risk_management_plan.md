@@ -36,10 +36,9 @@ classoption: "table"
 - [2. REGISTRO DE RIESGOS](#2-registro-de-riesgos)
 - [3. CLASIFICACIÓN DE RIESGOS](#3-clasificación-de-riesgos)
 - [4. EVALUACIÓN DE RIESGOS](#4-evaluación-de-riesgos)
-- [5. PLANES DE CONTINGENCIA Y CONTRAMEDIDAS](#5-planes-de-contingencia-y-contramedidas)
+- [5. PLANES DE CONTIGENCIA Y CONTRAMEDIDAS](#5-planes-de-contigencia-y-contramedidas)
 - [6. SEGUIMIENTO DE RIESGOS](#6-seguimiento-de-riesgos)
 - [7. MATRIZ DE RIESGOS](#7-matriz-de-riesgos)
-<!-- COMMENT THIS WHEN EXPORTING TO PDF -->
 
 <br>
 
@@ -65,8 +64,6 @@ classoption: "table"
 
 ---
 
-<!-- \newpage -->
-
 **Histórico de Modificaciones**
 
 | Fecha      | Versión | Realizada por                    | Descripción de los cambios |
@@ -74,6 +71,9 @@ classoption: "table"
 | 17/02/2025 | v1.0    | Delfín Santana Rubio          | Creación del documento y primeras modificaciones |
 | 18/02/2025 | v1.1    | Julen Redondo Pacheco        | Correcciones y modificaciones |
 | 18/02/2025 | v1.2    | Delfín Santana Rubio        | Modificado punto 5 para añadir tipos de contramedidas a riesgos |
+| 19/02/2025 | v1.3    | Delfín Santana Rubio        | Modificado punto 5 y matriz de riesgos |
+| 19/02/2025 | v1.4    | Delfín Santana Rubio        | Añadido nuevo riesgo a matriz de riesgos |
+
 
 <br>
 
@@ -96,12 +96,12 @@ Se ha seguido la clasificación mostrada en la píldora teórica "ISPP - Sesión
 - Estimación: riesgos asociados con estimaciones.
 - Técnico: riesgos asociados con la parte técnica.
 - Requisitos: riesgos asociados con los requisitos. Por ejemplo, que surja un nuevo requisito.
-- Organizacional: problemas en la organización interna.
-- Internos: problemas internos del equipo del proyecto.
-- Internos-externos: problemas relacionados con interacciones entre la parte interna y externa.
+- Organizacional: Problemas en la organización interna.
+- Internos: Problemas internos del equipo del proyecto.
+- Internos-externos: Problemas relacionados con interacciones entre la parte interna y externa.
 
 # 4. EVALUACIÓN DE RIESGOS
-Para evaluar un riesgo, se debe analizar su probabilidad y su impacto. Una vez establecidos estos parámetros, se deberá establecer el factor, que es el resultado de multiplicar la probabilidad por el impacto, y la prioridad.
+Para evaluar un riesgo, se debe analizar su probabilidad y su impacto. Una vez establecidos estos parámetros, se deberán establecer el factor, que es el resultado de multiplicar la probabilidad por el impacto, y la prioridad.
 
 | Parámetro  | Descripción | Escala |
 |------------|------------|--------|
@@ -109,14 +109,18 @@ Para evaluar un riesgo, se debe analizar su probabilidad y su impacto. Una vez e
 | **Impacto (I)** | Consecuencias si el riesgo ocurre | 1-10 |
 | **Factor (F = P × I)** | Grado de criticidad del riesgo | 1-100 |
 
-# 5. PLANES DE CONTINGENCIA Y CONTRAMEDIDAS
+
+# 5. PLANES DE CONTIGENCIA Y CONTRAMEDIDAS
 Se deberán indicar las medidas que se deben tomar de suceder el riesgo. Además, se deberán indicar las contramedidas que se están tomando para evitar que suceda o minimizar el impacto del riesgo en cuestión.
 
-Las contramedidas que se pueden aplicar a un riesgo pueden diferenciarse entre:
-- Aceptar: aceptar el riesgo y no tomar medidas.
-- Evitar: descartar o modificar aquello que causa el riesgo.
-- Mitigar: tomar acciones para evitar que suceda o minimizar el impacto del riesgo en cuestión.
-- Transferir: transferir el riesgo a un sujeto externo al equipo.
+Las distintas estrategias para las contramedidas que se pueden aplicar a un riesgo pueden diferenciarse entre:
+- Aceptar: Aceptar el riesgo y no tomar medidas.
+- Evitar: Descartar o modificar aquello que causa el riesgo.
+- Mitigar: Tomar acciones para evitar que suceda o minimizar el impacto del riesgo en cuestión.
+- Transferir: Transferir el riesgo a un sujeto externo al equipo.
+
+Estas estrategias deben de entenderse como un punto de partida, no como una respuesta que no deba de desarrollarse. Además, dependiendo de la probabilidad y el impacto de un riesgo habrá estrategias que no podrán ser elegidas. Por ejemplo, si un riesgo tiene mucho impacto y mucha probabilidad, ese riesgo no podrá ser aceptado. Esto se decide por los responsables de diseñar las contramedidas.
+
 
 # 6. SEGUIMIENTO DE RIESGOS
 Para los riesgos registrados, se debe hacer un seguimiento mediante la revisión de las contramedidas implementadas.
@@ -127,8 +131,8 @@ Además, se entiende que el proceso de registro de riesgos es un proceso constan
 
 | IMPACTO ↓   PROBABILIDAD →  | 1-2 (Baja)      | 3-4 (Moderada)   | 5-6 (Alta)      | 7-8 (Crítica)   | 9-10 (Extrema)  |
 |-------------------------------|----------------|----------------|----------------|----------------|----------------|
-| **1-2 (Bajo impacto)**      | Riesgo mínimo    | Riesgo tolerable  | Riesgo moderado  | Riesgo alto     | Riesgo crítico  |
-| **3-4 (Moderado impacto)**  | Riesgo tolerable | Riesgo moderado   | Riesgo alto      | Riesgo crítico  | Riesgo extremo  |
-| **5-6 (Alto impacto)**      | Riesgo moderado  | Riesgo alto       | Riesgo crítico   | Riesgo extremo  | Riesgo extremo  |
-| **7-8 (Crítico impacto)**   | Riesgo alto      | Riesgo crítico    | Riesgo extremo   | Riesgo extremo  | Riesgo extremo  |
-| **9-10 (Extremo impacto)**  | Riesgo crítico   | Riesgo extremo    | Riesgo extremo   | Riesgo extremo  | Riesgo extremo  |
+| **1-2 (Bajo impacto)**      |         |   |   |     |  |
+| **3-4 (Moderado impacto)**  |       |   |       |   |  |
+| **5-6 (Alto impacto)**      | RIG-007, RIG-008  | RIG-005, RIG-004       |    | |   |
+| **7-8 (Crítico impacto)**   | RIG-009, RIG-011      |     | RIG-002, RIG-003, RIG-010   |  |  |
+| **9-10 (Extremo impacto)**  | RIG-006   | RIG-001    |   |   |  |
