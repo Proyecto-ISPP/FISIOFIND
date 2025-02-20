@@ -36,7 +36,7 @@ classoption: "table"
 - [2. REGISTRO DE RIESGOS](#2-registro-de-riesgos)
 - [3. CLASIFICACIÓN DE RIESGOS](#3-clasificación-de-riesgos)
 - [4. EVALUACIÓN DE RIESGOS](#4-evaluación-de-riesgos)
-- [5. PLANES DE CONTIGENCIA Y CONTRAMEDIDAS](#5-planes-de-contigencia-y-contramedidas)
+- [5. PLANES DE CONTINGENCIA Y CONTRAMEDIDAS](#5-planes-de-contigencia-y-contramedidas)
 - [6. SEGUIMIENTO DE RIESGOS](#6-seguimiento-de-riesgos)
 - [7. MATRIZ DE RIESGOS](#7-matriz-de-riesgos)
 
@@ -58,7 +58,7 @@ classoption: "table"
 
 - **Fecha de Creación:** 17/02/2025  
 
-- **Versión:** v1.2
+- **Versión:** v1.4
 
 <br>
 
@@ -96,9 +96,9 @@ Se ha seguido la clasificación mostrada en la píldora teórica "ISPP - Sesión
 - Estimación: riesgos asociados con estimaciones.
 - Técnico: riesgos asociados con la parte técnica.
 - Requisitos: riesgos asociados con los requisitos. Por ejemplo, que surja un nuevo requisito.
-- Organizacional: Problemas en la organización interna.
-- Internos: Problemas internos del equipo del proyecto.
-- Internos-externos: Problemas relacionados con interacciones entre la parte interna y externa.
+- Organizacional: problemas en la organización interna.
+- Internos: problemas internos del equipo del proyecto.
+- Internos-externos: problemas relacionados con interacciones entre la parte interna y externa.
 
 # 4. EVALUACIÓN DE RIESGOS
 Para evaluar un riesgo, se debe analizar su probabilidad y su impacto. Una vez establecidos estos parámetros, se deberán establecer el factor, que es el resultado de multiplicar la probabilidad por el impacto, y la prioridad.
@@ -110,7 +110,7 @@ Para evaluar un riesgo, se debe analizar su probabilidad y su impacto. Una vez e
 | **Factor (F = P × I)** | Grado de criticidad del riesgo | 1-100 |
 
 
-# 5. PLANES DE CONTIGENCIA Y CONTRAMEDIDAS
+# 5. PLANES DE CONTINGENCIA Y CONTRAMEDIDAS
 Se deberán indicar las medidas que se deben tomar de suceder el riesgo. Además, se deberán indicar las contramedidas que se están tomando para evitar que suceda o minimizar el impacto del riesgo en cuestión.
 
 Las distintas estrategias para las contramedidas que se pueden aplicar a un riesgo pueden diferenciarse entre:
