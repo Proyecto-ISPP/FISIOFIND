@@ -79,6 +79,7 @@ monofont: "Noto Sans Mono"
 |------------|---------|--------------|----------------------------|
 | 13/02/2025 | v1.0    |  Daniel Alors Romero | Versión inicial del documento. |
 | 15/02/2025 | v1.1    |  Antonio Macías Ferrera | Aclaraciones respecto a la base de conocimiento general del curso. |
+| 20/02/2025| v1.2    | Delfín Santana Rubio | Añadidas urls a bases de conocimiento | 
 
 <br>
 
@@ -89,6 +90,10 @@ monofont: "Noto Sans Mono"
 
 # 1. INTRODUCCIÓN  
 Este acuerdo establece las normas, responsabilidades, directrices y procedimientos para la gestión, uso, mantenimiento y actualización de la **Base de Conocimiento (Knowledge Base)** en el contexto del proyecto **FISIO FIND**. La Base de Conocimiento es un recurso estratégico para la organización, diseñado para centralizar, organizar y compartir información relevante, promoviendo la eficiencia, la colaboración y la toma de decisiones informadas.  
+
+Actualmente, las bases de conocimiento se encuentran en las siguientes enlaces:
+- Base de conocimiento grupal(de toda la clase): [https://bcc-three.vercel.app/](https://fisiofind.vercel.app/)
+- Base de conocimiento propia(específicamente nuestro grupo de trabajo de FISIO FIND): [https://bcc-three.vercel.app/](https://fisiofind.vercel.app/)
 
 <br>
 
