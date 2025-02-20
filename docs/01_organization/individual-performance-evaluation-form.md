@@ -18,9 +18,6 @@ header-right: "20/02/2025"                                # CHANGE IF NEEDED
 footer-left: "FISIOFIND"
 documentclass: scrartcl
 classoption: "table"
-mainfont: "Noto Sans"
-sansfont: "Noto Sans"
-monofont: "Noto Sans Mono"
 ---
 
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
@@ -124,7 +121,7 @@ Registro de requisitos, Historias de Usuario, Casos de Uso, Reporte IA 31/01/202
 Estudio Viabilidad Gallery Guide, Análisis Competidores Fisio Find, Casos de Uso, Análisis de Costes Fisio Find, Herramientas de CI, planificación de los Costes, Herramienta para Estudio de Costes y ROI.
 
 ### Gavira Sánchez, Ramón
-Propuesta idea (Gallery Guide), Agile Inception (Gallery Guide), DAFO (Gallery Guide), Costes y Monetización (Gallery Guide), TCO y Monetización (Fisio Find), Revisión Documentos.
+Propuesta idea (Gallery Guide), Agile Inception (Gallery Guide), DAFO (Gallery Guide), Costes y Monetización (Gallery Guide), TCO y Monetización (Fisio Find), Revisión Documentos, Sprint Planning (Sprint 1), Product Backlog.
 
 ### Macías Ferrera, Antonio
 Preparación de reunion del 03/02/2024, Elaboración plantillas documentos, Diseños y portadas, Presentación 07/02/2025, Actualización feedback, Búsqueda de competidores, Organización, Plan de Gestión de la Configuración, Preparación reunión 09/02/2025, Mockups casos de uso core, Presentación 14/02/2025, Corrección de documentos, Sprint Planning, Presentación 21/02/2025, Plan de Recursos Humanos, Exportación de documentos.
