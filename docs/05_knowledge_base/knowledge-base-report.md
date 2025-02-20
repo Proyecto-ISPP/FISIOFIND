@@ -41,6 +41,16 @@ classoption: "table"
       - 4.1.1 [Evaluación de viabilidad del proyecto](#411-evaluación-de-viabilidad-del-proyecto)
       - 4.1.2 [Redirección del proyecto](#412-redirección-del-proyecto)
       - 4.1.3 [Estrategia de validación con usuarios piloto](#413-estrategia-de-validación-con-usuarios-piloto)
+    - 4.1 [Análisis y Decisiones tomadas tras el Feedback del 14/02/2025](#41-análisis-y-decisiones-tomadas-tras-el-feedback-del-14022025)
+      - 4.2.1 [Visión clara de las herramientas especializadas](#421-visión-clara-de-las-herramientas-especializadas)
+      - 4.2.2 [Respuesta efectiva al feedback recibido y cambio de idea anterior](#421-respuesta-efectiva-al-feedback-recibido-y-cambio-de-idea-anterior)
+      - 4.2.3 [Calidad visual de la presentación y de los mockups y otro feedback positivo](#423-calidad-visual-de-la-presentación-y-de-los-mockups-y-otro-feedback-positivo)
+      - 4.2.4 [Costos](#424-costos)
+      - 4.2.5 [Riesgos](#425-riesgos)
+      - 4.2.6 [Inicio efectivo](#426-inicio-efectivo)
+      - 4.2.7 [Mejora en la visión corporativa y listado del equipo y habilidades](#427-mejora-en-la-visión-corporativa-y-listado-del-equipo-y-habilidades)
+      - 4.2.8 [Actualización del CA](#428-actualizacion-del-ca)
+      - 4.2.9 [Tiempo y número de diapositivas en presentaciones](#429-tiempo-y-numero-de-diapositivas-en-presentaciones)
 <!-- COMMENT WHEN EXPORTING TO PDF -->
 
 <br>
@@ -75,6 +85,7 @@ classoption: "table"
 |------------|---------|----------------------------------|----------------------------|
 | 20/02/2025 | v1.0    | Delfín Santana Rubio | Creación del reporte de base de conocimiento. |
 | 20/02/2025 | v1.1    | Daniel Vela Camacho  | Correción del índice y adición del epígrafe que recopila acciones correctivas de la primera semana |
+| 20/02/2025 | v1.2    | Delfín Santana Rubio | Añadidas acciones tomadas por feedback de día 14/02 | 
 
 <br>
 
@@ -91,10 +102,10 @@ El acceso a la base de conocimiento está disponible en el siguiente enlace: [Fi
 Para consultar la documentación, visita [Documentación FisioFind](https://fisiofind.vercel.app/docs/Inicio). En esta sección, encontrarás un panel lateral izquierdo que muestra todos los documentos subidos.
 
 # 3. CONTRIBUCIONES DEL EQUIPO
-En la base de conocimiento podemos ver que tenemos subidos todos nuestros documentos: registros, planes, informes, etc. **También, en la sección de recursos/feedback podemos ver informes del feedback que se ha dado en clase. Este feedback incluye el específico que se ha dado a nuestro grupo y el general.**
+En la base de conocimiento podemos ver que tenemos subidos todos nuestros documentos: registros, planes, informes, notas de las píldoras teóricas, etc. **También, en la sección de recursos/feedback podemos ver informes del feedback que se ha dado en clase. Este feedback incluye el específico que se ha dado a nuestro grupo y el general.**
 
 # 4. ACCIONES TOMADAS A PARTIR DEL FEEDBACK
-En esta sección se muestra un resumen de las acciones que se han tomado a partir del feedback dado:
+En esta sección se muestra un resumen de las acciones que se han tomado a partir del feedback dado. Se muestra un resumen ya que se entiende que existe un proceso de interiorización del feedback que hace que se tomen acciones de forma inconsciente. Es decir, si por ejemplo se valora mucho una presentación en concreto, logicamente se va a intentar parecerse a esa presentación(en los puntos en los que se haya dado feedback positivo. Se puede obtener un análisis mucho más detallado del feedback y de las presentaciones en los documentos [Feedback_07-02-2025](https://fisiofind.vercel.app/docs/Recursos/5.1.%20Feedbacks/5.1.1.%20Feedback_07-02-2025) y [Feedback_14-02-2025](https://fisiofind.vercel.app/docs/Recursos/5.1.%20Feedbacks/5.1.2.%20Feedback_14-02-2025) de nuestra base de conocimiento.
 
 ## 4.1. Análisis y Decisiones tomadas tras el Feedback del 07/02/2025
 
@@ -128,3 +139,49 @@ Para la gestión de los usuarios piloto, se realizó una encuesta dirigida a fis
 - Las aplicaciones que utilizan actualmente para prestar sus servicios de manera _online_.
 
 Con esta información, se busca optimizar el desarrollo del nuevo proyecto y asegurar una mayor viabilidad en el mercado.
+
+## 4.2. Análisis y Decisiones tomadas tras el Feedback del 14/02/2025
+
+Tras el _feedback_ recibido en la sesión del 14/02/2025, se tomaron medidas para mejorar en aquellos aspectos de la presentación que se nos indicaron fallos, y también se tomaron medidas para seguir haciéndolo bien en aquellos puntos que se nos felicitó.
+
+### 4.2.1. Visión clara de las herramientas especializadas
+Se tuvo en cuenta la recomendación de mostrar en la presentación las herramientas que va a implementar FISIO FIND.
+
+### 4.2.2. Respuesta efectiva al feedback recibido y cambio de idea anterior
+En el feedback del 14/02 se indicó que no era necesario decir que habíamos cambiado de idea. Por este motivo, en la siguiente presentación no lo haremos.
+
+Por otro lado, se nos felicitó por tener una respuesta al feedback tan clara. Sin embargo, hemos decidido para la presentación de evaluación no incluir una presentación dedicada exclusivamente al feedback.
+
+### 4.2.3. Calidad visual de la presentación y de los mockups y otro feedback positivo
+Se nos felicitó por la calidad de nuestra presentación y de nuestros mockups. De este modo, se decidió tomar la presentación y los mockups hechos como referencia para nuevas presentaciones y mockups.
+
+Por otro lado, también se nos felicitó por el análisis de costos y de competidores, por lo que se decidió tomar el trabajo anterior en estas áreas como referencia para el futuro. Es decir, también se nos indicó que había áreas de mejora en los costos, por lo que se entiende el nuevo trabajo que se haga sobre los costos como un incremento, no como trabajo desde 0.
+
+### 4.2.4 Costos
+Se nos indicó que debíamos de hacer mejoras en el área de costos. De este modo, en la semana antes de la evaluación se dedicaron recursos a mejorar en este área. Entre otras cosas, se ha mejorado en los siguientes aspectos:
+- Se ha mejorado en el desglose por meses
+- Se ha mejorado en la especificación de coste por recurso.
+- Se ha mejorado en la consideración del soporte posterior. 
+  - También se ha tenido en cuenta la versión de Github Enterprise. 
+
+Todo esto se ha registrado en un documento.
+
+### 4.2.5. Riesgos
+Se indicó que se debía de hacer un mejor análisis de riesgos. De este modo, se han dedicado más recursos a desarrollar el Plan de Gestión de Riesgos y el Registro de Riesgos. 
+
+### 4.2.6. Inicio efectivo
+Del feedback recibido de otros grupos, se ha decidido comenzar la siguiente presentación utilizando la técnica de inicio efectivo de contar una historia. Además, se pretende también utilizar esto mismo para mostrar los mockups. 
+
+### 4.2.7. Mejora en la visión corporativa y listado del equipo y habilidades
+Se mandado la tarea de tomarnos una foto todos con la misma ropa y el mismo fondo para así poder mostrarla.
+
+Además, se creó un nuevo documento de recursos humanos para listar el equipo y sus habilidades.
+
+### 4.2.8. Actualización del CA
+Se revisó el CA para comprobar las penalizaciones relacionadas con el compromiso de las tareas y las responsabilidades a partir de las recomendaciones generales que se dieron en clase. Se llegó a la conclusión de que no hacía falta modificación.
+
+### 4.2.9. Tiempo y número de diapositivas en presentaciones
+Se tomó nota y se tomaron medidas(hacer la siguiente presentación con esto en cuenta) para que la siguiente presentación tuviera la longitud esperada:
+- Menos de 40 diapositivas
+- Terminar en el último minuto
+
