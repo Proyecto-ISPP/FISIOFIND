@@ -73,7 +73,7 @@ classoption: "table"
 
 - **Fecha de Creación:** 20/02/2025  
 
-- **Versión:** v1.2
+- **Versión:** v1.4
 
 <br>
 
@@ -88,6 +88,7 @@ classoption: "table"
 | 20/02/2025 | v1.1    | Daniel Vela Camacho  | Correción del índice y adición del epígrafe que recopila acciones correctivas de la primera semana |
 | 20/02/2025 | v1.2    | Delfín Santana Rubio | Añadidas acciones tomadas por feedback de día 14/02 | 
 | 20/02/2025 | v1.3    | Daniel Vela Camacho | Mejorada la redacción en los epígrafes y corregido el índice | 
+| 20/02/2025 | v1.4    | Añadido link a base de conocimiento grupal | 
 
 
 <br>
@@ -103,6 +104,8 @@ Hemos desarrollado la base de conocimiento siguiendo las directrices establecida
 El acceso a la base de conocimiento está disponible en el siguiente enlace: [FisioFind](https://fisiofind.vercel.app/).  
 
 Para consultar la documentación, visita [Documentación FisioFind](https://fisiofind.vercel.app/docs/Inicio). En esta sección, encontrarás un panel lateral izquierdo que muestra todos los documentos subidos.
+
+Por otro lado, la base de conocimiento de toda la clase se encuentra en el siguiente link: [https://bcc-three.vercel.app/](https://bcc-three.vercel.app/)
 
 # 3. CONTRIBUCIONES DEL EQUIPO
 En la base de conocimiento podemos ver que tenemos subidos todos nuestros documentos: registros, planes, informes, notas de las píldoras teóricas, etc. **También, en la sección de recursos/feedback podemos ver informes del feedback que se ha dado en clase. Este feedback incluye el específico que se ha dado a nuestro grupo y el general.**
