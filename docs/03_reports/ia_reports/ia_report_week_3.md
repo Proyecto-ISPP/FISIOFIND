@@ -17,13 +17,20 @@ header-left: "IA REPORT"                                  # CHANGE IF NEEDED
 header-right: "21/02/2025"                                # CHANGE IF NEEDED
 footer-left: "FISIO FIND"
 documentclass: scrartcl
-classoption: "table"  
+classoption: "table"
 ---
 
+<!-- COMMENT THIS WHEN EXPORTING TO PDF -->
+<p align="center">
+  <img src="../../.img/Logo_FisioFind_Verde_sin_fondo.PNG" alt="Logo FisioFind" width="300" />
+</p>
 
+<h1 align="center" style="font-size: 30px; font-weight: bold;">
+  FISIO FIND - REPORTE DE IA DE LA SEMANA 3 (14/02/25) - (20/02/25)
+</h1>
+<!-- COMMENT WHEN EXPORTING TO PDF -->
 
 <br>
-
 
 **Ficha del documento**
 
@@ -35,7 +42,7 @@ classoption: "table"
 
 - **Miembros del grupo:** Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes.
 
-- **Autores:** Daniel Fernández Caballero
+- **Autor:** Daniel Fernández Caballero
 
 - **Fecha de Creación:** 21/02/2025  
 
@@ -43,16 +50,13 @@ classoption: "table"
 
 <br>
 
-
 ---
 
 **Histórico de Modificaciones**
 
-| Fecha      | Versión | Realizada por   | Descripción de los cambios                       |
-| ---------- | ------- | --------------- | ------------------------------------------------ |
+| Fecha      | Versión | Realizada por             | Descripción de los cambios                       |
+| ---------- | ------- | ------------------------- | ------------------------------------------------ |
 | 21/02/2025 | v1.0    | Daniel Fernández Caballero | Elaboración de la primera versión del documento. |
-
-
 
 <br>
 
@@ -62,14 +66,14 @@ classoption: "table"
 
 ---
 
-# 1. PROMPTS UTILIZADOS  
+# PROMPTS UTILIZADOS  
 
 A continuación, se listan los diferentes prompts utilizados en esta fase del proyecto, organizados por categoría para una mejor comprensión.  
 
 ## **Documentación y Gestión de Proyecto**  
 - [Actualizar índice de documento](https://chatgpt.com/share/67af87ef-6e20-8012-8fba-39fff71f858a)  
 - [Mejora en la redacción y conversión a Markdown](https://chatgpt.com/share/67b76277-f7e4-8011-ba94-bb1b72f86ea7)  
-- [Ayuda a la creación del IA commitment](https://chatgpt.com/share/67b36aad-2774-800f-8e94-09e3a95c21c2)  
+- [Ayuda en la creación del IA commitment](https://chatgpt.com/share/67b36aad-2774-800f-8e94-09e3a95c21c2)  
 - [Recomendación para plan de comunicación](https://chatgpt.com/share/67b48a98-8f5c-8000-901e-0254773ecd4a)  
 
 ## **Definición del Producto y Estrategia**  
@@ -84,5 +88,5 @@ A continuación, se listan los diferentes prompts utilizados en esta fase del pr
 ---  
 
 **Aprobado por:**  
-**Scrum Master:** Antonio Macías Ferrera  
+**Scrum Master:** Antonio Macías Ferrera
 

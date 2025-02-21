@@ -18,9 +18,6 @@ header-right: "05/02/2025"                                # CHANGE IF NEEDED
 footer-left: "FISIOFIND"
 documentclass: scrartcl
 classoption: "table"
-mainfont: "Noto Sans"
-sansfont: "Noto Sans"
-monofont: "Noto Sans Mono"
 ---
 
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->

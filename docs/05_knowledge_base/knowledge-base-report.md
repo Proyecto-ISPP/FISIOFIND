@@ -1,5 +1,5 @@
 ---
-title: "REPORTE BASE DE CONOCIMIENTO"                                # CHANGE IF NEEDED
+title: "REPORTE BASE DE CONOCIMIENTO"                       # CHANGE IF NEEDED
 subtitle: "FISIO FIND - Grupo 6 - #DP"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]
 date: "20/02/2025"                                          # CHANGE IF NEEDED
@@ -13,7 +13,7 @@ titlepage-rule-height: 0
 colorlinks: true
 linkcolor: blue
 titlepage-background: "../.backgrounds/background2V.pdf"    # CHANGE IF NEEDED
-header-left: "REPORTE BASE DE CONOCIMIENTO"                                     # CHANGE IF NEEDED
+header-left: "REPORTE BASE DE CONOCIMIENTO"                 # CHANGE IF NEEDED
 header-right: "14/02/2025"                                  # CHANGE IF NEEDED
 footer-left: "FISIO FIND"
 documentclass: scrartcl
@@ -33,25 +33,25 @@ classoption: "table"
 
 
 # **ÍNDICE**
-1. [INTRODUCCIÓN](#1-introducción)
-2. [ACCESO A LA BASE DE CONOCIMIENTO](#2-acceso-a-la-base-de-conocimiento)
-3. [CONTRIBUCIONES DEL EQUIPO](#3-contribuciones-del-equipo)
-4. [ACCIONES TOMADAS A PARTIR DEL FEEDBACK](#4-acciones-tomadas-a-partir-del-feedback)
-    - 4.1 [Análisis y Decisiones tomadas tras el Feedback del 07/02/2025](#41-análisis-y-decisiones-tomadas-tras-el-feedback-del-07022025)
-        - 4.1.1 [Evaluación de viabilidad del proyecto](#411-evaluación-de-viabilidad-del-proyecto)
-        - 4.1.2 [Redirección del proyecto](#412-redirección-del-proyecto)
-        - 4.1.3 [Estrategia de validación con usuarios piloto](#413-estrategia-de-validación-con-usuarios-piloto)
-    - 4.2 [Resumen de Mejoras Tras el Feedback (14/02/2025)](#resumen-de-mejoras-tras-el-feedback-14022025)
-        - 4.2.1 [Visión clara de las herramientas especializadas](#421-visión-clara-de-las-herramientas-especializadas)
-        - 4.2.2 [Respuesta efectiva al feedback recibido y cambio de idea anterior](#422-respuesta-efectiva-al-feedback-recibido-y-cambio-de-idea-anterior)
-        - 4.2.3 [Calidad visual de la presentación y de los mockups y otro feedback positivo](#423-calidad-visual-de-la-presentación-y-de-los-mockups-y-otro-feedback-positivo)
-        - 4.2.4 [Costos](#424-costos)
-        - 4.2.5 [Riesgos](#425-riesgos)
-        - 4.2.6 [Inicio efectivo](#426-inicio-efectivo)
-        - 4.2.7 [Mejora en la visión corporativa y listado del equipo y habilidades](#427-mejora-en-la-visión-corporativa-y-listado-del-equipo-y-habilidades)
-        - 4.2.8 [Actualización del CA](#428-actualización-del-ca)
-        - 4.2.9 [Tiempo y número de diapositivas en presentaciones](#429-tiempo-y-número-de-diapositivas-en-presentaciones)
-
+- [**ÍNDICE**](#índice)
+- [1. INTRODUCCIÓN](#1-introducción)
+- [2. ACCESO A LA BASE DE CONOCIMIENTO](#2-acceso-a-la-base-de-conocimiento)
+- [3. CONTRIBUCIONES DEL EQUIPO](#3-contribuciones-del-equipo)
+- [4. ACCIONES TOMADAS A PARTIR DEL FEEDBACK](#4-acciones-tomadas-a-partir-del-feedback)
+  - [4.1. Análisis y Decisiones tomadas tras el Feedback del 07/02/2025](#41-análisis-y-decisiones-tomadas-tras-el-feedback-del-07022025)
+    - [4.1.1. Evaluación de viabilidad del proyecto](#411-evaluación-de-viabilidad-del-proyecto)
+    - [4.1.2. Redirección del proyecto](#412-redirección-del-proyecto)
+    - [4.1.3. Estrategia de validación con usuarios piloto](#413-estrategia-de-validación-con-usuarios-piloto)
+- [Resumen de Mejoras Tras el Feedback (14/02/2025)](#resumen-de-mejoras-tras-el-feedback-14022025)
+  - [4.2.1. Visión clara de las herramientas especializadas](#421-visión-clara-de-las-herramientas-especializadas)
+  - [4.2.2. Respuesta efectiva al feedback recibido y cambio de idea anterior](#422-respuesta-efectiva-al-feedback-recibido-y-cambio-de-idea-anterior)
+  - [4.2.3. Calidad visual de la presentación y de los mockups y otro feedback positivo](#423-calidad-visual-de-la-presentación-y-de-los-mockups-y-otro-feedback-positivo)
+  - [4.2.4. Costos](#424-costos)
+  - [4.2.5. Riesgos](#425-riesgos)
+  - [4.2.6. Inicio efectivo](#426-inicio-efectivo)
+  - [4.2.7. Mejora en la visión corporativa y listado del equipo y habilidades](#427-mejora-en-la-visión-corporativa-y-listado-del-equipo-y-habilidades)
+  - [4.2.8. Actualización del CA](#428-actualización-del-ca)
+  - [4.2.9. Tiempo y número de diapositivas en presentaciones](#429-tiempo-y-número-de-diapositivas-en-presentaciones)
 <!-- COMMENT WHEN EXPORTING TO PDF -->
 
 <br>
@@ -85,8 +85,8 @@ classoption: "table"
 | Fecha      | Versión | Realizada por                    | Descripción de los cambios |
 |------------|---------|----------------------------------|----------------------------|
 | 20/02/2025 | v1.0    | Delfín Santana Rubio | Creación del reporte de base de conocimiento. |
-| 20/02/2025 | v1.1    | Daniel Vela Camacho  | Correción del índice y adición del epígrafe que recopila acciones correctivas de la primera semana |
-| 20/02/2025 | v1.2    | Delfín Santana Rubio | Añadidas acciones tomadas por feedback de día 14/02 | 
+| 20/02/2025 | v1.1    | Daniel Vela Camacho  | Corrección del índice y adición del epígrafe que recopila acciones correctivas de la primera semana |
+| 20/02/2025 | v1.2    | Delfín Santana Rubio | Añadidas acciones tomadas por feedback del día 14/02 | 
 | 20/02/2025 | v1.3    | Daniel Vela Camacho | Mejorada la redacción en los epígrafes y corregido el índice | 
 | 20/02/2025 | v1.4    | Delfín Santana Rubio | Añadido link a base de conocimiento grupal | 
 
@@ -105,13 +105,13 @@ El acceso a la base de conocimiento está disponible en el siguiente enlace: [Fi
 
 Para consultar la documentación, visita [Documentación FisioFind](https://fisiofind.vercel.app/docs/Inicio). En esta sección, encontrarás un panel lateral izquierdo que muestra todos los documentos subidos.
 
-Por otro lado, la base de conocimiento de toda la clase se encuentra en el siguiente link: [https://bcc-three.vercel.app/](https://bcc-three.vercel.app/)
+Por otro lado, la base de conocimiento de toda la clase se encuentra en el siguiente enlace: [https://bcc-three.vercel.app/](https://bcc-three.vercel.app/)
 
 # 3. CONTRIBUCIONES DEL EQUIPO
 En la base de conocimiento podemos ver que tenemos subidos todos nuestros documentos: registros, planes, informes, notas de las píldoras teóricas, etc. **También, en la sección de recursos/feedback podemos ver informes del feedback que se ha dado en clase. Este feedback incluye el específico que se ha dado a nuestro grupo y el general.**
 
 # 4. ACCIONES TOMADAS A PARTIR DEL FEEDBACK
-En esta sección se muestra un resumen de las acciones que se han tomado a partir del feedback dado. Se muestra un resumen ya que se entiende que existe un proceso de interiorización del feedback que hace que se tomen acciones de forma inconsciente. Es decir, si por ejemplo se valora mucho una presentación en concreto, logicamente se va a intentar parecerse a esa presentación(en los puntos en los que se haya dado feedback positivo. Se puede obtener un análisis mucho más detallado del feedback y de las presentaciones en los documentos [Feedback_07-02-2025](https://fisiofind.vercel.app/docs/Recursos/5.1.%20Feedbacks/5.1.1.%20Feedback_07-02-2025) y [Feedback_14-02-2025](https://fisiofind.vercel.app/docs/Recursos/5.1.%20Feedbacks/5.1.2.%20Feedback_14-02-2025) de nuestra base de conocimiento.
+En esta sección se muestra un resumen de las acciones que se han tomado a partir del feedback dado. Se muestra un resumen ya que se entiende que existe un proceso de interiorización del feedback que hace que se tomen acciones de forma inconsciente. Es decir, si por ejemplo se valora mucho una presentación en concreto, lógicamente se va a intentar parecerse a esa presentación en los puntos en los que se haya dado feedback positivo. Se puede obtener un análisis mucho más detallado del feedback y de las presentaciones en los documentos [Feedback_07-02-2025](https://fisiofind.vercel.app/docs/Recursos/5.1.%20Feedbacks/5.1.1.%20Feedback_07-02-2025) y [Feedback_14-02-2025](https://fisiofind.vercel.app/docs/Recursos/5.1.%20Feedbacks/5.1.2.%20Feedback_14-02-2025) de nuestra base de conocimiento.
 
 ## 4.1. Análisis y Decisiones tomadas tras el Feedback del 07/02/2025
 

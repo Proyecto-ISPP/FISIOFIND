@@ -17,7 +17,7 @@ header-left: "DESGLOSE DE LOS COSTES"                     # CHANGE IF NEEDED
 header-right: "19/02/2025"                                # CHANGE IF NEEDED
 footer-left: "FISIO FIND"
 documentclass: scrartcl
-classoption: "table"  
+classoption: "table"
 ---
 
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->

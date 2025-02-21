@@ -1,5 +1,5 @@
 ---
-title: "REPORTE DE IA DE LA SEMANA 1 y 2 (31/02/25) - (14/02/25)" # CHANGE IF NEEDED
+title: "REPORTE DE IA DE LA SEMANA 1 y 2 (31/01/25) - (14/02/25)" # CHANGE IF NEEDED
 subtitle: "FISIO FIND - Grupo 6 - #DP"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]                                                # CHANGE IF NEEDED
 date: "17/02/2025"
@@ -17,13 +17,20 @@ header-left: "IA REPORT"                                  # CHANGE IF NEEDED
 header-right: "17/02/2025"                                # CHANGE IF NEEDED
 footer-left: "FISIO FIND"
 documentclass: scrartcl
-classoption: "table"  
+classoption: "table"
 ---
 
+<!-- COMMENT THIS WHEN EXPORTING TO PDF -->
+<p align="center">
+  <img src="../../.img/Logo_FisioFind_Verde_sin_fondo.PNG" alt="Logo FisioFind" width="300" />
+</p>
 
+<h1 align="center" style="font-size: 30px; font-weight: bold;">
+  FISIO FIND - REPORTE DE IA DE LA SEMANA 1 y 2 (31/01/25) - (14/02/25)
+</h1>
+<!-- COMMENT WHEN EXPORTING TO PDF -->
 
 <br>
-
 
 **Ficha del documento**
 
@@ -43,7 +50,6 @@ classoption: "table"
 
 <br>
 
-
 ---
 
 **Histórico de Modificaciones**
@@ -53,7 +59,6 @@ classoption: "table"
 | 15/02/2025 | v1.0    | Daniel Fernández Caballero, Daniel Ruiz López | Elaboración de la primera versión del documento. |
 | 20/02/2025 | v1.1    | Daniel Fernández Caballero | Añadidos enlaces a las conversaciones. |
 
-
 <br>
 
 <!-- \newpage -->
@@ -62,7 +67,7 @@ classoption: "table"
 
 ---
 
-# 1. PROMPTS UTILIZADOS  
+# PROMPTS UTILIZADOS  
 
 A continuación, se listan los diferentes prompts utilizados en esta fase del proyecto, organizados por categoría para una mejor comprensión.
 
@@ -83,7 +88,7 @@ A continuación, se listan los diferentes prompts utilizados en esta fase del pr
 -  [Competidores para un letterbox de videojuegos en los ámbitos publicitarios, de letterbox y foros.](https://chatgpt.com/share/67aa49e5-7454-8009-b2ce-cf0c301eda16)  
 
 ##  **APIs y Conectividad**
--  [¿La DGT tiene API?](https://chatgpt.com/share/67aa49fd-eb14-8009-8204-a709623f3162s)  
+-  [¿La DGT tiene API?](https://chatgpt.com/share/67aa49fd-eb14-8009-8204-a709623f3162)  
 -  [Herramientas para hacer videollamadas.](https://chatgpt.com/share/67acf098-0f18-800e-8feb-6f56ed31f5bc)  
 
 ##  **Optimización y Recursos**
@@ -100,4 +105,4 @@ A continuación, se listan los diferentes prompts utilizados en esta fase del pr
 ---
 
 **Aprobado por:**  
-**Scrum Master:** Antonio Macías Ferrera  
+**Scrum Master:** Antonio Macías Ferrera

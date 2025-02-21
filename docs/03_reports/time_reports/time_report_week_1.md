@@ -17,7 +17,7 @@ header-left: "CLOCKIFY REPORT"                               # CHANGE IF NEEDED
 header-right: "10/02/2025"                                   # CHANGE IF NEEDED
 footer-left: "FISIO FIND"
 documentclass: scrartcl
-classoption: "table"  
+classoption: "table"
 ---
 
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
