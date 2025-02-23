@@ -55,7 +55,7 @@ header-includes:
 
 - **Miembros del grupo:** Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes.
 
-- **Autores:** Miguel Encina MArtínez, Ramón Gavira Sánchez
+- **Autores:** Miguel Encina Martínez, Ramón Gavira Sánchez
 - **Fecha de Creación:** 16/02/2025  
 
 - **Versión:** v1.0
@@ -69,7 +69,7 @@ header-includes:
 
 | Fecha      | Versión | Realizada por                                   | Descripción de los cambios                |
 | ---------- | ------- | ----------------------------------------------- | ----------------------------------------- |
-| 16/02/2025 | v1.0    | Miguel Encina Martínez                          | Creación del documento              |
+| 16/02/2025 | v1.0    | Miguel Encina Martínez, Ramón Gavira Sánchez                        | Creación del documento              |
 
 <br>
 
@@ -84,7 +84,7 @@ En este plan se especifica cómo realizar la instalación de las herramientas ne
 
 <br>
 
-# 2. INSTALACIÓN DE POSTGRES SQL
+# 2. INSTALACIÓN DE POSTGRES SQL 16.8
 1. Windows y macOS: Descargar [instalador](https://www.postgresql.org/download/) y seguir las instrucciones (ignorar make-builder al final)  
 2. Abrir el pgAdmin
 3. Conectarse a PostgreSQL utilizando la clave proporcionada en la instalación
@@ -92,34 +92,32 @@ En este plan se especifica cómo realizar la instalación de las herramientas ne
 
 # 3. LANZAR LA APLICACIÓN
 1. 
-```shell
-python -m venv venv
+```python
+cd backend
+python -m venv venv # O tu nombre preferido
 ```
-2. Windows
-```shell
-venv/Scripts/activate
-```
-Linux
-```shell
-source venv/bin/activate
+2. Activar el entorno virtual
+```python
+source venv/bin/activate # Para Linux
+venv/bin/activate # Para Windows
+
 ```
 3. 
 ```shell
-cd backend
 pip install -r requirements.txt
 ```
 4. 
 ```shell
 cp .env.example .env
 ```
-Sustituye SECRET_KEY de .env por 'django-insecure-u7d%q)oc8jl=zzchf&b8qrehpm3#+l3i+t+)_s$tp^g@v@n#ed'
+Sustituye SECRET_KEY de .env por la clave secreta de Django (Grupo de Avisos de WhatsApp)
 Sustituye DATABASE_NAME, DATABASE_USER, DATABASE_PASSWORD por los datos de tu base de datos en PostgresSQL
 5. 
-```shell
+```python
 cd fisio_find
 python manage.py makemigrations
 python manage.py migrate
-python manage.py createsuperuser
+python manage.py createsuperuser #Para acceder al panel de administración
 python manage.py runserver
 ```
 
