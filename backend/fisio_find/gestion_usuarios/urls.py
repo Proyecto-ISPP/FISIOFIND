@@ -1,11 +1,11 @@
 from django.urls import path
-from gestion_usuarios.views import AppUserCreate, AppUserList, AppUserDetail, AppUserUpdate, AppUserDelete
+from .views import AppUserCreate, AppUserList, AppUserDetail, AppUserUpdate, AppUserDelete, test_json_response
 
 urlpatterns = [
-    path('create/', AppUserCreate.as_view(), name='create_app_user'),
-    path('', AppUserList.as_view()),
-    path('detail/<int:pk>/', AppUserDetail.as_view(), name='retrieve_app_user'),
-    path('update/<int:pk>/', AppUserUpdate.as_view(), name='update_app_user'),
-    path('delete/<int:pk>/', AppUserDelete.as_view(), name='delete_app_user'),
-
+    path('create/', AppUserCreate.as_view(), name='app_user_create'),
+    path('list/', AppUserList.as_view(), name='app_user_list'),
+    path('<int:pk>/', AppUserDetail.as_view(), name='app_user_detail'),
+    path('update/<int:pk>/', AppUserUpdate.as_view(), name='app_user_update'),
+    path('delete/<int:pk>/', AppUserDelete.as_view(), name='app_user_delete'),
+    path('prueba/', test_json_response, name='test_json_response'),
 ]

@@ -68,6 +68,7 @@ build/
 
 # TypeScript
 *.tsbuildinfo
+next-env.d.ts
 
 # IDEs y editores (frontend)
 .vscode/

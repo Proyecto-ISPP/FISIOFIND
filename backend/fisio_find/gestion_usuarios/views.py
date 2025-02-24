@@ -41,3 +41,13 @@ class AppUserDelete(generics.DestroyAPIView):
     '''
     queryset = AppUser.objects.all()
     serializer_class = AppUserSerializer
+    
+def test_json_response(request):
+    '''
+    API endpoint that returns a test JSON response.
+    '''
+    data = {
+        'message': 'This is a test JSON response',
+        'status': 'success'
+    }
+    return JsonResponse(data)
