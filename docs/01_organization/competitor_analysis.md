@@ -41,6 +41,7 @@ FISIO FIND  - COMPETITOR ANALYSIS
   - [3.4 PROET](#34-proet)
   - [3.5 DEPORWEB](#35-deporweb)
   - [3.6 I-FISIO](#36-i-fisio)
+  - [3.7 TOP DOCTORS](#37-top-doctors)
 - [4. COMPETIDORES DESCUBIERTOS MEDIANTE *KEYWORDS*](#4-competidores-descubiertos-mediante-keywords)
   - [4.1 FISIO APP AI](#41-fisio-app-ai)
     - [4.1.1 FISIA](#411-fisia)
@@ -55,6 +56,7 @@ FISIO FIND  - COMPETITOR ANALYSIS
     - [4.2.4 PHYSIOTEC / WIBBI](#424-physiotec--wibbi)
     - [4.2.5 PHYSIOTOOLS / PHYSITRACK](#425-physiotools--physitrack)
     - [4.2.6 THEREHABLAB](#426-therehablab)
+    - [4.2.7 DYCARE](#427-dycare)
   - [4.3 FISIOTERAPIA ONLINE](#43-fisioterapia-online)
     - [4.3.1 TUFISIO](#431-tufisio)
     - [4.3.2 FISIOMAP](#432-fisiomap)
@@ -109,6 +111,7 @@ FISIO FIND  - COMPETITOR ANALYSIS
 | 13/02/2025 | v1.5 | Francisco Mateos Villarejo, Daniel Tortorici Bartús, Daniel Vela Camacho | Análisis del resto de competidores y enumeración de aquellos menos relevantes |
 | 13/02/2025 | v1.6 | Francisco Mateos Villarejo, Daniel Tortorici Bartús, Daniel Vela Camacho | Análisis de los competidores propuestos Guadalupe Ridruejo, Delfín Santana y Pablo Fernández  |
 | 14/02/2025 | v1.7 | Daniel Vela Camacho | Análisis del competidor encontrado mediante feedback   |
+| 26/02/2025 | v1.8 | Julen Redondo Pacheco | Añadido varios competidores no contemplados anteriormente   |
 
 <br>
 
@@ -450,6 +453,41 @@ Al igual que con DeporWeb, la información de esta aplicación a la que se puede
 
 Al buscar varias keywords no se ha encontrado ninguna en las que aparezca esta aplicación en la primera página de búsqueda.
 
+## 3.7 TOP DOCTORS
+
+**Top Doctors** es una plataforma de **excelencia médica** que conecta a pacientes con especialistas de alto nivel en diversas áreas de la salud. Ofrece herramientas avanzadas para la gestión de consultas y clínicas, mejorando la eficiencia operativa y la experiencia del paciente.
+
+**MONETIZACIÓN**  
+
+Top Doctors ofrece soluciones tanto para profesionales individuales como para centros médicos. Los planes y precios se adaptan a las necesidades específicas de cada cliente, por lo que es necesario **contactar directamente con la plataforma** para obtener una cotización personalizada.
+
+**FEATURES DESTACADAS**  
+
+| Característica | Descripción |
+| --- | --- |
+| **Gestión de citas y reservas** | Agenda médica multiespecialista con reserva de citas online 24/7, reduciendo tiempos de espera y optimizando la organización. |
+| **Historia clínica digital** | Almacenamiento seguro y personalizable de la información médica, permitiendo acceso rápido y eficiente. |
+| **Telemedicina** | Plataforma integrada para realizar videoconsultas, brindando flexibilidad a pacientes y médicos. |
+| **Reputación online** | Perfil profesional en el portal de Top Doctors, aumentando visibilidad y credibilidad. |
+| **CRM médico** | Herramienta de marketing para redes sociales, email marketing y gestión de valoraciones. |
+| **Asistente virtual (TD Phone)** | Optimiza la atención telefónica, asegurando que todas las llamadas de pacientes sean atendidas. |
+| **Pago anticipado** | Permite a los pacientes realizar pagos online al reservar su cita, reduciendo ausencias y facilitando la administración. |
+
+**PUNTOS FUERTES**  
+
+- **Proceso de selección riguroso**: Solo **1 de cada 10 médicos** supera el estricto proceso de selección, garantizando la excelencia profesional. 
+- **Amplia visibilidad**: Más de **73 millones de visitas anuales** al portal, ofreciendo una gran exposición a los profesionales registrados. 
+- **Soluciones integrales**: Proporciona herramientas completas para la gestión clínica, desde la agenda médica hasta CRM y telemedicina.
+- **Atención al paciente mejorada**: Funcionalidades como el asistente virtual y el pago anticipado optimizan la experiencia del paciente y la eficiencia operativa.
+
+**PUNTOS DÉBILES**  
+
+- **Falta de transparencia en precios**: No hay tarifas públicas disponibles, lo que dificulta la comparación con otras plataformas.
+- **Enfoque en médicos de élite**: Su modelo de selección restringe la accesibilidad para algunos profesionales.
+- **Coste elevado**: Al estar orientado a médicos de alto nivel, el precio de los servicios puede ser más elevado que en otras plataformas de gestión médica.
+
+
+
 <br>
 
 <!-- \newpage -->
@@ -642,6 +680,41 @@ Nota: Los precios indicados corresponden a la suscripción anual con descuentos 
 | **Accesibilidad y Soporte** | Compatibilidad con escritorio, tabletas y móviles, Acceso en cualquier momento y lugar, Soporte por correo electrónico. |
 
 The Rehab Lab es un competidor parcial, ya que su solución se orienta más hacia la creación de programas de ejercicios que a la gestión de consultas y atención online. Mientras que TheRehabLab puede ser atractivo para clínicas que buscan exclusivamente una biblioteca de ejercicios, FisioFind ofrece una propuesta más completa y adaptada a la práctica real de fisioterapia online.
+
+### 4.2.7 DYCARE
+
+**DyCare** es una plataforma de **rehabilitación digital** que proporciona soluciones innovadoras para el seguimiento y tratamiento de pacientes con trastornos musculoesqueléticos. Su enfoque se basa en la inteligencia artificial y el análisis del movimiento, permitiendo a profesionales de la salud realizar evaluaciones precisas y diseñar planes de tratamiento personalizados.
+
+**MONETIZACIÓN**  
+
+DyCare ofrece diferentes modelos de suscripción para clínicas y profesionales, adaptándose a las necesidades de cada usuario. Aunque los precios exactos **no son públicos**, su modelo de negocio se basa en licencias de software y servicios personalizados para centros de rehabilitación y fisioterapeutas.
+
+**FEATURES DESTACADAS**  
+
+| Característica | Descripción |
+| --- | --- |
+| **ReHub** | Plataforma de rehabilitación digital que permite realizar sesiones de terapia a distancia con monitorización en tiempo real. |
+| **Evaluación del movimiento** | Análisis preciso de la movilidad articular mediante sensores y algoritmos avanzados de IA. |
+| **Seguimiento remoto** | Permite a los fisioterapeutas hacer un seguimiento de la evolución del paciente sin necesidad de visitas presenciales. |
+| **Ejercicios personalizados** | Generación automática de programas de ejercicios adaptados a cada paciente. |
+| **Reportes y analítica** | Informes detallados sobre el progreso del paciente, facilitando la toma de decisiones clínicas. |
+| **Integración con clínicas** | Compatible con diferentes sistemas de gestión médica para optimizar el flujo de trabajo. |
+
+**PUNTOS FUERTES**  
+
+- **Rehabilitación accesible**: Facilita el acceso a tratamientos desde casa, reduciendo desplazamientos innecesarios.  
+- **Mayor precisión diagnóstica**: Gracias a su análisis de movimiento basado en IA, permite una evaluación objetiva y detallada.  
+- **Optimización del tiempo clínico**: Los fisioterapeutas pueden gestionar más pacientes con menor carga administrativa.  
+- **Ahorro en costes sanitarios**: Reduce la necesidad de consultas presenciales, optimizando los recursos médicos.  
+
+**DIFERENCIAS CON FISIOFIND**  
+
+A diferencia de FisioFind, que está diseñada para conectar pacientes con fisioterapeutas de manera ágil y personalizada mediante un sistema de **matchmaking**, DyCare se orienta exclusivamente a la **rehabilitación digital** dentro de entornos clínicos. Su enfoque principal está en proporcionar herramientas avanzadas para la evaluación del movimiento, el seguimiento remoto y el análisis de datos, facilitando la optimización de los tratamientos en centros de salud y clínicas. Sin embargo, DyCare no cuenta con un sistema que permita a los pacientes encontrar fácilmente a un fisioterapeuta adecuado a sus necesidades, algo que sí ofrece FisioFind como una de sus principales fortalezas.  
+
+Otra diferencia clave es que DyCare no está pensada para fisioterapeutas independientes, sino que su modelo de negocio está orientado a instituciones sanitarias que buscan soluciones tecnológicas avanzadas para la rehabilitación de sus pacientes. En cambio, FisioFind permitirá a cualquier fisioterapeuta registrarse y ofrecer sus servicios de forma independiente, ampliando así el acceso a la fisioterapia de manera flexible y descentralizada, tanto para profesionales como para pacientes.  
+
+Por estas razones, aunque ambas plataformas operan en el ámbito de la fisioterapia, sus objetivos y públicos son significativamente distintos. Mientras que DyCare se centra en la digitalización de la rehabilitación dentro de clínicas con herramientas de análisis y monitorización, FisioFind busca mejorar la accesibilidad a los fisioterapeutas mediante un sistema de conexión directa entre profesionales y pacientes, ofreciendo una solución más accesible y versátil para quienes buscan atención fisioterapéutica personalizada.  
+
 
 ## 4.3 FISIOTERAPIA ONLINE
 
