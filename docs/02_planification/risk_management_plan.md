@@ -58,7 +58,7 @@ classoption: "table"
 
 - **Fecha de Creación:** 17/02/2025  
 
-- **Versión:** v1.4
+- **Versión:** v1.5
 
 <br>
 
@@ -73,7 +73,7 @@ classoption: "table"
 | 18/02/2025 | v1.2    | Delfín Santana Rubio        | Modificado punto 5 para añadir tipos de contramedidas a riesgos |
 | 19/02/2025 | v1.3    | Delfín Santana Rubio        | Modificado punto 5 y matriz de riesgos |
 | 19/02/2025 | v1.4    | Delfín Santana Rubio        | Añadido nuevo riesgo a matriz de riesgos |
-
+| 26/02/2025 | v1.5    | Delfín Santana Rubio        | Añadido riesgo RIG-012 a matriz de riesgos |
 
 <br>
 
@@ -134,5 +134,5 @@ Además, se entiende que el proceso de registro de riesgos es un proceso constan
 | **1-2 (Bajo impacto)**      |         |   |   |     |  |
 | **3-4 (Moderado impacto)**  |       |   |       |   |  |
 | **5-6 (Alto impacto)**      | RIG-007, RIG-008  | RIG-005, RIG-004       |    | |   |
-| **7-8 (Crítico impacto)**   | RIG-009, RIG-011      |     | RIG-002, RIG-003, RIG-010   |  |  |
+| **7-8 (Crítico impacto)**   | RIG-009, RIG-011      | RIG-012    | RIG-002, RIG-003, RIG-010   |  |  |
 | **9-10 (Extremo impacto)**  | RIG-006   | RIG-001    |   |   |  |

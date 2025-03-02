@@ -72,6 +72,7 @@ classoption: "table"
 | 18/02/2025 | v1.4    | Delfín Santana Rubio          | Modificación del título de RIG-001 por feedback de pull request |
 | 19/02/2025 | v1.5    | Delfín Santana Rubio          | Cambiado estilo de las tablas para que se genere correctamente el pdf y añadido nuevo riesgo |
 | 20/02/2025 | v1.6    | Delfín Santana Rubio          | Explicadas mejor consecuencias de riesgos |
+| 26/02/2025 | v1.7    | Delfín Santana Rubio          | Añadido el RIG-012 |
 
 <br>
 
@@ -215,4 +216,16 @@ En este documento se detallan cada uno de los riesgos contemplados en el proyect
 | **Prioridad** | 6 |
 | **Contramedidas actuales** | Utilizar APIs de servicios que estén bien establecidos en el mercado, como puede ser la API de Google Maps. |
 | **Plan de contingencia** | Evaluar la posibilidad de utilizar otra API o seguir usando la misma API pero asumiendo el nuevo precio. |
+
+| **RIG-012** | **Usuarios piloto**  |  
+| --- | --- |
+| **Versión** | V1.0 |
+| **Descripción** | Puede suceder que algunos de nuestros usuarios piloto que se han comprometido a probar la aplicación, no terminen cumpliendo con esto. Si el número de usuarios piloto que nos fallan es muy alto, podría desencadenar que se cumpla el riesgo **RIG-005**, haciendo que perdamos o no tengamos clientes.  |
+| **Clasificación** | Externos |
+| **Probabilidad** | 3 |
+| **Impacto** | 8 |
+| **Factor** | 24 |
+| **Prioridad** | 7 |
+| **Contramedidas actuales** | Conseguir muchos usuarilos piloto para que sea improbable que nos fallen todos. |
+| **Plan de contingencia** | Buscar nuevos usuarios piloto y cambiar la forma en la que se gestionan los usuarios piloto. |
 
