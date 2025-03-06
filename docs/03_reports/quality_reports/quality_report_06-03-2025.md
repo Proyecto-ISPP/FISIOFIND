@@ -70,6 +70,7 @@ classoption: "table"
 | Fecha      | Versión | Realizada por   | Descripción de los cambios                       |
 | ---------- | ------- | --------------- | ------------------------------------------------ |
 | 04/03/2025 | v1.0    | Francisco Mateos Villarejo, Daniel Alors Romero | Elaboración de la estructura del documento para su posterior realización el día 06. |
+| 06/03/2025 | v1.1    | Francisco Mateos Villarejo, Daniel Alors Romero, Miguel Encina Martínez, Benjamín Ignacio Maureira Flores | Compleción del documento
 
 
 <br>
@@ -95,18 +96,40 @@ Los commits reflejan el nivel de actividad en el desarrollo, permitiendo identif
 A continuación, se presentan los datos recopilados durante este período.
 
 ## 2.1. NÚMERO DE COMMITS
-Breve eplicación sobre el número de commits realizados por el equipo durante la primera mitad del Sprint 1.
+El número de commits que se van a evaluar son los mergeados a la rama de Develop, sabiendo que no son los únicos realizados durante la semana, se contabilizará el número total de commits y su comparativa con los realizados en la anterior semana.
+Commits totales: 236
+Commits Semanales: Al ser esta la primera vez que se contabilicen se considerarán como iguales los totales y semanales.
+
+### 2.1.1. NÚMERO DE COMMITS POR PERSONA
+Alberto Carmona Sicre: 10
+Antonio Macías Ferrera: 35
+Benjamín Ignacio Maureira Flores: 2
+Francisco Capote García: 1
+Daniel Alors Romero: 7
+Daniel Fernández Caballero: 15
+Daniel Ruiz López: 19
+Daniel Tortorici Bartús: 5
+Daniel Vela Camacho: 11
+Delfín Santana Rubio: 59
+Guadalupe Ridruejo Pineda: 6 
+Julen Redondo Pacheco: 4
+Miguel Encina Martínez: 12
+Francisco Mateos Villarejo: 4 
+Pablo Fernández Pérez: 1
+Ramón Gavira Sánchez: 6
+Rafael Pulido Cifuentes: 39
 
 ## 2.2. NÚMERO DE PULL REQUESTS
-Breve eplicación sobre el número de pull requests realizadas por el equipo durante la primera mitad del Sprint 1.
+El número de Pull Requests que se van a evaluar son las mergeadas a la rama de Develop, sabiendo que no son los únicas realizadas durante la semana, se contabilizará el número total de Pull Requests realizadas en el proyecto y su comparativa con las realizadas en la anterior semana.
+Pull Requests totales: 63
+Pull Requests Semanales: Al ser esta la primera vez que se contabilicen se considerarán como iguales los totales y semanales.
 
 # 3. INFORME DE TIEMPO
 El análisis del tiempo de trabajo es un factor clave en la evaluación de la productividad y eficiencia del equipo. En esta sección, se presentan datos recopilados por el equipo de control de tiempo, los cuales permiten medir el desempeño en función de las horas trabajadas, el cumplimiento de los planes establecidos y las posibles desviaciones respecto a la planificación inicial.
 
 Este análisis ayuda a identificar patrones en la distribución del tiempo, evaluar la carga de trabajo y detectar oportunidades de mejora en la gestión del tiempo dentro del Sprint. Además, proporciona información valiosa para la planificación de futuras iteraciones y la optimización del flujo de trabajo del equipo.
 
-Fuente: Datos proporcionados por el equipo de control de tiempo.
-
+Fuente: Datos proporcionados por el equipo de control de tiempo en los reportes "time_report_week_4" y "time_report_week_5" en la carpeta "03_reports/time_reports".
 
 # 4. ANÁLISIS DE TAREAS REALIZADAS
 El análisis de las tareas realizadas es fundamental para evaluar el avance del Sprint y la eficiencia del equipo en la ejecución de las actividades planificadas. A través de la recopilación de datos en herramientas como GitHub Project y el uso de gráficas Burn Down, se obtiene una visión clara sobre el ritmo de trabajo y la capacidad del equipo para completar las tareas asignadas dentro de los plazos establecidos.
@@ -115,27 +138,33 @@ Este estudio permite identificar posibles bloqueos en el desarrollo, evaluar la 
 
 Fuente: GitHub Project, gráficas Burn Down.
 
-## 4.1. GRÁFICA BURN DOWN
-Interpretación de la gráfica burn down del proyecto.
+## 4.1. GRÁFICA BURN UP
+![Burn Up Chart](../../.img/burnup_chart_week_4-5.png)
+
+Como podemos observar, hay un avance progresivo de las tareas durante estas primeras semanas de trabajo, lo que indica que el equipo está trabajando diariamente de forma equitativa. Sin embargo, si se quiere completar con todas las tareas planificadas para este primer Sprint, va a ser necesario incrementar la productividad y el esfuerzo dedicado. Aún así, cabe destacar que esta gráfica no representa el progreso de las tareas no finalizadas, por lo que no podemos profundizar más en el análisis.
 
 # 5. ANÁLISIS DE COMUNICACIONES
 La comunicación efectiva es un pilar fundamental en el éxito del equipo de desarrollo. En esta sección, se evalúa el respeto a los horarios establecidos, el uso correcto de los canales de comunicación y la eficiencia en la interacción entre los miembros del equipo. Un flujo de comunicación adecuado permite la resolución rápida de bloqueos, mejora la coordinación del trabajo y evita malentendidos.
 
 El análisis de la comunicación incluye métricas como la frecuencia de uso de los distintos canales, el tiempo de respuesta a consultas y la adherencia a las mejores prácticas establecidas para el trabajo en equipo. Además, se busca identificar posibles mejoras en la dinámica comunicativa para optimizar la productividad y la cohesión del equipo.
 
-#### Respeto de horarios de comunicación: [Sí/No, con observaciones]
-#### Uso de canales/grupos adecuados: [Sí/No, con ejemplos]
-#### Ratio de respuestas en canales oficiales: X%
-#### Observaciones generales: [Incluir sugerencias de mejora, si aplica]
+### Respeto de horarios de comunicación
+El horario de comunicación se ha respetado por parte de todos los integrantes del grupo. Este horario viene definido en el Commitment Agreement, y todos los integrantes han estado disponibles dentro de ese periodo. 
+
+### Uso de canales/grupos adecuados
+Para la comunicación entre los miembros de cada grupo, se han respetado los canales disponibles definidos en el Plan de Gestión de las Comunicaciones. Cada grupo se ha reunido por Discord o por Teams, y la comunicación entre grupos se ha realizado mediante los representantes de cada uno.
+
+### Ratio de respuestas en canales oficiales
+Las respuestas se han realizado de la forma más rápida y eficaz posible: se ha creado un grupo de WhatsApp dentro de la comunidad creada para aclarar dudas rápidas. Si alguien tiene una duda rápida, la explica de la forma más detallada posible. El primer miembro que lea dicha pregunta y la sepa responder responderá. De esta forma, se evita que las dudas se pierdan por el chat ya que funciona con la forma pregunta-respuesta.
+
+### Observaciones generales
+El equipo está siguiendo el Plan de Gestión de Comunicaciones y el Commitment Agreement, no produciéndose problemas y respetando los tiempos de disponibilidad. El clima y ritmo de trabajo son favorables gracias a esto.
 
 # 6. USO DE INTELIGENCIA ARTIFICIAL
 El uso de herramientas de inteligencia artificial en el desarrollo de software ha cobrado una relevancia creciente en los últimos años. En esta sección, se analiza el impacto del uso de IA dentro del equipo, considerando su aplicación en diversas tareas como generación de código, documentación, pruebas y automatización de procesos repetitivos.
 
 Este análisis busca evaluar cómo la inteligencia artificial ha influido en la productividad del equipo, si ha permitido reducir tiempos de desarrollo y si ha presentado algún desafío en su implementación. También se revisa el cumplimiento de buenas prácticas en su uso, garantizando que la IA se utilice como un complemento eficaz dentro del flujo de trabajo del equipo.
 
-Fuente: Datos proporcionados por el equipo de control de uso de IA.
-
-# 7. CONCLUSIONES
-
+Fuente: Datos proporcionados por el equipo de control de uso de IA en el documento "ia_report_week_4-5" en la carpeta "03_reports/ia_reports".
 
 ---
