@@ -50,10 +50,8 @@ export default function VerTerminos() {
           <button className="btn-admin-green" onClick={() => location.href="/gestion-admin/terminos/"}>No</button>
           </>
         }
-        {!termino && <h1>Término no encontrado</h1>
-        }    
+        {!termino && <h1>Término no encontrado</h1>}
       </div>
-
     </>
-  );
+);
 }

@@ -9,11 +9,10 @@ export default function GestionAdmin() {
       </div>
       <div className="container">
         <div>
-            <p>Panel de gestión de términos y condiciones
-              <a href="/gestion-admin/terminos"><button className="btn-admin-green">Acceder</button></a>
-            </p>
+          <p>Panel de gestión de términos y condiciones</p>
+          <a href="/gestion-admin/terminos"><button className="btn-admin-green">Acceder</button></a>
         </div>
       </div>
     </>
-  );
+);
 }

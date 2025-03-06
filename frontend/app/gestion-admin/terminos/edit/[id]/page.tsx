@@ -71,9 +71,8 @@ export default function VerTerminos() {
           </form>
           </>
         }
-        {!termino && <h1>Término no encontrado</h1>
-        }   
+        {!termino && <h1>Término no encontrado</h1>}
       </div>
     </>
-  );
+);
 }

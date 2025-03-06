@@ -50,5 +50,5 @@ export default function GestionarTerminos() {
         </div>
       </div>
     </>
-  );
+);
 }

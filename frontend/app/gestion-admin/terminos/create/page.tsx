@@ -21,7 +21,7 @@ export default function editarTerminos() {
     });
   }
 
-  return (
+return (
     <>
       <div className="admin-header">
         <h1>Crear término</h1>
@@ -39,7 +39,6 @@ export default function editarTerminos() {
           <input type="submit" value="Submit" className="btn-admin" />
         </form>
       </div>
-
     </>
-  );
+);
 }
