@@ -5,6 +5,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.db.utils import IntegrityError
 from .models import AppUser, Patient
 import re
+from datetime import date  # Importar para obtener la fecha de hoy
 
 class PatientRegisterSerializer(serializers.ModelSerializer):
     # Validación para campos únicos con `UniqueValidator`
@@ -22,12 +23,16 @@ class PatientRegisterSerializer(serializers.ModelSerializer):
     )
 
     password = serializers.CharField(write_only=True, required=True)
-    first_name = serializers.CharField(required=True)
-    last_name = serializers.CharField(required=True)
     phone_number = serializers.CharField(required=True)
     postal_code = serializers.CharField(required=True)
-
-    gender = serializers.ChoiceField(choices=[('M', 'Male'), ('F', 'Female'), ('O', 'Other')], required=True)
+    first_name = serializers.CharField(
+        required=True, 
+        error_messages={'required': 'El campo nombre es obligatorio.'}
+    )
+    last_name = serializers.CharField(
+        required=True, 
+        error_messages={'required': 'El campo apellido es obligatorio.'}
+    )
     birth_date = serializers.DateField(required=True)
 
     class Meta:
@@ -54,7 +59,17 @@ class PatientRegisterSerializer(serializers.ModelSerializer):
         
         if len(data['postal_code']) != 5:
             raise serializers.ValidationError({"postal_code": "El código postal debe tener 5 caracteres."})
+
+        if not data['first_name']:
+            raise serializers.ValidationError({"first_name": "El campo nombre es obligatorio."})
         
+        if not data['last_name']:
+            raise serializers.ValidationError({"last_name": "El campo apellido es obligatorio."})
+        
+        today = date.today()
+        if data['birth_date'] > today:
+            raise serializers.ValidationError({"birth_date": "La fecha de nacimiento no puede ser posterior a la fecha actual."})
+
         return data
 
     def create(self, validated_data):
@@ -80,9 +95,4 @@ class PatientRegisterSerializer(serializers.ModelSerializer):
 
         except IntegrityError as e:
             raise serializers.ValidationError({"error": "Error de integridad en la base de datos. Posible duplicado de datos."})
-
-        
-        
-        
-
 

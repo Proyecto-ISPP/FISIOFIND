@@ -5,6 +5,7 @@ from rest_framework.permissions import AllowAny
 from .serializers import PatientRegisterSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
+
 class PatientRegisterView(APIView):
     # Permite el acceso sin autenticación, pues es el registro
     permission_classes = [AllowAny]

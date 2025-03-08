@@ -8,6 +8,13 @@ const {
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
+    "./src/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}"
+  ],
+  darkMode: "class",
+  theme: {
+    extend: {},  
+
 	"./src/**/*.{ts,tsx}",
 	"./app/**/*.{ts,tsx}"
   ],
@@ -65,6 +72,7 @@ module.exports = {
   			}
   		}
   	}
+
   },
   plugins: [addVariablesForColors, require("tailwindcss-animate")],
 };

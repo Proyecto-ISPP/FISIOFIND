@@ -1,6 +1,30 @@
 'use client';
 
+import axios from "axios";
+
 export default function GestionAdmin() {
+
+  const token = localStorage.getItem("token")
+  if (token) {
+    console.log(token)
+    axios.get("http://127.0.0.1:8000/api/app_user/check-role/", {
+      headers : {
+        "Authorization": "Bearer "+token
+      }
+    }
+    ).then(response => {
+        const role = response.data.user_role;
+        if (role != "admin") {
+          location.href = ".."
+        }
+      })
+      .catch(error => {
+        console.error("Error fetching data:", error);
+        location.href = ".."
+      });
+  } else {
+    location.href = ".."
+  }
 
   return (
     <>
