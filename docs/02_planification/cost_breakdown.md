@@ -116,11 +116,17 @@ Esta sección recoge el coste del desarrollo inicial de la aplicación, incluyen
 El equipo de desarrollo de FisioFind está compuesto por **17 personas**, distribuidas de la siguiente manera:
 
 - **5 Analistas**
-
 - **1 Project Manager (PM)**
-
 - **11 Desarrolladores Fullstack**
 
+La distribución de horas de trabajo varía según el mes del proyecto:
+
+- **Febrero:** 36 horas (30 horas base + 20% adicional por alta carga inicial)
+- **Marzo:** 48 horas (40 horas base + 20% adicional)
+- **Abril:** 36 horas (30 horas base + 20% adicional)
+- **Mayo:** 36 horas (30 horas base + 20% adicional)
+
+El incremento del 20% se considera basado en la tendencia observada durante las primeras etapas del proyecto, donde el equipo ha mostrado capacidad y disposición para dedicar horas adicionales cuando es necesario.
 Cada integrante debe trabajar un mínimo de **161 horas** mensuales (horas mínimas +15%). Estos roles asumirán los costes de desarrollo que deberán rentabilizarse a largo plazo para lograr el retorno de inversión.
 
 <br>
@@ -184,8 +190,7 @@ Se estima que la **vida útil media de un equipo es de 3 años**, lo que implica
 
 > [!NOTE]
 > Este coste se considera únicamente en el primer año (desarrollo inicial). 
-> En años posteriores se prevé un coste menor de hardware (por ejemplo, 800 €/año para un grupo reducido de “personas top”).
-> Este coste se sumará a los costes de desarrollo y será constante en el tiempo.
+> En años posteriores se prevé un coste menor de hardware debido a que el reemplazo de hardware no es decesario que se realice cada año.
 
 <br>
 
@@ -271,7 +276,7 @@ Tras el lanzamiento, se prevé la necesidad de mantenimiento y soporte, dividido
    
    - Anual: 270 × 12 = **3.240 €/año**
 
-3. **Soporte Premium (Opcional – Fisio Gold):**  
+3. **Soporte Premium (Fisio Gold):**  
    - Cobertura en horario laboral con 3 agentes en turnos rotativos: **600 €/mes**  
    
    - Anual: 600 × 12 = **7.200 €/año**

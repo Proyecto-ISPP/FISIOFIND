@@ -32,6 +32,7 @@ media/
 *.swp
 *.swo
 *.DS_Store
+setup.cfg
 
 # Django Debug Toolbar
 debug_toolbar/
