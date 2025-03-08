@@ -41,8 +41,10 @@ classoption: "table"
   - [2.5 PRÁCTICAS DE EQUIPO](#25-prácticas-de-equipo)
   - [2.6 CRITERIOS DE ÉXITO](#26-criterios-de-éxito)
   - [2.7 CUMPLIMIENTO DEL ACUERDO](#27-cumplimiento-del-acuerdo)
-  - [2.8 CONDICIONES DEL ACUERDO](#28-condiciones-del-acuerdo)
-  - [2.9 CASOS NO CONTEMPLADOS](#29-casos-no-contemplados)
+  - [2.8 PROCESO DE REFUTACIÓN DE LA CALIFICACIÓN EN QA](#28-proceso-de-refutación-de-la-Calificación-en-qa)
+  - [2.9 AJUSTE DEL PORCENTAJE DE CALIFICACIÓN EN EVALUACIONES DE QA](#29-ajuste-del-porcentaje-de-calificación-en-evaluaciones-de-qa)
+  - [2.10 CONDICIONES DEL ACUERDO](#210-condiciones-del-acuerdo)
+  - [2.11 CASOS NO CONTEMPLADOS](#211-casos-no-contemplados)
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
 
 <br>
@@ -81,6 +83,7 @@ classoption: "table"
 | 05/02/2025 | v1.3    |  Alberto Carmona Sicre, Daniel Ruiz López | Modificación del apartado Cumplimiento del acuerdo. |
 | 07/02/2025 | v1.4    |  Alberto Carmona Sicre, Daniel Ruiz López | Modificación de los apartados: Horario de disponibilidad, Compromiso y realización de las tareas. Añadidas portada e Índice. |
 | 09/02/2025 | v1.5    |  Antonio Macías Ferrera | Pequeñas correcciones de formato. |
+| 08/03/2025 | v1.6    |  Daniel Alors Romero | Modificación y añadidos los apartados. |
 
 <br>
 
@@ -210,7 +213,15 @@ Se establecen los siguientes niveles de cumplimiento del acuerdo de compromiso, 
 <br>
 
 
-## 2.8 CONDICIONES DEL ACUERDO
+## 2.8 Proceso de Refutación de la Calificación en QA
+Antes de que la reducción de calificación entre en vigor, los miembros del equipo de QA publicarán la información correspondiente a través de los canales de comunicación establecidos, especificando a los afectados. Los interesados tendrán la oportunidad de presentar una réplica con el fin de debatir la reducción y, si procede, modificarla según la decisión final de los miembros de QA.
+
+
+## 2.9 Ajuste del Porcentaje de Calificación en Evaluaciones de QA
+En caso de que los miembros del equipo de QA determinen una reducción en el porcentaje de calificación, dicho ajuste se reflejará en las evaluaciones posteriores. Para recuperar la calificación reducida, será necesario obtener la puntuación máxima en las evaluaciones siguientes. La recuperación de la nota será progresiva y estará condicionada por la magnitud de la reducción inicial, garantizando en todo caso que el restablecimiento de la calificación no se produzca en una única evaluación.
+
+
+## 2.10 CONDICIONES DEL ACUERDO
 
 - ***El acuerdo de compromiso puede ser utilizado como referencia para exigir el cumplimiento de las responsabilidades.***
 
@@ -219,7 +230,7 @@ Se establecen los siguientes niveles de cumplimiento del acuerdo de compromiso, 
 <br>
 
 
-## 2.9 CASOS NO CONTEMPLADOS
+## 2.11 CASOS NO CONTEMPLADOS
 
 - Si el equipo de QA detecta que se está dando una situación no contemplada en este acuerdo, pero que debería haberse contemplado, se hará saber a nivel de proyecto y se intentará resolver mediante reuniones y votaciones. Si no se consigue resolver, se hará saber a los profesores.
 
