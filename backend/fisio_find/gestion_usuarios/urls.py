@@ -1,11 +1,12 @@
 from django.urls import path
-from .views import CheckRoleView, CustomTokenObtainView, LogoutView, PatientRegisterView
+from .views import patient_register_view, custom_token_obtain_view, logout_view, check_role_view, physio_register_view
 
 urlpatterns = [
-    path('patient/register/', PatientRegisterView.as_view(), name='patient_register'),
-    path('login/', CustomTokenObtainView.as_view(), name='login'),
-    path('logout/', LogoutView.as_view(), name='logout'),
-    path('check-role/', CheckRoleView.as_view(), name='check_role'),
+    path('patient/register/', patient_register_view, name='patient_register'),
+    path('login/', custom_token_obtain_view, name='login'),
+    path('logout/', logout_view, name='logout'),
+    path('check-role/', check_role_view, name='check_role'),
+    path('physio/register/', physio_register_view, name='physio_register'),
 ]
     
 

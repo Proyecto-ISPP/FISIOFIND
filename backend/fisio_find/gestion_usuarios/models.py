@@ -53,14 +53,14 @@ class Patient(models.Model):
     
 class Physiotherapist(models.Model):
     user = models.OneToOneField(AppUser, on_delete=models.CASCADE, related_name='physio')
-    bio = models.TextField()
+    bio = models.TextField(null=True, blank=True)
     autonomic_community = models.CharField(max_length=30, choices=AUTONOMIC_COMMUNITY_CHOICES)
-    rating_avg = models.FloatField()
-    schedule = models.JSONField()
+    rating_avg = models.FloatField(null=True, blank=True)
+    schedule = models.JSONField(null=True, blank=True)
     birth_date = models.DateField()
-    collegiate_number = models.CharField(max_length=30, unique=True)
-    services = models.JSONField()
-    account_status = models.CharField(max_length=10, choices=ACCOUNT_STATUS_CHOICES, default='ACTIVE')
+    collegiate_number = models.CharField(max_length=30)
+    services = models.JSONField(null=True, blank=True)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     
     def __str__(self):
         return f"{self.user.username} - {self.user.email}"
