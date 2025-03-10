@@ -7,6 +7,7 @@ import {
   IconStethoscope,
   IconCalendar,
   IconUser,
+  IconPhone,
 } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
@@ -49,6 +50,13 @@ export function SidebarDemo() {
       href: isAuthenticated ? "#" : "/gestion-paciente/registro",
       icon: (
         <IconUser className="text-[#253240] h-5 w-5 flex-shrink-0 mx-auto" />
+      ),
+    },
+    {
+      label: "Videollamadas",
+      href: "/videollamadas",
+      icon: (
+        <IconPhone className="text-[#253240] h-5 w-5 flex-shrink-0 mx-auto" />
       ),
     },
   ];

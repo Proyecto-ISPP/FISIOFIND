@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Videollamadas</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Videollamadas</h1>
+
+        <!-- Sección para crear una nueva sala -->
+        <div class="new-room">
+            <input type="text" id="room-name" placeholder="Nombre de la sala">
+            <button id="btn-create-room">Crear Sala</button>
+        </div>
+
+        <!-- Sección para unirse a una sala existente -->
+        <div class="join-room">
+            <input type="text" id="room-id" placeholder="ID de la sala">
+            <button id="btn-join-room">Unirse</button>
+        </div>
+
+        <!-- Lista de salas activas (opcional, si usas Django para gestionarlas) -->
+        <div id="active-rooms">
+            <h2>Salas activas</h2>
+            <ul id="room-list">
+                <!-- Codigo por si se activan las salas activas -->
+                <!-- {% for room in rooms %}
+                    <li><a href="/videollamada/{{ room.room_id }}/">{{ room.name }}</a></li>
+                {% endfor %} -->
+            </ul>
+            
+        </div>
+    </div>
+
+    <script type="text/javascript" src="{% static 'js/videollamadas.js' %}"></script>
+</body>
+</html>

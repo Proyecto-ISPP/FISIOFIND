@@ -3,12 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "@fortawesome/free-solid-svg-icons": "^6.7.2",
+    "@fortawesome/react-fontawesome": "github:fortawesome/react-fontawesome",
     "@tabler/icons-react": "^3.31.0",
     "axios": "^1.7.9",
     "class-variance-authority": "^0.7.1",

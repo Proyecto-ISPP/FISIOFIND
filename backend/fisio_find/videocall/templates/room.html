@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Video Chat</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+</head>
+<body>
+    <h3 id="label-username">USERNAME</h3>
+    <div>
+        <input id="username">
+        <button id="btn-join">Join Room</button>
+    </div>
+
+    <div class="main-grid-container">
+        <!-- Sección de Video -->
+        <div id="video-container">
+            <div class="video-wrapper">
+                <p class="username-label" id="local-username">Tú</p>
+                <video id="local-video" autoplay playsinline></video>
+            </div>
+            <!-- <div class="video-wrapper">
+                <p class="username-label" id="remote-username">Usuario remoto</p>
+                <video id="remote-video" autoplay playsinline></video>
+            </div> -->
+            <!-- Controles -->
+            <div class="controls">
+                <button id="btn-toggle-audio" class="control-btn">
+                    <img src="{% static 'icons/microphone.svg' %}" alt="Mute">
+                </button>
+                <button id="btn-toggle-video" class="control-btn">
+                    <img src="{% static 'icons/video.svg' %}" alt="Video">
+                </button>
+                <button id="btn-share-screen" class="control-btn">
+                    <img src="{% static 'icons/screen-share.svg' %}" alt="Share Screen">
+                </button>
+                <button id="btn-hangup" class="control-btn hangup">
+                    <img src="{% static 'icons/hangup.svg' %}" alt="Hang Up">
+                </button>
+            </div>
+        </div>
+
+        <!-- Sección de Chat -->
+        <div id="chat-section">
+            <h3>CHAT</h3>
+            <div id="messages">
+                <ul id="message-list"></ul>
+            </div>
+            <div id="input-container">
+                <input id="msg" type="text" placeholder="Escribe un mensaje...">
+                <button id="btn-send-msg">Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+</body>
+</html>
