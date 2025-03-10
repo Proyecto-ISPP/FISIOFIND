@@ -34,7 +34,7 @@ classoption: "table"
 **ÍNDICE**
 - [**1. RESUMEN DE CONTRIBUCIÓN INDIVIDUAL**](#resumen-de-contribución-individual)
   - [**1.1. DEVISING A PROJECT (#DP)**](#11-devising-a-project-dp)
-  - [**1.2. SPRINT 1 (#S1)**](#12-sprint-1-s1)
+  - [**1.2. SPRINT 1 (#SPRINT 1)**](#12-sprint-1-s1)
   - [**1.3. SPRINT 2 (#S2)**](#13-sprint-2-s2)
   - [**1.4. SPRINT 3 (#S3)**](#14-sprint-3-s3)
   - [**1.5. PREPARING PROJECT LAUNCH (#PPL)**](#15-preparing-project-launch-ppl)
@@ -77,7 +77,7 @@ classoption: "table"
 
 <br>
 
-| Estudiante                        | #DP1 | #S1 | #S2 | #S3 | #PPL | #WPL | Total | Weight |
+| Estudiante                        | #DP1 | #SPRINT 1 | #S2 | #S3 | #PPL | #WPL | Total | Weight |
 | --------------------------------- | ---- | --- | --- | --- | ---- | ---- | ----- | ------ |
 | Alors Romero, Daniel              | 10   |     |     |     |      |      |       |        |
 | Capote García, Francisco          | 10   |     |     |     |      |      |       |        |
@@ -153,7 +153,7 @@ Agile Inception (Fisio Find), Investigación de tecnologías de videollamadas, A
 ### Vela Camacho, Daniel
 Agile Inception (Gallery Guide), DAFO (Gallery Guide), Presentación 07/02/2025, Análisis de competidores (Fisio Find), Recogida de feedback 14/02/2025, Historias de Usuario, Plan de Gestión de la Calidad, Plan de Gestión de las Comunicaciones, Mockups Navegables, Registro de acciones Correctivas, Uso de la base del conocimiento, EDT.
 
-## 1.2. Sprint 1 (#S1)
+## 1.2. Sprint 1 (#SPRINT 1)
 ### Apellido, Nombre 1
 Contribución del estudiante
 
