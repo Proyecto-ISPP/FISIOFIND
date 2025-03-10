@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import {get_id_from_url } from "@/app/gestion-admin/util";
 
-
 interface citaInterface {
   id: string;
   start_time: string;
@@ -19,6 +18,30 @@ interface citaInterface {
 export default function EditarCitas() {
 
   const id = get_id_from_url()
+
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const token = localStorage.getItem("token")
+  if (token) {
+    axios.get("http://127.0.0.1:8000/api/app_user/check-role/", {
+      headers : {
+        "Authorization": "Bearer "+token
+      }
+    }
+    ).then(response => {
+        const role = response.data.user_role;
+        if (role != "admin") {
+          location.href = ".."
+        }
+      })
+      .catch(error => {
+        console.error("Error fetching data:", error);
+        location.href = ".."
+      });
+  } else {
+    location.href = ".."
+  }
+
   const [cita, setCita] = useState<citaInterface | null>(null);
 
   const [fechaInicio, setFechaInicio] = useState("");
@@ -30,7 +53,11 @@ export default function EditarCitas() {
   const [estado, setEstado] = useState("")
 
   useEffect(() => {
-    axios.get('http://localhost:8000/api/app_appointment/appointment/admin/list/'+id+'/'
+    axios.get('http://localhost:8000/api/app_appointment/appointment/admin/list/'+id+'/',{
+      headers : {
+        "Authorization": "Bearer "+token
+      }
+    }
     ).then(response => {
         setCita(response.data);
         setFechaInicio(response.data.start_time.replace("Z",""))
@@ -40,7 +67,10 @@ export default function EditarCitas() {
         setPaciente(response.data.patient)
         setFisio(response.data.physiotherapist)
         setEstado(response.data.status)
-        console.log(response.data)
+      }, {
+        headers : {
+          "Authorization": "Bearer "+token
+        }
       })
       .catch(error => {
         console.error("Error fetching data:", error);
@@ -50,20 +80,85 @@ export default function EditarCitas() {
   function handleSubmit(event) {
     event.preventDefault();
 
+    let service = {}
+    try {
+      service = JSON.parse(servicios);
+    } catch (error) {
+      setErrorMessage("JSON de servicios inválido")
+      return
+    }
+
     axios.put('http://localhost:8000/api/app_appointment/appointment/admin/edit/'+id+'/',{
       start_time: fechaInicio,
       end_time: fechaFinal,
       is_online: esOnline,
-      service: JSON.parse(servicios),
+      service: service,
       patient: paciente,
       physiotherapist: fisio,
+      patient_id: paciente,
+      physiotherapist_id: fisio,
       status: estado
-    }).then(() => {
+    },{
+      headers : {
+        "Authorization": "Bearer "+token
+      }
+    }
+  ).then(() => {
         location.href="/gestion-admin/citas/"
       })
       .catch(error => {
-        console.error("Error fetching data:", error);
+        if (error.response && error.response.data.non_field_errors) {
+          setErrorMessage(error.response.data.non_field_errors[0])
+        } else if (error.response && error.response.status == 400) {
+          let container = ''
+          for (const [_, error_msg] of Object.entries(error.response.data)) {
+            container += error_msg 
+          }
+          setErrorMessage(container)
+        }else {
+          console.error("Error fetching data:", error);
+        }
     });
+  }
+
+  const [pacienteFetched, setPacienteFetched] = useState(null);
+  function searchPaciente(id) {
+    axios.get('http://localhost:8000/api/app_user/admin/user/list/'+id+'/',{
+      headers : {
+        "Authorization": "Bearer "+token
+      }
+    }
+    ).then(response => {
+        setPacienteFetched(response.data)
+      })
+      .catch(error => {
+        if (error.response && error.response.status == 404) {
+          setPacienteFetched({"first_name":"No","last_name":"encontrado"})
+        } else {
+
+          console.error("Error fetching data:", error);
+        }
+      });
+  }
+
+  const [fisioFetched, setFisioFetched] = useState(null);
+  function searcFisio(id) {
+    axios.get('http://localhost:8000/api/app_user/admin/user/list/'+id+'/',{
+      headers : {
+        "Authorization": "Bearer "+token
+      }
+    }
+    ).then(response => {
+        setFisioFetched(response.data)
+      })
+      .catch(error => {
+        if (error.response && error.response.status == 404) {
+          setFisioFetched({"first_name":"No","last_name":"encontrado"})
+        } else {
+
+          console.error("Error fetching data:", error);
+        }
+      });
   }
 
   return (
@@ -77,11 +172,11 @@ export default function EditarCitas() {
           <form onSubmit={handleSubmit}>
               <div>
               <label htmlFor="fecha-inicio">Fecha y hora inicio: </label>
-              <input value={fechaInicio} type="datetime-local" id="fecha-inicio" onChange={fechaIn => setFechaInicio(fechaIn.target.value)}/>
+              <input required value={fechaInicio} type="datetime-local" id="fecha-inicio" onChange={fechaIn => setFechaInicio(fechaIn.target.value)}/>
             </div>
             <div>
               <label htmlFor="fecha-final">Ficha y hora final: </label>
-              <input value={fechaFinal} type="datetime-local" id="fecha-final" onChange={fechaFin => setFechaFinal(fechaFin.target.value)}/>
+              <input required value={fechaFinal} type="datetime-local" id="fecha-final" onChange={fechaFin => setFechaFinal(fechaFin.target.value)}/>
             </div> 
 
             <div>
@@ -94,17 +189,19 @@ export default function EditarCitas() {
 
             <div>
               <label htmlFor="paciente">ID Paciente: </label>
-              <input value={paciente} type="text" id="paciente"  onChange={paciente => setPaciente(paciente.target.value)} />
+              <input required value={paciente} type="text" id="paciente"  onChange={paciente => {setPaciente(paciente.target.value); searchPaciente(paciente.target.value)}} />
+              {pacienteFetched && <p>Paciente seleccionado: {pacienteFetched.first_name + ' ' + pacienteFetched.last_name}</p>}
             </div>
 
             <div>
               <label htmlFor="fisio">ID Fisioterapeuta: </label>
-              <input value={fisio} type="text" id="fisio"  onChange={fisio => setFisio(fisio.target.value)} />
+              <input required value={fisio} type="text" id="fisio"  onChange={fisio => {setFisio(fisio.target.value); searcFisio(fisio.target.value)}} />
+              {fisioFetched && <p>Fisioterapeuta seleccionado: {fisioFetched.first_name + ' ' + fisioFetched.last_name}</p>}
             </div>
 
             <div className="json-service">
               <label htmlFor="servicios">Servicios:</label>
-              <textarea value={servicios} id="servicios" onChange={serv => setServicios(serv.target.value)}></textarea>
+              <textarea required value={servicios} id="servicios" onChange={serv => setServicios(serv.target.value)}></textarea>
             </div>
 
             <div>
@@ -116,6 +213,7 @@ export default function EditarCitas() {
                 <option value="booked">Reservada</option>
               </select>
             </div>
+            {errorMessage && <p className="text-red-500">*{errorMessage}</p>}
             <input type="submit" value="Submit" className="btn-admin" />
           </form>
           </>

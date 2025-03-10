@@ -19,8 +19,35 @@ export default function EliminarCitas() {
 
   const [cita, setCita] = useState<citaInterface | null>(null);
 
+  const token = localStorage.getItem("token")
+  useEffect(() => {    
+    if (token) {
+      axios.get("http://127.0.0.1:8000/api/app_user/check-role/", {
+        headers : {
+          "Authorization": "Bearer "+token
+        }
+      }
+      ).then(response => {
+          const role = response.data.user_role;
+          if (role != "admin") {
+            location.href = ".."
+          }
+        })
+        .catch(error => {
+          console.error("Error fetching data:", error);
+          location.href = ".."
+        });
+    } else {
+      location.href = ".."
+    }
+  },[])
+
   useEffect(() => {
-    axios.get('http://localhost:8000/api/app_appointment/appointment/admin/list/'+id+'/'
+    axios.get('http://localhost:8000/api/app_appointment/appointment/admin/list/'+id+'/', {
+      headers : {
+        "Authorization": "Bearer "+token
+      }
+    }
     ).then(response => {
         setCita(response.data);
       })
@@ -30,7 +57,11 @@ export default function EliminarCitas() {
   }, []);
 
   function deleteCita() {
-    axios.delete('http://localhost:8000/api/app_appointment/appointment/admin/delete/'+id+'/'
+    axios.delete('http://localhost:8000/api/app_appointment/appointment/admin/delete/'+id+'/', {
+      headers : {
+        "Authorization": "Bearer "+token
+      }
+    }
     ).then(() => {
         location.href="/gestion-admin/citas/"
       })
@@ -45,11 +76,13 @@ export default function EliminarCitas() {
         <a href="/gestion-admin/citas/"><button className="btn-admin">Volver</button></a>
         <h1>Eliminar cita</h1>
       </div>
-      <div className="admin-header">
+      <div className="terminos-container">
         {cita && <>
-          <p>¿Quieres borrar la cita {cita.id}?</p>
-          <button className="btn-admin-red" onClick={deleteCita}>Sí</button>
-          <button className="btn-admin-green" onClick={() => location.href="/gestion-admin/citas/"}>No</button>
+          <p style={{fontSize:"1.5rem"}}>¿Quieres borrar la cita {cita.id}?</p>
+          <div>
+            <button className="btn-admin-red" onClick={deleteCita}>Sí</button>
+            <button className="btn-admin-green" onClick={() => location.href="/gestion-admin/citas/"}>No</button>
+          </div>
           </>
         }
         {!cita && <h1>Cita no encontrada</h1>

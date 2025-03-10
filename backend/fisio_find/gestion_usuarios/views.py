@@ -2,8 +2,11 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
-from .serializers import PatientRegisterSerializer, PhysioRegisterSerializer, PhysioSerializer, PatientSerializer, AppUserSerializer
+from .serializers import PatientRegisterSerializer, PatientAdminViewSerializer, PhysioRegisterSerializer, PhysioSerializer, PatientSerializer, AppUserSerializer, AppUserAdminViewSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework import generics
+#from permissions import IsAdmin
+from gestion_usuarios.models import Patient, AppUser
 
 
 @api_view(['POST'])
@@ -70,3 +73,51 @@ def physio_register_view(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class AdminAppUserDetail(generics.RetrieveAPIView):
+    '''
+    API endpoint que retorna un solo user por su id para admin.
+    '''
+    permission_classes = [AllowAny]
+    queryset = AppUser.objects.all()
+    serializer_class = AppUserAdminViewSerializer
+
+class AdminPatientCreate(generics.CreateAPIView):
+    '''
+    API endpoint para crear un término para admin.
+    '''
+    permission_classes = [AllowAny]
+    queryset = Patient.objects.all()
+    serializer_class = PatientRegisterSerializer
+
+
+class AdminPatientList(generics.ListAPIView):
+    '''
+    API endpoint para listar los pacientes para admin.
+    '''
+    permission_classes = [AllowAny]
+    queryset = Patient.objects.all()
+    serializer_class = PatientAdminViewSerializer
+
+class AdminPatientnDetail(generics.RetrieveAPIView):
+    '''
+    API endpoint que retorna un solo paciente por su id para admin.
+    '''
+    permission_classes = [AllowAny]
+    queryset = Patient.objects.all()
+    serializer_class = PatientAdminViewSerializer
+
+class AdminPatientUpdate(generics.RetrieveUpdateAPIView):
+    '''
+    API endpoint para que admin actualice un término.
+    '''
+    permission_classes = [AllowAny]
+    queryset = Patient.objects.all()
+    serializer_class = PatientRegisterSerializer
+
+class AdminPatientDelete(generics.DestroyAPIView):
+    '''
+    API endpoint para que admin elimine un término.
+    '''
+    permission_classes = [AllowAny]
+    queryset = Patient.objects.all()
+    serializer_class = PatientRegisterSerializer

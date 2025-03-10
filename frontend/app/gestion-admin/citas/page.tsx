@@ -30,8 +30,35 @@ const estados_cita = {
 export default function GestionarCitas() {
   const [citas, setCitas] = useState<[citaInterface] | null>(null);
 
+  const token = localStorage.getItem("token")
+  useEffect(() => {    
+    if (token) {
+      axios.get("http://127.0.0.1:8000/api/app_user/check-role/", {
+        headers : {
+          "Authorization": "Bearer "+token
+        }
+      }
+      ).then(response => {
+          const role = response.data.user_role;
+          if (role != "admin") {
+            location.href = ".."
+          }
+        })
+        .catch(error => {
+          console.error("Error fetching data:", error);
+          location.href = ".."
+        });
+    } else {
+      location.href = ".."
+    }
+  },[])
+
   useEffect(() => {
-    axios.get('http://localhost:8000/api/app_appointment/appointment/admin/list/'
+    axios.get('http://localhost:8000/api/app_appointment/appointment/admin/list/', {
+      headers : {
+        "Authorization": "Bearer "+token
+      }
+    }
     ).then(response => {
         setCitas(response.data);
       })

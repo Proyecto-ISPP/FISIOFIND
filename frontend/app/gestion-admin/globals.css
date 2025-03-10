@@ -1,122 +1,305 @@
+/* Reset and global styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
+body {
+    background-color: #ffffff;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+}
+
+/* Header styles */
 .admin-header {
-    width:100vw;
-    text-align: center;
-    display:flex;
+    width: 60%;
+    display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
+    justify-content: space-between;
+    text-align: center;
+    font-size: 1.125rem;
+    color: #ffffff;
+    background-color: #05668D;
+    padding: 10px 20px;
+    border-radius: 8px;
+    margin-bottom: 2rem;
 }
 
-.btn-admin{
-    font-size: 1.3rem;
-    font-weight: 900;
-    background-color: #41B8D5;
-    border: 10px solid #41B8D5;
-    border-radius: 10%;
-}
-
-.btn-admin-green{
-    font-size: 1rem;
-    font-weight: 900;
-    background-color: #05AC9C;
-    border: 10px solid #05AC9C;
-    border-radius: 10%;
-    margin:1rem;
-}
-
-.btn-admin-green:hover{
-    cursor: pointer;
-}
-
-.btn-admin-yellow{
-    font-size: 1rem;
-    font-weight: 900;
-    background-color: #a9ac05;
-    border: 10px solid #a9ac05;
-    border-radius: 10%;
-    margin:1rem;
-}
-
-.btn-admin-yellow:hover{
-    cursor: pointer;
-}
-
-.btn-admin-red{
-    font-size: 1rem;
-    font-weight: 900;
-    background-color: #ac1e05;
-    border: 10px solid #ac1e05;
-    border-radius: 10%;
-    margin:1rem;
-}
-
-.btn-admin-red:hover{
-    cursor: pointer;
-}
-
-.btn-admin:hover{
-    cursor: pointer;
-}
 .admin-header h1 {
-    margin:5rem;
+    font-size: 1.6rem;
+    font-weight: bold;
+    margin: 0;
+    color: #ffffff;
+    flex-grow: 1;
+    text-align: center;
 }
 
+/* Button base styles */
+.btn-admin {
+    font-size: 1.125rem;
+    font-weight: bold;
+    background-color: #0A7487;
+    color: #ffffff;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-admin:hover {
+    background-color: #05AC9C;
+}
+
+.btn-admin-green {
+    font-size: 1.125rem;
+    font-weight: bold;
+    background-color: #05AC9C;
+    color: #ffffff;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-admin-green:hover {
+    background-color: #05918F;
+}
+
+.btn-admin-yellow {
+    font-size: 1.125rem;
+    font-weight: bold;
+    background-color: #a9ac05;
+    color: #ffffff;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-admin-yellow:hover {
+    background-color: #8b8c04;
+}
+
+.btn-admin-red {
+    font-size: 1.125rem;
+    font-weight: bold;
+    background-color: #ac1e05;
+    color: #ffffff;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-admin-red:hover {
+    background-color: #8e1804;
+}
+
+/* General container */
 .container {
-    font-size: 1.1rem;
-    width:100vw;
-    text-align: center;
-    display:flex;
+    width: 100vw;
+    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    white-space: pre-wrap;
+    text-align: center;
+    font-size: 1.125rem;
+    color: #333333;
+    background-color: #ffffff;
+    padding: 20px;
+    min-height: 50vh;
 }
 
+.container div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.container p {
+    margin: 0;
+    font-size: 1.125rem;
+    color: #333333;
+}
+
+/* Terms container */
 .terminos-container {
-    font-size: 1.1rem;
-    width:100vw;
-    text-align: center;
-    display:flex;
+    width: 90vw;
+    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    white-space: pre-wrap;
-}
-
-.terminos-container form{
-    font-size: 1.1rem;
     text-align: center;
-    display:flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    font-size: 1.125rem;
+    color: #333333;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
 }
 
-.terminos-container form input{
-    font-size: 1rem;
-    padding: 0.4rem;
-    margin-bottom: 1rem;
+.terminos-container > p {
+    margin: 0.5rem 0;
+    font-size: 1.125rem;
+    color: #333333;
 }
 
-.terminos-container form textarea{
-    font-size: 1rem;
-    padding: 0.4rem;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    min-width: 50vw;
-    min-height: 20vh;
+.terminos-container > h1 {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #333333;
+    margin: 1rem 0;
 }
 
+/* Term list view */
 .termino-list-view {
-    padding:1rem;
-    border: 5px solid #41B8D5;
-    border-radius: 5px;
-    margin-top:3rem;
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid #41B8D5;
+    border-radius: 6px;
+    margin-top: 1rem;
+    background-color: #ffffff;
+    color: #333333;
+    text-align: center;
 }
 
 .termino-list-view h3 {
-    padding:0;
-    margin:0;
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin: 0;
+    color: #333333;
+}
+
+.termino-list-view p {
+    margin: 0.5rem 0;
+    font-size: 1rem;
+    color: #333333;
+}
+
+/* Form styles */
+.terminos-container form {
+    width: 75%;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 1rem; /* Space after info text */
+}
+
+.terminos-container form > div {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.terminos-container form .terminos-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    background-color: transparent;
+    padding: 0;
+    border-radius: 0;
+}
+
+.terminos-container form label {
+    font-size: 1.125rem;
+    font-weight: bold;
+    color: #333333;
+}
+
+.terminos-container form input[type="text"] {
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.75rem;
+    border: 1px solid #41B8D5;
+    border-radius: 6px;
+    background-color: #f5f5f5;
+    color: #333333;
+}
+
+.terminos-container form textarea {
+    width: 100%;
+    min-height: 15rem;
+    font-size: 1rem;
+    padding: 0.75rem;
+    border: 1px solid #41B8D5;
+    border-radius: 6px;
+    background-color: #f5f5f5;
+    color: #333333;
+    resize: vertical;
+}
+
+.terminos-container form input[type="submit"] {
+    font-size: 1.125rem;
+    font-weight: bold;
+    background-color: #0A7487;
+    color: #ffffff;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.terminos-container form input[type="submit"]:hover {
+    background-color: #05AC9C;
+}
+
+/* Delete page specific styles */
+.terminos-container .btn-admin-red, 
+.terminos-container .btn-admin-green {
+    margin: 0.5rem; /* Space between Yes/No buttons */
+}
+
+/* Link styling */
+.admin-header a, .terminos-container a, .container a {
+    text-decoration: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .admin-header {
+        padding: 8px 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .admin-header h1 {
+        font-size: 1.4rem;
+    }
+
+    .container, .terminos-container {
+        text-wrap: wrap;
+        padding: 15px;
+        width: 90%;
+    }
+
+    .terminos-container form, .termino-list-view {
+        width: 90%;
+    }
+
+    .btn-admin, .btn-admin-green, .btn-admin-yellow, .btn-admin-red,
+    .terminos-container form input[type="text"],
+    .terminos-container form textarea,
+    .terminos-container form input[type="submit"] {
+        padding: 6px 12px;
+        font-size: 1rem;
+    }
 }

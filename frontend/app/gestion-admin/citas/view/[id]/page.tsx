@@ -32,8 +32,75 @@ export default function VerCita() {
 
   const [cita, setCita] = useState<citaInterface | null>(null);
 
+  const token = localStorage.getItem("token")
+  useEffect(() => {    
+    if (token) {
+      axios.get("http://127.0.0.1:8000/api/app_user/check-role/", {
+        headers : {
+          "Authorization": "Bearer "+token
+        }
+      }
+      ).then(response => {
+          const role = response.data.user_role;
+          if (role != "admin") {
+            location.href = ".."
+          }
+        })
+        .catch(error => {
+          console.error("Error fetching data:", error);
+          location.href = ".."
+        });
+    } else {
+      location.href = ".."
+    }
+  },[])
+
+  const [pacienteFetched, setPacienteFetched] = useState(null);
+  function searchPaciente(id) {
+    axios.get('http://localhost:8000/api/app_user/admin/user/list/'+id+'/',{
+      headers : {
+        "Authorization": "Bearer "+token
+      }
+    }
+    ).then(response => {
+        setPacienteFetched(response.data)
+      })
+      .catch(error => {
+        if (error.response && error.response.status == 404) {
+          setPacienteFetched({"first_name":"No","last_name":"encontrado"})
+        } else {
+
+          console.error("Error fetching data:", error);
+        }
+      });
+  }
+
+  const [fisioFetched, setFisioFetched] = useState(null);
+  function searcFisio(id) {
+    axios.get('http://localhost:8000/api/app_user/admin/user/list/'+id+'/',{
+      headers : {
+        "Authorization": "Bearer "+token
+      }
+    }
+    ).then(response => {
+        setFisioFetched(response.data)
+      })
+      .catch(error => {
+        if (error.response && error.response.status == 404) {
+          setFisioFetched({"first_name":"No","last_name":"encontrado"})
+        } else {
+
+          console.error("Error fetching data:", error);
+        }
+      });
+  }
+
   useEffect(() => {
-    axios.get('http://localhost:8000/api/app_appointment/appointment/admin/list/'+id+'/'
+    axios.get('http://localhost:8000/api/app_appointment/appointment/admin/list/'+id+'/', {
+      headers : {
+        "Authorization": "Bearer "+token
+      }
+    }
     ).then(response => {
         setCita(response.data);
       })
@@ -42,6 +109,12 @@ export default function VerCita() {
       });
   }, []);
 
+  useEffect(() => {
+    if (cita) {
+      searcFisio(cita.physiotherapist)
+      searchPaciente(cita.patient)
+    }
+  },[cita])
   return (
     <>
       <div className="admin-header">
@@ -55,7 +128,9 @@ export default function VerCita() {
           <p>Es online: {cita.is_online ? "Sí" : "No"}</p>
           <p>Estado: {estados_cita[cita.status]}</p>
           <p>Id del paciente: {cita.patient} </p>
+          <p>Nombre del paciente: {pacienteFetched && pacienteFetched.first_name + ' ' + pacienteFetched.last_name}</p>
           <p>Id del fisioterapeuta: {cita.physiotherapist} </p>
+          <p>Nombre del fisioterapeuta: {fisioFetched && fisioFetched.first_name + ' ' + fisioFetched.last_name}</p>
           <p>Servicios: {JSON.stringify(cita.service)} </p>
           </>
         }

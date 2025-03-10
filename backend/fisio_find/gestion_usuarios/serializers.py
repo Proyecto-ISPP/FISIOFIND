@@ -5,7 +5,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.db.utils import IntegrityError
 from django.db import transaction
 from gestion_usuarios.validacionFisios import validar_colegiacion
-from .models import AppUser, Patient, Physiotherapist
+from .models import AppUser, Patient, Physiotherapist, Admin
 import re
 from datetime import date  # Importar para obtener la fecha de hoy
 
@@ -227,3 +227,17 @@ class PhysioRegisterSerializer(serializers.ModelSerializer):
 
         except IntegrityError as e:
             raise serializers.ValidationError({"error": "Error de integridad en la base de datos. Posible duplicado de datos."})
+
+class AppUserAdminViewSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = AppUser
+        fields = '__all__'
+
+class PatientAdminViewSerializer(serializers.ModelSerializer):
+    
+    user = AppUserAdminViewSerializer()
+    
+    class Meta:
+        model = Patient
+        fields = '__all__'
