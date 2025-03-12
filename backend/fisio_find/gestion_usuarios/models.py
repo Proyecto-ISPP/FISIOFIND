@@ -51,6 +51,19 @@ class Patient(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.user.email}"
     
+class Specialization(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.name
+class PhysiotherapistSpecialization(models.Model):
+    physiotherapist = models.ForeignKey(
+        'Physiotherapist', on_delete=models.CASCADE, related_name="physio_specializations"
+    )
+    specialization = models.ForeignKey(
+        'Specialization', on_delete=models.SET_NULL, null=True, blank=True
+    )
+
 class Physiotherapist(models.Model):
     user = models.OneToOneField(AppUser, on_delete=models.CASCADE, related_name='physio')
     bio = models.TextField(null=True, blank=True)
@@ -61,7 +74,8 @@ class Physiotherapist(models.Model):
     collegiate_number = models.CharField(max_length=30)
     services = models.JSONField(null=True, blank=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
-    
+    specializations = models.ManyToManyField(Specialization, through="PhysiotherapistSpecialization")
+
     def __str__(self):
         return f"{self.user.username} - {self.user.email}"
 
