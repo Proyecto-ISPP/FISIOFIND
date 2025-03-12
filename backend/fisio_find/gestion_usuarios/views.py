@@ -59,6 +59,10 @@ def return_user(request):
         return Response({"physio": {**serializer.data, "user_data": user_serializer.data}})
     return Response({"error": "User role not found"}, status=status.HTTP_404_NOT_FOUND)
 
+
+    
+
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def physio_register_view(request):
