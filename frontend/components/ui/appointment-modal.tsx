@@ -15,9 +15,14 @@ const deleteEvent = (selectedEvent: CalendarProps | null) => {
   if (!selectedEvent) return;
 
   axios
-    .delete(`http://localhost:8000/api/appointment/${selectedEvent.id}/`)
+    .delete(`http://localhost:8000/api/appointment/delete/${selectedEvent.id}/`,{
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
     .then((response) => {
       alert("La cita se eliminó correctamente.");
+      window.location.reload();
     })
     .catch((error) => {
       alert("Hubo un problema con la conexión. Intenta nuevamente.");
@@ -43,11 +48,11 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
 
     const token = localStorage.getItem("token"); // Obtén el JWT desde localStorage (o desde donde lo tengas almacenado)
     
-    axios.patch(`http://localhost:8000/api/appointment/${selectedEvent?.id}/`, {
+    axios.put(`http://localhost:8000/api/appointment/update/${selectedEvent?.id}/`, {
       "start_time": startDateTime,
       "end_time": endDateTime,
       "status": "confirmed",
-      "alternatives": ""
+      "alternatives": selectedEvent.alternatives,
     }, {
       headers: {
         Authorization: `Bearer ${token}`, // Envía el JWT en la cabecera de la petición

@@ -313,9 +313,9 @@ def update_appointment(request, appointment_id):
 
         alternatives = data.get("alternatives", {})
 
-        # Validar que haya al menos dos fechas diferentes
-        if not isinstance(alternatives, dict) or len(alternatives.keys()) < 2:
-            return Response({"error": "Debes proporcionar al menos dos fechas diferentes en 'alternatives'"}, status=status.HTTP_400_BAD_REQUEST)
+        # # Validar que haya al menos dos fechas diferentes
+        # if not isinstance(alternatives, dict) or len(alternatives.keys()) < 2:
+        #     return Response({"error": "Debes proporcionar al menos dos fechas diferentes en 'alternatives'"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Validar que las fechas y horas sean únicas y que no incluyan la fecha actual de la cita
         appointment_start_time = appointment.start_time.strftime("%Y-%m-%dT%H:%M:%SZ")  # Convertir a string
@@ -367,11 +367,11 @@ def update_appointment(request, appointment_id):
             if valid_selection:
                 break
 
-        if not valid_selection:
-            return Response({"error": "El rango horario seleccionado no coincide con las alternativas disponibles"}, status=status.HTTP_400_BAD_REQUEST)
+        # if not valid_selection:
+        #     return Response({"error": "El rango horario seleccionado no coincide con las alternativas disponibles"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Actualizar la cita con la nueva fecha y hora seleccionada
-        data["alternatives"] = {}  # Eliminar todas las alternativas
+        data["alternatives"] = ""  # Eliminar todas las alternativas
         data["status"] = "confirmed"
 
     else:
@@ -397,6 +397,13 @@ def delete_appointment(request, appointment_id):
     user = request.user
     now = datetime.now(timezone.utc)  # Fecha y hora actual en UTC
 
+    if (hasattr(user, 'physio')):
+        if appointment.physiotherapist != user.physio.id:
+            return Response({"error": "No tienes permisos para borrar esta cita"}, status=status.HTTP_403_FORBIDDEN)
+    elif (hasattr(user, 'patient')):
+        if appointment.patient != user.patient:
+            return Response({"error": "No tienes permisos para borrar esta cita"}, status=status.HTTP_403_FORBIDDEN)
+
     # Verificar si el usuario es el fisioterapeuta o el paciente de la cita
     if not (hasattr(user, 'physio') or hasattr(user, 'patient')):
         return Response({"error": "No tienes permisos para borrar esta cita"}, status=status.HTTP_403_FORBIDDEN)
@@ -411,14 +418,6 @@ def delete_appointment(request, appointment_id):
 
     appointment.delete()
     return Response({"message": "Cita eliminada correctamente"}, status=status.HTTP_204_NO_CONTENT)
-
-
-
-
-class AppointmentDetail(generics.RetrieveUpdateDestroyAPIView):
-    # permission_classes = [IsAuthenticated, IsOwner]
-    queryset = Appointment.objects.all()
-    serializer_class = AppointmentSerializer
 
 """
 class AdminAppointmenCreate(generics.CreateAPIView):

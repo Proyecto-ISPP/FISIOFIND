@@ -50,8 +50,7 @@ const Calendar = ({
     console.log("Fechas alternativas enviadas:", alternatives);
     // Aquí podrías hacer una petición al backend para actualizar la cita,
     // por ejemplo, usando axios.post con el array de alternativas
-    axios
-      .patch(`http://localhost:8000/api/appointment/${selectedEvent?.id}/`, {
+    axios.put(`http://localhost:8000/api/appointment/update/${selectedEvent?.id}/`, {
         start_time: selectedEvent?.start,
         end_time: selectedEvent?.end,
         status: "pending",

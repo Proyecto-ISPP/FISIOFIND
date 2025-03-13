@@ -3,7 +3,6 @@ from gestion_citas import views
 from rest_framework.urlpatterns import format_suffix_patterns
 
 urlpatterns = [
-    path('<int:pk>/', views.AppointmentDetail.as_view()),
     path('schedule/<int:pk>/', views.get_physio_schedule_by_id),
     path('physio/schedule/weekly/', views.edit_weekly_schedule ),
     path('physio/schedule/add-unavailable/', views.add_unavailable_day),
