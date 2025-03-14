@@ -25,17 +25,20 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
 
   const deleteEvent = (selectedEvent: CalendarProps | null) => {
     if (!selectedEvent) return;
-    if (isClient) {
-      if (token) {
-        axios
-          .delete(`${getApiBaseUrl()}/api/appointment/${selectedEvent.id}/`)
-          .then((response) => {
-            alert("La cita se eliminó correctamente.");
-          })
-          .catch((error) => {
-            alert("Hubo un problema con la conexión. Intenta nuevamente.");
-          });
-      }
+    if (isClient && token) {
+      axios
+        .delete(`${getApiBaseUrl()}/api/appointment/delete/${selectedEvent.id}/`, {
+          headers: {
+            Authorization: "Bearer " + token, // Envía el JWT en la cabecera de la petición
+          },
+        })
+        .then((response) => {
+          alert("La cita se eliminó correctamente.");
+          window.location.reload();
+        })
+        .catch((error) => {
+          alert("Hubo un problema con la conexión. Intenta nuevamente.");
+        });
     }
   };
 
@@ -47,7 +50,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
 
     console.log("Seleccion confirmada:", { startDateTime, endDateTime });
     alert(`Seleccionaste: ${startDateTime} - ${endDateTime}`);
-    
+
     axios.put(`${getApiBaseUrl()}/api/appointment/update/${selectedEvent?.id}/`, {
       "start_time": startDateTime,
       "end_time": endDateTime,
