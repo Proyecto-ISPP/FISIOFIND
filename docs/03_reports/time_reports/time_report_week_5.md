@@ -77,6 +77,7 @@ classoption: "table"
 | Fecha      | Versión | Realizada por                    | Descripción de los cambios |
 |------------|---------|----------------------------------|----------------------------|
 | 06/03/2025 | v1.0    | Alberto Carmona Sicre            | Elaboración de la primera versión del documento de informe de tiempo de la semana 5 |
+| 13/03/2025 | v1.1    | Alberto Carmona Sicre            | Actualización de los apartados con las horas faltantes del día 06/03/2025 |
 
 
 <br>
@@ -87,8 +88,6 @@ classoption: "table"
 
 
 # 1. PROYECTOS
-
-**IMPORTANTE: LAS HORAS SE HAN CALCULADO HASTA LAS 14:30 DEL DÍA 06/03/2025**  
 
 ## 1.1. Definición de cada proyecto
 A continuación, se muestran los posibles tipos de tareas en las que pueden trabajar los integrantes del equipo, junto con una breve definición de estas:
@@ -131,13 +130,13 @@ En esta semana de trabajo se ha trabajado en los siguientes proyectos:
 ## 1.3. Proyectos destacados
 Entre los proyectos destacados de la semana, aquellos en los que se ha invertido más tiempo, encontramos el siguiente, que cuenta con hasta 10 veces más horas que el segundo:  
 
-- **feat:** 115:30:32	
+- **feat:** 118:38:59	
 
 <br>
 
 
 # 2. HORAS TOTALES
-Para esta semana de trabajo, el tiempo total dedicado al proyecto ha sido de 159 horas y 15 minutos.
+Para esta semana de trabajo, el tiempo total dedicado al proyecto ha sido de 168 horas y 47 minutos.
   
 
 <br>
@@ -161,7 +160,7 @@ Ordenado de manera cronológica:
 
 - **Miércoles 05/03:** 48:26:56  
 
-- **Jueves 06/03:** 21:58:00    
+- **Jueves 06/03:** 31:30:36    
 
 
 <br>
@@ -169,19 +168,19 @@ Ordenado de manera cronológica:
 ## 3.2 Desglose por proyectos  
 Ordenado de mayor a menor tiempo dedicado en cada proyecto: 
 
-**1. feat:** 115:30:32    	
+**1. feat:** 118:38:59    	
 
-**2. fix / refactor / style:** 11:58:43  
+**2. fix / refactor / style:** 11:58:43   
 
-**3. docs:** 10:44:08  
+**3. Presentaciones / Diseños:** 11:28:20  
 
-**4. Redes sociales:** 09:35:38  
+**4. docs:** 11:03:29 
 
-**5. Presentaciones / Diseños:** 09:01:53
+**5. Redes sociales:** 09:35:38
 
-**6. Clases / Vídeos:** 02:05:20  
+**6. Reuniones:** 03:56:57 
 
-**7. Reuniones:** 00:18:36   
+**7. Clases / Vídeos:** 02:05:20    
 
 **8. Planificación:** hh:mm    
 
@@ -198,11 +197,11 @@ Diagrama de sectores para una mejor visualización de la división:
 
 Ordenado por orden alfabético:
 
-**1. Alberto Carmona Sicre** - 10:27:18
+**1. Alberto Carmona Sicre** - 10:46:39
 
 **2. Antonio Macías Ferrera** -  11:51:25
 
-**3. Benjamín Ignacio Maureira Flores** -  10:37:31
+**3. Benjamín Ignacio Maureira Flores** -  14:27:52
 
 **4. Daniel Alors Romero** - 10:34:25
 
@@ -218,13 +217,13 @@ Ordenado por orden alfabético:
 
 **10. Francisco Capote García** -  09:26:29
 
-**11. Francisco Mateos Villarejo** -  07:32:08
+**11. Francisco Mateos Villarejo** -  10:40:35
 
 **12. Guadalupe Ridruejo Pineda** - 07:47:59
 
 **13. Julen Redondo Pacheco** -  09:20:38
 
-**14. Miguel Encina Martínez** -  07:19:49
+**14. Miguel Encina Martínez** -  09:34:16
 
 **15. Pablo Fernández Pérez** -  10:08:21
 
@@ -234,7 +233,8 @@ Ordenado por orden alfabético:
 
 Diagrama de sectores para una mejor visualización:
 
-![Diagrama de integrantes](../../.img/users_diagram_week_5.png)  
+![Diagrama de integrantes](../../.img/users_diagram_week_5_1.png)  
+![Diagrama de integrantes](../../.img/users_diagram_week_5_2.png)  
 
 <br>
 

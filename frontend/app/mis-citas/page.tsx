@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from "react";
 import axios from "axios";
 import Cards from "@/components/ui/cards";
 import Calendar from "@/components/ui/calendar";
+import { getApiBaseUrl } from "@/utils/api";
 
 interface APIResponse {
   message: string;
@@ -31,80 +32,90 @@ export default function Home() {
   const [events, setEvents] = useState([]);
   const [hoveredEventId, setHoveredEventId] = useState<string | null>(null); // Estado para el hover de tarjetas
   const [currentRole, setCurrentRole] = useState("");
+  const [isClient, setIsClient] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("token"); // Obtén el JWT desde localStorage (o desde donde lo tengas almacenado)
+    setIsClient(true);
+  }, []);
 
-    axios.get("http://localhost:8000/api/app_user/check-role/", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    })
-      .then(response => {
-        setCurrentRole(response.data.user_role);
-      })
-      .catch(error => {
-        console.log("Error fetching data:", error);
-      });
+  useEffect(() => {
+    if (isClient) {
+      const storedToken = localStorage.getItem("token"); // Obtén el JWT desde localStorage (o desde donde lo tengas almacenado)
+      setToken(storedToken);
+      if (token) {
+        axios.get(`${getApiBaseUrl()}/api/app_user/check-role/`, {
+          headers: {
+            Authorization: "Bearer " + token, // Envía el JWT en la cabecera de la petición
+          },
+        })
+          .then(response => {
+            setCurrentRole(response.data.user_role);
+          })
+          .catch(error => {
+            console.log("Error fetching data:", error);
+          });
 
-    if (currentRole == "physiotherapist") {
-      axios.get("http://localhost:8000/api/appointment/physio/list/", {
-        headers: {
-          Authorization: `Bearer ${token}`, // Envía el JWT en la cabecera de la petición
-        },
-      })
-        .then(response => {
-          const transformedEvents = response.data.results.map((event: any) => ({
-            id: event.id,
-            title: event.service.type + "-" + event.patient || "Sin título",
-            start: event.start_time,  // Cambio de start_time a start
-            end: event.end_time,      // Cambio de end_time a end
-            description: event.description,
-            allDay: event.allDay || false,
-            status: event.status,
-            service: {
-              type: event.service.type,
-              duration: event.service.duration,
+        if (currentRole == "physiotherapist") {
+          axios.get(`${getApiBaseUrl()}/api/appointment/physio/list/`, {
+            headers: {
+              Authorization: "Bearer " + token, // Envía el JWT en la cabecera de la petición
             },
-            alternatives: event.alternatives,
-          }));
-          console.log("citas", response.data);
-          setEvents(transformedEvents);
-        })
-        .catch(error => {
-          console.log("Error fetching data:", error);
-          setData({ message: "Error al cargar las citas", status: "error" });
-        });
-    } else if (currentRole == "patient") {
-      axios.get("http://localhost:8000/api/appointment/patient/list/", {
-        headers: {
-          Authorization: `Bearer ${token}`, // Envía el JWT en la cabecera de la petición
-        },
-      })
-        .then(response => {
-          const transformedEvents = response.data.map((event: any) => ({
-            id: event.id,
-            title: event.service.type + "-" + event.physiotherapist || "Sin título",
-            start: event.start_time,  // Cambio de start_time a start
-            end: event.end_time,      // Cambio de end_time a end
-            description: event.description,
-            allDay: event.allDay || false,
-            status: event.status,
-            service: {
-              type: event.service.type,
-              duration: event.service.duration,
+          })
+            .then(response => {
+              const transformedEvents = response.data.results.map((event: any) => ({
+                id: event.id,
+                title: event.service.type + "-" + event.patient || "Sin título",
+                start: event.start_time,  // Cambio de start_time a start
+                end: event.end_time,      // Cambio de end_time a end
+                description: event.description,
+                allDay: event.allDay || false,
+                status: event.status,
+                service: {
+                  type: event.service.type,
+                  duration: event.service.duration,
+                },
+                alternatives: event.alternatives,
+              }));
+              console.log("citas", response.data);
+              setEvents(transformedEvents);
+            })
+            .catch(error => {
+              console.log("Error fetching data:", error);
+              setData({ message: "Error al cargar las citas", status: "error" });
+            });
+        } else if (currentRole == "patient") {
+          axios.get(`${getApiBaseUrl()}/api/appointment/patient/list/`, {
+            headers: {
+              Authorization: "Bearer " + token, // Envía el JWT en la cabecera de la petición
             },
-            alternatives: event.alternatives,
-          }));
-          console.log("citas", response.data);
-          setEvents(transformedEvents);
-        })
-        .catch(error => {
-          console.log("Error fetching data:", error);
-          setData({ message: "Error al cargar las citas", status: "error" });
-        });
+          })
+            .then(response => {
+              const transformedEvents = response.data.map((event: any) => ({
+                id: event.id,
+                title: event.service.type + "-" + event.physiotherapist || "Sin título",
+                start: event.start_time,  // Cambio de start_time a start
+                end: event.end_time,      // Cambio de end_time a end
+                description: event.description,
+                allDay: event.allDay || false,
+                status: event.status,
+                service: {
+                  type: event.service.type,
+                  duration: event.service.duration,
+                },
+                alternatives: event.alternatives,
+              }));
+              console.log("citas", response.data);
+              setEvents(transformedEvents);
+            })
+            .catch(error => {
+              console.log("Error fetching data:", error);
+              setData({ message: "Error al cargar las citas", status: "error" });
+            });
+        }
+      }
     }
-  }, [currentRole]);
+  }, [currentRole, isClient]);
 
   const handleCardHover = (eventId: string | null) => {
     setHoveredEventId(eventId);

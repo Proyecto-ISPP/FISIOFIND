@@ -22,7 +22,7 @@ classoption: "table"
 
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
 <p align="center">
-  <img src="../.img/Logo_FisioFind_Verde_sin_fondo.PNG" alt="Logo FisioFind" width="300" />
+  <img src="../../.img/Logo_FisioFind_Verde_sin_fondo.PNG" alt="Logo FisioFind" width="300" />
 </p>
 
 <h1 align="center" style="font-size: 30px; font-weight: bold;">
@@ -90,18 +90,10 @@ classoption: "table"
 |----------------|-----|----------|
 | Antonio Macías Ferrera | -- | antmacfer1@alum.us.es |
 | Benjamín Ignacio Maureira Flores | -- | benmauflo@alum.us.es |
-| Francisco Capote García | -- | fracapgar1@alum.us.es |
-| Daniel Alors Romero | -- | danalorom1@alum.us.es |
-| Daniel Fernández Caballero | -- | danfercab@alum.us.es |
-| Daniel Ruiz López | -- | danruilop1@alum.us.es |
-| Daniel Tortorici Bartús | -- | dantorbar1@alum.us.es |
-| Daniel Vela Camacho | -- | danvelcam@alum.us.es |
 | Delfín Santana Rubio | -- | delsanrub@alum.us.es |
+| Francisco Capote García | -- | fracapgar1@alum.us.es |
 | Guadalupe Ridruejo Pineda | -- | guaridpin@alum.us.es |
-| Julen Redondo Pacheco | -- | julredpac@alum.us.es |
-| Pablo Fernández Pérez | -- | pablofp.33@gmail.com |
 | Ramón Gavira Sánchez | -- | ramgavsan@alum.us.es |
-| Rafael Pulido Cifuentes | -- | rafpulcif@alum.us.es |
 
 <br>
 
@@ -167,9 +159,9 @@ Detalle de las acciones acordadas para el próximo Sprint. Se deberá incluir el
 
 | Acción | Responsable | Fecha límite |
 |--------|------------|--------------|
-| 🔵 Crear un plan de inicio de tareas para evitar bloqueos entre funcionalidades | Todo el equipo | [Fecha] |
-| 🔵 Destacar los mensajes para asegurar la lectura del mismo por los integrantes del equipo | Todo el equipo | [Fecha] |
-| 🔵 Realizar una revisión al final de cada sprint sobre la distribución de la carga de trabajo y proponer mejoras si es necesario| Todo el equipo| [Fecha] |
+| 🔵 Crear un plan de inicio de tareas para evitar bloqueos entre funcionalidades | Todo el equipo | Al inicio del sprint |
+| 🔵 Destacar los mensajes para asegurar la lectura del mismo por los integrantes del equipo | Todo el equipo | Diariamente |
+| 🔵 Realizar una revisión al final de cada sprint sobre la distribución de la carga de trabajo y proponer mejoras si es necesario| Todo el equipo | Final de sprint |
 
 <br>
 
@@ -180,5 +172,3 @@ Detalle de las acciones acordadas para el próximo Sprint. Se deberá incluir el
 
 **Aprobado por:**  
 **Scrum Master:** Antonio Macías Ferrera  
-**Rol:** [Nombre y Apellidos]
-

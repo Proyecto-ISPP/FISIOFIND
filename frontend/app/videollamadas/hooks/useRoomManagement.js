@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import axios from 'axios';
+import { getApiBaseUrl } from "@/utils/api";
 
 /**
  * Custom hook for managing room lifecycle
@@ -25,6 +26,12 @@ const useRoomManagement = ({
   const [modalMessage, setModalMessage] = useState("");
   const [showDeleteButtons, setShowDeleteButtons] = useState(false);
   const [waitingForDeletion, setWaitingForDeletion] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+  const [token, setToken] = useState < string | null > (null);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // End call
   const endCall = useCallback(async () => {
@@ -45,25 +52,31 @@ const useRoomManagement = ({
 
   // Confirm room deletion (physio only)
   const confirmDeleteRoom = useCallback(async () => {
-    try {
-      const response = await axios.delete(`http://localhost:8000/api/videocall/delete-room/${roomCode}/`);
-      if (response.status === 204) {
-        console.log('Sala eliminada correctamente');
-        await sendWebSocketMessage({
-          action: 'call-ended',
-          message: { text: 'La llamada ha sido eliminada.' }
-        });
+    if (isClient) {
+      const storedToken = localStorage.getItem('token');
+      setToken(storedToken);
+      if (token) {
+        try {
+          const response = await axios.delete(`${getApiBaseUrl()}/api/videocall/delete-room/${roomCode}/`);
+          if (response.status === 204) {
+            console.log('Sala eliminada correctamente');
+            await sendWebSocketMessage({
+              action: 'call-ended',
+              message: { text: 'La llamada ha sido eliminada.' }
+            });
 
-        // Now show modal to patient
-        setModalMessage("La llamada ha finalizado");
-        setShowDeleteButtons(false);
-        setShowModal(true);
-        setWaitingForDeletion(true);
+            // Now show modal to patient
+            setModalMessage("La llamada ha finalizado");
+            setShowDeleteButtons(false);
+            setShowModal(true);
+            setWaitingForDeletion(true);
+          }
+        } catch (error) {
+          console.error('Error eliminando la sala:', error);
+        }
       }
-    } catch (error) {
-      console.error('Error eliminando la sala:', error);
     }
-  }, [roomCode, sendWebSocketMessage]);
+  }, [roomCode, sendWebSocketMessage, token, isClient]);
 
   // Cancel deletion
   const cancelDelete = useCallback(() => {

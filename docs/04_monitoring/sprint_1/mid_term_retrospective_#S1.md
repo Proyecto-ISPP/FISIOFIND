@@ -138,7 +138,7 @@ El gráfico muestra el progreso actual del proyecto en relación con la planific
 - **Impacto:** A pesar del esfuerzo adicional, se han alcanzado los objetivos planificados
 - **Medidas futuras:** Se realizará un ajuste en la planificación para evitar situaciones similares en próximos sprints
 
-![Reloj de avance del proyecto](../../.img/rejo_proyecto_06_03.png)
+![Reloj de avance del proyecto](../../.img/reloj_de_avance_proyecto_06-03-2025.png)
 
 ---
 

@@ -6,6 +6,7 @@ date: "10/02/2025"                                        # CHANGE IF NEEDED
 subject: "ISPP"
 lang: "es"
 toc: true
+toc-own-page: true
 titlepage: true
 titlepage-text-color: "1C1C1C"
 titlepage-rule-color: "1C1C1C"
@@ -61,7 +62,6 @@ classoption: "table"
 
 <br>
 
----
 
 **Ficha del documento**
 
@@ -85,14 +85,14 @@ classoption: "table"
 
 **Historial de modificaciones**
 
-| Fecha      | Versión | Realizada por             | Descripción de los cambios                                                      |
-| ---------- | ------- | ------------------------- | ------------------------------------------------------------------------------- |
-| 10/02/2025 | v1.0    | Delfín Santana Rubio      | Versión inicial del documento    |
-| 15/02/2025 | v1.1    | Antonio Macías Ferrera    | Adaptación a usuarios piloto externos y alumnos de la asignatura ISPP           |
-| 18/02/2025 | v1.2    | Delfín Santana Rubio      | Cambio en los beneficios para los usuarios  (se puede ver en el apartado 2.1.2) |
-| 20/02/2025 | v1.3    | Guadalupe Ridruejo Pineda | Firmas de los primeros usuarios piloto     |
-| 26/02/2025 | v1.4    | Guadalupe Ridruejo Pineda | Últimas firmas de usuarios piloto    |
-| 10/03/2025 | v1.5    | Antonio Macías Ferrera | Correcciones finales para la entrega del #SPRINT 1  |
+| Fecha        | Versión   | Realizada por             | Descripción de los cambios                                            |
+| ------------ | --------- | ------------------------- | --------------------------------------------------------------------- |
+| 10/02/2025   | v1.0      | Delfín Santana Rubio      | Versión inicial del documento                                         |
+| 15/02/2025   | v1.1      | Antonio Macías Ferrera    | Adaptación a usuarios piloto externos y alumnos de la asignatura ISPP |
+| 18/02/2025   | v1.2      | Delfín Santana Rubio      | Cambio en los beneficios para los usuarios  (se puede ver en el apartado 2.1.2) |
+| 20/02/2025   | v1.3      | Guadalupe Ridruejo Pineda | Firmas de los primeros usuarios piloto                                |
+| 26/02/2025   | v1.4      | Guadalupe Ridruejo Pineda | Últimas firmas de usuarios piloto                                     |
+| 10/03/2025   | v1.5      | Antonio Macías Ferrera    | Correcciones finales para la entrega del #SPRINT 1                    |
 
 
 <br>
@@ -105,6 +105,8 @@ classoption: "table"
 # 1. INTRODUCCIÓN
 
 En este documento se detallan el proceso de comunicación con los usuarios piloto, sus perfiles personales y profesionales, enunciado de su acuerdo de compromiso, y la forma de gestión del feedback y de la evaluación de los usuarios piloto alumnos de la asignatura ISPP.
+
+<br>
 
 <br>
 
@@ -126,21 +128,39 @@ Tal y como se detalló en el documento [Acuerdo de usuarios piloto](../../01_org
 El tipo de usuario piloto que más difícil ha sido de encontrar, y de conseguir su compromiso para todo el periodo de pruebas, han sido los fisioterapeutas. Desconocemos el alcance real que alcanzó el formulario de inscripción para este tipo de usuarios, pero podemos estimar que 1 de cada 4 fisioterapeutas que tuvieron acceso al mismo se inscribieron. Finalmente, obtuvimos una lista definitiva de **16 usuarios piloto fisioterapeutas**, con los siguientes perfiles profesionales:
 
 - **Lugar / forma de trabajo**:
+
   ![Trabajo fisioterapeutas](../.img/pilot_users/lugar_trabajo_fisios.png)
+
 - **Especialidades**:
+
   ![Especialidades fisioterapeutas](../.img/pilot_users/especialidades_fisioterapeutas.png)
+
+<!-- \newpage -->
+
 - **Años de experiencia**:
+
   ![Años de experiencia fisioterapeutas](../.img/pilot_users/experiencia_fisioterapeutas.png)
 
 En el caso de los usuarios piloto que actuarán en el rol de paciente, el proceso de captación fue mucho más sencillo. La gran mayoría de las personas inscritas son familiares cercanos, vecinos o amigos de miembros del equipo de FISIO FIND. Se ha procurado cubrir todas las franjas de edad posibles, para obtener un *feedback* que nos permita adaptar la plataforma al nivel de conocimientos y habilidades tecnológicas de cualquier persona. Todas las personas a las que se solicitó inscribirse así lo hicieron, dejando una lista definitiva con **18 usuarios piloto pacientes**, con las siguientes características destacables:
 
 - **Edad**:
+
   ![Edad pacientes](../.img/pilot_users/edad_pacientes.png)
+
+<!-- \newpage -->
+
 - **Frecuencia de consulta con un fisioterapeuta**:
+
   ![Frecuencia consulta](../.img/pilot_users/frecuencia_consulta.png)
+
 - **Motivos más frecuentes de consulta**:
+
   ![Motivos consulta](../.img/pilot_users/motivos_consulta.png)
+
+<!-- \newpage -->
+
 - **Qué aspectos priorizan a la hora de escoger fisioterapeuta**:
+
   ![Prioridades pacientes](../.img/pilot_users/prioridades_pacientes.png)
 
 Por último, indicar que para los usuarios piloto técnicos tenemos a **6 alumnos de la asignatura ISPP** inscritos para las pruebas.
@@ -157,6 +177,10 @@ De los 12 fisioterapeutas que recibieron el correo, solo 5 se inscribieron a tra
 Para la captación de pacientes, se siguió una estrategia similar. Todos nuestros **conocidos** que, de manera informal habían mostrado interés en participar en las pruebas, recibieron un **mensaje de WhatsApp con el formulario** de inscripción. Además de los términos de participación ya expuestos, se hicieron algunas preguntas para elaborar un perfil demográfico de los pacientes inscritos y sobre su relación y experiencia con la fisioterapia como pacientes.
 
 Todos los usuarios piloto inscritos, incluidos los técnicos, recibieron un **correo de confirmación de participación** desde nuestra cuenta de email oficial info@fisiofind.com.
+
+<br>
+
+<!-- \newpage -->
 
 <br>
 
@@ -230,6 +254,10 @@ Una vez los usuarios hayan realizado las pruebas y hayan completado los formular
 
 <br>
 
+<!-- \newpage -->
+
+<br>
+
 
 # 4. LISTA DE USUARIOS PILOTO
 
@@ -258,38 +286,43 @@ Se presenta un listado de los usuarios piloto que participarán en las pruebas d
 
 ### PACIENTES
 
-| Nombre Completo                 | Edad        | ¿Ha acudido al fisioterapeuta? | Frecuencia          | Motivo de consulta                       | ¿Busca fisioterapeutas por internet? | Preferencias de selección                           |
-| ------------------------------- | ----------- | ------------------------------ | ------------------- | ---------------------------------------- | ------------------------------------ | --------------------------------------------------- |
-| Pedro Pablo Gallego Mendoza     | Más de 60   | Sí                             | Ocasionalmente      | Tendinitis, dolor muscular               | No                                   | Recomendaciones                                     |
-| Marta García Maldonado          | 18-25       | Sí                             | Ocasionalmente      | Dolor de espalda                         | No                                   | Ubicación, Precio, Recomendaciones, Disponibilidad  |
+| Nombre Completo        | Edad         | ¿Ha acudido al fisioterapeuta? | Frecuencia         | Motivo de consulta     | ¿Busca fisioterapeutas por internet? | Preferencias de selección |
+| ---------------------- | ------------ | ------------------------------ | ------------------ | ---------------------- | -------------------- | ------------------------- |
+| Pedro Pablo Gallego Mendoza     | Más de 60   | Sí                             | Ocasional      | Tendinitis, dolor muscular               | No                                   | Recomendaciones                                     |
+| Marta García Maldonado          | 18-25       | Sí                             | Ocasional      | Dolor de espalda                         | No                                   | Ubicación, Precio, Recomendaciones, Disponibilidad  |
 | Francisco Muñoz Sánchez         | 18-25       | Sí                             | Una vez al año      | Recuperación para oposiciones de bombero | No                                   | Ubicación, Precio, Recomendaciones                  |
 | Carmen Bilbao Marcos            | 18-25       | Sí                             | Una vez al año      | Suelo pélvico                            | No                                   | Ubicación, Precio, Especialización                  |
-| Andrea Ruiz                     | 18-25       | Sí                             | Ocasionalmente      | Dolor de espalda                         | No                                   | Ubicación, Recomendaciones                          |
-| Antonio Macías Barrera          | 41-60       | Sí                             | Ocasionalmente      | Recuperación posoperatoria               | No                                   | Ubicación, Precio, Recomendaciones                  |
-| M° Dolores Ferrera Ortiz        | 41-60       | Sí                             | Ocasionalmente      | Problemas de rodilla                     | No                                   | Recomendaciones                                     |
+| Andrea Ruiz                     | 18-25       | Sí                             | Ocasional      | Dolor de espalda                         | No                                   | Ubicación, Recomendaciones                          |
+| Antonio Macías Barrera          | 41-60       | Sí                             | Ocasional      | Recuperación posoperatoria               | No                                   | Ubicación, Precio, Recomendaciones                  |
+| M° Dolores Ferrera Ortiz        | 41-60       | Sí                             | Ocasional      | Problemas de rodilla                     | No                                   | Recomendaciones                                     |
 | Rodrigo Macías Ferrera          | Menos de 18 | No                             |                     | Nunca ha acudido a fisioterapia          | No                                   | Precio, Especialización                             |
-| Leonor Moreno Ortiz             | 26-40       | Sí                             | Ocasionalmente      | Suelo pélvico                            | No                                   | Ubicación, Precio, Especialización, Recomendaciones |
-| Sara Allouani Mechfaoui         | 18-25       | Sí                             | Ocasionalmente      | Dolor de espalda                         | Sí                                   | Precio, Especialización, Recomendaciones            |
-| Guadalupe Pineda Tejeda         | 41-60       | Sí                             | Ocasionalmente      | Dolor de espalda                         | No                                   | Ubicación, Precio                                   |
+| Leonor Moreno Ortiz             | 26-40       | Sí                             | Ocasional      | Suelo pélvico                            | No                                   | Ubicación, Precio, Especialización, Recomendaciones |
+| Sara Allouani Mechfaoui         | 18-25       | Sí                             | Ocasional      | Dolor de espalda                         | Sí                                   | Precio, Especialización, Recomendaciones            |
+| Guadalupe Pineda Tejeda         | 41-60       | Sí                             | Ocasional      | Dolor de espalda                         | No                                   | Ubicación, Precio                                   |
 | Reyes Ismael Sánchez Parra      | 18-25       | Sí                             | Varias veces al año | Dolor de espalda, Lesión deportiva       | No                                   | Ubicación, Precio, Recomendaciones                  |
-| Laura Fuentes González          | 18-25       | Sí                             | Ocasionalmente      | Dolor de espalda                         | No                                   | Precio, Especialización, Recomendaciones            |
-| Francisco Manuel Gómez Manzorro | 18-25       | Sí                             | Ocasionalmente      | Dolor de espalda                         | No                                   | Especialización                                     |
-| Borja Lozano Marcos             | 18-25       | Sí                             | Ocasionalmente      | Nudillo roto                             | No                                   | Precio                                              |
-| Ester Palomar Bonet             | 18-25       | Sí                             | Ocasionalmente      | Dolor de espalda                         | No                                   | Ubicación, Recomendaciones, Disponibilidad          |
-| María Macías Barrera            | 41-60       | Sí                             | Ocasionalmente      | Dolor de espalda                         | No                                   | Ubicación, Precio, Especialización                  |
-| Luis Manuel Martín Domínguez    | 41-60       | Sí                             | Ocasionalmente      | Lesión deportiva                         | No                                   | Ubicación, Precio                                   |
+| Laura Fuentes González          | 18-25       | Sí                             | Ocasional      | Dolor de espalda                         | No                                   | Precio, Especialización, Recomendaciones            |
+| Francisco Manuel Gómez Manzorro | 18-25       | Sí                             | Ocasional      | Dolor de espalda                         | No                                   | Especialización                                     |
+| Borja Lozano Marcos             | 18-25       | Sí                             | Ocasional      | Nudillo roto                             | No                                   | Precio                                              |
+| Ester Palomar Bonet             | 18-25       | Sí                             | Ocasional      | Dolor de espalda                         | No                                   | Ubicación, Recomendaciones, Disponibilidad          |
+| María Macías Barrera            | 41-60       | Sí                             | Ocasional      | Dolor de espalda                         | No                                   | Ubicación, Precio, Especialización                  |
+| Luis Manuel Martín Domínguez    | 41-60       | Sí                             | Ocasional      | Lesión deportiva                         | No                                   | Ubicación, Precio                                   |
 
 ### USUARIOS PILOTO TÉCNICOS
 
-| Nombre Completo                  | Edad       | ¿Ha acudido al fisioterapeuta? | Frecuencia           | Motivo de consulta                                      | ¿Busca fisioterapeutas por internet? | Preferencias de selección|
-| --------------------------------- | ---------- | ---------------------------- | -------------------- | ------------------------------------------------------- | ----------------------------------- | ------------------------- |
-| Antonio Daniel Porcar Aragón      | 18-25     | [Sí/No]                      | [Frecuencia]         | [Motivo de consulta]                                    | [Sí/No]                            | [Preferencias de selección] |
-| Antonio Jiménez Ortega            | 18-25     | [Sí/No]                      | [Frecuencia]         | [Motivo de consulta]                                    | [Sí/No]                            | [Preferencias de selección] |
-| David Guillén Fernández           | 18-25     | [Sí/No]                      | [Frecuencia]         | [Motivo de consulta]                                    | [Sí/No]                            | [Preferencias de selección] |
-| Jaime Linares Barrera             | 18-25     | [Sí/No]                      | [Frecuencia]         | [Motivo de consulta]                                    | [Sí/No]                            | [Preferencias de selección] |
-| Javier Ulecia García              | 18-25     | [Sí/No]                      | [Frecuencia]         | [Motivo de consulta]                                    | [Sí/No]                            | [Preferencias de selección] |
-| José Manuel Miret Martín          | 18-25     | [Sí/No]                      | [Frecuencia]         | [Motivo de consulta]                                    | [Sí/No]                            | [Preferencias de selección] |
+| Nombre Completo   | Edad     | ¿Ha acudido al fisioterapeuta? | Frecuencia        | Motivo de consulta   | ¿Busca fisioterapeutas por internet? | Preferencias de selección |
+| ----------------- | -------- | ------------------------------ | ----------------- | -------------------- | -------------------------------- | ----------------- |
+| Antonio Daniel Porcar Aragón | 18-25 | [Sí/No]                        | [Frecuencia] | [Motivo] | [Sí/No]                              | [Preferencias] |
+| Antonio Jiménez Ortega       | 18-25 | [Sí/No]                        | [Frecuencia] | [Motivo] | [Sí/No]                              | [Preferencias] |
+| David Guillén Fernández      | 18-25 | [Sí/No]                        | [Frecuencia] | [Motivo] | [Sí/No]                              | [Preferencias] |
+| Jaime Linares Barrera        | 18-25 | [Sí/No]                        | [Frecuencia] | [Motivo] | [Sí/No]                              | [Preferencias] |
+| Javier Ulecia García         | 18-25 | [Sí/No]                        | [Frecuencia] | [Motivo] | [Sí/No]                              | [Preferencias] |
+| José Manuel Miret Martín     | 18-25 | [Sí/No]                        | [Frecuencia] | [Motivo] | [Sí/No]                              | [Preferencias] |
 
+<br>
+
+<!-- \newpage -->
+
+<br>
 
 
 # 5. GESTIÓN DE LAS COMUNICACIONES CON LOS USUARIOS PILOTO
@@ -317,6 +350,13 @@ Recalcamos que los Usuarios Piloto ***Técnicos*** deberán completar el formula
 
 Se proporcionó documentación clara y soporte técnico para facilitar el uso de la plataforma y resolver dudas o problemas encontrados por los usuarios piloto, fomentando por parte del equipo de desarrollo la **elaboración de vídeos** explicativos en el que se detallen los casos de uso que el usuario debe probar.
 
+<br>
+
+<!-- \newpage -->
+
+<br>
+
+
 # 6. FEEDBACK OBTENIDO
 
 Una vez completados los formularios, el equipo encargado de la gestión del feedback procesará los datos y elaborará un informe detallado sobre el feedback obtenido. El feedback de cada sesión de evaluación de los usuarios piloto será registrado en su informe pertinente ubicado en `/docs/03_reports/pilot_user_reports`. Se realizará un informe por Sprint.
@@ -342,6 +382,5 @@ Todo este feedback será elaluado y contemplado por los responsables de calidad 
 Se realizará una calificación a los Usuarios Piloto Técnicos (alumnos de ISPP) de forma individual, en función de su grado de completitud y contribución al feedback atendiendo a la siguiente rúbrica establecida por los profesores de la asignatura:
 
 
-| Fecha de acceso al sistema | Fecha de envío del feedback | Enlace Clockify (solo estudiantes) | Usuario(s) piloto | Fallos encontrados | Recomendaciones de mejora | Otros comentarios |
-|---------------------------|----------------------------|------------------------------------|-------------------|--------------------|-------------------------|------------------|
-|                           |                            |                                    |                   |                    |                         |                  |
+| Usuario piloto | Fecha acceso al sistema | Fecha envío de feedback | Enlace Clockify | Fallos encontrados | Recomendaciones de mejora | Otros comentarios |
+| -------------- |------------------------ | ----------------------- | --------------- |  ----------------- | ------------------------- | ----------------- |

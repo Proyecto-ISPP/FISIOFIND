@@ -26,9 +26,6 @@ export interface Service {
   duration: string;
 }
 
-// definitions.ts
-// definitions.ts
-// definitions.ts
 export interface AppointmentData {
   start_time: string;
   end_time: string;
@@ -43,11 +40,28 @@ export interface AppointmentData {
   alternatives: string;
 }
 
-
-
 export interface PaymentMethod {
   id: string;
   name: string;
   description?: string;
   imageUrl: string;
+}
+
+export interface ScheduleInterval {
+  start: string;
+  end: string;
+}
+
+export interface WeeklySchedule {
+  monday: ScheduleInterval[];
+  tuesday: ScheduleInterval[];
+  wednesday: ScheduleInterval[];
+  thursday: ScheduleInterval[];
+  friday: ScheduleInterval[];
+  saturday: ScheduleInterval[];
+  sunday: ScheduleInterval[];
+}
+
+export interface ScheduleData {
+  weekly_schedule: WeeklySchedule;
 }

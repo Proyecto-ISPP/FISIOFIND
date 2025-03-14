@@ -88,11 +88,11 @@ classoption: "table"
 
 | Nombre completo | Rol | Contacto |
 |----------------|-----|----------|
-| Francisco Capote García | Backend | fracapgar1@alum.us.es |
-| Francisco Mateos Villarejo | Backend | framatvil@alum.us.es |
-| Daniel Tortorici Bartús | Frontend | dantorbar1@alum.us.es |
-| Daniel Vela Camacho | Frontend | danvelcam@alum.us.es |
-| Miguel Encina Martínez | Fullstack | migencmar@alum.us.es |
+| Francisco Capote García | -- | fracapgar1@alum.us.es |
+| Francisco Mateos Villarejo | -- | framatvil@alum.us.es |
+| Daniel Tortorici Bartús | -- | dantorbar1@alum.us.es |
+| Daniel Vela Camacho | -- | danvelcam@alum.us.es |
+| Miguel Encina Martínez | -- | migencmar@alum.us.es |
 
 
 

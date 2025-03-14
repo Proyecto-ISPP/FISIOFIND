@@ -15,16 +15,34 @@ from pathlib import Path
 import os
 from django.conf.global_settings import MEDIA_URL
 from dotenv import load_dotenv
+import os
+import dj_database_url  # Para parsear la URL de la base de datos
+import environ
 
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.getenv('SECRET_KEY')
+
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-temporary-key-for-deployment')
 
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'fisiofind-backend.azurewebsites.net', 'fisiofind.netlify.app']
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://fisiofind-backend.azurewebsites.net"
+]
+SECURE_PROXY_SSL_HEADER = ("X-Forwarded-Proto", "https")
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+CSRF_USE_SESSIONS = True
+
+# Application definition
 
 INSTALLED_APPS = [
     'daphne',
@@ -62,13 +80,38 @@ INSTALLED_APPS += [ 'corsheaders', 'django_extensions',
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # Move this up
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # Remove the duplicate corsheaders.middleware.CorsMiddleware from here
+    'django.middleware.common.CommonMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+]
+
+# Add additional CORS settings
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
 ]
 
 REST_FRAMEWORK = {
@@ -91,6 +134,8 @@ SIMPLE_JWT = {
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://localhost:3000",
+    "https://fisiofind-backend.azurewebsites.net",  # Note the comma here
+    "https://fisiofind.netlify.app"
 ]
 
 ROOT_URLCONF = 'fisio_find.urls'
@@ -120,16 +165,39 @@ CHANNEL_LAYERS = {
     },
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.getenv('DATABASE_NAME'),
+#         'USER': os.getenv('DATABASE_USER'),
+#         'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+#         'HOST': os.getenv('DATABASE_HOST'),
+#         'PORT': os.getenv('DATABASE_PORT'),
+#     }
+# }
+
+env = environ.Env()
+environ.Env.read_env()
+
+IS_PRODUCTION = os.getenv('DJANGO_PRODUCTION', env.bool('DJANGO_PRODUCTION', default=False))
+
+DEBUG = not IS_PRODUCTION
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DATABASE_NAME'),
-        'USER': os.getenv('DATABASE_USER'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
-        'HOST': os.getenv('DATABASE_HOST'),
-        'PORT': os.getenv('DATABASE_PORT'),
+        'NAME': os.getenv('DATABASE_NAME', env('DATABASE_NAME', default='postgres')),
+        'USER': os.getenv('DATABASE_USER', env('DATABASE_USER', default='postgres')),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD', env('DATABASE_PASSWORD', default='')),
+        'HOST': os.getenv('DATABASE_HOST', env('DATABASE_HOST', default='localhosts')),
+        'PORT': os.getenv('DATABASE_PORT', env('DATABASE_PORT', default='5432')),
+        'OPTIONS': {
+            'sslmode': 'require' if IS_PRODUCTION else 'prefer',
+        },
     }
 }
+
+ALLOWED_HOSTS = ['*'] if DEBUG else ['fisiofind-backend.azurewebsites.net']
 
 AUTH_USER_MODEL = 'gestion_usuarios.AppUser'
 

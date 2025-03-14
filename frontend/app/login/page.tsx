@@ -4,6 +4,7 @@ import React, { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import Image from "next/image";
+import { getApiBaseUrl } from "@/utils/api";
 
 export default function LoginPaciente() {
   const router = useRouter();
@@ -11,13 +12,10 @@ export default function LoginPaciente() {
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { name, value } = e.target;
-      setFormData(prev => ({ ...prev, [name]: value }));
-    },
-    []
-  );
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -26,7 +24,7 @@ export default function LoginPaciente() {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/app_user/login/",
+        `${getApiBaseUrl()}/api/app_user/login/`,
         formData,
         { headers: { "Content-Type": "application/json" } }
       );
@@ -39,7 +37,9 @@ export default function LoginPaciente() {
         }, 500);
       }
     } catch (error: any) {
-      setMessage(error.response?.data?.error || "Las credenciales no son válidas");
+      setMessage(
+        error.response?.data?.error || "Las credenciales no son válidas"
+      );
       console.error("Error al iniciar sesión:", error);
     } finally {
       setIsSubmitting(false);
@@ -57,7 +57,9 @@ export default function LoginPaciente() {
             height={120}
             className="mx-auto mb-4"
           />
-          <h1 className="text-3xl font-bold text-[#1E5ACD]">Inicio de Sesión</h1>
+          <h1 className="text-3xl font-bold text-[#1E5ACD]">
+            Inicio de Sesión
+          </h1>
           <p className="text-gray-600 dark:text-gray-400 mt-2">
             Ingresa tus credenciales para continuar
           </p>
@@ -67,7 +69,9 @@ export default function LoginPaciente() {
           {message && (
             <p
               className={`text-center mb-4 ${
-                message === "Inicio de sesión exitoso" ? "text-green-500" : "text-red-500"
+                message === "Inicio de sesión exitoso"
+                  ? "text-green-500"
+                  : "text-red-500"
               }`}
             >
               {message}
@@ -76,7 +80,10 @@ export default function LoginPaciente() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="mb-4">
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-white mb-1">
+              <label
+                htmlFor="username"
+                className="block text-sm font-medium text-gray-700 dark:text-white mb-1"
+              >
                 Nombre de usuario <span className="text-red-500">*</span>
               </label>
               <input
@@ -92,7 +99,10 @@ export default function LoginPaciente() {
             </div>
 
             <div className="mb-4">
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-white mb-1">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700 dark:text-white mb-1"
+              >
                 Contraseña <span className="text-red-500">*</span>
               </label>
               <input
@@ -119,7 +129,10 @@ export default function LoginPaciente() {
           <div className="text-center mt-6">
             <p className="text-gray-600 dark:text-gray-400">
               ¿No tienes cuenta?{" "}
-              <button onClick={() => router.push("/register")} className="text-[#1E5ACD] hover:underline font-medium">
+              <button
+                onClick={() => router.push("/register")}
+                className="text-[#1E5ACD] hover:underline font-medium"
+              >
                 Registrarse
               </button>
             </p>
@@ -127,7 +140,17 @@ export default function LoginPaciente() {
               onClick={() => router.push("/")}
               className="mt-4 text-gray-500 hover:text-gray-700 flex items-center gap-2 mx-auto"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 <path d="M19 12H5M12 19l-7-7 7-7" />
               </svg>
               Volver a la página principal

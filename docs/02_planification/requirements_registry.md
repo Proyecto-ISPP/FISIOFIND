@@ -89,7 +89,7 @@ classoption: "table"
 | 12/02/2025 | v1.1    | Alberto Carmona Sicre, Daniel Fernández Caballero       | Modificado el apartado de requisitos funcionales |
 | 12/02/2025 | v1.2    | Daniel Alors Romero       | Modificados los apartados de requisitos funcionales y no funcionales  |
 | 12/02/2025 | v1.3    | Daniel Fernández Caballero      | Añadidos nuevos requisitos funcionales, editados los requisitos funcionales 6, 7, 12, y 23 y añadidos nuevos requisitos no funcionales  |
-| 23/02/2025 | v2.0    | Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Delfín Santana Rubio   | Modificación de los requisitos de acuerdo con la nueva versión de historias de usuario (fisioterapeutas y administradores)  |
+| 23/02/2025 | v2.0    | Guadalupe Ridruejo Pineda, Julen Redondo Pacheco   | Modificación de los requisitos de acuerdo con la nueva versión de historias de usuario (fisioterapeutas y administradores)  |
 | 27/02/2025 | v2.1    | Guadalupe Ridruejo Pineda  | Añadido nuevo requisito de comprobación continua de fisioterapeutas colegiados |
 | 27/02/2025 | v2.2    | Guadalupe Ridruejo Pineda  | Numeración de requisitos |
 | 27/02/2025 | v3.0    | Guadalupe Ridruejo Pineda  | Requisitos de información |

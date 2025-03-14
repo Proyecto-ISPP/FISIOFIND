@@ -129,6 +129,7 @@ def physio_update_view(request):
                 
     # Serializar y validar los datos enviados
     serializer = PhysioRegisterSerializer(physio, data=request_data, partial=True)
+    print(request_data['schedule'])
     
     if serializer.is_valid():
         serializer.update(physio, serializer.validated_data)

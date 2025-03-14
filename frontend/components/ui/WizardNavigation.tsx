@@ -4,12 +4,15 @@ import { useAppointment } from "@/context/appointmentContext";
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { getApiBaseUrl } from "@/utils/api";
 
 interface WizardNavigationProps {
   currentStep: number;
   totalSteps: number;
   goToNext: () => void;
   goToPrevious: () => void;
+  token: string | null;
+  isClient: boolean;
 }
 
 const WizardNavigation: React.FC<WizardNavigationProps> = ({
@@ -17,6 +20,8 @@ const WizardNavigation: React.FC<WizardNavigationProps> = ({
   totalSteps,
   goToNext,
   goToPrevious,
+  token,
+  isClient,
 }) => {
   const [currentRole, setCurrentRole] = useState("");
   const { state } = useAppointment();
@@ -25,59 +30,63 @@ const WizardNavigation: React.FC<WizardNavigationProps> = ({
 
   // Obtener el rol actual del usuario mediante una petición de axios
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      axios
-        .get("http://localhost:8000/api/app_user/check-role/", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((response) => {
-          setCurrentRole(response.data.user_role);
-        })
-        .catch((error) => {
-          console.error("Error fetching data:", error);
-        });
+    if (isClient) {
+      if (token) {
+        axios
+          .get(`${getApiBaseUrl()}/api/app_user/check-role/`, {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          })
+          .then((response) => {
+            setCurrentRole(response.data.user_role);
+          })
+          .catch((error) => {
+            console.error("Error fetching data:", error);
+          });
+      }
     }
-  }, []);
+  }, [isClient, token]);
 
   const createAppointment = () => {
     if (currentRole === "patient") {
       // Si el rol es 'patient', se procede a confirmar la cita
-      const token = localStorage.getItem("token");
-      axios
-        .post(
-          `http://localhost:8000/api/appointment/patient/`,
-          {
-            start_time: appointmentData?.start_time,
-            end_time: appointmentData?.end_time,
-            is_online: appointmentData?.is_online,
-            service: appointmentData?.service,
-            physiotherapist: appointmentData?.physiotherapist,
-            status: "booked",
-            alternatives: "",
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        )
-        .then((response) => {
-          alert("La cita se realizó correctamente.");
-          console.log("Cita realizada correctamente", response);
-          // Redirigir a la pestaña 'mis-citas'
-          router.push("/mis-citas");
-        })
-        .catch((error) => {
-          console.error("Error en la creación de la cita:", error);
-          alert("Hubo un problema con la conexión. Intenta nuevamente.");
-        });
-    } else {
-      // Si el rol no es 'patient', se muestra un mensaje y se redirige a la página de registro de paciente
-      alert("Debe registrarse como paciente para confirmar la cita.");
-      router.push("/register/patient");
+      if (isClient) {
+        if (token) {
+          axios
+            .post(
+              `${getApiBaseUrl()}/api/appointment/patient/`,
+              {
+                start_time: appointmentData?.start_time,
+                end_time: appointmentData?.end_time,
+                is_online: appointmentData?.is_online,
+                service: appointmentData?.service,
+                physiotherapist: appointmentData?.physiotherapist,
+                status: "booked",
+                alternatives: "",
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            )
+            .then((response) => {
+              alert("La cita se realizó correctamente.");
+              console.log("Cita realizada correctamente", response);
+              // Redirigir a la pestaña 'mis-citas'
+              router.push("/mis-citas");
+            })
+            .catch((error) => {
+              console.error("Error en la creación de la cita:", error);
+              alert("Hubo un problema con la conexión. Intenta nuevamente.");
+            });
+        } else {
+          // Si el rol no es 'patient', se muestra un mensaje y se redirige a la página de registro de paciente
+          alert("Debe registrarse como paciente para confirmar la cita.");
+          router.push("/register/patient");
+        }
+      }
     }
   };
 

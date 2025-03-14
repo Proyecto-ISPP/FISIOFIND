@@ -7,7 +7,7 @@ import WizardNavigation from "./WizardNavigation";
 import { Service, Step } from "@/lib/definitions";
 import { AppointmentProvider } from "@/context/appointmentContext"; // Asegúrate de ajustar la ruta
 
-const Wizard: React.FC<{ steps: Step[] }> = ({ steps }) => {
+const Wizard: React.FC<{ steps: Step[], token: string, isClient: boolean}> = ({ steps }) => {
   const [currentStep, setCurrentStep] = useState<number>(1);
 
   const services: Service[] = [
@@ -53,6 +53,8 @@ const Wizard: React.FC<{ steps: Step[] }> = ({ steps }) => {
             totalSteps={steps.length}
             goToNext={goToNextStep}
             goToPrevious={goToPreviousStep}
+            token={token}
+            isClient={isClient}
           />
         </div>
       </div>

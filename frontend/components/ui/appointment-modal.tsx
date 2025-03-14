@@ -1,61 +1,61 @@
-import React from "react";
 import axios from "axios";
 import { CalendarProps } from "@/lib/definitions";
 import Image from "next/image";
 import AlternativeSelector from "./alternative-selector";
+import { getApiBaseUrl } from "@/utils/api";
 
 interface AppointmentModalProps {
   selectedEvent: CalendarProps | null;
   currentRole: string;
   setSelectedEvent: (event: CalendarProps | null) => void;
   setEditionMode: (mode: boolean) => void;
+  isClient: boolean;
+  token: string | null;
 }
-
-const deleteEvent = (selectedEvent: CalendarProps | null) => {
-  if (!selectedEvent) return;
-
-  axios
-    .delete(`http://localhost:8000/api/appointment/delete/${selectedEvent.id}/`,{
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    })
-    .then((response) => {
-      alert("La cita se eliminó correctamente.");
-      window.location.reload();
-    })
-    .catch((error) => {
-      alert("Hubo un problema con la conexión. Intenta nuevamente.");
-    });
-};
 
 const AppointmentModal: React.FC<AppointmentModalProps> = ({
   selectedEvent,
   currentRole,
   setSelectedEvent,
   setEditionMode,
+  isClient,
+  token
 }) => {
   if (!selectedEvent) return null;
 
+  const deleteEvent = (selectedEvent: CalendarProps | null) => {
+    if (!selectedEvent) return;
+    if (isClient) {
+      if (token) {
+        axios
+          .delete(`${getApiBaseUrl()}/api/appointment/${selectedEvent.id}/`)
+          .then((response) => {
+            alert("La cita se eliminó correctamente.");
+          })
+          .catch((error) => {
+            alert("Hubo un problema con la conexión. Intenta nuevamente.");
+          });
+      }
+    }
+  };
+
   const handleSelection = (date: string, startTime: string) => {
- 
+
     const [startTimeSplit, endTimeSplit] = startTime.split(" - "); // Tomamos solo la hora de inicio
     const startDateTime = new Date(`${date}T${startTimeSplit}:00Z`).toISOString(); // Generamos la fecha completa en formato UTC
     const endDateTime = new Date(`${date}T${endTimeSplit}:00Z`).toISOString(); // Generamos la fecha completa en formato UTC
-    
+
     console.log("Seleccion confirmada:", { startDateTime, endDateTime });
     alert(`Seleccionaste: ${startDateTime} - ${endDateTime}`);
-
-    const token = localStorage.getItem("token"); // Obtén el JWT desde localStorage (o desde donde lo tengas almacenado)
     
-    axios.put(`http://localhost:8000/api/appointment/update/${selectedEvent?.id}/`, {
+    axios.put(`${getApiBaseUrl()}/api/appointment/update/${selectedEvent?.id}/`, {
       "start_time": startDateTime,
       "end_time": endDateTime,
       "status": "confirmed",
       "alternatives": selectedEvent.alternatives,
     }, {
       headers: {
-        Authorization: `Bearer ${token}`, // Envía el JWT en la cabecera de la petición
+        Authorization: "Bearer " + token, // Envía el JWT en la cabecera de la petición
       },
     })
       .then((response) => {
@@ -135,4 +135,4 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
   );
 };
 
-export { AppointmentModal, deleteEvent };
+export { AppointmentModal };

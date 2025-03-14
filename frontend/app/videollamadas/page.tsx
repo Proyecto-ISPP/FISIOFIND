@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
+import { getApiBaseUrl } from "@/utils/api";
 
 interface RoomDetails {
   code: string;
@@ -17,6 +18,12 @@ const VideoCallPage = () => {
   // Estados para el modal
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
+  const [isClient, setIsClient] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const createRoom = async () => {
     if (!userRole) {
@@ -31,12 +38,16 @@ const VideoCallPage = () => {
       return;
     }
 
-    try {
-      const response = await axios.post("http://localhost:8000/api/videocall/create-room/");
-      setRoomCode(response.data.code);
-      window.location.href = `/videollamadas/${response.data.code}?role=${userRole}`;
-    } catch (error) {
-      console.error("Error creating room:", error);
+    if (isClient) {
+      const storedToken = localStorage.getItem("token");
+      setToken(storedToken);
+      try {
+        const response = await axios.post(`${getApiBaseUrl()}/api/videocall/create-room/`);
+        setRoomCode(response.data.code);
+        window.location.href = `/videollamadas/${response.data.code}?role=${userRole}`;
+      } catch (error) {
+        console.error("Error creating room:", error);
+      }
     }
   };
 
@@ -46,8 +57,14 @@ const VideoCallPage = () => {
       return;
     }
 
+    // Add validation to ensure code is not empty
+    if (!code || code.trim() === '') {
+      alert("Por favor, ingresa un código de sala válido.");
+      return;
+    }
+
     try {
-      const response = await axios.get(`http://localhost:8000/api/videocall/join-room/${code}/`);
+      const response = await axios.get(`${getApiBaseUrl()}/api/videocall/join-room/${code}/`);
       setRoomDetails(response.data);
       window.location.href = `/videollamadas/${response.data.code}?role=${userRole}`;
     } catch (error) {

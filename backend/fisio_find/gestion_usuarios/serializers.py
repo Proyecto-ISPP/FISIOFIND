@@ -266,12 +266,13 @@ class PhysioRegisterSerializer(serializers.ModelSerializer):
     specializations = serializers.ListField(
         child=serializers.CharField(), required=False  # Lista de nombres de especializaciones
     )
+    schedule = serializers.JSONField(required=False)
     
     class Meta:
         model = Physiotherapist
         fields = [
             'username', 'email', 'password', 'dni', 'gender', 'first_name', 'last_name', 
-            'birth_date', 'collegiate_number', 'autonomic_community', 'phone_number', 'postal_code', 'bio', 'photo', 'services', 'specializations'
+            'birth_date', 'collegiate_number', 'autonomic_community', 'phone_number', 'postal_code', 'bio', 'photo', 'services', 'specializations', 'schedule'
         ]
         
     def validate_password(self, value):
@@ -368,6 +369,7 @@ class PhysioRegisterSerializer(serializers.ModelSerializer):
                 # Actualizar datos del fisioterapeuta (Physiotherapist)
                 instance.bio = validated_data.get("bio", instance.bio)
                 instance.services = validated_data.get("services", instance.services)
+                instance.schedule = validated_data.get("schedule", instance.schedule)
                 instance.save()
 
                 return instance

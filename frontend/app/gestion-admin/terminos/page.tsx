@@ -1,8 +1,9 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { print_time } from "../util";
+import { getApiBaseUrl } from "@/utils/api";
 
 interface terminoInterface {
   id: string;
@@ -15,53 +16,68 @@ interface terminoInterface {
 export default function GestionarTerminos() {
   const [terminos, setTerminos] = useState<[terminoInterface] | null>(null);
 
-  const token = localStorage.getItem("token")
-  useEffect(() => {    
-    if (token) {
-      axios.get("http://127.0.0.1:8000/api/app_user/check-role/", {
-        headers : {
-          "Authorization": "Bearer "+token
-        }
-      }
-      ).then(response => {
-          const role = response.data.user_role;
-          if (role != "admin") {
-            location.href = ".."
-          }
-        })
-        .catch(error => {
-          console.log("Error fetching data:", error);
-          location.href = ".."
-        });
-    } else {
-      location.href = ".."
-    }
-  },[])
-
+  const [isClient, setIsClient] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    axios.get('http://localhost:8000/api/terminos/list/', {
-      headers : {
-        "Authorization": "Bearer "+token
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (isClient) {
+      const storedToken = localStorage.getItem("token");
+      setToken(storedToken);
+      if (token) {
+        axios
+          .get(`${getApiBaseUrl()}/api/app_user/check-role/`, {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          })
+          .then((response) => {
+            const role = response.data.user_role;
+            if (role != "admin") {
+              location.href = "..";
+            }
+          })
+          .catch((error) => {
+            console.error("Error fetching data:", error);
+            location.href = "..";
+          });
+      } else {
+        location.href = "..";
       }
     }
-    ).then(response => {
+  }, [isClient, token]);
+
+  useEffect(() => {
+    axios
+      .get(`${getApiBaseUrl()}/api/terminos/list/`, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      })
+      .then((response) => {
         setTerminos(response.data);
 
       })
       .catch(error => {
         console.log("Error fetching data:", error);
       });
-  }, []);
+  }, [token]);
 
   return (
     <>
       <div className="admin-header">
-        <a href="/gestion-admin/"><button className="btn-admin">Volver</button></a>
+        <a href="/gestion-admin/">
+          <button className="btn-admin">Volver</button>
+        </a>
         <h1>Página de administración de términos</h1>
       </div>
       <div className="terminos-container">
-        <a href="/gestion-admin/terminos/create"><button className="btn-admin">Crear</button></a>
+        <a href="/gestion-admin/terminos/create">
+          <button className="btn-admin">Crear</button>
+        </a>
         <div>
           {terminos && 
             terminos.map(function(termino,key) {

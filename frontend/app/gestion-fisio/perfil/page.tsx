@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "./photo.scss";
+import ScheduleCalendar from "@/components/ui/ScheduleCalendar";
+import { getApiBaseUrl } from "@/utils/api";
 
 const getAuthToken = () => {
     return localStorage.getItem("token"); // Obtiene el token JWT
@@ -31,11 +33,19 @@ const FisioProfile = () => {
         services: ""
     });
 
+    
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [formErrors, setFormErrors] = useState({});
     const [showServiceModal, setShowServiceModal] = useState(false);
     const [services, setServices] = useState([]);
+    const [schedule, setSchedule] = useState<string[] | null>(null);
+    const [isClient, setIsClient] = useState(false);
+    const [token, setToken] = useState<string | null>(null);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
 
     const handleAddService = (newService) => {
         setServices([...services, newService]);
@@ -49,54 +59,62 @@ const FisioProfile = () => {
                 URL.revokeObjectURL(profile.user.photo);
             }
         };
-    }, []);
+    }, [token, isClient]);
 
     const fetchFisioProfile = async () => {
-        try {
-            const token = getAuthToken();
-            if (!token) {
-                setError("No hay token disponible.");
+        if (isClient) {
+            try {
+                const storedToken = getAuthToken();
+                setToken(storedToken)
+                if (!token) {
+                    setError("No hay token disponible.");
+                    setLoading(false);
+                    return;
+                }
+
+                const response = await axios.get(`${getApiBaseUrl()}/api/app_user/current-user/`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+
+                setProfile({
+                    user: {
+                        dni: response.data.physio.user_data.dni,
+                        email: response.data.physio.user_data.email,
+                        first_name: response.data.physio.user_data.first_name,
+                        last_name: response.data.physio.user_data.last_name,
+                        phone_number: response.data.physio.user_data.phone_number,
+                        photo: response.data.physio.user_data.photo,
+                        postal_code: response.data.physio.user_data.postal_code,
+                        user_id: response.data.physio.user_data.user_id,
+                        username: response.data.physio.user_data.username,
+                    },
+                    autonomic_community: response.data.physio.autonomic_community,
+                    bio: response.data.physio.bio,
+                    birth_date: response.data.physio.birth_date,
+                    collegiate_number: response.data.physio.collegiate_number,
+                    gender: response.data.physio.gender,
+                    rating_avg: response.data.physio.rating_avg,
+                    schedule: response.data.physio.schedule,
+                    services: response.data.physio.services
+                });
+                if (response.data.physio.services) {
+                    setServices(JSON.parse(response.data.physio.services));
+                }
+            } catch {
+                setError("Error obteniendo el perfil.");
+            } finally {
                 setLoading(false);
-                return;
             }
-
-            const response = await axios.get("http://localhost:8000/api/app_user/current-user/", {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-
-            setProfile({
-                user: {
-                    dni: response.data.physio.user_data.dni,
-                    email: response.data.physio.user_data.email,
-                    first_name: response.data.physio.user_data.first_name,
-                    last_name: response.data.physio.user_data.last_name,
-                    phone_number: response.data.physio.user_data.phone_number,
-                    photo: response.data.physio.user_data.photo,
-                    postal_code: response.data.physio.user_data.postal_code,
-                    user_id: response.data.physio.user_data.user_id,
-                    username: response.data.physio.user_data.username,
-                },
-                autonomic_community: response.data.physio.autonomic_community,
-                bio: response.data.physio.bio,
-                birth_date: response.data.physio.birth_date,
-                collegiate_number: response.data.physio.collegiate_number,
-                gender: response.data.physio.gender,
-                rating_avg: response.data.physio.rating_avg,
-                schedule: response.data.physio.schedule,
-                services: response.data.physio.services
-            });
-            if (response.data.physio.services) {
-                setServices(JSON.parse(response.data.physio.services));
-            }
-        } catch {
-            setError("Error obteniendo el perfil.");
-        } finally {
-            setLoading(false);
         }
     };
 
+    // Manejar actualizaciones del calendario
+    const handleScheduleChange = (newSchedule) => {
+        setSchedule(newSchedule);
+    };
+
     // Validaciones de los campos editables
-    const validateField = (name: string, value: string) => {
+    const validateField = (name, value) => {
         let error = "";
 
         switch (name) {
@@ -123,7 +141,7 @@ const FisioProfile = () => {
         return error === "";
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e) => {
         const { name, value } = e.target;
 
         validateField(name, value); // Validar cada campo en tiempo real
@@ -138,7 +156,7 @@ const FisioProfile = () => {
         }
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         // Validar todos los campos antes de enviar
@@ -152,7 +170,6 @@ const FisioProfile = () => {
         }
 
         try {
-            const token = getAuthToken();
             if (!token) {
                 setError("No hay token disponible.");
                 return;
@@ -160,32 +177,36 @@ const FisioProfile = () => {
 
             const formData = new FormData();
             Object.entries(profile.user).forEach(([key, value]) => {
-                if (key !== "photo" && value) formData.append(`user.${key}`, value);
+                if (key !== "photo" && key !== "photoFile" && value) formData.append(`user.${key}`, value);
             });
 
             if (profile.user.photoFile) {
                 formData.append("user.photo", profile.user.photoFile);
             }
 
-            formData.append("gender", profile.gender);
-            formData.append("birth_date", profile.birth_date);
-            formData.append("autonomic_community", profile.autonomic_community);
-            formData.append("collegiate_number", profile.collegiate_number);
-            formData.append("bio", profile.bio);
-            formData.append("rating_avg", profile.rating_avg);
-            formData.append("schedule", profile.schedule);
+            formData.append("gender", profile.gender || "");
+            formData.append("birth_date", profile.birth_date || "");
+            formData.append("autonomic_community", profile.autonomic_community || "");
+            formData.append("collegiate_number", profile.collegiate_number || "");
+            formData.append("bio", profile.bio || "");
+            formData.append("rating_avg", profile.rating_avg || "");
+            
+            // Actualizar el schedule con los datos actuales del calendario
+            const { initialized, ...scheduleWithoutInitialized } = schedule;
+            formData.append("schedule", JSON.stringify(scheduleWithoutInitialized));
+            
             formData.append("services", JSON.stringify(services));
-            console.log(services);
 
-            const response = await axios.post("http://localhost:8000/api/app_user/physio/update/", formData, {
-                headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
+            const response = await axios.post(`${getApiBaseUrl()}/api/app_user/physio/update/`, formData, {
+                headers: { Authorization: "Bearer " + token, "Content-Type": "multipart/form-data" },
             });
 
             if (response.status === 200) {
                 alert("Perfil actualizado correctamente");
                 fetchFisioProfile();
             }
-        } catch (error: any) {
+        } catch (error) {
+            console.error("Error updating profile:", error);
             if (error.response) {
                 alert(`Error: ${JSON.stringify(error.response.data)}`);
             } else {
@@ -223,7 +244,7 @@ const FisioProfile = () => {
 
         // Si no existe un previewUrl, entonces usar la imagen del backend si está disponible
         if (profile?.user?.photo) {
-            return `http://localhost:8000/api/app_user${profile.user.photo}`;
+            return `${getApiBaseUrl()}/api/app_user${profile.user.photo}`;
         }
 
         // Si no hay foto, usar la imagen por defecto
@@ -237,31 +258,25 @@ const FisioProfile = () => {
         const [frecuencia, setFrecuencia] = useState("diaria"); // Valor por defecto
         const [duracion, setDuracion] = useState("");
         const [unidadDuracion, setUnidadDuracion] = useState("días"); // Valor por defecto
-    
+
         const handleSave = () => {
             const newService = { titulo, descripcion, precio, frecuencia, duracion: `${duracion} ${unidadDuracion}` };
             onSave(newService);
-            console.log(newService);
         };
 
-        const handleAddService = (newService) => {
-            setServices((prevServices) => [...prevServices, newService]); // Añadir el nuevo servicio
-            setShowServiceModal(false); // Cerrar el modal
-        };
-    
         return (
             <div className="modal-overlay">
                 <div className="modal-content">
                     <h2>Añadir servicio</h2>
                     <label>Título:</label>
                     <input type="text" value={titulo} onChange={(e) => setTitulo(e.target.value)} />
-    
+
                     <label>Descripción:</label>
                     <textarea value={descripcion} onChange={(e) => setDescripcion(e.target.value)} />
-    
+
                     <label>Precio:</label>
                     <input type="text" value={precio} placeholder="€ / consulta" onChange={(e) => setPrecio(e.target.value)} />
-    
+
                     <label>Frecuencia:</label>
                     <select value={frecuencia} onChange={(e) => setFrecuencia(e.target.value)}>
                         <option value="diaria">Diaria</option>
@@ -271,7 +286,7 @@ const FisioProfile = () => {
                         <option value="trimestral">Trimestral</option>
                         <option value="semestral">Semestral</option>
                     </select>
-    
+
                     <label>Duración:</label>
                     <div className="duration-input">
                         <input
@@ -286,7 +301,7 @@ const FisioProfile = () => {
                             <option value="meses">Meses</option>
                         </select>
                     </div>
-    
+
                     <button onClick={handleSave}>Guardar</button>
                     <button onClick={onClose}>Cancelar</button>
                 </div>
@@ -323,6 +338,11 @@ const FisioProfile = () => {
                     <p>Número de colegiado: {profile?.collegiate_number || "No disponible"}</p>
                     <p>Colegio: {profile?.autonomic_community || "No disponible"}</p>
                 </div>
+                <h3 className="mt-4 mb-2 font-bold">Calendario de disponibilidad</h3>
+                <ScheduleCalendar 
+                    initialSchedule={schedule} 
+                    onScheduleChange={handleScheduleChange}
+                />
             </div>
 
             {/* Sección derecha con el formulario */}

@@ -21,3 +21,28 @@ export function formatAppointment(isoString: string): { date: string; time: stri
     }),
   };
 }
+
+export function prepareScheduleForBackend(schedule) {
+  // Transformar weekly_schedule
+  const weekly_schedule = Object.keys(schedule.weekly_schedule).reduce((acc, day) => {
+    acc[day] = schedule.weekly_schedule[day].map((block) =>
+      block.map(({ id, ...rest }) => rest)
+    );
+    return acc;
+  }, {});
+
+  // Transformar exceptions
+  const exceptions = Object.keys(schedule.exceptions).reduce((acc, dateKey) => {
+    acc[dateKey] = schedule.exceptions[dateKey].map(({ id, ...rest }) => rest);
+    return acc;
+  }, {});
+
+  // Las appointments se pueden transformar de manera similar si contienen id's
+  const appointments = schedule.appointments.map(({ id, ...rest }) => rest);
+
+  return { 
+    exceptions, 
+    appointments, 
+    weekly_schedule 
+  };
+};

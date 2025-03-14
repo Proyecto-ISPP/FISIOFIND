@@ -5,10 +5,11 @@ import esLocale from "@fullcalendar/core/locales/es";
 import listPlugin from "@fullcalendar/list";
 import { CalendarProps } from "@/lib/definitions";
 import "@/app/mis-citas/mis-citas.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import DynamicFormModal from "./dinamic-form-modal";
 import { AppointmentModal } from "./appointment-modal";
+import { getApiBaseUrl } from "@/utils/api";
 
 const Calendar = ({
   events,
@@ -24,24 +25,43 @@ const Calendar = ({
   );
   // const [events, setEvents] = useState();
   const [editionMode, setEditionMode] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (isClient) {
+      const storedToken = localStorage.getItem("token");
+      setToken(storedToken);
+    }
+  }, [isClient, token]);
 
   // useEffect(() => {
-  //   axios.get("http://localhost:8000/api/appointment?physiotherapist=2")
-  //     .then(response => {
-  //       const transformedEvents = response.data.map((event: any) => ({
-  //         id: event.id,
-  //         title: event.title,
-  //         start: event.start_time,  // Cambio de start_time a start
-  //         end: event.end_time,      // Cambio de end_time a end
-  //         description: event.description,
-  //         allDay: event.allDay || false,
-  //       }));
-  //       setEvents(transformedEvents);
-  //     })
-  //     .catch(error => {
-  //       console.error("Error fetching data:", error);
-  //     });
-  // }, []);
+  //   if (isClient) {
+  //     const storedToken = localStorage.getItem("token");
+  //     setToken(storedToken);
+  //     if (token) {
+  //       axios.get(`${getApiBaseUrl()}/api/appointment?physiotherapist=2`)
+  //         .then(response => {
+  //           const transformedEvents = response.data.map((event: any) => ({
+  //             id: event.id,
+  //             title: event.title,
+  //             start: event.start_time,  // Cambio de start_time a start
+  //             end: event.end_time,      // Cambio de end_time a end
+  //             description: event.description,
+  //             allDay: event.allDay || false,
+  //           }));
+  //           setEvents(transformedEvents);
+  //         })
+  //         .catch(error => {
+  //           console.error("Error fetching data:", error);
+  //         });
+  //     }
+  //   }
+  // }, [token, isClient]);
 
   // Función para recibir las alternativas del modal
   const handleAlternativesSubmit = (
@@ -50,29 +70,34 @@ const Calendar = ({
     console.log("Fechas alternativas enviadas:", alternatives);
     // Aquí podrías hacer una petición al backend para actualizar la cita,
     // por ejemplo, usando axios.post con el array de alternativas
-    axios.put(`http://localhost:8000/api/appointment/update/${selectedEvent?.id}/`, {
-        start_time: selectedEvent?.start,
-        end_time: selectedEvent?.end,
-        status: "pending",
-        alternatives: alternatives,
-      }, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        }
-      })
-      .then((response) => {
-        // Si la respuesta fue exitosa
-        alert("La cita se actualizó correctamente.");
-        console.log("Cita actualizada correctamente", response);
-        setEditionMode(false);
-        setSelectedEvent(null);
-        window.location.reload();
-      })
-      .catch((error) => {
-        // Si hubo un error en la solicitud
-        console.error("Error en la actualización de la cita:", error);
-        alert("Hubo un problema con la conexión. Intenta nuevamente.");
-      });
+    if (isClient) {
+      if (token) {
+        axios
+          .patch(`${getApiBaseUrl()}/api/appointment/update/${selectedEvent?.id}/`, {
+            start_time: selectedEvent?.start,
+            end_time: selectedEvent?.end,
+            status: "pending",
+            alternatives: alternatives,
+          }, {
+            headers: {
+              Authorization: "Bearer " + token,
+            }
+          })
+          .then((response) => {
+            // Si la respuesta fue exitosa
+            alert("La cita se actualizó correctamente.");
+            console.log("Cita actualizada correctamente", response);
+            setEditionMode(false);
+            setSelectedEvent(null);
+            window.location.reload();
+          })
+          .catch((error) => {
+            // Si hubo un error en la solicitud
+            console.error("Error en la actualización de la cita:", error);
+            alert("Hubo un problema con la conexión. Intenta nuevamente.");
+          });
+      }
+    }
   };
 
   return (
@@ -131,6 +156,8 @@ const Calendar = ({
           currentRole={currentRole}
           setSelectedEvent={setSelectedEvent}
           setEditionMode={setEditionMode}
+          isClient={isClient}
+          token={token}
         />
       )}
       {/* MODAL */}
