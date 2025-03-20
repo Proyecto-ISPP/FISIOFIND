@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 
-const QuestionnaireBuilder = ({ addQuestionnaire, editingQuestionnaire }) => {
+const QuestionnaireBuilder = ({ addQuestionnaire, editingQuestionnaire, onCancelEdit }) => {
   const [title, setTitle] = useState('');
   const [questions, setQuestions] = useState([]);
   const [newQuestion, setNewQuestion] = useState({ label: '', type: 'string', options: [] });
@@ -37,6 +37,17 @@ const QuestionnaireBuilder = ({ addQuestionnaire, editingQuestionnaire }) => {
   const deleteQuestion = (index) => {
     setQuestions((prev) => prev.filter((_, i) => i !== index));
   };
+
+  const cancelQuestionnaire = () => {
+    setTitle('');
+    setQuestions([]);
+    setNewQuestion({ label: '', type: 'string', options: [] });
+    
+    // Si estamos en modo edición, notificar al componente padre
+    if (editingQuestionnaire && onCancelEdit) {
+      onCancelEdit();
+    }
+  }
 
   const generateQuestionnaire = () => {
     if (!title) return alert('Debes poner un título al cuestionario');
@@ -229,6 +240,23 @@ const QuestionnaireBuilder = ({ addQuestionnaire, editingQuestionnaire }) => {
       >
         {editingQuestionnaire ? 'Actualizar Cuestionario' : 'Generar Cuestionario'}
       </button>
+
+      <button
+          onClick={cancelQuestionnaire}
+          style={{
+            backgroundColor: 'red',
+            color: '#fff',
+            padding: '12px 24px',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            marginTop: '0.5rem',
+            marginLeft: '1rem',
+            fontSize: '16px'
+          }}
+        >
+          Cancelar
+        </button>
     </div>
   );
 };
