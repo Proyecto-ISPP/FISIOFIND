@@ -20,6 +20,7 @@ import useWebRTC from './hooks/useWebRTC';
 import useMediaControls from './hooks/useMediaControls';
 import useChat from './hooks/useChat';
 import useRoomManagement from './hooks/useRoomManagement';
+import MapaDolor from './tools/MapaDolor'
 
 /**
  * Main Room component for video call
@@ -98,7 +99,7 @@ const Room = ({ roomCode }) => {
             chat.handleChatMessage(data.message);
             break;
           case 'call-ended':
-
+            
             console.log("🛑 Recibido call-ended en el paciente, ejecutando handleCallEnded...");
             roomManagement.handleCallEnded();
             break;
@@ -230,6 +231,11 @@ const Room = ({ roomCode }) => {
         setShowSettings={setShowSettings}
       />
 
+
+      {/* Tools (patient only) */}
+      {!showTools && (
+        <MapaDolor scale={1.5} />
+      )}
       {/* Tools (physio only) */}
       {showTools && (
         <>

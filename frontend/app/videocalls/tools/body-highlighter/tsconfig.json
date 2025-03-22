@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ES5",                       // más compatible con navegadores
+    "module": "ESNext",                    // Next.js entiende bien módulos ES
+    "jsx": "react",                        // necesario para Next.js en lugar de "react-native"
+    "strict": true,
+    "esModuleInterop": true,
+    "declaration": true,                   // genera archivos .d.ts (opcional pero recomendado)
+    "outDir": "dist",                      // destino del build
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true
+  },
+  "include": ["./**/*"],
+  "exclude": ["node_modules", "dist"],
+}
