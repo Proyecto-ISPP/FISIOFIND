@@ -3,10 +3,13 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
+from rest_framework import generics
 from users.permissions import IsPatient, IsPhysioOrPatient, IsPhysiotherapist
-from .models import Exercise, ExerciseLog, ExerciseSession, Series, Session, SessionTest, Treatment
+from .models import Exercise, ExerciseLog, ExerciseSession, Series, Session, SessionTest, Treatment, SessionTestResponse
 from .serializers import ExerciseLogSerializer, ExerciseSerializer, ExerciseSessionSerializer, SeriesSerializer, SessionSerializer, SessionTestResponseSerializer, SessionTestSerializer, TreatmentSerializer, TreatmentDetailSerializer
 from gestion_citas.models import Appointment
+from rest_framework.permissions import AllowAny
+
 
 class TreatmentCreateView(APIView):
     """
@@ -1202,3 +1205,347 @@ class ExerciseLogDetailView(APIView):
                 {'detail': 'No se ha encontrado el registro'},
                 status=status.HTTP_404_NOT_FOUND
             )
+
+## Treatment
+
+class AdminTreatmentList(generics.ListAPIView):
+    '''
+    API endpoint para listar los términos para admin.
+    '''
+    permission_classes = [AllowAny]
+    queryset = Treatment.objects.all()
+    serializer_class = TreatmentSerializer
+
+class AdminTreatmentDetail(generics.RetrieveAPIView):
+    '''
+    API endpoint que retorna un solo término por su id para admin.
+    '''
+    permission_classes = [AllowAny]
+    queryset = Treatment.objects.all()
+    serializer_class = TreatmentSerializer
+
+class AdminTreatmentUpdate(generics.RetrieveUpdateAPIView):
+    '''
+    API endpoint para que admin actualice un término.
+    '''
+    permission_classes = [AllowAny]
+    queryset = Treatment.objects.all()
+    serializer_class = TreatmentSerializer
+
+class AdminTreatmentDelete(generics.DestroyAPIView):
+    '''
+    API endpoint para que admin elimine un término.
+    '''
+    permission_classes = [AllowAny]
+    queryset = Treatment.objects.all()
+    serializer_class = TreatmentSerializer
+
+
+class AdminTreatmentCreate(generics.CreateAPIView):
+    '''
+    API endpoint para crear un término para admin.
+    '''
+    permission_classes = [AllowAny]
+    queryset = Treatment.objects.all()
+    serializer_class = TreatmentSerializer
+
+### Ssession
+
+class AdminSessionList(generics.ListAPIView):
+    '''
+    API endpoint para listar los términos para admin.
+    '''
+    permission_classes = [AllowAny]
+    queryset = Session.objects.all()
+    serializer_class = SessionSerializer
+
+class AdminSessionDetail(generics.RetrieveAPIView):
+    '''
+    API endpoint que retorna un solo término por su id para admin.
+    '''
+    permission_classes = [AllowAny]
+    queryset = Session.objects.all()
+    serializer_class = SessionSerializer
+
+class AdminSessionUpdate(generics.RetrieveUpdateAPIView):
+    '''
+    API endpoint para que admin actualice un término.
+    '''
+    permission_classes = [AllowAny]
+    queryset = Session.objects.all()
+    serializer_class = SessionSerializer
+
+class AdminSessionDelete(generics.DestroyAPIView):
+    '''
+    API endpoint para que admin elimine un término.
+    '''
+    permission_classes = [AllowAny]
+    queryset = Session.objects.all()
+    serializer_class = SessionSerializer
+
+
+class AdminSessionCreate(generics.CreateAPIView):
+    '''
+    API endpoint para crear un término para admin.
+    '''
+    permission_classes = [AllowAny]
+    queryset = Session.objects.all()
+    serializer_class = SessionSerializer
+
+# SessionTest
+
+class AdminSessionTestList(generics.ListAPIView):
+    '''
+    API endpoint para listar los términos para admin.
+    '''
+    permission_classes = [AllowAny]
+    queryset = SessionTest.objects.all()
+    serializer_class = SessionTestSerializer
+
+class AdminSessionTestDetail(generics.RetrieveAPIView):
+    '''
+    API endpoint que retorna un solo término por su id para admin.
+    '''
+    permission_classes = [AllowAny]
+    queryset = SessionTest.objects.all()
+    serializer_class = SessionTestSerializer
+
+class AdminSessionTestUpdate(generics.RetrieveUpdateAPIView):
+    '''
+    API endpoint para que admin actualice un término.
+    '''
+    permission_classes = [AllowAny]
+    queryset = SessionTest.objects.all()
+    serializer_class = SessionTestSerializer
+
+class AdminSessionTestDelete(generics.DestroyAPIView):
+    '''
+    API endpoint para que admin elimine un término.
+    '''
+    permission_classes = [AllowAny]
+    queryset = SessionTest.objects.all()
+    serializer_class = SessionTestSerializer
+
+
+class AdminSessionTestCreate(generics.CreateAPIView):
+    '''
+    API endpoint para crear un término para admin.
+    '''
+    permission_classes = [AllowAny]
+    queryset = SessionTest.objects.all()
+    serializer_class = SessionTestSerializer
+
+## SessionTestResponse
+
+class AdminSessionTestResponseList(generics.ListAPIView):
+    '''
+    API endpoint para listar los términos para admin.
+    '''
+    permission_classes = [AllowAny]
+    queryset = SessionTestResponse.objects.all()
+    serializer_class = SessionTestResponseSerializer
+
+class AdminSessionTestResponseDetail(generics.RetrieveAPIView):
+    '''
+    API endpoint que retorna un solo término por su id para admin.
+    '''
+    permission_classes = [AllowAny]
+    queryset = SessionTestResponse.objects.all()
+    serializer_class = SessionTestResponseSerializer
+
+class AdminSessionTestResponseUpdate(generics.RetrieveUpdateAPIView):
+    '''
+    API endpoint para que admin actualice un término.
+    '''
+    permission_classes = [AllowAny]
+    queryset = SessionTestResponse.objects.all()
+    serializer_class = SessionTestResponseSerializer
+
+class AdminSessionTestResponseDelete(generics.DestroyAPIView):
+    '''
+    API endpoint para que admin elimine un término.
+    '''
+    permission_classes = [AllowAny]
+    queryset = SessionTestResponse.objects.all()
+    serializer_class = SessionTestResponseSerializer
+
+
+class AdminSessionTestResponseCreate(generics.CreateAPIView):
+    '''
+    API endpoint para crear un término para admin.
+    '''
+    permission_classes = [AllowAny]
+    queryset = SessionTestResponse.objects.all()
+    serializer_class = SessionTestResponseSerializer
+
+#### Exercise
+
+class AdminExerciseList(generics.ListAPIView):
+    '''
+    API endpoint para listar los términos para admin.
+    '''
+    permission_classes = [AllowAny]
+    queryset = Exercise.objects.all()
+    serializer_class = ExerciseSerializer
+
+class AdminExerciseDetail(generics.RetrieveAPIView):
+    '''
+    API endpoint que retorna un solo término por su id para admin.
+    '''
+    permission_classes = [AllowAny]
+    queryset = Exercise.objects.all()
+    serializer_class = ExerciseSerializer
+
+class AdminExerciseUpdate(generics.RetrieveUpdateAPIView):
+    '''
+    API endpoint para que admin actualice un término.
+    '''
+    permission_classes = [AllowAny]
+    queryset = Exercise.objects.all()
+    serializer_class = ExerciseSerializer
+
+class AdminExerciseDelete(generics.DestroyAPIView):
+    '''
+    API endpoint para que admin elimine un término.
+    '''
+    permission_classes = [AllowAny]
+    queryset = Exercise.objects.all()
+    serializer_class = ExerciseSerializer
+
+
+class AdminExerciseCreate(generics.CreateAPIView):
+    '''
+    API endpoint para crear un término para admin.
+    '''
+    permission_classes = [AllowAny]
+    queryset = Exercise.objects.all()
+    serializer_class = ExerciseSerializer
+    
+### ExerciseSession
+
+class AdminExerciseSessionList(generics.ListAPIView):
+    '''
+    API endpoint para listar los términos para admin.
+    '''
+    permission_classes = [AllowAny]
+    queryset = ExerciseSession.objects.all()
+    serializer_class = ExerciseSessionSerializer
+
+class AdminExerciseSessionDetail(generics.RetrieveAPIView):
+    '''
+    API endpoint que retorna un solo término por su id para admin.
+    '''
+    permission_classes = [AllowAny]
+    queryset = ExerciseSession.objects.all()
+    serializer_class = ExerciseSessionSerializer
+
+class AdminExerciseSessionUpdate(generics.RetrieveUpdateAPIView):
+    '''
+    API endpoint para que admin actualice un término.
+    '''
+    permission_classes = [AllowAny]
+    queryset = ExerciseSession.objects.all()
+    serializer_class = ExerciseSessionSerializer
+
+class AdminExerciseSessionDelete(generics.DestroyAPIView):
+    '''
+    API endpoint para que admin elimine un término.
+    '''
+    permission_classes = [AllowAny]
+    queryset = ExerciseSession.objects.all()
+    serializer_class = ExerciseSessionSerializer
+
+
+class AdminExerciseSessionCreate(generics.CreateAPIView):
+    '''
+    API endpoint para crear un término para admin.
+    '''
+    permission_classes = [AllowAny]
+    queryset = ExerciseSession.objects.all()
+    serializer_class = ExerciseSessionSerializer
+
+### Series
+
+class AdminSeriesList(generics.ListAPIView):
+    '''
+    API endpoint para listar los términos para admin.
+    '''
+    permission_classes = [AllowAny]
+    queryset = Series.objects.all()
+    serializer_class = SeriesSerializer
+
+class AdminSeriesDetail(generics.RetrieveAPIView):
+    '''
+    API endpoint que retorna un solo término por su id para admin.
+    '''
+    permission_classes = [AllowAny]
+    queryset = Series.objects.all()
+    serializer_class = SeriesSerializer
+
+class AdminSeriesUpdate(generics.RetrieveUpdateAPIView):
+    '''
+    API endpoint para que admin actualice un término.
+    '''
+    permission_classes = [AllowAny]
+    queryset = Series.objects.all()
+    serializer_class = SeriesSerializer
+
+class AdminSeriesDelete(generics.DestroyAPIView):
+    '''
+    API endpoint para que admin elimine un término.
+    '''
+    permission_classes = [AllowAny]
+    queryset = Series.objects.all()
+    serializer_class = SeriesSerializer
+
+
+class AdminSeriesCreate(generics.CreateAPIView):
+    '''
+    API endpoint para crear un término para admin.
+    '''
+    permission_classes = [AllowAny]
+    queryset = Series.objects.all()
+    serializer_class = SeriesSerializer
+
+### ExerciseLog
+
+class AdminExerciseLogList(generics.ListAPIView):
+    '''
+    API endpoint para listar los términos para admin.
+    '''
+    permission_classes = [AllowAny]
+    queryset = ExerciseLog.objects.all()
+    serializer_class = ExerciseLogSerializer
+
+class AdminExerciseLogDetail(generics.RetrieveAPIView):
+    '''
+    API endpoint que retorna un solo término por su id para admin.
+    '''
+    permission_classes = [AllowAny]
+    queryset = ExerciseLog.objects.all()
+    serializer_class = ExerciseLogSerializer
+
+class AdminExerciseLogUpdate(generics.RetrieveUpdateAPIView):
+    '''
+    API endpoint para que admin actualice un término.
+    '''
+    permission_classes = [AllowAny]
+    queryset = ExerciseLog.objects.all()
+    serializer_class = ExerciseLogSerializer
+
+class AdminExerciseLogDelete(generics.DestroyAPIView):
+    '''
+    API endpoint para que admin elimine un término.
+    '''
+    permission_classes = [AllowAny]
+    queryset = ExerciseLog.objects.all()
+    serializer_class = ExerciseLogSerializer
+
+
+class AdminExerciseLogCreate(generics.CreateAPIView):
+    '''
+    API endpoint para crear un término para admin.
+    '''
+    permission_classes = [AllowAny]
+    queryset = ExerciseLog.objects.all()
+    serializer_class = ExerciseLogSerializer
