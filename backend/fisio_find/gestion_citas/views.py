@@ -19,6 +19,7 @@ from gestion_citas.emailUtils import send_appointment_email
 from django.core import signing
 from django.core.signing import BadSignature, SignatureExpired
 from rest_framework.permissions import AllowAny
+from django.db.models import Q
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 10
@@ -558,14 +559,6 @@ def create_appointment_admin(request):
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class AdminAppointmenList(generics.ListAPIView):
-    '''
-    API endpoint para listar los términos para admin.
-    '''
-    permission_classes = [IsAdmin]
-    queryset = Appointment.objects.all()
-    serializer_class = AppointmentSerializer
-
 class AdminAppointmennDetail(generics.RetrieveAPIView):
     '''
     API endpoint que retorna un solo término por su id para admin.
@@ -589,6 +582,64 @@ class AdminAppointmenDelete(generics.DestroyAPIView):
     permission_classes = [IsAdmin]
     queryset = Appointment.objects.all()
     serializer_class = AppointmentSerializer
+
+@api_view(['GET'])
+@permission_classes([IsAdmin]) 
+def admin_list_and_search_appointments(request):
+    appointments = Appointment.objects.all()
+
+    physio_param = request.query_params.get('physiotherapist', None)
+    if physio_param:
+        appointments = appointments.filter(
+            Q(physiotherapist__user__first_name__icontains=physio_param) |
+            Q(physiotherapist__user__last_name__icontains=physio_param) |
+            Q(physiotherapist__user__email__icontains=physio_param) |
+            Q(physiotherapist__user__dni__icontains=physio_param)
+        )
+
+
+    patient_param = request.query_params.get('patient', None)
+    if patient_param:
+        appointments = appointments.filter(
+            Q(patient__user__first_name__icontains=patient_param) |
+            Q(patient__user__last_name__icontains=patient_param) |
+            Q(patient__user__email__icontains=patient_param) |
+            Q(patient__user__dni__icontains=patient_param)
+        )
+
+
+    status_param = request.query_params.get('status', None)
+    if status_param:
+        appointments = appointments.filter(status=status_param)
+
+    is_online = request.query_params.get('is_online', None)
+    if is_online is not None:
+        appointments = appointments.filter(is_online=is_online.lower() == 'si')
+
+    date_param = request.query_params.get('date', None)
+    if date_param:
+        try:
+            from datetime import datetime
+            date_obj = datetime.strptime(date_param, "%Y-%m-%d").date()
+            appointments = appointments.filter(start_time__date=date_obj)
+        except ValueError:
+            return Response({"error": "Invalid date format. Use YYYY-MM-DD."}, status=status.HTTP_400_BAD_REQUEST)
+
+    search_filter = SearchFilter()
+    search_fields = ['status']
+    appointments = search_filter.filter_queryset(request, appointments, view=None)
+
+    # Ordenamiento (por start_time o end_time)
+    ordering_filter = OrderingFilter()
+    ordering_filter.ordering_fields = ['start_time', 'end_time']
+    appointments = ordering_filter.filter_queryset(request, appointments, view=None)
+
+    # Paginación
+    paginator = StandardResultsSetPagination()
+    page = paginator.paginate_queryset(appointments, request)
+    serializer = AppointmentSerializer(page, many=True)
+
+    return paginator.get_paginated_response(serializer.data)
 
 """
 class AdminAppointmenCreate(generics.CreateAPIView):

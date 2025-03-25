@@ -84,7 +84,7 @@ export default function EditarCitas() {
   function searchFisio(id) {
     axios.get(`${getApiBaseUrl()}/api/app_user/admin/physio/list/`+id+'/',{
       headers : {
-      //  "Authorization": "Bearer "+token
+        "Authorization": "Bearer "+token
       }
     }
     ).then(response => {
@@ -129,7 +129,7 @@ export default function EditarCitas() {
   useEffect(() => {
     axios.get(`${getApiBaseUrl()}/api/appointment/admin/list/`+id+'/',{
       headers : {
-      //  "Authorization": "Bearer "+token
+        "Authorization": "Bearer "+token
       }
     }
     ).then(response => {
@@ -149,7 +149,7 @@ export default function EditarCitas() {
         setAlternativas(response.data.alternatives)
       }, {
         headers : {
-        //  "Authorization": "Bearer "+token
+          "Authorization": "Bearer "+token
         }
       })
       .catch(error => {

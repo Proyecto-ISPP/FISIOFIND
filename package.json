@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "chart.js": "^4.4.8",
-    "react-chartjs-2": "^5.3.0"
+    "react-chartjs-2": "^5.3.0",
     "@fullcalendar/core": "^6.1.15",
     "@fullcalendar/daygrid": "^6.1.15",
     "@fullcalendar/list": "^6.1.15",

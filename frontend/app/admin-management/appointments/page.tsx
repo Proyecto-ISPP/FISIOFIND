@@ -56,7 +56,7 @@ export default function GestionarCitas() {
             }
           })
           .catch((error) => {
-            console.error("Error fetching data:", error);
+            console.log("Error fetching data:", error);
             location.href = "..";
           });
       } else {
@@ -65,19 +65,53 @@ export default function GestionarCitas() {
     }
   }, [isClient, token]);
 
+  // Parametros de busqueda
+  const [fisio, setFisio] = useState("")
+  const [paciente, setPaciente] = useState("")
+  const [online, setOnline] = useState("-")
+  const [fecha, setFecha] = useState("")
+
+  const [nextUrl, setNextUrl] = useState(null);
+  const [previusUrl, setPreviusUrl] = useState(null);
+  const [url, setUrl] = useState(`${getApiBaseUrl()}/api/appointment/admin/list/`);
+  const [lengthCounter, setLengthCounter] = useState(0);
+  const [lastLength, setLastLength] = useState(0);
+  const [totalLength, setTotalLength] = useState(null);
   useEffect(() => {
-    axios.get(`${getApiBaseUrl()}/api/appointment/admin/list/`, {
+    let payload = !url.includes("?") ? "?" : ""
+
+    if (fisio.length > 3) {
+      payload += 'physiotherapist='+fisio
+    } 
+
+    if (paciente.length > 3) {
+      payload += '&patient='+paciente
+    } 
+
+    if (online !== "-") {
+      payload += "&is_online="+online
+    }
+
+    if (fecha.length > 3) {
+      payload += "&date="+fecha
+    }
+    axios.get(url+payload, {
       headers : {
         "Authorization": "Bearer "+token
       }
     }
     ).then(response => {
-        setCitas(response.data);
+        setNextUrl(response.data.next)
+        setPreviusUrl(response.data.previous)
+        setTotalLength(response.data.count)
+        setCitas(response.data.results);
       })
       .catch(error => {
-        console.error("Error fetching data:", error);
+        console.log("Error fetching data:", error);
       });
-  }, [token]);
+  }, [token, url, fisio, paciente, online, fecha]);
+
+
 
   return (
     <>
@@ -85,8 +119,28 @@ export default function GestionarCitas() {
         <a href="/admin-management/"><button className="btn-admin">Volver</button></a>
         <h1>Página de administración de citas</h1>
       </div>
-      <div className="terminos-container">
+      <div className="terminos-container gap-3">
         <a href="/admin-management/appointments/create"><button className="btn-admin">Crear</button></a>
+        <div className="flex flex-col">
+          <label htmlFor="fisio">Nombre,email o DNI del fisioterapeuta:</label>
+          <input onChange={fi => setFisio(fi.target.value)} name="fisio" className="border-2 border-solid border-black" type="text" />
+        </div>
+        <div className="flex flex-col">
+          <label htmlFor="paciente">Nombre,email o DNI del paciente:</label>
+          <input onChange={pa => setPaciente(pa.target.value)} name="paciente" className="border-2 border-solid border-black" type="text" />
+        </div>
+        <div className="flex flex-row gap-4">
+          <label htmlFor="fisio mr-3">Cita online:</label>
+          <select onChange={onl => setOnline(onl.target.value)} name="fisio" className="border-2 border-solid border-black" >
+            <option value="-">---</option>
+            <option value="si">Sí</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+        <div className="flex flex-row gap-4">
+          <label htmlFor="fecha">Fecha:</label>
+          <input onChange={fe => {setFecha(fe.target.value)}} name="fecha" className="border-2 border-solid border-black" type="date" />
+        </div>
         <div>
           {citas && 
             citas.map(function(cita,key) {
@@ -101,6 +155,24 @@ export default function GestionarCitas() {
                 <a href={"/admin-management/appointments/delete/"+cita.id}><button className="btn-admin-red">Eliminar</button></a>
               </div>
             })
+          }
+        </div>
+        <div>
+          {
+            citas && citas.length > 0 && <>
+              <div className="flex flex-row gap-4 mt-8"> 
+                {
+                  previusUrl && <button onClick={() => {setLengthCounter(lengthCounter-lastLength);setUrl(previusUrl)}} className="btn-admin">Anterior</button>
+                }
+                <p>Viendo {lengthCounter+citas.length} elementos de {totalLength} elementos </p>
+                {
+                  nextUrl &&  <button onClick={() => {setLastLength(citas?.length);setLengthCounter(lengthCounter+citas?.length);setUrl(nextUrl)}} className="btn-admin">Siguiente</button>
+                }
+              </div>
+            </>
+          }
+          {
+            (!citas || !citas.length) && <p> No se encontraron citas</p>
           }
         </div>
       </div>
