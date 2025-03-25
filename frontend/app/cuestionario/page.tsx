@@ -1,9 +1,11 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { JsonForms } from '@jsonforms/react';
 import { materialCells, materialRenderers } from '@jsonforms/material-renderers';
 import MyGroupRenderer, { myGroupTester } from './MyGroupRenderer';
 import QuestionnaireBuilder from './Cuestionarios';
+import axios from 'axios';
+import { getApiBaseUrl } from '@/utils/api';
 
 type Questionnaire = {
   id: string;
@@ -90,6 +92,28 @@ function App() {
   const [showModal, setShowModal] = useState(false);
   const [questionnaireToDelete, setQuestionnaireToDelete] = useState<string | null>(null);
 
+  useEffect(() => {
+    const fetchQuestionnaires = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(
+          `${getApiBaseUrl()}/api/questionnaires/list/`,
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          }
+        );
+        setQuestionnaires(response.data);
+      } catch (error) {
+        console.error('Error fetching questionnaires:', error);
+      }
+    };
+  
+    fetchQuestionnaires();
+  }, []);
+
   const addOrUpdateQuestionnaire = (newQ: Questionnaire) => {
     if (editingQuestionnaire) {
       setQuestionnaires((prev) =>
@@ -99,7 +123,7 @@ function App() {
     } else {
       setQuestionnaires((prev) => [...prev, newQ]);
     }
-
+  
     setSchema(newQ.jsonSchema);
     setUischema(newQ.uiSchema);
   };
@@ -113,15 +137,31 @@ function App() {
     }
   };
 
-  const deleteQuestionnaire = (id: string) => {
-    setQuestionnaires((prev) => prev.filter((q) => q.id !== id));
-    
-    if (editingQuestionnaire && editingQuestionnaire.id === id) {
-      setEditingQuestionnaire(null);
+  const deleteQuestionnaire = async (id: string) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(
+        `${getApiBaseUrl()}/api/questionnaires/${id}/`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      
+      setQuestionnaires((prev) => prev.filter((q) => q.id !== id));
+      
+      if (editingQuestionnaire && editingQuestionnaire.id === id) {
+        setEditingQuestionnaire(null);
+      }
+    } catch (error) {
+      console.error('Error deleting questionnaire:', error);
+      alert('Error al eliminar el cuestionario');
+    } finally {
+      setShowModal(false);
+      setQuestionnaireToDelete(null);
     }
-
-    setShowModal(false);
-    setQuestionnaireToDelete(null);
   };
 
   const cancelDelete = () => {

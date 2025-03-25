@@ -71,6 +71,7 @@ INSTALLED_APPS += [
     'gestion_citas',
     'terms',
     'guest_session',
+    'questionnaire',
 ]
 
 

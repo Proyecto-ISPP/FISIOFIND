@@ -1,15 +1,30 @@
 'use client';
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { getApiBaseUrl } from '@/utils/api';
 
 const QuestionnaireBuilder = ({ addQuestionnaire, editingQuestionnaire, onCancelEdit }) => {
   const [title, setTitle] = useState('');
   const [questions, setQuestions] = useState([]);
   const [newQuestion, setNewQuestion] = useState({ label: '', type: 'string', options: [] });
+  const [isClient, setIsClient] = useState(false);
+  const [token, setToken] = useState(null);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (isClient) {
+      const storedToken = localStorage.getItem("token");
+      setToken(storedToken);
+    }
+  }, [isClient]);
 
   useEffect(() => {
     if (editingQuestionnaire) {
       setTitle(editingQuestionnaire.title);
-      setQuestions(editingQuestionnaire.questions);
+      setQuestions(editingQuestionnaire.questions || []);
     } else {
       setTitle('');
       setQuestions([]);
@@ -42,18 +57,62 @@ const QuestionnaireBuilder = ({ addQuestionnaire, editingQuestionnaire, onCancel
     setTitle('');
     setQuestions([]);
     setNewQuestion({ label: '', type: 'string', options: [] });
-    
-    // Si estamos en modo edición, notificar al componente padre
     if (editingQuestionnaire && onCancelEdit) {
       onCancelEdit();
     }
   }
 
-  const generateQuestionnaire = () => {
+  const handleApiError = (error) => {
+    console.error('API Error:', error);
+    if (error.response) {
+      alert(`Error: ${error.response.data.detail || 'Ocurrió un error'}`);
+    } else {
+      alert('Error de conexión con el servidor');
+    }
+  };
+
+  const createQuestionnaire = async (questionnaireData) => {
+    try {
+      const response = await axios.post(
+        `${getApiBaseUrl()}/api/questionnaires/create/`,
+        questionnaireData,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      handleApiError(error);
+      throw error;
+    }
+  };
+
+  const updateQuestionnaire = async (id, questionnaireData) => {
+    try {
+      const response = await axios.put(
+        `${getApiBaseUrl()}/api/questionnaires/${id}/`,
+        questionnaireData,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      handleApiError(error);
+      throw error;
+    }
+  };
+
+  const saveQuestionnaire = async () => {
     if (!title) return alert('Debes poner un título al cuestionario');
     if (questions.length === 0) return alert('Agrega al menos una pregunta');
 
-    const id = editingQuestionnaire ? editingQuestionnaire.id : `q_${Date.now()}`;
     const properties = {};
     const elements = [];
 
@@ -66,9 +125,35 @@ const QuestionnaireBuilder = ({ addQuestionnaire, editingQuestionnaire, onCancel
     const jsonSchema = { type: 'object', properties };
     const uiSchema = { type: 'Group', label: title, elements };
 
-    addQuestionnaire({ id, title, jsonSchema, uiSchema, questions });
-    setTitle('');
-    setQuestions([]);
+    const questionnaireData = {
+      title,
+      json_schema: jsonSchema,
+      ui_schema: uiSchema,
+      questions
+    };
+
+    try {
+      if (editingQuestionnaire) {
+        // Actualizar cuestionario existente
+        const updatedQuestionnaire = await updateQuestionnaire(editingQuestionnaire.id, questionnaireData);
+        addQuestionnaire({
+          id: editingQuestionnaire.id,
+          ...updatedQuestionnaire
+        });
+      } else {
+        // Crear nuevo cuestionario
+        const newQuestionnaire = await createQuestionnaire(questionnaireData);
+        addQuestionnaire({
+          id: newQuestionnaire.id,
+          ...newQuestionnaire
+        });
+      }
+
+      setTitle('');
+      setQuestions([]);
+    } catch (error) {
+      console.error('Error saving questionnaire:', error);
+    }
   };
 
   return (
@@ -225,7 +310,7 @@ const QuestionnaireBuilder = ({ addQuestionnaire, editingQuestionnaire, onCancel
       </ul>
 
       <button
-        onClick={generateQuestionnaire}
+        onClick={saveQuestionnaire}
         style={{
           backgroundColor: '#2e7d32',
           color: '#fff',
@@ -238,25 +323,25 @@ const QuestionnaireBuilder = ({ addQuestionnaire, editingQuestionnaire, onCancel
           marginTop: '1rem'
         }}
       >
-        {editingQuestionnaire ? 'Actualizar Cuestionario' : 'Generar Cuestionario'}
+        {editingQuestionnaire ? 'Actualizar Cuestionario' : 'Guardar Cuestionario'}
       </button>
 
       <button
-          onClick={cancelQuestionnaire}
-          style={{
-            backgroundColor: 'red',
-            color: '#fff',
-            padding: '12px 24px',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            marginTop: '0.5rem',
-            marginLeft: '1rem',
-            fontSize: '16px'
-          }}
-        >
-          Cancelar
-        </button>
+        onClick={cancelQuestionnaire}
+        style={{
+          backgroundColor: 'red',
+          color: '#fff',
+          padding: '12px 24px',
+          border: 'none',
+          borderRadius: '8px',
+          cursor: 'pointer',
+          marginTop: '0.5rem',
+          marginLeft: '1rem',
+          fontSize: '16px'
+        }}
+      >
+        Cancelar
+      </button>
     </div>
   );
 };
