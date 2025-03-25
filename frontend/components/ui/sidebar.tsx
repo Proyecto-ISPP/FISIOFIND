@@ -79,7 +79,6 @@ export const SidebarBody = (props: React.ComponentProps<typeof motion.div>) => {
   );
 };
 
-// Update the DesktopSidebar component
 export const DesktopSidebar = ({
   className,
   children,
@@ -90,11 +89,15 @@ export const DesktopSidebar = ({
     <>
       <motion.div
         className={cn(
-          "h-full px-4 py-8 hidden md:flex md:flex-col bg-neutral-100 dark:bg-neutral-600 w-[100px] flex-shrink-0",
+          "h-full px-6 py-8 hidden md:flex md:flex-col bg-neutral-100 dark:bg-neutral-600 w-[80px] flex-shrink-0",
           className
         )}
         animate={{
-          width: animate ? (open ? "160px" : "70px") : "200px",
+          width: animate ? (open ? "240px" : "80px") : "240px",
+        }}
+        transition={{
+          duration: 0.3,
+          ease: "easeInOut",
         }}
         onMouseEnter={() => setOpen(true)}
         onMouseLeave={() => setOpen(false)}
@@ -120,18 +123,24 @@ export const SidebarLink = ({
     <Link
       href={link.href}
       className={cn(
-        "flex items-center justify-start gap-3 group/sidebar py-2",
+        "flex items-center gap-4 group/sidebar py-3 px-2 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all duration-200",
         className
       )}
       {...props}
     >
-      {link.icon}
+      <div className="min-w-[24px] flex items-center justify-center">
+        {link.icon}
+      </div>
       <motion.span
         animate={{
           display: animate ? (open ? "inline-block" : "none") : "inline-block",
           opacity: animate ? (open ? 1 : 0) : 1,
         }}
-        className="text-[#253240] font-semibold text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0"
+        transition={{
+          duration: 0.2,
+          ease: "easeInOut",
+        }}
+        className="text-[#253240] font-semibold text-sm whitespace-pre"
       >
         {link.label}
       </motion.span>

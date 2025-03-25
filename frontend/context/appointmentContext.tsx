@@ -1,7 +1,8 @@
 // src/context/appointmentContext.tsx
 "use client";
 import React, { createContext, useReducer, useContext } from "react";
-import { AppointmentData } from "@/lib/definitions";
+import { AppointmentData, QuestionaryResponse } from "@/lib/definitions";
+import { QuestionElement } from "@/lib/definitions";
 
 type State = {
   appointmentData: AppointmentData;
@@ -11,23 +12,26 @@ type Action =
   | {
     type: "SELECT_SERVICE";
     payload: {
-      service: { type: string; price: number; duration: number };
+      service: { type: string; price: number; duration: number, questionary: { type: string; label: string; elements: QuestionElement[] } };
       physiotherapist: number;
     }
   }
   | { type: "DESELECT_SERVICE" }
   | { type: "SELECT_PAYMENT_METHOD"; payload: string }
   | { type: "SELECT_SLOT"; payload: { start_time: string; end_time: string; is_online: boolean } }
+  | { type: 'UPDATE_QUESTIONARY_RESPONSES'; payload: QuestionaryResponse }
 
 const initialState: State = {
   appointmentData: {
     start_time: "",
     end_time: "",
     is_online: false,
-    service: { type: "", price: 0, duration: 0 },
+    service: { type: "", price: 0, duration: 0, questionary: { type: "", label: "", elements: [] } },
     physiotherapist: 0,
     status: "",
     alternatives: "",
+    questionaryResponses: {} // Inicializar como objeto vacío
+
   },
 };
 
@@ -57,7 +61,7 @@ const appointmentReducer = (state: State, action: Action): State => {
           start_time: "",
           end_time: "",
           is_online: false,
-          service: { type: "", price: 0, duration: 0 },
+          service: { type: "", price: 0, duration: 0, questionary: { type: "", label: "", elements: [] } },
           physiotherapist: 0,
           status: "",
           alternatives: "",
@@ -82,6 +86,14 @@ const appointmentReducer = (state: State, action: Action): State => {
           status: "pending",
         },
       };
+      case 'UPDATE_QUESTIONARY_RESPONSES':
+        return {
+          ...state,
+          appointmentData: {
+            ...state.appointmentData,
+            questionaryResponses: action.payload
+          }
+        };
     default:
       return state;
   }
@@ -103,3 +115,5 @@ export const useAppointment = () => {
   }
   return context;
 };
+
+

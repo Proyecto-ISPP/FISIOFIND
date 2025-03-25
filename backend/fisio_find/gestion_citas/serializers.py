@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from gestion_citas.models import Appointment, StatusChoices
-from gestion_usuarios.models import AppUser, Patient, Physiotherapist
+from users.models import AppUser, Patient, Physiotherapist
 
 class AppointmentSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True) 

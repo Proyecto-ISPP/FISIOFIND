@@ -1,0 +1,76 @@
+.anatomicalModelContainer {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    height: 90%;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    overflow: hidden;
+  }
+  
+  .modelControls {
+    display: flex;
+    padding: 10px;
+    background-color: #fff;
+    border-bottom: 1px solid #e0e0e0;
+    gap: 10px;
+  }
+  
+  .modelSelector {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    flex-grow: 1;
+  }
+  
+  .controlButton {
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .controlButton:hover {
+    background-color: #e0e0e0;
+  }
+  
+  .activeButton {
+    background-color: #d5ebff;
+    border-color: #4a97e8;
+  }
+  
+  .canvasContainer {
+    flex-grow: 1;
+    position: relative;
+    width: 100%;
+    height: 500px;
+  }
+  
+  .annotations {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 10px 15px;
+    border-top: 1px solid #e0e0e0;
+  }
+  
+  .annotations h3 {
+    margin: 0 0 5px 0;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  
+  .annotations p {
+    margin: 0;
+    font-size: 14px;
+  }

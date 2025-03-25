@@ -46,3 +46,13 @@ export function prepareScheduleForBackend(schedule) {
     weekly_schedule 
   };
 };
+
+
+export function formatDateFromIso(isoDate: string): string {
+  const date = new Date(isoDate);
+
+  // Formateamos la fecha en "DD-MM-YYYY HH:mm" pero en UTC
+  const formattedDate = `${String(date.getUTCDate()).padStart(2, '0')}-${String(date.getUTCMonth() + 1).padStart(2, '0')}-${date.getUTCFullYear()} ${String(date.getUTCHours()).padStart(2, '0')}:${String(date.getUTCMinutes()).padStart(2, '0')}`;
+
+  return formattedDate;
+}

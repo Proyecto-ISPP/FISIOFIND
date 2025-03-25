@@ -1,0 +1,223 @@
+/* ======= FONDO GENERAL DEL CALENDARIO ======= */
+.fc {
+    width: 75%;
+    background-color: #253240; /* Azul oscuro */
+    border-radius: 10px;
+    padding: 10px;
+    color: #ffffff; /* Texto en blanco */
+  }
+
+  .fc-toolbar-chunk{
+    font-size: small;
+  }
+  
+  /* ======= ESTILOS DEL HEADER ======= */
+  .fc-toolbar {
+    background-color: #05668D; /* Azul medio */
+    padding: 10px;
+    border-radius: 8px;
+  }
+  
+  /* ======= TITULO (MES ACTUAL) ======= */
+  .fc-toolbar-title {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #ffffff;
+  }
+  
+  /* ======= BOTONES DEL HEADER ======= */
+  .fc-button {
+    background-color: #0A7487 !important; /* Azul más claro */
+    color: #ffffff !important;
+    border-radius: 6px !important;
+    padding: 8px 14px;
+    font-weight: bold !important;
+    border: none !important;
+  }
+  
+  /* ======= BOTÓN ACTIVO ======= */
+  .fc-button-active {
+    background-color: #05918F !important; /* Azul verdoso */
+  }
+  
+  /* ======= BOTÓN HOVER ======= */
+  .fc-button:hover {
+    background-color: #05AC9C !important; /* Verde agua */
+  }
+  
+  /* ======= ESTILOS DE LOS DÍAS ======= */
+  .fc-daygrid-day {
+    border: 1px solid #41B8D5; /* Bordes en azul claro */
+    color: #ffffff; /* Texto en blanco */
+  }
+  
+  /* ======= DÍAS NORMALES ======= */
+  .fc-daygrid-day-number {
+    font-size: 14px;
+    font-weight: bold;
+    color: #ffffff;
+  }
+  
+  /* ======= DÍA ACTUAL ======= */
+  .fc-day-today {
+    background-color: #05918F !important; /* Verde agua translúcido */
+    /* border: 2px solid #6BC9BE !important; */
+  }
+  
+  /* ======= FINES DE SEMANA ======= */
+  .fc-day-sat, .fc-day-sun {
+    background-color: #65c2c933 ; /* Azul claro translúcido */
+  }
+  
+  /* ======= EVENTOS ======= */
+  .fc-event {
+    background-color: #1160ad !important; /* Azul fuerte */
+    color: #ffffff !important;
+    border-radius: 6px !important;
+    padding: 5px !important;
+    font-size: 14px;
+    text-align: center;
+    border: none;
+    margin-block: 0.15rem;
+  }
+
+  .fc-event-hovered {
+    background-color: #41B8D5 !important; /* Ejemplo: Color de fondo cuando se pasa el ratón */
+  }
+
+  .fc-event-confirmed {
+    background-color: green !important;
+    border-color: #1F7A6C !important;
+    color: #ffffff !important;
+  }
+
+  .fc-event-pending {
+    background-color: darkolivegreen !important;
+    border-color: #4FA48F !important;
+    color: #ffffff !important;
+  }
+
+  .fc-event-booked {
+    background-color: olivedrab !important;
+    border-color: #8AC4B3 !important;
+    color: #ffffff !important;
+  }
+  
+  .fc-popover.fc-more-popover.fc-day.fc-day-wed.fc-day-future{
+    z-index: 1;
+  }
+  
+  /* ======= EVENTO HOVER ======= */
+  .fc-event:hover {
+    background-color: #41B8D5 !important;
+  }
+  
+  /* ======= TEXTO DEL EVENTO ======= */
+  .fc-event-title {
+    font-weight: bold;
+    font-size: 14px;
+  }
+  
+  /* ======= HORA DEL EVENTO ======= */
+  .fc-event-time {
+    font-size: 12px;
+    font-style: italic;
+    color: #ffffff;
+  }
+  
+  /* ======= VISTA DE LISTA ======= */
+  .fc-list {
+    background-color: #253240; /* Fondo oscuro */
+    border-radius: 8px;
+    padding: 10px;
+  }
+  
+  /* ======= EVENTO EN LISTA (HOVER) ======= */
+  .fc-list-event:hover {
+    background-color: #6BC9BE !important; /* Verde agua */
+    cursor: pointer;
+  }
+  
+  /* ======= BOTÓN HOY ======= */
+  .fc-button.fc-today-button {
+    background-color: #05AC9C !important; /* Verde agua */
+    color: #ffffff !important;
+    font-weight: bold;
+  }
+
+  .fc-col-header-cell{
+    background-color: #19242e ;
+    color: #ffffff;
+  }
+
+  .fc-col-header-cell.fc-day.fc-day-sat, .fc-col-header-cell.fc-day.fc-day-sun{
+    background-color: #193031 !important;
+    color: #ffffff;
+  }
+
+  .fc-scrollgrid-shrink{
+    font-weight: 700;
+  }
+
+  .fc-button.fc-button-primary{
+    margin-inline: 0.4rem;
+    height: 2.15rem;
+  }
+
+  .fc-icon-chevron-right, .fc-icon-chevron-left{
+    vertical-align: unset !important;
+  }
+
+  @keyframes fadeOutShadow {
+    0% {
+        box-shadow: #262d338c 0px 0px 5px 1px;
+    }
+    100% {
+      box-shadow: none;
+    }
+  }
+  
+  .fc .fc-button-primary:focus {
+    animation: fadeOutShadow 1s forwards;
+  }
+
+  td[data-time^="00:"],
+  td[data-time^="02:"],
+  td[data-time^="04:"],
+  td[data-time^="06:"],
+  td[data-time^="08:"],
+  td[data-time^="10:"],
+  td[data-time^="12:"],
+  td[data-time^="14:"],
+  td[data-time^="16:"],
+  td[data-time^="18:"],
+  td[data-time^="20:"],
+  td[data-time^="22:"] {
+    background-color: #ffffff24;
+ }
+
+ .fc-day-other{
+    background-color: #ffffff0c;
+  }
+  .fc-day-other.fc-day-sat, .fc-day-other.fc-day-sun{
+    background-color: #abdfe33c;
+  }
+
+  .fc-popover-header, .fc-list-day-cushion{
+    background-color: #0A7487 !important;
+  }
+
+  .fc-popover-body{
+    background-color: #65C2C9;
+  }
+
+  .fc-list-event:hover, .fc-list-event-time:hover, .fc-list-event-graphic:hover{
+    --fc-list-event-hover-bg-color: #41B8D5 !important;
+  }
+
+  .fc-event {
+    white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+    overflow: hidden; /* Oculta el exceso de texto */
+    text-overflow: ellipsis; /* Agrega "..." si el texto es muy largo */
+  }
+  

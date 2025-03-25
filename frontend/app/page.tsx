@@ -8,6 +8,7 @@ import Modal from "@/components/ui/Modal";
 import Link from "next/link";
 import axios from "axios";
 import { getApiBaseUrl } from "@/utils/api";
+import { CookieConsent } from "@/components/CookieConsent";
 
 interface Physiotherapist {
   id: string;
@@ -29,7 +30,7 @@ const Home = () => {
   const closePhysioModal = () => setIsPhysioModalOpen(false);
   const [isClient, setIsClient] = useState(false);
   const [token, setToken] = useState<string | null>(null);
-
+  const apiBaseurl = getApiBaseUrl();
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -53,15 +54,19 @@ const Home = () => {
   }, [isClient, token]);
 
   // Efecto para mover imágenes flotantes al hacer scroll
+  // Modify the floating images styles
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
       const floatingImages = document.querySelectorAll(".floating-image");
-      floatingImages.forEach((image, index) => {
-        const offset = (index + 1) * 50;
-        (image as HTMLElement).style.transform = `translateX(${scrollY / offset
-          }px)`;
-      });
+      
+      // Only apply floating effect if screen is large enough
+      if (window.innerWidth > 1240) {
+        floatingImages.forEach((image, index) => {
+          const offset = (index + 1) * 50;
+          (image as HTMLElement).style.transform = `translateX(${scrollY / offset}px)`;
+        });
+      }
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -124,27 +129,36 @@ const Home = () => {
       const fetchSpecializations = async () => {
         try {
           const response = await axios.get(
-            `${getApiBaseUrl()}/api/sesion_invitado/specializations`
+            `${getApiBaseUrl()}/api/guest_session/specializations/`
           );
+
           if (response.status === 200) {
-            setSpecializations(["", ...response.data]);
+            if (response.data && response.data.length > 0) {
+              setSpecializations(["", ...response.data]);
+            } else {
+              console.warn("Specializations list is empty.");
+              setSpecializations([]); // Set an empty list if no data is returned
+            }
+          } else {
+            console.warn("Unexpected response status:", response.status);
           }
         } catch (error) {
           console.error("Error fetching data:", error);
         }
       };
+
       fetchSpecializations();
     }, []);
 
     const handleSearch = async () => {
-      setSearchAttempted(true); // Marca que el usuario ha intentado buscar
+      setSearchAttempted(true);
 
       if (!specialization) {
         return;
       }
 
       try {
-        const searchUrl = `${getApiBaseUrl()}/api/sesion_invitado/physios-with-specializations/?specialization=${specialization}`;
+        const searchUrl = `${apiBaseurl}/api/guest_session/physios-with-specializations/?specialization=${specialization}`;
         const response = await axios.get(searchUrl);
 
         if (response.status === 200) {
@@ -264,7 +278,7 @@ const Home = () => {
                       {/* Imagen estática del fisioterapeuta */}
                       <CardItem translateZ="60" className="w-full mt-4 z-20">
                         <Image
-                          src="/static/fisioterapeuta_sample.jpeg"
+                          src="/static/fisioterapeuta_sample.webp"
                           className="h-48 w-full object-cover rounded-xl group-hover/card:shadow-xl"
                           alt="Fisioterapeuta"
                           width={500}
@@ -276,7 +290,7 @@ const Home = () => {
                         <CardItem
                           translateZ="20"
                           className="px-4 py-2 rounded-xl bg-[#1E5ACD] text-white text-sm font-bold hover:bg-[#1848A3] transition-colors"
-                          onClick={() => router.push(`/citas/crear/${physio.id}`)}
+                          onClick={() => router.push(`/appointments/create/${physio.id}`)}
                         >
                           Reservar cita
                         </CardItem>
@@ -294,6 +308,9 @@ const Home = () => {
 
   return (
     <div className="min-h-screen w-full z=90">
+      {/* Add CookieConsent component */}
+      <CookieConsent />
+      
       {/* Hero Section */}
       <section className="flex flex-col items-center justify-center text-center relative overflow-hidden mb-8 py-12">
         <div className="absolute top-0 left-0 w-full h-full">
@@ -353,7 +370,7 @@ const Home = () => {
           </div>
         </div>
         <Image
-          src="/static/logo_fisio_find_smaller.png"
+          src="/static/logo_fisio_find_smaller.webp"
           alt="Fisio Find Logo"
           width={150}
           height={150}
@@ -506,16 +523,16 @@ const Home = () => {
                 </a>
               </li>
               <li>
-                <a href="https://fisiofind.vercel.app">Documentación</a>
+                <a href="/terms">Política de Privacidad</a>
               </li>
               <li>
-                <Link href="/">Términos de Servicio</Link>
+                <Link href="/terms">Términos de Servicio</Link>
               </li>
             </ul>
           </div>
           <div>
             <h3 className="text-lg font-bold mb-4">Contacto</h3>
-            <p>Correo: support@fisiofind.com</p>
+            <p>Correo: <a href="mailto:support@fisiofind.com" className="hover:underline">support@fisiofind.com</a></p>
             <p>Ubicación: Sevilla, España</p>
           </div>
         </div>

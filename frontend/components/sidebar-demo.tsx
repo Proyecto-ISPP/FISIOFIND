@@ -41,9 +41,9 @@ export function SidebarDemo() {
           .then(response => {
             const role = response.data.user_role;
             if (role === "patient") {
-              setUrlPerfil("/gestion-paciente/perfil");
+              setUrlPerfil("/patient-management/profile/");
             } else if (role === "physiotherapist") {
-              setUrlPerfil("/gestion-fisio/perfil");
+              setUrlPerfil("/physio-management/profile/");
             }
           })
       }
@@ -60,14 +60,14 @@ export function SidebarDemo() {
     },
     {
       label: "Mis citas",
-      href: isAuthenticated ? "/mis-citas" : "/gestion-paciente/registro",
+      href: "/my-appointments",  // Remove conditional
       icon: (
         <IconCalendar className="text-[#253240] h-5 w-5 flex-shrink-0 mx-auto" />
       ),
     },
     {
       label: "Tratamientos",
-      href: isAuthenticated ? "#" : "/gestion-paciente/registro",
+      href: "#",  // Remove conditional and add actual route
       icon: (
         <IconStethoscope className="text-[#253240] h-5 w-5 flex-shrink-0 mx-auto" />
       ),
@@ -81,7 +81,7 @@ export function SidebarDemo() {
     },
     {
       label: "Videollamadas",
-      href: "/videollamadas",
+      href: "/videocalls",
       icon: (
         <IconPhone className="text-[#253240] h-5 w-5 flex-shrink-0 mx-auto" />
       ),
@@ -98,7 +98,7 @@ export function SidebarDemo() {
   return (
     <div
       className={cn(
-        "fixed left-0 top-0 flex flex-col md:flex-row bg-gray-50 dark:bg-neutral-900 h-screen w-[60px] border-r border-gray-200 dark:border-neutral-800"
+        "fixed left-0 top-0 flex flex-col md:flex-row bg-gray-50 dark:bg-neutral-900 h-screen w-[80px] border-r border-gray-200 dark:border-neutral-800 z-50"
       )}
     >
       <Sidebar open={open} setOpen={setOpen}>
@@ -143,14 +143,12 @@ const Logo = () => {
       <img
         src="/static/fisio_find_logo.webp"
         alt="Logo"
-        className="h-1.5 w-auto flex-shrink-0"
+        className="h-8 w-auto flex-shrink-0"
         style={{ filter: "brightness(0) invert(0)" }}
       />
     </a>
   );
 };
-
-export default Logo;
 
 export const LogoIcon = () => {
   return (
@@ -161,7 +159,7 @@ export const LogoIcon = () => {
       <img
         src="/static/fisio_find_logo.webp"
         alt="Fisio Find logo"
-        className="h-0.5 w-auto flex-shrink-0"
+        className="h-6 w-auto flex-shrink-0"
         style={{ filter: "brightness(0) invert(0)" }}
       />
     </a>

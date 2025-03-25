@@ -75,18 +75,18 @@ const WizardNavigation: React.FC<WizardNavigationProps> = ({
               alert("La cita se realizó correctamente.");
               console.log("Cita realizada correctamente", response);
               // Redirigir a la pestaña 'mis-citas'
-              router.push("/mis-citas");
+              router.push("/my-appointments");
             })
             .catch((error) => {
               console.error("Error en la creación de la cita:", error);
               alert("Hubo un problema con la conexión. Intenta nuevamente.");
             });
-        } else {
-          // Si el rol no es 'patient', se muestra un mensaje y se redirige a la página de registro de paciente
-          alert("Debe registrarse como paciente para confirmar la cita.");
-          router.push("/register/patient");
-        }
+        } 
       }
+    } else {
+      // Si el rol no es 'patient', se muestra un mensaje y se redirige a la página de registro de paciente
+      alert("Debe registrarse como paciente para confirmar la cita.");
+      router.push("/login");
     }
   };
 

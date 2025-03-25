@@ -1,5 +1,5 @@
 from django.db import models
-from gestion_usuarios.models import AppUser, Physiotherapist, Patient
+from users.models import AppUser, Physiotherapist, Patient
 
 class StatusChoices(models.TextChoices):
     FINISHED = "finished", "Finished"

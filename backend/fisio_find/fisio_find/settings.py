@@ -13,10 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from datetime import timedelta
 from pathlib import Path
 import os
-from django.conf.global_settings import MEDIA_URL
 from dotenv import load_dotenv
-import os
-import dj_database_url  # Para parsear la URL de la base de datos
 import environ
 
 load_dotenv()
@@ -37,9 +34,13 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'fisiofind-backend.azurewebsites.net'
 CSRF_TRUSTED_ORIGINS = [
     "https://fisiofind-backend.azurewebsites.net"
 ]
-SECURE_PROXY_SSL_HEADER = ("X-Forwarded-Proto", "https")
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+# SECURE_PROXY_SSL_HEADER = ("X-Forwarded-Proto", "https")
+# SESSION_COOKIE_SECURE = True
+# CSRF_COOKIE_SECURE = True
+# CSRF_USE_SESSIONS = True
+SECURE_PROXY_SSL_HEADER = None
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
 CSRF_USE_SESSIONS = True
 
 # Application definition
@@ -53,7 +54,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'channels',
-    'videocall',
+    'videocall'
 ]
 
 # DJANGO REST FRAMEWORK
@@ -66,16 +67,14 @@ INSTALLED_APPS += [
 # APPS PROPIAS
 
 INSTALLED_APPS += [
-    'gestion_usuarios',
+    'users',
     'gestion_citas',
-    'gestion_terminos',
-    'sesion_invitado'
+    'terms',
+    'guest_session',
 ]
 
 
-
-INSTALLED_APPS += [ 'corsheaders', 'django_extensions',
-    'django_filters']
+INSTALLED_APPS += ['corsheaders', 'django_extensions', 'django_filters']
 
 
 MIDDLEWARE = [
@@ -134,6 +133,8 @@ SIMPLE_JWT = {
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://localhost:3000",
+    "http://127.0.0.1:3001",
+    "http://localhost:3001",
     "https://fisiofind-backend.azurewebsites.net",  # Note the comma here
     "https://fisiofind.netlify.app"
 ]
@@ -179,6 +180,7 @@ CHANNEL_LAYERS = {
 env = environ.Env()
 environ.Env.read_env()
 
+
 IS_PRODUCTION = os.getenv('DJANGO_PRODUCTION', env.bool('DJANGO_PRODUCTION', default=False))
 
 DEBUG = not IS_PRODUCTION
@@ -197,9 +199,23 @@ DATABASES = {
     }
 }
 
+
+# Configuración del servicio de correos
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = os.getenv('EMAIL_PORT') 
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER)
+
+# Default email para los correos enviados
+DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default=env('EMAIL_HOST_USER'))
+
+
 ALLOWED_HOSTS = ['*'] if DEBUG else ['fisiofind-backend.azurewebsites.net']
 
-AUTH_USER_MODEL = 'gestion_usuarios.AppUser'
+AUTH_USER_MODEL = 'users.AppUser'
 
 
 # Password validation
@@ -212,8 +228,8 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+LANGUAGE_CODE = 'es-es'
+TIME_ZONE = 'Europe/Madrid'
 USE_I18N = True
 USE_TZ = True
 

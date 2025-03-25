@@ -385,3 +385,17 @@ form input:disabled, form select:disabled {
 .error__close path {
   fill: #fff;
 }
+
+
+/* Add these responsive styles */
+@media (max-width: 1240px) {
+  .floating-image {
+    display: none;
+  }
+}
+
+/* Adjust main content container */
+.main-content {
+  position: relative;
+  z-index: 2;
+}
