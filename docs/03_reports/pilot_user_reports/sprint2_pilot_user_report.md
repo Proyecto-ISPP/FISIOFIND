@@ -179,36 +179,97 @@ Este enfoque permitirá abordar de manera estructurada las áreas críticas de m
 
 Se recogen los comentarios y sugerencias más relevantes de los usuarios piloto, destacando aspectos positivos y áreas de mejora.
 
+Los usuarios piloto realizaron aportaciones valiosas sobre la experiencia general con la plataforma. Las principales observaciones se agrupan en las siguientes categorías:
+
+- **Claridad de la interfaz**: Varios fisioterapeutas indicaron que ciertos apartados resultan poco intuitivos o requieren demasiados clics para completar acciones frecuentes (por ejemplo, asignar ejercicios a un paciente). Se sugiere una navegación más directa y con menos pasos.
+
+- **Información del paciente**: Se valoró positivamente la posibilidad de visualizar el progreso de los pacientes, pero se solicitó que se integren gráficos o resúmenes visuales que faciliten la evaluación del tratamiento.
+
+- **Comprobación del número de colegiado**: Hubo confusión entre algunos fisioterapeutas respecto al proceso de validación. Se sugiere proporcionar instrucciones más claras o una confirmación explícita del estado de validación.
+
+- **Mayor personalización del perfil**: Tanto pacientes como fisioterapeutas sugirieron incluir más campos en los perfiles, como especialidades o condiciones de salud.
+
+- **Notificaciones y recordatorios**: Los pacientes proponen incorporar notificaciones que recuerden la realización de ejercicios o citas pendientes.
+
+- **Accesibilidad desde dispositivos móviles**: Aunque la mayoría pudo acceder a la plataforma desde móviles, algunos reportaron problemas de visualización. Se recomienda optimizar la experiencia móvil.
 
 # 3.2. PROBLEMAS DETECTADOS
 
-*Se identifican los principales problemas encontrados por los usuarios piloto durante la prueba de la plataforma, junto con su impacto y posibles soluciones.*
+Se identifican los principales problemas encontrados por los usuarios piloto durante la prueba de la plataforma, junto con su impacto y posibles soluciones.
+
+Durante la fase de pruebas se identificaron los siguientes problemas:
+
+- **Errores en el registro de fisioterapeutas**: Algunos usuarios no pudieron registrarse correctamente debido a fallos en la verificación del número de colegiado, bloqueando el acceso a funcionalidades clave.
+
+- **Carga de datos lenta**: Se detectaron tiempos de carga elevados en la página de inicio de sesión y en la lista de pacientes asignados.
+
+- **Asignación de ejercicios**: En ciertos casos, los ejercicios asignados no se guardaban correctamente o desaparecían tras actualizar la página.
+
+- **Interfaz no responsiva en móviles**: Algunos formularios y botones se desalineaban o se ocultaban en dispositivos móviles de gama media-baja.
+
+- **Incoherencias en los formularios de test**: Los tests asignados a las sesiones a veces no se mostraban correctamente o no permitían su edición.
 
 # 3.3. FUNCIONALIDADES VALORADAS POSITIVAMENTE
 
-*Se detallan las características y funcionalidades de FISIO FIND que recibieron comentarios positivos por parte de los usuarios piloto, identificando fortalezas clave del producto.*
+Se detallan las características y funcionalidades de FISIO FIND que recibieron comentarios positivos por parte de los usuarios piloto, identificando fortalezas clave del producto.
+
+Los usuarios destacaron varias funcionalidades que mejoraron significativamente su experiencia:
+
+- **Asignación de ejercicios personalizados**: Fisioterapeutas valoraron positivamente poder crear y asignar ejercicios específicos para cada paciente, lo cual refuerza el seguimiento individualizado.
+
+- **Sistema de sesiones y test por sesión**: Se apreció la posibilidad de asignar sesiones a lo largo de la semana, así como incluir un test para recoger feedback del paciente tras cada entrenamiento.
+
+- **Panel claro y organizado**: Técnicos ISPP resaltaron la organización general del panel y la facilidad para encontrar funciones básicas, especialmente desde el punto de vista del desarrollo y evaluación de software.
+
+- **Gestión de pacientes**: La estructura de los historiales clínicos y su accesibilidad fue bien recibida por los fisioterapeutas.
+
+- **Diseño visual agradable**: Pacientes indicaron que la estética de la plataforma genera confianza, siendo clara y profesional.
 
 # 4. CONCLUSIONES, LECCIONES APRENDIDAS Y PROCESADO DEL FEEDBACK
 
-*En este apartado se presentan las conclusiones generales del informe, las lecciones aprendidas y las acciones tomadas en base al feedback de los usuarios piloto.*
+La fase piloto ha permitido identificar fortalezas clave de la plataforma, así como diversas áreas de mejora que resultan cruciales para alcanzar un producto sólido y adaptado a las necesidades reales de fisioterapeutas y pacientes. La recopilación de feedback ha sido variada, representativa y útil para marcar prioridades de desarrollo en los siguientes sprints.
+
+Se ha aprendido que la validación de roles, la usabilidad y la claridad en los procesos son aspectos centrales para garantizar una experiencia satisfactoria. Además, se ha valorado la utilidad de ciertas funciones específicas del ámbito clínico, lo que indica que el enfoque profesional está bien orientado.
 
 ## 4.1. AJUSTES REALIZADOS EN BASE AL FEEDBACK
 
-*Se describen los cambios y mejoras implementadas en la plataforma tras analizar las opiniones y sugerencias de los usuarios piloto.*
+Tras la evaluación del feedback, se han realizarán los siguientes cambios en la plataforma:
+
+- Revisión del sistema de verificación de colegiados para reducir errores en el registro de fisioterapeutas.
+
+- Rediseño parcial de formularios y navegación para facilitar la asignación de ejercicios y la gestión de sesiones.
+
+- Mejora del rendimiento en las pantallas principales (inicio de sesión y panel de pacientes).
+
+- Ajustes en la visualización móvil para mejorar la compatibilidad en distintos dispositivos.
+
+- Simplificación del formulario de tests de sesión, añadiendo validaciones y una interfaz más clara.
+
 
 ## 4.2. ESTRATEGIAS DE MEJORA FUTURA
 
-*Se establecen estrategias y planes de acción para continuar mejorando FISIO FIND en futuros sprints, basándose en la experiencia obtenida en esta fase piloto.*
+De cara a próximos sprints, se establecen las siguientes líneas de trabajo:
 
+- Implementación de notificaciones automáticas para pacientes (recordatorios de sesiones, tests pendientes).
+
+- Inclusión de analíticas gráficas del progreso del paciente en el dashboard del fisioterapeuta.
+
+- Añadir una sección de ayuda con guías interactivas o tutoriales para nuevos usuarios.
+
+- Ampliar las opciones de personalización de perfiles tanto para pacientes como para fisioterapeutas.
+
+- Realizar nuevas pruebas específicas en dispositivos móviles para garantizar la accesibilidad total.
+
+- Revisión continua del flujo de registro, acceso y validación para evitar cuellos de botella y errores recurrentes.
 
 
 # 5. EVALUACIÓN DE LA EXPERIENCIA PILOTO
 
 | Usuario piloto (uvus) | Fecha acceso al sistema | Fecha envío de feedback | Enlace Clockify | Fallos encontrados | Recomendaciones de mejora | Otros comentarios |
 |----------------------|------------------------|------------------------|----------------|-------------------|------------------------|------------------|
-| Antonio Daniel Porcar Aragón (antporara) | 12/03/2025 18:30 | 12/03/2025 18:45 | [antporara](https://app.clockify.me/shared/67d18452becbe07bd98ec838) | - | Asegurarse de que cualquiera de las versiones desplegadas se encuentre disponible en todo momento | Me ha parecido bastante interesante el contenido realizado por redes sociales y de buena calidad. |
-| Antonio Jiménez Ortega (antjimort) | 11/03/2025 15:30 | 11/03/2025 15:41 | [antjimort](https://app.clockify.me/shared/67d1d1a8ef0d12419bbe3b19) | • En la parte de inicio, cuando bajas, en la parte de enlaces sale "Acerca de" y está duplicado.<br>• Cuando le das a "Probar demo", si bajas aparecen palabras en inglés encima de los iconos de las redes sociales.<br>• En la demo, si le das a inicio, desaparecen las demás opciones del header.<br>• Puedes registrar procesos sin añadir número de series o dolor.<br>• En los ejercicios no se ven los vídeos. | De momento, si fuera posible intentaría conseguir desplegar la app en algún sitio que tuviera mejores tiempos de carga (aunque entiendo que sería difícil puesto que en la mayoría de las plataformas es necesario pagar para ello) | En general, la landing page es muy bonita, sencilla, fácil de usar y no es complicado encontrar la información en ella. Bajo mi opinión, tenéis mi 10. |
-| David Guillén Fernández (davguifer) | 11/03/2025 20:25 | 11/03/2025 21:00 | [davguifer](https://app.clockify.me/shared/67d08fd1becbe07bd98cb6a8) | • En la parte de inicio, "Acerca de" está duplicado<br>• Palabras en inglés en iconos de redes sociales en demo<br>• Más iconos de redes sociales en demo que en inicio<br>• Desaparecen opciones del header al dar a inicio<br>• Se pueden registrar procesos sin series o dolor<br>• Videos de ejercicios no visibles | • Mejorar reordenamiento en búsquedas con filtros<br>• Cambiar color de fechas disponibles a verde en calendario<br>• Sombrear días no laborables<br>• Añadir fotos de fisios en reserva de citas | Lo veo bastante bien en general, he comentado cosas que seguramente en un futuro se solucionarían. Me gusta bastante. |
-| Jaime Linares Barrera (jailinbar) | 11/03/2025 20:27 | 11/03/2025 21:08 | [jailinbar](https://app.clockify.me/shared/67d09057becbe07bd98cb84d) | • Sección "Acerca de" duplicada tres veces<br>• Términos en inglés en demo (footer)<br>• Videos de ejercicios no cargan<br>• Permite registros sin series ni dolor<br>• Sistema permite reservas en fechas pasadas | • Ajustar color de fondo en sección "Sobre nosotros"<br>• Optimizar rendimiento y tiempos de carga | Muy completa y buen diseño en general. |
-| Javier Ulecia García (javulegar) | 12/03/2025 11:30 | 12/03/2025 12:15 | [javulegar](https://app.clockify.me/shared/67d0567e06a063047ed3554d) | En la demo, al ver el listado de pacientes siendo fisio los detalles llevan a una página que no existe | • Reducir tamaño de fotos de perfil de fisios<br>• Mostrar todas las citas con botón de gestión | - |
-| José Manuel Miret Martín (josmirmar2) | 12/03/2025 14:55 | 12/03/2025 15:04 | [josmirmar2](https://app.clockify.me/shared/67d08d5e06a063047ed41c21) | Ninguno. Da las funcionalidades principales que me gustaría que tuviera | Añadir información de contacto y dirección del fisioterapeuta para atención presencial | Me gusta la idea, la usaría |
+| Antonio Daniel Porcar Aragón (antporara) | 12/03/2025 18:30 | 12/03/2025 18:45 | [antporara](https://app.clockify.me/shared/67e42125f62c693dbbcbb42e) | - |  |  |
+| Antonio Jiménez Ortega (antjimort) | 11/03/2025 15:30 | 11/03/2025 15:41 | [antjimort]() |  |  |  |
+| David Guillén Fernández (davguifer) | 11/03/2025 20:25 | 11/03/2025 21:00 | [davguifer]() |  |  |  |
+| Jaime Linares Barrera (jailinbar) | 11/03/2025 20:27 | 11/03/2025 21:08 | [jailinbar](https://app.clockify.me/shared/67e3e19bf562c161b726c9f1) | |  |  |
+| Javier Ulecia García (javulegar) | 12/03/2025 11:30 | 12/03/2025 12:15 | [javulegar](https://app.clockify.me/shared/67e431c1f62c693dbbcbfaf7) |  | | - |
+| José Manuel Miret Martín (josmirmar2) | 12/03/2025 14:55 | 12/03/2025 15:04 | [josmirmar2](https://app.clockify.me/shared/67e42154f562c161b727e4ca) |  |  |  |
