@@ -89,9 +89,6 @@ const PatientProfile = () => {
         setLoading(false);
         return;
       }
-      const response = await axios.get(`${getApiBaseUrl()}/api/app_user/current-user/`, {
-        headers: { Authorization: "Bearer " + token },
-      });
 
       setProfile({
         user: {
