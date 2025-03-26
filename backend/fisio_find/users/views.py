@@ -598,7 +598,7 @@ def create_file(request):
                     missing_emails = set(patients_list) - found_emails
                     if missing_emails:
                         return Response(
-                            {"errorManaged": f"Usuarios no encontrados para emails: {", ".join(list(missing_emails))}"},
+                            {"errorManaged": f"Usuarios no encontrados para emails: {', '.join(list(missing_emails))}"},
                             status=status.HTTP_400_BAD_REQUEST
                         )
                     
@@ -608,7 +608,7 @@ def create_file(request):
                     missing_patients = found_emails - patients_found_emails
                     if missing_patients:
                         return Response(
-                            {"errorManaged": f"Paciente no encontrado para usuarios con emails: {", ".join(list(missing_patients))}"},
+                            {"errorManaged": f"Paciente no encontrado para usuarios con emails: {', '.join(list(missing_patients))}"},
                             status=status.HTTP_400_BAD_REQUEST
                         )
                     
@@ -799,4 +799,3 @@ def update_video(request, video_id):
         return Response({"message": "Video actualizado correctamente", "video": serializer.data}, status=status.HTTP_200_OK)
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-

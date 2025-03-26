@@ -14,7 +14,6 @@ from django.core.validators import RegexValidator
 from datetime import date, datetime
 import boto3, uuid
 from users.util import validate_dni_match_letter, codigo_postal_no_mide_5, telefono_no_mide_9, validate_dni_structure
-from users.validacionFisios import validar_colegiacion
 from .models import AppUser, Patient, Physiotherapist, PhysiotherapistSpecialization, Specialization, Video
 
 
@@ -334,7 +333,11 @@ class PhysioRegisterSerializer(serializers.ModelSerializer):
         last_name = data.get("last_name", "")
         collegiate_number = data.get("collegiate_number", "")
         autonomic_community = data.get("autonomic_community", "")
-        if not validar_colegiacion(first_name, last_name, collegiate_number, autonomic_community):
+        
+        full_name_uppercase = first_name.upper() + " " + last_name.upper()
+                # Validar número de colegiado
+        valid_physio = validar_colegiacion(full_name_uppercase, collegiate_number, autonomic_community)
+        if not valid_physio:
             validation_errors["collegiate_number"] = "El número de colegiado o nombre no son válidos."
 
         if validation_errors:
