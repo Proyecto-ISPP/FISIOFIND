@@ -1098,13 +1098,19 @@ const FisioProfile = () => {
                                             <div className="flex space-x-2">
                                                 <GradientButton
                                                     variant="edit"
-                                                    onClick={() => handleEditService(index)}
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        handleEditService(index);
+                                                    }}
                                                 >
                                                     <Edit className="w-4 h-4" />
                                                 </GradientButton>
                                                 <GradientButton 
                                                     variant="danger"
-                                                    onClick={() => handleDeleteService(index)}
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        handleDeleteService(index);
+                                                    }}
                                                     className="text-red-500 hover:bg-red-100 p-2 rounded"
                                                 >
                                                     <Trash2 className="w-4 h-4" />
