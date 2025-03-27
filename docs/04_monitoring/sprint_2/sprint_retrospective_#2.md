@@ -161,6 +161,7 @@ Este tipo de retrospectiva permite que el equipo reflexione de manera estructura
 - 🔴 Feedback de los usuarios piloto: Los usuarios piloto no han mostrado el nivel de compromiso esperado, y su feedback ha resultado insuficiente. Es necesario replantear cómo gestionar mejor su participación y la obtención de comentarios más relevantes.
 - 🔴 Muchos conflictos de migraciones y de archivos que estaban siendo editados por distintas personas.
 - 🔴 El continuo mergeo y cambio de develop propició una gran cantidad de fallos que tuvieron que ser corregidos, quitándonos mucho tiempo.
+- 🔴 Integración: no se puede refactorizar y hacer funcionalidades al mismo tiempo, sobre todo si se trata de lo mismo, ya que produce un doble esfuerzo para completar de nuevo la funcionalidad implementada.
 
 ## **START: ¿Qué debemos empezar a hacer?**
 - 🟡 Merge diario a develop: Es crucial que todos los miembros del equipo realicen merges a develop a diario para evitar los conflictos de integración que se presentaron en este sprint. Esto contribuirá a mantener un flujo de trabajo más estable y sin sobresaltos.
