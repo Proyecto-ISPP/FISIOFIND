@@ -8,6 +8,7 @@ import { getApiBaseUrl } from "@/utils/api";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import { Eye, EyeOff } from "lucide-react";
 
 // Tipado de los datos del formulario
 interface FormData {
@@ -94,43 +95,66 @@ const FormField = ({
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
   error?: string;
-}) => (
-  <div className="mb-4">
-    <label
-      htmlFor={name}
-      className="block text-sm font-medium text-gray-700 dark:text-white mb-1"
-    >
-      {label} {required && <span className="text-red-500">*</span>}
-    </label>
-    {type === "select" ? (
-      <select
-        id={name}
-        name={name}
-        value={value}
-        onChange={onChange}
-        required={required}
-        className="w-full px-4 py-2 border border-gray-300 dark:border-neutral-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1E5ACD] dark:bg-neutral-800 dark:text-white"
+}) => {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  return (
+    <div className="mb-4 relative">
+      <label
+        htmlFor={name}
+        className="block text-sm font-medium text-gray-700 dark:text-white mb-1"
       >
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-    ) : (
-      <input
-        type={type}
-        id={name}
-        name={name}
-        value={value}
-        onChange={onChange}
-        required={required}
-        className="w-full px-4 py-2 border border-gray-300 dark:border-neutral-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1E5ACD] dark:bg-neutral-800 dark:text-white"
-      />
-    )}
-    {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
-  </div>
-);
+        {label} {required && <span className="text-red-500">*</span>}
+      </label>
+      {type === "select" ? (
+        <select
+          id={name}
+          name={name}
+          value={value}
+          onChange={onChange}
+          required={required}
+          className="w-full px-4 py-2 border border-gray-300 dark:border-neutral-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1E5ACD] dark:bg-neutral-800 dark:text-white"
+        >
+          {options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      ) : (
+        <div className="relative">
+          <input
+            type={type === "password" && showPassword ? "text" : type}
+            id={name}
+            name={name}
+            value={value}
+            onChange={onChange}
+            required={required}
+            className="w-full px-4 py-2 border border-gray-300 dark:border-neutral-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1E5ACD] dark:bg-neutral-800 dark:text-white pr-10"
+          />
+          {type === "password" && (
+            <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              className="absolute right-2 top-1/4 -translate-y-1/2 bg-transparent border-none cursor-pointer focus:outline-none z-10 hover:bg-transparent"
+            >
+              {showPassword ? (
+                <Eye className="text-blue-600" size={20} />
+              ) : (
+                <EyeOff className="text-blue-600" size={20} />
+              )}
+            </button>
+          )}
+        </div>
+      )}
+      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+    </div>
+  );
+};
 
 // Componente para el pago (paso 5)
 interface StripePaymentFormProps {
