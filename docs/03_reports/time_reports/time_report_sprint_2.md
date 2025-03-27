@@ -59,11 +59,11 @@ classoption: "table"
 
 - **Miembros del grupo:** Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes.
 
-- **Contribuidores:** [Alberto Carmona Sicre](https://github.com/albcarsic) (autor), [Rafael Pulido Cifuentes](https://github.com/rafpulcif) (revisor)
+- **Contribuidores:** [Alberto Carmona Sicre](https://github.com/albcarsic) (autor), [Rafael Pulido Cifuentes](https://github.com/rafpulcif) (autor y revisor)
 
 - **Fecha de Creación:** 25/03/2025  
 
-- **Versión:** v1.0
+- **Versión:** v1.1
 
 <br>
 
@@ -77,6 +77,7 @@ classoption: "table"
 | Fecha      | Versión | Realizada por                    | Descripción de los cambios |
 |------------|---------|----------------------------------|----------------------------|
 | 25/03/2025 | v1.0    | Alberto Carmona Sicre            | Elaboración de la primera versión del documento de informe de tiempo del sprint 2 |
+| 27/03/2025 | v1.1    | Alberto Carmona Sicre, Rafael Pulido Cifuentes            | Añadidas las horas de los días faltantes |
 
 
 <br>
@@ -88,6 +89,7 @@ classoption: "table"
 
 # 1. PROYECTOS
 
+### IMPORTANTE: LAS HORAS ESTÁN CONTEMPLADAS HASTA LAS 17:00 DEL DÍA 27/03/2025
 ## 1.1. Definición de cada proyecto
 
 A continuación, se muestran los posibles tipos de tareas en las que pueden trabajar los integrantes del equipo, junto con una breve definición de estas:
@@ -138,11 +140,11 @@ Durante estas semanas de trabajo se ha trabajado en los siguientes proyectos:
 
 Entre los proyectos más destacados, auqellos en los que se ha invertido más tiempo, encontramos los siguientes:  
 
-- **feat:** 
+- **feat:** 210:08:51
 
-- **Clases/Vídeos:** 
+- **Clases/Vídeos:** 117:05:00
 
--**fix/refactor/style:** 
+-**fix/refactor/style:** 70:35:48
 
 Es bastante apreciable que el segundo sprint también ha con muchas horas de desarrollo de código, así como de refactorización y arreglo de problemas de código del sprint 1.
 
@@ -150,7 +152,7 @@ Es bastante apreciable que el segundo sprint también ha con muchas horas de des
 
 
 # 2. HORAS TOTALES
-Para este sprint, el tiempo total dedicado al proyecto ha sido de .
+Para este sprint, el tiempo total dedicado al proyecto ha sido de 475 horas y 51 minutos.
   
 
 <br>
@@ -176,9 +178,9 @@ Ordenado de manera cronológica:
 
 - **Miércoles 19/03:** 46:04:39  
 
-- **Jueves 20/03:** 32:00:01
+- **Jueves 20/03:** 37:07:01
 
-- **Viernes 21/03:** 53:51:51  
+- **Viernes 21/03:** 55:57:17  
 
 - **Sábado 22/03:** 27:14:26  
 
@@ -186,11 +188,11 @@ Ordenado de manera cronológica:
 
 - **Lunes 24/03:** 42:52:17  
 
-- **Martes 25/03:**  
+- **Martes 25/03:** 56:26:07
 
-- **Miércoles 26/03:** 
+- **Miércoles 26/03:** 29:37:54
 
-- **Jueves 27/03:**  (Incompleto)
+- **Jueves 27/03:** 09:48:21 (Incompleto)
 
 
 <br>
@@ -199,19 +201,19 @@ Ordenado de manera cronológica:
 
 Ordenado de mayor a menor tiempo dedicado en cada proyecto: 
 
-**1. feat:** 
+**1. feat:** 210:08:51
 
-**2. Clases/Vídeos:** 109:15:00
+**2. Clases/Vídeos:** 117:05:00
 
-**3. fix / refactor / style:**   
+**3. fix / refactor / style:**  70:35:48
 
-**4. docs:** 
+**4. docs:** 27:35:06
 
-**5. Presentaciones / Diseños:** 
+**5. Presentaciones / Diseños:** 19:05:12
 
 **6. Reuniones:** 13:04:45 
 
-**7. Usuarios Piloto:** 
+**7. Usuarios Piloto:** 08:41:14
 
 **8. Planificación:** 05:34:37 
 
@@ -228,39 +230,39 @@ Diagrama de sectores para una mejor visualización de la división:
 
 Ordenado por orden alfabético:
 
-**1. Alberto Carmona Sicre** - 
+**1. Alberto Carmona Sicre** - 20:19:53
 
-**2. Antonio Macías Ferrera** - 
+**2. Antonio Macías Ferrera** - 41:45:25
 
-**3. Benjamín Ignacio Maureira Flores** -  
+**3. Benjamín Ignacio Maureira Flores** -  33:37:10
 
-**4. Daniel Alors Romero** - 
+**4. Daniel Alors Romero** - 19:47:01
 
-**5. Daniel Fernández Caballero** - 
+**5. Daniel Fernández Caballero** - 26:48:06
 
-**6. Daniel Ruiz López**  -  
+**6. Daniel Ruiz López**  -  25:45:38
 
-**7. Daniel Tortorici Bartús** - 
+**7. Daniel Tortorici Bartús** - 29:26:05
 
-**8. Daniel Vela Camacho** - 
+**8. Daniel Vela Camacho** - 41:49:43
 
-**9. Delfín Santana Rubio** - 
+**9. Delfín Santana Rubio** - 24:21:05
 
-**10. Francisco Capote García** -  
+**10. Francisco Capote García** - 27:34:35
 
-**11. Francisco Mateos Villarejo** -  
+**11. Francisco Mateos Villarejo** - 27:18:32
 
-**12. Guadalupe Ridruejo Pineda** - 
+**12. Guadalupe Ridruejo Pineda** - 28:00:00
 
-**13. Julen Redondo Pacheco** -  
+**13. Julen Redondo Pacheco** -  20:15:27
 
-**14. Miguel Encina Martínez** -  
+**14. Miguel Encina Martínez** -  30:08:31
 
-**15. Pablo Fernández Pérez** -  
+**15. Pablo Fernández Pérez** -  25:07:50
 
-**16. Ramón Gavira Sánchez**  -  
+**16. Ramón Gavira Sánchez**  -  25:05:30
 
-**17. Rafael Pulido Cifuentes** -  
+**17. Rafael Pulido Cifuentes** -  28:40:49
 
 Diagrama de sectores para una mejor visualización:
 
