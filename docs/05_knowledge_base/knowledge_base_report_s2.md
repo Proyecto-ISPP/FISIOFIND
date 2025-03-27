@@ -54,8 +54,10 @@ classoption: "table"
     - [4.1.2. Planificación](#412-planificación)
     - [4.1.3. Informes](#413-informes)
     - [4.1.4. Seguimiento](#414-seguimiento)
-    - [4.1.5. Recursos](#415-recursos)
+    - [4.1.5. Recursos (Conocimiento base en el repositorio oficial de Fisio Find)](#415-recursos-conocimiento-base-en-el-repositorio-oficial-de-fisio-find)
     - [4.1.6. Ideando un proyecto](#416-ideando-un-proyecto)
+    - [4.1.7. Términos](#417-términos)
+    - [4.1.8. Sprint 1](#418-sprint-1)
   - [4.2 CONTRIBUCIONES A LA BASE DE CONOCIMIENTO GENERAL](#42-contribuciones-a-la-base-de-conocimiento-general)
     - [4.2.1. Feedback individual del grupo 6](#421-feedback-individual-del-grupo-6)
         - [Semana 6](#semana-6)
@@ -64,22 +66,14 @@ classoption: "table"
         - [Apartado Presentaciones](#apartado-presentaciones)
         - [Apartado Idea de Negocio](#apartado-idea-de-negocio)
 - [**5. ACCIONES TOMADAS A PARTIR DEL FEEDBACK**](#5-acciones-tomadas-a-partir-del-feedback)
-  - [5.1. Resumen de mejoras tras el feedback del 21/02/2025](#51-resumen-de-mejoras-tras-el-feedback-del-21022025)
-    - [5.1.1. Aumento de usuarios piloto](#511-aumento-de-usuarios-piloto)
-    - [5.1.2. Tabla de competidores](#512-tabla-de-competidores)
-    - [5.1.3. Asignaciones de tareas y responsabilidades](#513-asignaciones-de-tareas-y-responsabilidades)
-    - [5.1.4. Costos](#514-costos)
-    - [5.1.5. Inicio efectivo](#515-inicio-efectivo)
-    - [5.1.6. Organización de la presentación](#516-organización-de-la-presentación)
-  - [5.2. Resumen de mejoras tras el feedback del 07/03/2025](#52-resumen-de-mejoras-tras-el-feedback-del-07032025)
-    - [5.2.1. Inicio efectivo](#521-inicio-efectivo)
-    - [5.2.2. Diapositivas](#522-diapositivas)
-    - [5.2.3. Costos](#523-costos)
-    - [5.2.4. Equipo](#524-equipo)
-    - [5.2.5. Demo](#525-demo)
-    - [5.2.6. Transparencia de IA](#526-transparencia-de-ia)
-    - [5.2.7. Riesgos y problemas](#527-riesgos-y-problemas)
-    - [5.2.8. Usuarios piloto](#528-usuarios-piloto)
+  - [5.1. Resumen de mejoras tras el feedback del 14/03/2025](#51-resumen-de-mejoras-tras-el-feedback-del-14032025)
+    - [5.1.1. Redefinición de las estimaciones](#511-redefinición-de-las-estimaciones)
+    - [5.1.2. Mecanismo de puntos, asvisos y penalizaciones](#512-mecanismo-de-puntos-asvisos-y-penalizaciones)
+    - [5.1.3. Historias de usuario provenientes de feedback](#513-historias-de-usuario-provenientes-de-feedback)
+  - [5.2. Resumen de mejoras tras el feedback del 21/03/2025](#52-resumen-de-mejoras-tras-el-feedback-del-21032025)
+    - [5.2.1. Request for Change](#521-request-for-change)
+    - [5.2.2. Rendimiento del equipo](#522-rendimiento-del-equipo)
+    - [5.2.3. Gráficas](#523-gráficas)
 - [**6. ANEXO - RESUMEN DEL FEEDBACK POR GRUPO**](#6-anexo---resumen-del-feedback-por-grupo)
    - [6.1 Feedback del día 14/03/2025 (semana 6)](#62-clase-del-día-7-032025) 
         - [**Primer grupo (Holos):**](#primer-grupo-holos)
@@ -119,7 +113,7 @@ classoption: "table"
 
 - **Fecha de Creación:** 26/03/2025
 
-- **Versión:** v1.0
+- **Versión:** v1.1
 
 <br>
 
@@ -130,7 +124,8 @@ classoption: "table"
 
 | Fecha      | Versión | Realizada por                    | Descripción de los cambios |
 |------------|---------|----------------------------------|----------------------------|
-| 26/03/2025 | v1.0    | Alberto Carmona Sicre | Creación del informe de base de conocimiento. |
+| 26/03/2025 | v1.0    | Alberto Carmona Sicre | Creación del informe de base de conocimiento del sprint 2. |
+| 27/03/2025 | v1.1    | Alberto Carmona Sicre | Modificación de distintos apartados. |
 
 <br>
 
@@ -142,13 +137,17 @@ classoption: "table"
 
 La base de conocimiento ha sido desarrollada siguiendo las directrices establecidas en nuestro Acuerdo de Base de Conocimiento. Cada acción realizada ha sido regulada conforme a sus disposiciones. En este documento puede encontrar la información correspondiente al sprint 2.
 
+Importante: el repositorio de documentación en el que se suben los documentos generados durante los sprints no se actualiza directamente tras la creación de un archivo, sino que se va actualizando una vez se conoce que los archivos van a dejar de ser modificados, para así evitar trabajo extra innecesario a los responsables de poblar dicho repositorio.
+
 # 2. ACCESO A LA BASE DE CONOCIMIENTO
 
-El acceso a la base de conocimiento está disponible en el siguiente enlace: [FisioFind](https://fisiofind.vercel.app/).  
+El acceso a la base de conocimiento está disponible en el siguiente enlace: [Fisio Find](https://fisiofind.vercel.app/).  
 
-Para consultar la documentación, visita [Documentación FisioFind](https://fisiofind.vercel.app/docs/Inicio). En esta sección, encontrarás un panel lateral izquierdo que muestra todos los documentos subidos.
+Para consultar la documentación, visita [Documentación Fisio Find](https://fisiofind.vercel.app/docs/Inicio). En esta sección, encontrarás un panel lateral izquierdo que muestra todos los documentos subidos.
 
-Por otro lado, la base de conocimiento de toda la clase se encuentra en el siguiente enlace: [https://bcc-three.vercel.app/](https://bcc-three.vercel.app/)
+Por otro lado, la base de conocimiento de toda la clase se encuentra en el siguiente enlace: [https://bcc-three.vercel.app/](https://bcc-three.vercel.app/).
+
+Por último, en caso de que la Base de Conocimiento no haya sido actualizada, usted puede encontrar los diferentes documentos mencionados en la carpeta docs del repositorio oficial de Fisio Find, haciendo click en este enlace: [Documentación repositorio oficial Fisio Find](https://github.com/FisioFind/FisioFind/tree/main/docs).
 
 # 3. USO Y GESTIÓN DE LA BASE DE CONOCIMIENTO
 
@@ -173,6 +172,12 @@ Para mejorar la eficiencia en la documentación de informes, se estableció un g
 - **Carpeta Informes de Tiempo**: en esta sección se acumulan todos los informes de horas que el equipo dedica al trabajo de manera semanal. Para la elaboración de dichos documentos se asignaron a los compañeros Rafael Pulido y Alberto Carmona.  
 
 - **Carpeta Informes de IA**: en esta sección se almacenan todos los informes dedicados a evaluar el uso de la inteligencia artificial por parte de los miembros del equipo durante cada semana de trabajo. Para la elaboración de dichos documentos se asignaron a los compañeros Daniel Ruiz y Daniel Fernández.
+
+- **Carpeta Informes de usuarios piloto**: en esta sección se almacenan todos los informes dedicados a la obtención y evaluación del feedback por parte de los usuarios piloto. Los compañeros Antonio Macías y Guadalupe Ridruejo fueron los encargados de la elaboración de dichos documentos.
+
+- **Carpeta Informes de calidad**: en esta sección se almacenan todos los informes dedicados a la evaluación del trabajo realizado por cada integrante del equipo en un periodo concreto. El equipo de QA es el encargado de realizar dichos documentos. Los integrantes son: Francisco Mateos, Daniel Alors, Miguel Encina, Benjamín Ignacio Maureira.
+
+- **Carpeta Informes de seguridad**: en esta sección se almacenan todos los informes que tienen como objetivo mostrar los resultados de utilizar una herramienta automática de análisis de seguridad. Los encargados de realizar dichos documentos son: Guadalupe Ridruejo y Delfín Santana.
 
 ### 3.2.4. Seguimiento
 
@@ -200,7 +205,7 @@ En esta sección encontramos tres subapartados: Reuniones, Sprint 1 y Sprint 2.
 
 <br>
 
-Los documentos e informes no se incluyen directamente en la base de conocimiento, sino que se van subiendo al apartado docs del repositorio oficial de código de [Fisio Find](https://github.com/Proyecto-ISPP/FISIOFIND), que cuenta con una estructura ampliamente parecida a la base de conocimiento, para así mantener un orden de los documentos que se van finalizando a lo largo del desarrollo. Una vez los documentos son finalizados, dos responsables, Rafael Pulido y Daniel Ruiz, se encargan de lo siguiente:
+Los documentos e informes no se incluyen directamente en la base de conocimiento, sino que se van subiendo al apartado docs del repositorio oficial de código de [Fisio Find](https://github.com/Proyecto-ISPP/FISIOFIND/tree/main/docs), que cuenta con una estructura ampliamente parecida a la base de conocimiento, para así mantener un orden de los documentos que se van finalizando a lo largo del desarrollo. Una vez los documentos son finalizados, dos responsables, Rafael Pulido y Daniel Ruiz, se encargan de lo siguiente:
 
 - Se aseguran de que los documentos añadidos en el repositorio oficial de código de **Fisio Find** estén correctamente reflejados en la base de conocimiento.  
 
@@ -233,7 +238,7 @@ A continuación, se muestran las contribuciones del equipo a la base de conocimi
 
 ### 4.1.2. Planificación
 
-- Modifcación del Plan de Gestión de la Configuración.
+- Modificación del Plan de Gestión de la Configuración.
 
 ### 4.1.3. Informes
 
@@ -243,7 +248,27 @@ A continuación, se muestran las contribuciones del equipo a la base de conocimi
 
 <br>
 
-- Informe de IA de la semana 7 (07/03/2025 - 13/03/2025).
+- Informe de IA del sprint 1 (21/02/2025 - 13/03/2025).
+
+- Informe de IA del sprint 2 (14/03/2025 - 27/03/2025).
+
+<br>
+
+- Informe de usuarios piloto del sprint 1 (21/02/2025 - 13/03/2025).
+
+- Informe de usuarios piloto del sprint 2 (14/03/2025 - 27/03/2025).
+
+<br>
+
+- Informe de la calidad del Sprint 1 (21/02/2025 - 13/03/2025).
+
+- Informe de la calidad del Sprint 2 (14/03/2025 - 27/03/2025).
+
+<br>
+
+- Informe de seguridad 2025-03-27 ZAP.
+
+- Informe de seguridad.
 
 ### 4.1.4. Seguimiento
 
@@ -251,7 +276,7 @@ A continuación, se muestran las contribuciones del equipo a la base de conocimi
 
 - Planificación del Sprint 2.
 
-- Retrspectiva global del Sprint 2.
+- Retrospectiva global del Sprint 2.
 
 - Retrospectiva del Sprint del grupo 1.
 
@@ -261,7 +286,7 @@ A continuación, se muestran las contribuciones del equipo a la base de conocimi
 
 - Retrospectiva de mitad del Sprint 2.
 
-### 4.1.5. Recursos
+### 4.1.5. Recursos (Conocimiento base en el repositorio oficial de Fisio Find)
 
 - Feedback de la clase del día 14 de marzo de 2025.
 
@@ -271,13 +296,45 @@ A continuación, se muestran las contribuciones del equipo a la base de conocimi
 
 En el anexo, se muestra tanto el feedback grupal como las anotaciones generales.
 
-### 4.1.5. Ideando un proyecto
+### 4.1.6. Ideando un proyecto
 
 - No se han añadido ni modificado documentos.
 
+### 4.1.7. Términos
+
+- Documento de "cookies" de Fisio Find en formato pdf y md.
+
+- Documento de términos y condiciones de Fisio Find en formato pdf y md.
+
+- Documento de privacidad de Fisio Find en formato pdf y md.
+
+- Documento de licencias de Fisio Find en formato pdf y md.
+
+### 4.1.8. Sprint 1
+
+- Informe de uso de la Inteligencia Artificial.
+
+- Informe de la base de conocimiento.
+
+- Acuerdo de compromiso con las modificaciones del sprint.
+
+- Documento de evaluación del rendimiento.
+
+- Documento de usuarios piloto.
+
+- Documento de acuerdo de compromiso de usuarios piloto.
+
+- Documento de evaluación del rendimiento de usuarios piloto.
+
+- Presentación del sprint en formato pdf.
+
+- Guía de uso y revisión.
+
+- Informe del esfuerzo de tiempo.
+
 <br>
 
-Para consultar la documentación, visita [Documentación FisioFind](https://fisiofind.vercel.app/docs/Inicio). En esta sección, encontrarás un panel lateral izquierdo que muestra todos los documentos subidos.
+Para consultar la documentación, visita [Documentación Fisio Find](https://fisiofind.vercel.app/docs/Inicio). En esta sección, encontrarás un panel lateral izquierdo que muestra todos los documentos subidos. Si desea una versión actualizada en todo momento, acceda al siguiente enlace con el apartado de documentos del [repositorio oficial de Fisio Find](https://github.com/Proyecto-ISPP/FISIOFIND/tree/main/docs).
 
 
 ## 4.2 CONTRIBUCIONES A LA BASE DE CONOCIMIENTO GENERAL
@@ -428,71 +485,33 @@ En esta sección se muestra un resumen de las acciones que se han tomado a parti
 
 Tras el _feedback_ recibido en la sesión del 14/03/2025, se tomaron medidas para mejorar aquellos aspectos de la presentación que presentaban fallos, al mismo tiempo que se reforzaron los puntos que fueron elogiados.
 
-### 5.1.1. Aumento de usuarios piloto
+### 5.1.1. Redefinición de las estimaciones
 
-- Ante la clara falta de usuarios piloto, se destinó cierto tiempo a una búsqueda más exhaustiva que permitiese tener una base mucho mayor de feedback por parte de posibles usuarios de la aplicación. Esto tuvo como resultado un aumento de fisioterapeutas de 5 a 16 con distinta experiencia, así como un aumento en pacientes de 3 a 18.
+- Se nos comentó que, en las estimaciones de costes, la estimación pesimista era demasiado pesimista, por lo que se hizo un reajuste para la siguiente presentación teniendo en cuenta este comentario, corrigiéndose este pequeño fallo.
 
-### 5.1.2. Tabla de competidores
+### 5.1.2. Mecanismo de puntos, asvisos y penalizaciones
 
-- En el feedback del 21/02 se indicó que la tabla de competidores principales no llegaba a entenderse puesto que era demasiado abstracta. Por ello, para la siguiente presentación se actualizó la tabla para que fuese más sencillo diferenciar lo que hacíamos distinto a los demás.
+- Aunque en el feedback del 14/03 se destacó el análsis de rendimiento de los compañeros, se generaron dudas acerca del mecanismo de quitar puntos, por lo que se hizo un reajuste para que se motivase con extras en vez de penalizar con menos puntos. Además, se implementaron los avisos, para no activar las penalizaciones tras el primer fallo.
 
-### 5.1.3. Asignaciones de tareas y responsabilidades
+### 5.1.3. Historias de usuario provenientes de feedback
 
-- Aunque se expusieron los equipos y diapositivas con las distintas responsabilidades existentes, no se dejó claro quién hacía qué mediante representaciones visuales, por lo que se corrigió para la siguiente presentación con diapositivas que juntasen a los miembros con sus responsabilidades.
-
-### 5.1.4. Costos
-
-Se nos indicó la necesidad de mejorar en la presentación de los costos. Entre las mejoras realizadas se encuentran:
-
-- **Desglose del CapEx**.
-- **Desglose del OpEx**.
-- Gráfica con Ingresos Acumulados, Costes Acumulados y ROI.
-
-### 5.1.5. Inicio efectivo
-
-- Se destacó la necesidad de innovar en el inicio efectivo, por lo que los presentadores dedicaron un tiempo mayor a idear un inicio mucho más potente.
-
-### 5.1.6. Organización de la presentación
-
-- Los docentes indicaron que la organización de la presentación no era la acordada, por lo que se anotaron bien los puntos para tener bien en cuenta la distribución en la siguiente presentación.
+- Como comentario común, se destacó la importancia de resaltar aquellas historias de usuario provenientes del feedback de los usuarios piloto, por lo que se tuvo en cuenta para la siguiente presentación.
 
 ## 5.2. Resumen de mejoras tras el feedback del 07/03/2025
 
 Tras el _feedback_ recibido en la sesión del 07/03/2025, se tomaron medidas para mejorar aquellos aspectos de la presentación que presentaban fallos, al mismo tiempo que se reforzaron los puntos que fueron elogiados.
 
-### 5.2.1. Inicio efectivo
+### 5.2.1. Request for Change
 
-- se comentó que el inicio efectivo fue demasiado largo y no estaba relacionado con lo que vamos a ofrecer, por lo que se ha destinado todavía más tiempo a preparar esta parte de la presentación.
+- Se comentó que los Request for Change no se habían realizado en los contextos adecuados, por lo que se realizó una reestructura para que se puedan realizar en los contextos adecuados, y se tuvo en cuenta para futuros sprints.
 
-### 5.2.2. Diapositivas
+### 5.2.2. Rendimiento del equipo
 
-- El número de diapositivas era superior a lo esperado, por lo que se tuvo en cuenta a la hora de realizar la siguiente presentación.
+- Se hizo hizo hincapié en que debía haber más información acerca del rendimiento del equipo, por lo que se añadieron más diapositivas e información que se adecuase a lo solicitado.
 
-- Como feedback positivo, se felicitó la presentación autocontenida, los elementos visuales y las animaciones, por lo que se seguirán utilizando en presentaciones futuras.
+### 5.2.3. Gráficas
 
-### 5.2.3. Costos
-
-- Aunque los costos estaban bien expuestos, se necesitaban resumir un poco más, por lo que se tuvo en cuenta para futuras presentaciones.
-
-### 5.2.4. Equipo
-
-- La presentación del equipo era demasiado extensa, por lo que se tuvo en cuenta para futuras presentaciones, aglutinando la información relevante.
-
-### 5.2.5. Demo
-
-- La mala visualización de la demo fue una constante en todos los grupos, por lo que se realizaron zooms en la demo para que se vea mejor lo que se estaba mostrando.
-
-### 5.2.6. Transparencia de IA
-
-- Faltó una diapositiva dedicada a la IA, por lo que se incluyó en la siguiente presentación para comentar la manera en la que se usaba.
-
-### 5.2.7. Riesgos y problemas
-
-- Mejorar en la sección de riesgos y problemas según lo dicho en el feedback(diferenciar entre riesgo y problema, mejorar la trazabilidad, solo poner riesgos que han surgido, etc.).
-
-### 5.2.8. Usuarios piloto
-
-- A partir del feedback recibido hemos terminado el Plan de Gestión de Usuarios Piloto, en el que entre otras cosas se determinan las encuestas que se van a pasar a cada tipo de usuario. Los comentarios de los profesores nos han hecho mejorar en gestión de usuarios piloto y en cómo lo presentamos.
+- Durante la presentación, también se mencionó la necesidad de una mayor diversidad en el tipo de gráfica usada, por lo que se tuvo en cuenta para la siguiente presentación.
 
 <br>
 
