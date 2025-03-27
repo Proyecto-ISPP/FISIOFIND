@@ -257,7 +257,7 @@ Caso de uso 11:
 
 # 4.5. **Gestión de subida de archivos**
 
-Actualmente, estamos trabajando en la funcionalidad de poder actualizar un archivo subido(editar título,descripción,etc.). Sin embargo, esta funcionalidad actualmente no está terminada, porque solo funciona con los ids de los pacientes. No la borramos para no tener que rehacerla, pero está pensada para terminarse en el S2.
+Actualmente, estamos trabajando en la funcionalidad de poder actualizar un archivo subido(editar título,descripción,etc.). Sin embargo, esta funcionalidad actualmente no está terminada, porque solo funciona con los ids de los pacientes. No la borramos para no tener que rehacerla, pero está pensada para terminarse en el S3.
 
 Caso de uso 12:
 1. El fisioterapeuta entra en la sección de subida de archivos.
