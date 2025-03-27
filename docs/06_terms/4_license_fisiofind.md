@@ -45,8 +45,8 @@ classoption: "table"
   - [4.6. CC-BY-4.0 (2)](#46-cc-by-40-2)
   - [4.7. LGPL-3.0-or-later (1)](#47-lgpl-30-or-later-1)
   - [4.8. Python-2.0 (1)](#48-python-20-1)
-  - [4.10. CC0-1.0 (1)](#410-cc0-10-1)
-  - [4.11. 0BSD (1)](#411-0bsd-1)
+  - [4.9. CC0-1.0 (1)](#49-cc0-10-1)
+  - [4.10. 0BSD (1)](#410-0bsd-1)
 - [5. MODIFICACIONES AL ACUERDO](#5-modificaciones-al-acuerdo)
 - [6. CONTACTO Y SOPORTE](#6-contacto-y-soporte)
 - [7. DISPOSICIONES FINALES](#7-disposiciones-finales)
@@ -221,7 +221,7 @@ La licencia **Python Software Foundation License versión 2.0 (Python-2.0)** es 
 
 <br>
 
-### 4.10. CC0-1.0 (1)
+### 4.9. CC0-1.0 (1)
 
 La licencia **Creative Commons Zero 1.0 (CC0-1.0)** es una licencia de dominio público que permite utilizar, modificar, distribuir y adaptar cualquier obra o recurso sin ningún tipo de restricción ni obligación, incluyendo su uso en proyectos comerciales o propietarios. Bajo CC0, el autor renuncia explícitamente a todos sus derechos sobre la obra, incluyendo cualquier requisito de atribución.
 
@@ -233,7 +233,7 @@ La licencia **Creative Commons Zero 1.0 (CC0-1.0)** es una licencia de dominio p
 
 <br>
 
-### 4.11. 0BSD (1)
+### 4.10. 0BSD (1)
 
 La licencia **Zero-Clause BSD (0BSD)** es una licencia extremadamente permisiva, similar a colocar la obra en dominio público, que permite usar, copiar, modificar y distribuir el software libremente para cualquier propósito, incluyendo fines comerciales o propietarios. Esta licencia no impone restricciones, condiciones, ni siquiera la obligación de mantener avisos o menciones sobre el software original.
 
