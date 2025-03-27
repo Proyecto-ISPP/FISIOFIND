@@ -117,7 +117,7 @@ Y, nuestro repositorio en GitHub: https://github.com/Proyecto-ISPP/FISIOFIND
 Una vez en nuestra aplicación, se podrá acceder sin necesidad de iniciar sesión a nuestra página principal y realizar una primeras búsquedas de fisioterapeutas. De todas formas, para probar nuestras funcionalidades completas, facilitamos los siguientes credenciales:
 
 El panel de admin hemos decidido utilizar un subdominio para tenerlo. Esta práctica está recomendada desde el punto de vista de la seguridad y es una práctica extendida: https://s2-api.fisiofind.com/admin
-No obstante, el administrador puede iniciar sesión en el frontend para editar los documentos legales más facilmente.
+. No obstante, el administrador puede iniciar sesión en el frontend para editar los documentos legales más fácilmente.
 Credenciales: 
   - Username: Administrador
   - Password: 65471364R65471364R
