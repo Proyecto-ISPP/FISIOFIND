@@ -1,11 +1,11 @@
---
+---
 title: "REPORTE ANÁLISIS DE SEGURIDAD S2"
 subtitle: "FISIO FIND - Grupo 6 - #SPRINT 2"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]                                                # CHANGE IF NEEDED
 date: "27/03/2025"
 subject: "ISPP"
 lang: "es"
-# toc: true
+toc: true
 titlepage: true
 titlepage-text-color: "1C1C1C"
 titlepage-rule-color: "1C1C1C"
@@ -82,7 +82,7 @@ Para el análisis hemos usado la configuración por defecto de la herramienta pa
 
 # 3. RESULTADOS DEL ANÁLISIS
 
-Los resultados del análisis se pueden ver en el archivo generado por ZAP "2025-03-27-ZAP-Report-.html". A continuación hacemos un resumen de lo más importante de los resultados.
+Los resultados del análisis se pueden ver en el archivo generado por ZAP [2025-03-27-ZAP-Report-.html](https://github.com/Proyecto-ISPP/FISIOFIND/blob/main/docs/03_reports/security_reports/2025-03-27-ZAP-Report-.html). ZAP categoriza los avisos en informativo, bajo, medio y alto en función del riesgo que suponen. A continuación, hacemos un resumen de lo más importante de los resultados. 
 
 |Nombre | 	Nivel de riesgo | 	Número de evidencias |
 |----|------------|------------------------|
@@ -103,4 +103,4 @@ Por ejemplo, el aviso "Server Leaks Information via "X-Powered-By" HTTP Response
 Después, el "Information Disclosure - Suspicious Comments" hace referencia a que parece haber comentarios sospechosos en las respuestas del servidor. En el proceso de desarrollo los programadores pueden poner comentarios con información sensible y no ser borrados en producción. Sin embargo, analizando los resultados parece que son comentarios normales sin información sensible (sin api keys, sin credenciales de administración, etc.). Sin embargo, para el siguiente sprint deberían de eliminarse todos los comentarios de funcionalidades que no se utilicen.
 
 # 4. CONCLUSIONES
-Fisio Find no presenta vulnerabilidades críticas que puedan ser encontradas con herramientas automáticas de análisis de seguridad. Los avisos que nos devuelve la aplicación no necesitan de acciones inminentes(de hecho muchas otras webs lo tienen). Sin embargo, se deben de tomar acciones correctivas para la siguiente entrega.
+Fisio Find no presenta vulnerabilidades críticas que puedan ser encontradas con herramientas automáticas de análisis de seguridad. De hecho, realmente no tenemos vulnerabilidades, solo tenemos avisos, y los avisos que nos devuelve ZAP son genéricos(muchas otras webs lo tienen y no hay consecuencias inmediatas) y no necesitan de acciones inminentes. Sin embargo, se deben de tomar medidas correctivas para la siguiente entrega porque se aspira a tener el mínimo número de avisos.
