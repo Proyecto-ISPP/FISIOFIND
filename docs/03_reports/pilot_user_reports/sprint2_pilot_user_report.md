@@ -39,9 +39,9 @@ classoption: "table"
     - [PACIENTES](#pacientes)
     - [USUARIOS PILOTO TÉCNICOS](#usuarios-piloto-técnicos)
 - [3. FEEDBACK OBTENIDO](#3-feedback-obtenido)
-  - [3.1. PRINCIPALES OBSERVACIONES Y SUGERENCIAS](#31-principales-observaciones-y-sugerencias)
-- [3.2. PROBLEMAS DETECTADOS](#32-problemas-detectados)
-- [3.3. FUNCIONALIDADES VALORADAS POSITIVAMENTE](#33-funcionalidades-valoradas-positivamente)
+  - [3.1. PROBLEMAS DETECTADOS](#31-problemas-detectados)
+  - [3.2. FUNCIONALIDADES VALORADAS POSITIVAMENTE](#32-funcionalidades-valoradas-positivamente)
+  - [3.3. PRINCIPALES OBSERVACIONES Y SUGERENCIAS](#33-principales-observaciones-y-sugerencias)
 - [4. CONCLUSIONES, LECCIONES APRENDIDAS Y PROCESADO DEL FEEDBACK](#4-conclusiones-lecciones-aprendidas-y-procesado-del-feedback)
   - [4.1. AJUSTES REALIZADOS EN BASE AL FEEDBACK](#41-ajustes-realizados-en-base-al-feedback)
   - [4.2. ESTRATEGIAS DE MEJORA FUTURA](#42-estrategias-de-mejora-futura)
@@ -88,11 +88,11 @@ classoption: "table"
 
 # 1. INTRODUCCIÓN
 
-En este documento se recogerá el feedback recogido en la fase piloto de FISIO FIND. Se analizarán las opiniones y comentarios recibidos, identificando problemas detectados, funcionalidades mejor valoradas y áreas de mejora. También se evaluarán a los usuarios piloto técnicos (estudiantes de la asignatura ISPP).
+En este documento se recogerá el feedback recogido en la fase piloto de Fisio Find. Se analizarán las opiniones y comentarios recibidos, identificando problemas detectados, funcionalidades mejor valoradas y áreas de mejora. También se evaluarán a los usuarios piloto técnicos (estudiantes de la asignatura ISPP).
 
 # 2. LISTA DE USUARIOS PILOTO
 
-Se presenta un listado de los usuarios piloto que participarán en las pruebas de FISIO FIND, detallando sus perfiles y *la relevancia de su participación en la evaluación de la plataforma*:
+Se presenta un listado de los usuarios piloto que participarán en las pruebas de FISIO FIND, detallando sus perfiles:
 
 
 ### FISIOTERAPEUTAS
@@ -161,7 +161,9 @@ Se presenta un listado de los usuarios piloto que participarán en las pruebas d
 
 # 3. FEEDBACK OBTENIDO
 
-El feedback de los usuarios piloto es clave para evaluar la plataforma y determinar las mejoras necesarias. En este apartado se presentan las principales observaciones, problemas detectados y funcionalidades mejor valoradas en la fase de pruebas de este Sprint 2.
+El feedback de los usuarios piloto es clave para evaluar la plataforma y determinar las mejoras necesarias. Sin embargo, en este sprint **hemos obtenido una baja tasa de respuestas**; tan solo 4/16 fisioterapeutas, 8/19 pacientes y 6/6 técnicos han enviado sus respuestas.
+
+En este apartado se presentan las principales observaciones, problemas detectados y funcionalidades mejor valoradas en la fase de pruebas de este Sprint 2.
 
 Para priorizar la corrección de los problemas detectados y sugerencias de mejora en el siguiente sprint, se seguirá el siguiente orden de prioridad:
 
@@ -175,55 +177,45 @@ Para priorizar la corrección de los problemas detectados y sugerencias de mejor
 
 Este enfoque permitirá abordar de manera estructurada las áreas críticas de mejora, asegurando que la plataforma evolucione para satisfacer las necesidades tanto de los fisioterapeutas como de los pacientes y usuarios técnicos.
 
-## 3.1. PRINCIPALES OBSERVACIONES Y SUGERENCIAS
+## 3.1. PROBLEMAS DETECTADOS
 
-Se recogen los comentarios y sugerencias más relevantes de los usuarios piloto, destacando aspectos positivos y áreas de mejora.
+Se detallan los principales problemas encontrados por los usuarios piloto durante la prueba de la plataforma, junto con su impacto y posibles soluciones.
 
-Los usuarios piloto realizaron aportaciones valiosas sobre la experiencia general con la plataforma. Las principales observaciones se agrupan en las siguientes categorías:
+| Error                                      | Motivo                                                                                                                                                                                                                                            | Solución                                                                                                                                                                                                                                                                                                   | Prioridad | Impacto |
+|-------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------|---------|
+| **Errores en el registro de fisioterapeutas** | Diferencia entre el número de colegiado en la tarjeta física (ej. 02300) y el registrado en la base de datos oficial (ej. 2300), lo que causa fallos en el script de validación.                                                                  | Incluir un enlace a la BBDD del colegio profesional correspondiente en el formulario para verificar el número antes de ingresarlo. Además, se hará una batería de pruebas con combinaciones comunes en diferentes comunidades autónomas.                                                                   | 1         | ALTO    |
+| **Problemas de conexión** | A pesar de estar registrados, los usuarios reportaron errores recurrentes de conexión que les impedían realizar las acciones que se les habían solicitado en la plataforma.                                                                  | Este error ya fue solucionado y tiene que ver con el tiempo de expiración y renovación del token de inicio de sesión. No obstante, se prestará especial atención a que esto no vuelva a suceder.                                                                   | 1         | ALTO    |
+| **Dependencia de datos** | Estar registrado con un nombre de usuario no permite cambiar el correo asociado en la edición del perfil. | Se revisará esta dependencia para mejorar la usabilidada en el proceso de edición de datos del perfil de usuario. | 1 | ALTO |
+| **Formularios que aceptan registros vacíos o datos inválidos** | Formularios como el de respuesta al cuestionario preintervención o el de creación de un servicio de fisioterapia admiten datos vacíos, cadenas de texto infinitamente largas o entradas que no corresponden al formato del campo que se está rellenando (p.e. registrar "123" para un número de teléfono). | Se revisarán cuidadosemante y se añadirán validaciones en TODOS los formularios de la plataforma. | 1 | ALTO |
+| **Carga de datos lenta**                      | No especificado en el informe. Posiblemente relacionado con optimización deficiente o problemas de red/conexión.                                                                                                                                  |Se requiere diagnóstico más profundo para determinar causa raíz y aplicar medidas correctivas como cacheo, optimización de consultas o manejo de errores de red.                                                                                                   | 4 | ALTO |
+| **Interfaz no responsiva en móviles**        | Formularios y botones no se adaptan correctamente a pantallas pequeñas, causando desalineaciones u ocultamiento de elementos. Esto se debe a que todo el desarrollo de la UI se ha hecho teniendo en cuenta la responsividad en un navegador de ordenador con tamaño estándar / medio                                                                                                          | Ajustar estilos CSS y layout para asegurar diseño responsivo (media queries, flexbox/grid adaptable). Realizar pruebas específicas en móviles y tablets.                                                                                                                                                    | 4 | MEDIO |
 
-- **Claridad de la interfaz**: Varios fisioterapeutas indicaron que ciertos apartados resultan poco intuitivos o requieren demasiados clics para completar acciones frecuentes (por ejemplo, asignar ejercicios a un paciente). Se sugiere una navegación más directa y con menos pasos.
 
-- **Información del paciente**: Se valoró positivamente la posibilidad de visualizar el progreso de los pacientes, pero se solicitó que se integren gráficos o resúmenes visuales que faciliten la evaluación del tratamiento.
-
-- **Comprobación del número de colegiado**: Hubo confusión entre algunos fisioterapeutas respecto al proceso de validación. Se sugiere proporcionar instrucciones más claras o una confirmación explícita del estado de validación.
-
-- **Mayor personalización del perfil**: Tanto pacientes como fisioterapeutas sugirieron incluir más campos en los perfiles, como especialidades o condiciones de salud.
-
-- **Notificaciones y recordatorios**: Los pacientes proponen incorporar notificaciones que recuerden la realización de ejercicios o citas pendientes.
-
-- **Accesibilidad desde dispositivos móviles**: Aunque la mayoría pudo acceder a la plataforma desde móviles, algunos reportaron problemas de visualización. Se recomienda optimizar la experiencia móvil.
-
-# 3.2. PROBLEMAS DETECTADOS
-
-Se identifican los principales problemas encontrados por los usuarios piloto durante la prueba de la plataforma, junto con su impacto y posibles soluciones.
-
-Durante la fase de pruebas se identificaron los siguientes problemas:
-
-- **Errores en el registro de fisioterapeutas**: Algunos usuarios no pudieron registrarse correctamente debido a fallos en la verificación del número de colegiado, bloqueando el acceso a funcionalidades clave.
-
-- **Carga de datos lenta**: Se detectaron tiempos de carga elevados en la página de inicio de sesión y en la lista de pacientes asignados.
-
-- **Asignación de ejercicios**: En ciertos casos, los ejercicios asignados no se guardaban correctamente o desaparecían tras actualizar la página.
-
-- **Interfaz no responsiva en móviles**: Algunos formularios y botones se desalineaban o se ocultaban en dispositivos móviles de gama media-baja.
-
-- **Incoherencias en los formularios de test**: Los tests asignados a las sesiones a veces no se mostraban correctamente o no permitían su edición.
-
-# 3.3. FUNCIONALIDADES VALORADAS POSITIVAMENTE
-
-Se detallan las características y funcionalidades de FISIO FIND que recibieron comentarios positivos por parte de los usuarios piloto, identificando fortalezas clave del producto.
+## 3.2. FUNCIONALIDADES VALORADAS POSITIVAMENTE
 
 Los usuarios destacaron varias funcionalidades que mejoraron significativamente su experiencia:
 
-- **Asignación de ejercicios personalizados**: Fisioterapeutas valoraron positivamente poder crear y asignar ejercicios específicos para cada paciente, lo cual refuerza el seguimiento individualizado.
-
-- **Sistema de sesiones y test por sesión**: Se apreció la posibilidad de asignar sesiones a lo largo de la semana, así como incluir un test para recoger feedback del paciente tras cada entrenamiento.
-
-- **Panel claro y organizado**: Técnicos ISPP resaltaron la organización general del panel y la facilidad para encontrar funciones básicas, especialmente desde el punto de vista del desarrollo y evaluación de software.
-
-- **Gestión de pacientes**: La estructura de los historiales clínicos y su accesibilidad fue bien recibida por los fisioterapeutas.
+- **Panel claro y organizado**: los usuarios pilotos técnicos resaltaron la organización general del panel y la facilidad para encontrar funciones básicas, especialmente desde el punto de vista del desarrollo y evaluación de software.
 
 - **Diseño visual agradable**: Pacientes indicaron que la estética de la plataforma genera confianza, siendo clara y profesional.
+
+También, se valoró positivamente el formato y estética del formulario de participación para la prueba. 
+
+## 3.3. PRINCIPALES OBSERVACIONES Y SUGERENCIAS
+
+Los usuarios piloto realizaron valiosas aportaciones sobre la experiencia general con la plataforma. A continuación, se recogen las sugerencias de mejora más repetidas, tanto para las funcinalidades ya implementadas para la fecha como para aquellas que aún están en desarrollo:
+
+- **Información del paciente**: Se valoró positivamente la posibilidad de visualizar el progreso de los pacientes, pero se solicitó que se integren gráficos o resúmenes visuales que faciliten la evaluación del tratamiento. *Esta funcionalidad ya está en desarrollo para la fecha de este documento. *
+
+- **Notificaciones y recordatorios**: Los pacientes proponen incorporar notificaciones que recuerden la realización de ejercicios o citas pendientes.
+
+- **Mayor personalización del perfil**: Tanto pacientes como fisioterapeutas sugirieron incluir más campos en los perfiles, como formación académica, promoción, lugar de trabajo y experiencia laboral.
+
+- **Contraseña**: Los usuarios echaron en falta una recuperación de la contraseña si la han olvidado o la posibilidad de visualizarla mientras la están escribiendo para evitar malentendidos en el registro. 
+
+- **Accesibilidad desde dispositivos móviles**: Aunque la mayoría pudo acceder a la plataforma desde móviles, algunos reportaron problemas de visualización. Se recomienda optimizar la experiencia móvil.
+
+- **Leyendas de colores e indicaciones**: para la gestión de citas y del calendario, se recomendó incluir una leyenda para indicar el significado de cada color empleado en la vista, así como instrucciones o una breve descripción de cómo interactuar con el mismo.
 
 # 4. CONCLUSIONES, LECCIONES APRENDIDAS Y PROCESADO DEL FEEDBACK
 
@@ -237,13 +229,11 @@ Tras la evaluación del feedback, se han realizarán los siguientes cambios en l
 
 - Revisión del sistema de verificación de colegiados para reducir errores en el registro de fisioterapeutas.
 
-- Rediseño parcial de formularios y navegación para facilitar la asignación de ejercicios y la gestión de sesiones.
+- Rediseño parcial de formularios y navegación para evitar inconsistencias con los resultados que esperamos almacenar.
 
 - Mejora del rendimiento en las pantallas principales (inicio de sesión y panel de pacientes).
 
 - Ajustes en la visualización móvil para mejorar la compatibilidad en distintos dispositivos.
-
-- Simplificación del formulario de tests de sesión, añadiendo validaciones y una interfaz más clara.
 
 
 ## 4.2. ESTRATEGIAS DE MEJORA FUTURA
@@ -265,11 +255,11 @@ De cara a próximos sprints, se establecen las siguientes líneas de trabajo:
 
 # 5. EVALUACIÓN DE LA EXPERIENCIA PILOTO
 
-| Usuario piloto (uvus) | Fecha acceso al sistema | Fecha envío de feedback | Enlace Clockify | Fallos encontrados | Recomendaciones de mejora | Otros comentarios |
-|----------------------|------------------------|------------------------|----------------|-------------------|------------------------|------------------|
-| Antonio Daniel Porcar Aragón (antporara) | 12/03/2025 18:30 | 12/03/2025 18:45 | [antporara](https://app.clockify.me/shared/67e42125f62c693dbbcbb42e) | - |  |  |
-| Antonio Jiménez Ortega (antjimort) | 11/03/2025 15:30 | 11/03/2025 15:41 | [antjimort]() |  |  |  |
-| David Guillén Fernández (davguifer) | 11/03/2025 20:25 | 11/03/2025 21:00 | [davguifer]() |  |  |  |
-| Jaime Linares Barrera (jailinbar) | 11/03/2025 20:27 | 11/03/2025 21:08 | [jailinbar](https://app.clockify.me/shared/67e3e19bf562c161b726c9f1) | |  |  |
-| Javier Ulecia García (javulegar) | 12/03/2025 11:30 | 12/03/2025 12:15 | [javulegar](https://app.clockify.me/shared/67e431c1f62c693dbbcbfaf7) |  | | - |
-| José Manuel Miret Martín (josmirmar2) | 12/03/2025 14:55 | 12/03/2025 15:04 | [josmirmar2](https://app.clockify.me/shared/67e42154f562c161b727e4ca) |  |  |  |
+| Usuario (uvus) | Fecha acceso | Feedback | Clockify | Fallos encontrados | Recomendaciones / Comentarios |
+|----------------|--------------|----------|----------|---------------------|-------------------------------|
+| Antonio Daniel Porcar Aragón (**antporara**) | 23/03/2025 | 23/03/2025 | [antporara](https://app.clockify.me/shared/67e42125f62c693dbbcbb42e) | Videollamadas no funcionaban correctamente | Interfaz sencilla y cómoda. La barra lateral podría integrarse mejor con el calendario. |
+| Antonio Jiménez Ortega (**antjimort**) | 11/03/2025 | 11/03/2025 | [antjimort](https://app.clockify.me/shared/67e47e6cf62c693dbbccd7ca) | Ningún bug | Diseño y UX agradables. Sugerencia: uso coherente de mayúsculas en títulos. |
+| David Guillén Fernández (**davguifer**) | 23/03/2025 | 23/03/2025 | [davguifer]() | Varios bugs en validación de formularios, errores al actualizar perfil, visualización del calendario incompleta | Visualmente atractiva. Mejorar espaciado entre botones y validaciones de campos. |
+| Jaime Linares Barrera (**jailinbar**) | 23/03/2025 | 23/03/2025 | [jailinbar](https://app.clockify.me/shared/67e3e19bf562c161b726c9f1) | Errores al registrarse, cargar perfil, reservar cita, mostrar métodos de pago | Interfaz intuitiva. Sugerencia: unificar campos de registro en una sola pantalla. |
+| Javier Ulecia García (**javulegar**) | 12/03/2025 | 12/03/2025 |[javulegar](https://app.clockify.me/shared/67e431c1f62c693dbbcbfaf7) | No pudo registrarse | Interfaz bonita, buena usabilidad. |
+| José Manuel Miret Martín (**josmirmar2**) | 26/03/2025 | 26/03/2025 | [josmirmar2](https://app.clockify.me/shared/67e42154f562c161b727e4ca) | Fallos en visualización y edición del perfil, registro incompleto, reservas no funcionales | Buen diseño general. Mejorar perfil de usuario y revisar funcionalidad completa de registro/reserva. |
