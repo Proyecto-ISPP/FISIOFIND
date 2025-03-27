@@ -9,7 +9,6 @@ import {
   IconUser,
   IconPhone,
 } from "@tabler/icons-react";
-import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import axios from "axios";
 import { getApiBaseUrl } from "@/utils/api";
@@ -26,6 +25,12 @@ export function SidebarDemo() {
     setIsClient(true);
   }, []);
 
+  // Add logout handler function
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    window.location.href = "/"; // Redirect to home and refresh the page
+  };
+
   // Cada vez que cambia la ruta, revalidamos la existencia del token en localStorage
   useEffect(() => {
     if (isClient) {
@@ -33,91 +38,97 @@ export function SidebarDemo() {
       setToken(storedToken);
       setIsAuthenticated(!!token);
       if (token) {
-        axios.get(`${getApiBaseUrl()}/api/app_user/check-role/`, {
-          headers: {
-            "Authorization": "Bearer " + token
-          }
-        })
-          .then(response => {
+        axios
+          .get(`${getApiBaseUrl()}/api/app_user/check-role/`, {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          })
+          .then((response) => {
             const role = response.data.user_role;
             if (role === "patient") {
               setUrlPerfil("/patient-management/profile/");
             } else if (role === "physiotherapist") {
               setUrlPerfil("/physio-management/profile/");
             }
-          })
+          });
       }
     }
   }, [pathname, isClient, token]);
 
-  const links = [
+  // Update the icon sizes and colors in the links array
+  // Update the links array to separate public and private links
+  const publicLinks = [
     {
       label: "Buscar",
       href: "/",
       icon: (
-        <IconSearch className="text-[#253240] h-5 w-5 flex-shrink-0 mx-auto" />
+        <IconSearch className="text-[#05668D] h-5 w-5 flex-shrink-0 mx-auto" />
       ),
     },
     {
       label: "Mis citas",
       href: isAuthenticated ? "/my-appointments" : "/register",
       icon: (
-        <IconCalendar className="text-[#253240] h-5 w-5 flex-shrink-0 mx-auto" />
+        <IconCalendar className="text-[#0A7487] h-5 w-5 flex-shrink-0 mx-auto" />
       ),
     },
     {
       label: "Tratamientos",
-      href: isAuthenticated ? "#" : "/register",
+      href: isAuthenticated? "/physio-management/follow-up" : "/login",
       icon: (
-        <IconStethoscope className="text-[#253240] h-5 w-5 flex-shrink-0 mx-auto" />
-      ),
-    },
-    {
-      label: "Mi perfil",
-      href: urlPerfil ? urlPerfil : "/",
-      icon: (
-        <IconUser className="text-[#253240] h-5 w-5 flex-shrink-0 mx-auto" />
+        <IconStethoscope className="text-[#05918F] h-5 w-5 flex-shrink-0 mx-auto" />
       ),
     },
     {
       label: "Videollamadas",
       href: "/videocalls",
       icon: (
-        <IconPhone className="text-[#253240] h-5 w-5 flex-shrink-0 mx-auto" />
+        <IconPhone className="text-[#1E5ACD] h-5 w-5 flex-shrink-0 mx-auto" />
       ),
-    },
+    }
+  ];
+
+  const privateLinks = [
+    {
+      label: "Mi perfil",
+      href: urlPerfil ? urlPerfil : "/",
+      icon: (
+        <IconUser className="text-[#05AC9C] h-5 w-5 flex-shrink-0 mx-auto" />
+      ),
+    }
   ];
 
   return (
-    <div
-      className={cn(
-        "fixed left-0 top-0 flex flex-col md:flex-row bg-gray-50 dark:bg-neutral-900 h-screen w-[80px] border-r border-gray-200 dark:border-neutral-800 z-50"
-      )}
-    >
+    <div className="h-screen">
       <Sidebar open={open} setOpen={setOpen}>
-        <SidebarBody className="flex flex-col h-full justify-between py-12">
-          <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-            <div className="mb-16">{open ? <Logo /> : <LogoIcon />}</div>
-            <div>
-              <br />
-            </div>
+        <SidebarBody className="flex flex-col h-full justify-between py-8">
+          <div className="flex flex-col flex-1 overflow-y-auto scrollbar-hide overflow-x-hidden">
+            <div className="mb-8 hidden md:block">{open ? <Logo /> : <LogoIcon />}</div>
             <div className="flex flex-col gap-8">
-              {links.map((link, idx) => (
-                <SidebarLink key={idx} link={link} />
+              {publicLinks.map((link, idx) => (
+                <SidebarLink key={`public-${idx}`} link={link} />
               ))}
+              {isAuthenticated && urlPerfil && // Only show profile if authenticated and urlPerfil exists (not admin)
+                privateLinks.map((link, idx) => (
+                  <SidebarLink key={`private-${idx}`} link={link} />
+                ))
+              }
             </div>
           </div>
-          {/* Elimina el Link externo para evitar anidar <a>, y usa mt-auto para posicionar al final */}
           {isAuthenticated && (
-            <div className="pt-2 pb-1 mt-auto cursor-pointer">
+            <div className="pt-2 pb-1 mt-auto cursor-pointer" onClick={handleLogout}>
               <SidebarLink
                 link={{
                   label: "Cerrar Sesión",
-                  href: "/logout",
+                  href: "#",
                   icon: (
-                    <IconArrowLeft className="text-[#253240] h-3 w-3 flex-shrink-0 mx-auto" />
+                    <div className="w-8 h-8 min-w-[2rem] min-h-[2rem] rounded-full border-2 border-[#FA5C2B] flex items-center justify-center">
+                      <IconArrowLeft className="text-[#FA5C2B] h-4 w-4 flex-shrink-0" />
+                    </div>
                   ),
                 }}
+                className="hover:bg-red-50"
               />
             </div>
           )}
@@ -131,13 +142,12 @@ const Logo = () => {
   return (
     <a
       href="/"
-      className="font-normal flex items-center text-sm text-[#253240] py-1 relative z-100"
+      className="font-normal flex items-center justify-center text-sm text-[#253240] py-1 relative z-300 w-full"
     >
       <img
-        src="/static/fisio_find_logo.webp"
+        src="/static/logo_fisio_find_smaller.webp"
         alt="Logo"
-        className="h-8 w-auto flex-shrink-0"
-        style={{ filter: "brightness(0) invert(0)" }}
+        className="h-16 w-auto flex-shrink-0"
       />
     </a>
   );
@@ -147,14 +157,15 @@ export const LogoIcon = () => {
   return (
     <a
       href="/"
-      className="font-normal flex space-x-5 items-center text-base text-[#253240] py-2 relative z-100"
+      className="font-normal flex justify-center items-center text-base text-[#253240] py-2 relative z-300 w-full"
     >
-      <img
-        src="/static/fisio_find_logo.webp"
-        alt="Fisio Find logo"
-        className="h-6 w-auto flex-shrink-0"
-        style={{ filter: "brightness(0) invert(0)" }}
-      />
+      <div className="h-12 w-12 overflow-hidden flex items-center justify-center">
+        <img
+          src="/static/logo_fisio_find_smaller.webp"
+          alt="Fisio Find logo"
+          className="h-12 w-auto flex-shrink-0 object-contain"
+        />
+      </div>
     </a>
   );
 };

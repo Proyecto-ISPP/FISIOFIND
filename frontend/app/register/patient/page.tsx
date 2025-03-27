@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import Image from "next/image";
 import { getApiBaseUrl } from "@/utils/api";
+import { Eye, EyeOff } from "lucide-react";
+
 
 interface FormData {
   username: string;
@@ -46,45 +48,74 @@ const FormField = ({
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => void;
   error?: string;
-}) => (
-  <div className="mb-4">
-    <label
-      htmlFor={name}
-      className="block text-sm font-medium text-gray-700 dark:text-white mb-1"
-    >
-      {label} {required && <span className="text-red-500">*</span>}
-    </label>
+}) => {
+  const [showPassword, setShowPassword] = useState(false);
 
-    {type === "select" ? (
-      <select
-        id={name}
-        name={name}
-        value={value}
-        onChange={onChange}
-        required={required}
-        className="w-full px-4 py-2 border border-gray-300 dark:border-neutral-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1E5ACD] dark:bg-neutral-800 dark:text-white"
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  return (
+    <div className="mb-4 relative">
+      <label
+        htmlFor={name}
+        className="block text-sm font-medium text-gray-700 dark:text-white mb-1"
       >
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-    ) : (
-      <input
-        type={type}
-        id={name}
-        name={name}
-        value={value}
-        onChange={onChange}
-        required={required}
-        className="w-full px-4 py-2 border border-gray-300 dark:border-neutral-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1E5ACD] dark:bg-neutral-800 dark:text-white"
-      />
-    )}
+        {label} {required && <span className="text-red-500">*</span>}
+      </label>
 
-    {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
-  </div>
-);
+      {type === "select" ? (
+        <select
+          id={name}
+          name={name}
+          value={value}
+          onChange={onChange}
+          required={required}
+          className="w-full px-4 py-2 border border-gray-300 dark:border-neutral-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1E5ACD] dark:bg-neutral-800 dark:text-white"
+        >
+          {options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      ) : (
+        <div className="relative">
+          <input
+            type={type === "password" && showPassword ? "text" : type}
+            id={name}
+            name={name}
+            value={value}
+            onChange={onChange}
+            required={required}
+            className="w-full px-4 py-2 border border-gray-300 dark:border-neutral-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1E5ACD] dark:bg-neutral-800 dark:text-white pr-10"
+          />
+          {type === "password" && (
+          <button 
+            type="button"
+            onClick={togglePasswordVisibility}
+            className="absolute right-2 top-1/4 -translate-y-1/2 bg-transparent border-none cursor-pointer focus:outline-none z-10 hover:bg-transparent"
+          >
+            {showPassword ? (
+              <Eye 
+                className="text-blue-600"
+                size={20} 
+              />
+            ) : (
+              <EyeOff 
+                className="text-blue-600"
+                size={20} 
+              />
+            )}
+          </button>
+          )}
+        </div>
+      )}
+
+      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+    </div>
+  );
+};
 
 const PatientRegistrationForm = () => {
   const router = useRouter();
@@ -231,7 +262,7 @@ const PatientRegistrationForm = () => {
         if (loginResponse.status === 200) {
           if (isClient) {
             localStorage.setItem("token", loginResponse.data.access);
-            router.push("/patient-management/profile");
+            router.push("/");
           } else {
             console.error("Error al iniciar sesión", loginResponse.data);
           }
@@ -422,7 +453,7 @@ const PatientRegistrationForm = () => {
                 <button
                   type="button"
                   onClick={handlePrevStep}
-                  className="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="px-6 py-2 bg-[#05AC9C] text-white font-medium rounded-xl transition-colors hover:bg-[#048F83] flex items-center gap-2"
                 >
                   Anterior
                 </button>
@@ -432,7 +463,7 @@ const PatientRegistrationForm = () => {
                 <button
                   type="button"
                   onClick={handleNextStep}
-                  className="ml-auto px-6 py-2 bg-[#1E5ACD] hover:bg-[#1848A3] text-white font-medium rounded-md transition-colors"
+                  className="ml-auto px-6 py-2 bg-gradient-to-r from-[#05668D] to-[#0A7487] hover:from-[#0A7487] hover:to-[#05918F] text-white font-medium rounded-xl transition-colors"
                 >
                   Siguiente
                 </button>
@@ -440,7 +471,7 @@ const PatientRegistrationForm = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="ml-auto px-6 py-2 bg-[#1E5ACD] hover:bg-[#1848A3] text-white font-medium rounded-md transition-colors disabled:bg-blue-300"
+                  className="ml-auto px-6 py-2 bg-gradient-to-r from-[#05668D] to-[#0A7487] hover:from-[#0A7487] hover:to-[#05918F] text-white font-medium rounded-xl transition-colors disabled:from-blue-300 disabled:to-blue-400"
                 >
                   {isSubmitting ? "Registrando..." : "Completar Registro"}
                 </button>

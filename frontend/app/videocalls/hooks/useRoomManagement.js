@@ -54,7 +54,7 @@ const useRoomManagement = ({
   
       // Redirigir al paciente después de un pequeño retraso
       setTimeout(() => {
-        window.location.href = '/videollamadas';
+        window.location.href = '/videocalls';
       }, 1000);
       
     }
@@ -98,7 +98,7 @@ const useRoomManagement = ({
   
           // Redirigir después de un tiempo
           setTimeout(() => {
-            window.location.href = '/videollamadas';
+            window.location.href = '/videocalls';
           }, 2000);
         }
       }, 1000);
@@ -117,7 +117,7 @@ const useRoomManagement = ({
     if (onCallEndedMessage) {
       closeConnection();
       cleanupMedia();
-      window.location.href = '/videollamadas';
+      window.location.href = '/videocalls';
     }
   }, [onCallEndedMessage, closeConnection, cleanupMedia]);
 
@@ -128,7 +128,7 @@ const useRoomManagement = ({
     setTimeout(() => {
       closeConnection();
       cleanupMedia();
-      window.location.href = '/videollamadas';
+      window.location.href = '/videocalls';
     }, 2000);
   }, [closeConnection, cleanupMedia]);
   

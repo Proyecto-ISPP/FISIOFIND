@@ -27,9 +27,7 @@ const AlternativeSelector: React.FC<AlternativeSelectorProps> = ({ alternatives,
   };
 
   return (
-    <div className="p-4 bg-white shadow-lg rounded-lg w-[300px]">
-      <h2 className="text-lg font-bold mb-2">Seleccionar alternativa</h2>
-
+    <div className="p-4 bg-white shadow-lg rounded-lg w-[300px] flex flex-col items-center justify-center">
       {/* Selección de fecha */}
       <select
         className="w-full p-2 border rounded"

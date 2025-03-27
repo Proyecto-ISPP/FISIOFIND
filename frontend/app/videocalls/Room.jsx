@@ -1,10 +1,8 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
 import styles from './Room.module.css';
 
-// Components
 import RoomHeader from './RoomHeader';
 import VideoGrid from './VideoGrid';
 import Controls from './Controls';
@@ -14,67 +12,52 @@ import ToolsContainer from './ToolsContainer';
 import ToolPanel from './ToolPanel';
 import RoomModal from './RoomModal';
 
-// Custom hooks
 import useWebSocket from './hooks/useWebSocket';
 import useWebRTC from './hooks/useWebRTC';
 import useMediaControls from './hooks/useMediaControls';
 import useChat from './hooks/useChat';
 import useRoomManagement from './hooks/useRoomManagement';
+import MapaDolor from './tools/MapaDolor';
 
-/**
- * Main Room component for video call
- * @param {Object} props - Component props
- * @param {string} props.roomCode - Room ID/code
- * @returns {JSX.Element} Room component
- */
+import { faCancel } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import axios from 'axios';
+import { getApiBaseUrl } from '@/utils/api';
+
 const Room = ({ roomCode }) => {
-  const searchParams = useSearchParams();
-  const userRole = searchParams.get('role') || 'physio';
+  const [userRole, setUserRole] = useState(null);
+  const [token, setToken] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Refs
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
   const localStreamRef = useRef(null);
 
-  // UI state
   const [showSettings, setShowSettings] = useState(false);
   const [selectedTool, setSelectedTool] = useState(null);
   const [activePainMap, setActivePainMap] = useState(null);
+  const [partsColored, setPartsColored] = useState([]);
 
-  // First initialize WebSocket hook with a dummy message handler
-  const webSocket = useWebSocket(
-    roomCode,
-    userRole,
-    () => {} // Placeholder to be updated later
-  );
-
-  // Initialize chat hook
-  const chat = useChat({
-    userRole,
-    sendWebSocketMessage: webSocket.sendWebSocketMessage
-  });
-
-  // Initialize WebRTC hook
+  // Inicializamos los hooks SIEMPRE
+  const webSocket = useWebSocket(roomCode, userRole, () => {});
+  const chat = useChat({ userRole, sendWebSocketMessage: webSocket.sendWebSocketMessage });
   const webRTC = useWebRTC({
     localStreamRef,
     localVideoRef,
     remoteVideoRef,
     userRole,
     addChatMessage: chat.addChatMessage,
-    sendWebSocketMessage: webSocket.sendWebSocketMessage
+    sendWebSocketMessage: webSocket.sendWebSocketMessage,
   });
-  
-  // Initialize media controls hook
   const mediaControls = useMediaControls({
     localStreamRef,
     localVideoRef,
     peerConnectionRef: webRTC.peerConnectionRef,
     addChatMessage: chat.addChatMessage,
     setErrorMessage: webRTC.setErrorMessage,
-    setConnecting: webRTC.setConnecting
+    setConnecting: webRTC.setConnecting,
   });
-
-  // Initialize room management hook
   const roomManagement = useRoomManagement({
     roomCode,
     userRole,
@@ -85,99 +68,160 @@ const Room = ({ roomCode }) => {
     },
     cleanupMedia: mediaControls.cleanupMedia,
     sendWebSocketMessage: webSocket.sendWebSocketMessage,
-    addChatMessage: chat.addChatMessage
+    addChatMessage: chat.addChatMessage,
   });
-  
-  // Now we can update the WebSocket message handler after all hooks are initialized
+
+  // Cargar token y rol desde backend
+  useEffect(() => {
+    const storedToken = localStorage.getItem('token');
+    if (storedToken) {
+      setToken(storedToken);
+      axios
+        .get(`${getApiBaseUrl()}/api/app_user/check-role/`, {
+          headers: {
+            Authorization: 'Bearer ' + storedToken,
+          },
+        })
+        .then((response) => {
+          const role = response.data.user_role;
+          if (role === 'physiotherapist') {
+            setUserRole('physio');
+          } else if (role === 'patient') {
+            setUserRole('patient');
+          } else {
+            setUserRole(null);
+          }
+        })
+        .catch((err) => {
+          console.error('Error al obtener el rol del usuario:', err);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } else {
+      setLoading(false);
+    }
+  }, []);
+
+  // Esperar a tener el rol antes de inicializar lógica pesada
+useEffect(() => {
+  const validateAccess = async () => {
+    try {
+      const response = await axios.get(`${getApiBaseUrl()}/api/videocall/join-room/${roomCode}/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log("✅ Acceso validado con backend:", response.data);
+    } catch (error) {
+      console.error("❌ Acceso denegado por backend:", error.response?.data || error.message);
+      alert("No tienes permiso para acceder a esta sala.");
+      window.location.href = '/videocalls';
+      return;
+    }
+
+    try {
+      console.log(`Inicializando sala ${roomCode} como ${userRole}`);
+      await mediaControls.initLocalMedia();
+      chat.addChatMessage('Sistema', 'Cámara y micrófono inicializados correctamente');
+      webSocket.connectWebSocket();
+    } catch (err) {
+      console.error('Error durante la inicialización:', err);
+      webRTC.setErrorMessage(`Error de inicialización: ${err.message}`);
+    }
+  };
+
+  if (!loading && userRole && token) {
+    validateAccess();
+  }
+
+  return () => {
+    webRTC.closeConnection();
+    webSocket.closeWebSocket();
+    mediaControls.cleanupMedia();
+  };
+}, [loading, userRole, token]);
+
+  // WebSocket message handling
   useEffect(() => {
     const handleWebSocketMessage = (data) => {
-      // Route messages to appropriate handlers
       if (data.action && data.message) {
         switch (data.action) {
           case 'chat-message':
             chat.handleChatMessage(data.message);
             break;
           case 'call-ended':
-
-            console.log("🛑 Recibido call-ended en el paciente, ejecutando handleCallEnded...");
+          case 'user-disconnected':
             roomManagement.handleCallEnded();
             break;
-          case 'user-disconnected': 
-            console.log("⚠️ Recibido user-disconnected. Cerrando llamada y redirigiendo...");
-            roomManagement.handleCallEnded();
+          case 'pain-map':
+            if (data.message.mapId) {
+              setActivePainMap(data.message.mapId === 'quit' ? null : data.message.mapId);
+            } else if (data.message.partsSelected) {
+              setPartsColored(data.message.partsSelected);
+            }
             break;
           default:
-            // WebRTC related messages
             webRTC.handleWebSocketMessage(data);
         }
       }
     };
-    
-    // Update the handler
+
     webSocket.setMessageHandler(handleWebSocketMessage);
   }, [chat, webRTC, webSocket, roomManagement]);
 
-  // Initialize everything when component mounts
-  useEffect(() => {
-    console.log(`Inicializando sala ${roomCode} como ${userRole}`);
-    
-    const initAll = async () => {
-      try {
-        await mediaControls.initLocalMedia();
-        chat.addChatMessage('Sistema', 'Cámara y micrófono inicializados correctamente');
-        
-        // Connect to WebSocket after media access
-        webSocket.connectWebSocket();
-      } catch (err) {
-        console.error("Error durante la inicialización:", err);
-        webRTC.setErrorMessage(`Error de inicialización: ${err.message}`);
-      }
-    };
-    
-    initAll();
-
-    // Cleanup on unmount
-    return () => {
-      webRTC.closeConnection();
-      webSocket.closeWebSocket();
-      mediaControls.cleanupMedia();
-    };
-  }, [roomCode]);
-
-  // Log remote video ref changes for debugging
-  useEffect(() => {
-    console.log("Estado de remoteVideoRef:", remoteVideoRef.current?.srcObject);
-  }, [webRTC.connected]);
-
-  // Tool-related functions
   const handlePainMapSelect = (mapId) => {
     setActivePainMap(mapId);
   };
 
-  const sendPainMapToPatient = () => {
+  const sendPainMapToPatient = (specific) => {
     if (activePainMap) {
       webSocket.sendWebSocketMessage({
         action: 'pain-map',
         message: {
-          mapId: activePainMap
-        }
+          mapId: specific || activePainMap,
+        },
       });
-      
+
       chat.addChatMessage('Sistema', `Mapa de dolor "${activePainMap}" enviado al paciente.`);
     }
   };
 
-  // Show tools only for physio role
-  const showTools = (userRole === 'physio');
+  const showTools = userRole === 'physio';
 
+  if (loading) {
+    return (
+      <div className={styles.roomContainer}>
+        <p>Cargando sala...</p>
+      </div>
+    );
+  }
+  if (!token || !userRole) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+          <h2 className="text-xl font-semibold mb-4 text-blue-600">Acceso restringido</h2>
+          <p className="text-gray-700 mb-4">
+            🔒 Necesitas iniciar sesión para acceder a las videollamadas.
+          </p>
+          <button
+            onClick={() => (window.location.href = '/login')}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
+          >
+            Iniciar Sesión
+          </button>
+        </div>
+      </div>
+    );
+  }
+  
   return (
     <div className={styles.roomContainer}>
-      <RoomHeader 
-        roomCode={roomCode} 
+      <RoomHeader
+        roomCode={roomCode}
         errorMessage={webRTC.errorMessage || webSocket.errorMessage}
       />
-      
-      {/* Modal for notifications and confirmations */}
+
       <RoomModal
         show={roomManagement.showModal}
         message={roomManagement.modalMessage}
@@ -185,11 +229,10 @@ const Room = ({ roomCode }) => {
         userRole={userRole}
         onConfirm={roomManagement.confirmDeleteRoom}
         onCancel={roomManagement.cancelDelete}
-        onClose={() => window.location.href = '/videocalls/'}
+        onClose={() => (window.location.href = '/videocalls/')}
       />
 
-      {/* Video grid */}
-      <VideoGrid 
+      <VideoGrid
         localVideoRef={localVideoRef}
         remoteVideoRef={remoteVideoRef}
         cameraActive={mediaControls.cameraActive}
@@ -198,8 +241,7 @@ const Room = ({ roomCode }) => {
         userRole={userRole}
       />
 
-      {/* Call controls */}
-      <Controls 
+      <Controls
         micActive={mediaControls.micActive}
         cameraActive={mediaControls.cameraActive}
         toggleMic={mediaControls.toggleMic}
@@ -212,8 +254,7 @@ const Room = ({ roomCode }) => {
         endCall={roomManagement.endCall}
       />
 
-      {/* Chat panel */}
-      <ChatPanel 
+      <ChatPanel
         showChat={chat.showChat}
         chatMessages={chat.chatMessages}
         chatMessagesRef={chat.chatMessagesRef}
@@ -224,36 +265,49 @@ const Room = ({ roomCode }) => {
         messageInputRef={chat.messageInputRef}
       />
 
-      {/* Settings panel */}
-      <SettingsPanel
-        showSettings={showSettings}
-        setShowSettings={setShowSettings}
-      />
+      <SettingsPanel showSettings={showSettings} setShowSettings={setShowSettings} />
 
-      {/* Tools (physio only) */}
+      {!showTools && activePainMap && (
+        <>
+          <button
+            className={`${styles.actionButton} ${styles.primaryAction}`}
+            onClick={() => sendPainMapToPatient('quit')}
+          >
+            <FontAwesomeIcon icon={faCancel} /> Dejar de compartir
+          </button>
+          <MapaDolor
+            scale={1.3}
+            gender={activePainMap}
+            partsColored={partsColored}
+            sendWebSocketMessage={webSocket.sendWebSocketMessage}
+          />
+        </>
+      )}
+
       {showTools && (
         <>
-          <ToolsContainer 
+          <ToolsContainer
             selectedTool={selectedTool}
             setSelectedTool={setSelectedTool}
-            toggleScreenShare={mediaControls.toggleScreenShare} 
+            toggleScreenShare={mediaControls.toggleScreenShare}
           />
           {selectedTool && (
-            <ToolPanel 
+            <ToolPanel
               selectedTool={selectedTool}
               activePainMap={activePainMap}
               handlePainMapSelect={handlePainMapSelect}
               sendPainMapToPatient={sendPainMapToPatient}
               userRole={userRole}
+              partsColored={partsColored}
+              sendWebSocketMessage={webSocket.sendWebSocketMessage}
             />
           )}
         </>
       )}
-      
-      {/* Reconnect button */}
+
       {!webRTC.connected && !webRTC.connecting && (
         <div className={styles.reconnectContainer}>
-          <button 
+          <button
             className={styles.reconnectButton}
             onClick={() => {
               if (userRole === 'physio') {

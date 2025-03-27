@@ -1,43 +1,16 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import FullCalendar, { DatesSetArg } from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { useAppointment } from "@/context/appointmentContext";
 import esLocale from "@fullcalendar/core/locales/es";
+import { useParams } from "next/navigation";
+import axios from "axios";
+import { getApiBaseUrl } from "@/utils/api";
 
-// Ejemplo de schedule; normalmente lo obtendrías de una API u otro origen
-const scheduleData = {
-  schedule: {
-    exceptions: {
-      "2025-03-15": [
-        { start: "10:00", end: "12:00" },
-        { start: "14:00", end: "16:00" },
-      ],
-    },
-    appointments: [
-      {
-        start_time: "2025-03-22T10:00:00Z",
-        end_time: "2025-03-22T10:45:00Z",
-        status: "booked",
-      },
-    ],
-    weekly_schedule: {
-      monday: [
-        [{ start: "10:00", end: "14:00" }],
-        [{ start: "15:00", end: "18:00" }],
-      ],
-      tuesday: [{ start: "10:00", end: "15:00" }],
-      wednesday: [],
-      thursday: [{ start: "10:00", end: "15:00" }],
-      friday: [],
-      saturday: [{ start: "09:00", end: "15:00" }],
-      sunday: [],
-    },
-  },
-};
+// ----- Funciones auxiliares para trabajar con tiempos -----
 
-// Funciones auxiliares para trabajar con tiempos
 const timeStrToMinutes = (timeStr: string): number => {
   const [hours, minutes] = timeStr.split(":").map(Number);
   return hours * 60 + minutes;
@@ -49,7 +22,6 @@ const minutesToTimeStr = (minutes: number): string => {
   return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`;
 };
 
-// Resta los intervalos ocupados de un intervalo libre
 const subtractInterval = (
   interval: { start: string; end: string },
   appointments: { start: string; end: string }[]
@@ -65,7 +37,7 @@ const subtractInterval = (
     const appStart = timeStrToMinutes(app.start);
     const appEnd = timeStrToMinutes(app.end);
     freeIntervals = freeIntervals.flatMap((free) => {
-      // Si no hay solapamiento, el intervalo queda tal cual
+      // Si no hay solapamiento, dejamos el intervalo intacto
       if (appEnd <= free.start || appStart >= free.end) {
         return [free];
       }
@@ -86,32 +58,51 @@ const subtractInterval = (
   }));
 };
 
-// Calcula los slots disponibles para una fecha, usando la duración del servicio y el slotInterval
+const combineDateAndTimeToISO = (dateStr: string, timeStr: string): string => {
+  return new Date(`${dateStr}T${timeStr}:00Z`).toISOString();
+};
+
+const addMinutesToISO = (isoDate: string, minutes: number): string => {
+  const date = new Date(isoDate);
+  date.setMinutes(date.getMinutes() + minutes);
+  return date.toISOString();
+};
+
+// ----- Función para calcular los slots disponibles -----
+// Utiliza el objeto de schedule que retorna la API, cuya estructura es:
+// {
+//   "exceptions": { ... },
+//   "appointments": [ ... ],
+//   "weekly_schedule": { ... }
+// }
 export const getAvailableSlots = (
   dateStr: string,
   serviceDuration: number,
-  slotInterval: number
+  slotInterval: number,
+  scheduleData: any
 ): string[] => {
+  // Convertimos la fecha al nombre del día en minúsculas (ej. "monday")
   const dayOfWeek = new Date(dateStr)
     .toLocaleDateString("en-US", { weekday: "long" })
     .toLowerCase();
 
-  const intervals = scheduleData.schedule.weekly_schedule[dayOfWeek] || [];
-  const exceptions = scheduleData.schedule.exceptions[dateStr] || [];
+  // Obtenemos las franjas horarias para ese día; en la API vienen como array de objetos
+  const intervals = scheduleData.weekly_schedule[dayOfWeek] || [];
+  const exceptions = scheduleData.exceptions[dateStr] || [];
 
-  // Aplanamos en caso de que sea un array de arrays
+  // Si por error se reciben arrays anidados, aplanamos (normalmente no sucede con la API)
   const flatIntervals = Array.isArray(intervals[0]) ? intervals.flat() : intervals;
 
-  const appointmentsForDate = scheduleData.schedule.appointments
-  .filter((app) => app.start_time.startsWith(dateStr))
-  .map((app) => {    
-    const startDate = new Date(app.start_time);
-    const endDate = new Date(app.end_time);
-    // Obtener la hora en formato HH:mm en UTC
-    const startTime = `${startDate.getUTCHours().toString().padStart(2, "0")}:${startDate.getUTCMinutes().toString().padStart(2, "0")}`;
-    const endTime = `${endDate.getUTCHours().toString().padStart(2, "0")}:${endDate.getUTCMinutes().toString().padStart(2, "0")}`;
-    return { start: startTime, end: endTime };
-  });
+  // Filtramos las citas (appointments) para la fecha indicada
+  const appointmentsForDate = scheduleData.appointments
+    .filter((app: any) => app.start_time.startsWith(dateStr))
+    .map((app: any) => {
+      const startDate = new Date(app.start_time);
+      const endDate = new Date(app.end_time);
+      const startTime = `${startDate.getHours().toString()}:${startDate.getMinutes().toString().padStart(2, "0")}`;
+      const endTime = `${endDate.getHours().toString()}:${endDate.getMinutes().toString().padStart(2, "0")}`;
+      return { start: startTime, end: endTime };
+    });
 
   let freeIntervals: { start: string; end: string }[] = [];
   flatIntervals.forEach((interval) => {
@@ -139,21 +130,11 @@ export const getAvailableSlots = (
   return availableSlots;
 };
 
-// Helper para combinar una fecha y una hora (HH:mm) en una ISO string en UTC
-const combineDateAndTimeToISO = (dateStr: string, timeStr: string): string => {
-  return new Date(`${dateStr}T${timeStr}:00Z`).toISOString();
-};
-
-// Suma minutos a una ISO date string y devuelve la nueva ISO string
-const addMinutesToISO = (isoDate: string, minutes: number): string => {
-  const date = new Date(isoDate);
-  date.setMinutes(date.getMinutes() + minutes);
-  return date.toISOString();
-};
+// ----- Componente AppointmentCalendar -----
 
 interface AppointmentCalendarProps {
-  serviceDuration: number; // en minutos (se toma de service.duration)
-  slotInterval: number;    // calculado como GCD de las duraciones
+  serviceDuration: number; // Duración del servicio en minutos
+  slotInterval: number;    // Intervalo de slots calculado (por ejemplo, GCD de duraciones)
 }
 
 const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
@@ -164,56 +145,76 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
   const [slots, setSlots] = useState<string[]>([]);
   const [backgroundEvents, setBackgroundEvents] = useState<any[]>([]);
   const { dispatch } = useAppointment();
+  const { id } = useParams();
+  const [schedule, setSchedule] = useState<any>(null); // Datos del schedule desde la API
 
-  // Slot seleccionado (hora)
+  // Traer el schedule desde la API usando la id del fisioterapeuta
+  useEffect(() => {
+    const fetchSchedule = async () => {
+      try {
+        const response = await axios.get(
+          `${getApiBaseUrl()}/api/appointment/schedule/${id}/`
+        );
+        if (response.status === 200) {
+          if (response.data.schedule) {
+            setSchedule(JSON.parse(response.data.schedule));
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching schedule:", error);
+      }
+    };
+    fetchSchedule();
+  }, [id]);
+
+  // Estado para el slot seleccionado y la fecha clicada
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
-
-  // Día clicado en el calendario
   const [clickedDate, setClickedDate] = useState<string>("");
 
-  // Escala de verdes: a mayor "count" (slots), más oscuro el verde.
-  // Si count = 0 => gris (#333333)
-  // Día clicado => verde agua (#05AC9C)
+  // Función para definir el color de fondo en el calendario según disponibilidad
   const getDayColor = (count: number, isSelected: boolean) => {
-    if (isSelected) {
-      // Día clicado
-      return "#05AC9C"; // verde agua corporativo
-    }
-    if (count === 0) return "#333333"; // gris oscuro para días sin disponibilidad
+    if (isSelected) return "#05AC9C"; // Verde agua para el día seleccionado
+    if (count === 0) return "#333333"; // Gris oscuro si no hay disponibilidad
     if (count === 1) return "#b6d9b0";
     if (count === 2) return "#8fcf8c";
     if (count === 3) return "#66c266";
     if (count === 4) return "#4CAF60";
-    if (count >= 5) return "#0B6B31"; // verde bosque
+    if (count >= 5) return "#0B6B31"; // Verde bosque
     return "#333333";
   };
 
+  // Al hacer click en una fecha del calendario
   const handleDateClick = (arg: any) => {
+    console.log("schedule", schedule);
     const dateStr = arg.dateStr;
-    const today = new Date()
+    const today = new Date();
     today.setDate(today.getDate() + 2);
     const twoDaysLater = today.toLocaleDateString("en-CA"); // Formato YYYY-MM-DD
-  
+
     setSelectedDate(dateStr);
-    setClickedDate(dateStr); // guardamos la fecha clicada
+    setClickedDate(dateStr);
+
+    // No mostramos horarios para fechas muy cercanas
     if (dateStr < twoDaysLater) {
-      setSlots([]); // No mostrar horarios en fechas pasadas
+      setSlots([]);
       return;
     }
-    const available = getAvailableSlots(dateStr, serviceDuration, slotInterval);
-    setSlots(available);
-    setSelectedSlot(null); // resetea la selección de hora al cambiar de día
+    if (schedule) {
+      const available = getAvailableSlots(
+        dateStr,
+        serviceDuration,
+        slotInterval,
+        schedule
+      );
+      setSlots(available);
+    }
   };
-  
 
-  // Al hacer clic en un slot
+  // Al seleccionar un slot, se envía la información al contexto de la cita
   const handleSlotClick = (slot: string) => {
     if (!selectedDate) return;
     setSelectedSlot(slot);
-    console.log("selectedDate", slot);
-
     const startISO = combineDateAndTimeToISO(selectedDate, slot);
-    console.log("startISO", startISO);
     const endISO = addMinutesToISO(startISO, serviceDuration);
     dispatch({
       type: "SELECT_SLOT",
@@ -225,40 +226,32 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
     });
   };
 
-  // Se actualizan los eventos de fondo cada vez que se cambia la vista
+  // Actualiza los eventos de fondo en el calendario (colores según disponibilidad)
   const handleDatesSet = (arg: DatesSetArg) => {
     const events = [];
     const today = new Date();
-    console.log("today", today);
-    // today.setHours(1, 0, 0, 0);
-
-
     const currentDate = new Date(arg.start);
-    console.log("currentDate", currentDate);
     while (currentDate < arg.end) {
       const dateStr = currentDate.toISOString().split("T")[0];
-      const available = getAvailableSlots(dateStr, serviceDuration, slotInterval);
-      const count = available.length;
-
-      // Determinamos si es día pasado
-      const isPast = currentDate < today;
-
-      // ¿Es el día que se ha clicado?
-      const isSelectedDay = dateStr === clickedDate;
-
-      // Si es día pasado => gris
-      // Sino, escalamos el verde según "count"
-      const bgColor = isPast
-        ? "#666666" // un gris un poco más claro para días pasados
-        : getDayColor(count, isSelectedDay);
-
-      events.push({
-        id: dateStr,
-        start: dateStr,
-        allDay: true,
-        display: "background",
-        backgroundColor: bgColor,
-      });
+      if (schedule) {
+        const available = getAvailableSlots(
+          dateStr,
+          serviceDuration,
+          slotInterval,
+          schedule
+        );
+        const count = available.length;
+        const isPast = currentDate < today;
+        const isSelectedDay = dateStr === clickedDate;
+        const bgColor = isPast ? "#666666" : getDayColor(count, isSelectedDay);
+        events.push({
+          id: dateStr,
+          start: dateStr,
+          allDay: true,
+          display: "background",
+          backgroundColor: bgColor,
+        });
+      }
       currentDate.setDate(currentDate.getDate() + 1);
     }
     setBackgroundEvents(events);
@@ -285,14 +278,10 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
                 <button
                   key={index}
                   onClick={() => handleSlotClick(slot)}
-                  className={`
-                    px-3 py-1 rounded border text-center transition-colors
-                    ${
-                      selectedSlot === slot
-                        ? "bg-[#05AC9C] text-white border-[#05AC9C]"
-                        : "bg-white text-black border-gray-300 hover:bg-gray-100"
-                    }
-                  `}
+                  className={`px-3 py-1 rounded border text-center transition-colors ${selectedSlot === slot
+                    ? "bg-[#05AC9C] text-white border-[#05AC9C]"
+                    : "bg-white text-black border-gray-300 hover:bg-gray-100"
+                    }`}
                 >
                   {slot}
                 </button>

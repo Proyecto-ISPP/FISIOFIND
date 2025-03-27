@@ -4,17 +4,24 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.http import HttpResponse
 
+
 def home(request):
     return HttpResponse("¡Bienvenido a FisioFind!")
 
+admin.site.index_title = "Panel de administración"
+admin.site.site_title = "Fisio Find"
+admin.site.site_header = "Fisio Find"
+
 urlpatterns = [
-    path('', home, name='home'),  # Agregar esta línea para la página principal
+    path('', home, name='home'),
     path('admin/', admin.site.urls),
-    path('api/app_user/', include('gestion_usuarios.urls')),
-    path('api/appointment/', include('gestion_citas.urls')),
-    path('api/terminos/', include('gestion_terminos.urls')),
+    path('api/app_user/', include('users.urls')),
+    path('api/appointment/', include('appointment.urls')),
+    path('api/terms/', include('terms.urls')),
     path('api/videocall/', include('videocall.urls')),
-    path('api/sesion_invitado/', include('sesion_invitado.urls')),
+    path('api/treatments/', include('treatments.urls')),
+    path('api/guest_session/', include('guest_session.urls')),
+    path('api/payments/', include('payment.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

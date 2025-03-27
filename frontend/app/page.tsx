@@ -8,6 +8,12 @@ import Modal from "@/components/ui/Modal";
 import Link from "next/link";
 import axios from "axios";
 import { getApiBaseUrl } from "@/utils/api";
+import { useAppointment } from "@/context/appointmentContext";
+import DraftModal from "@/components/ui/draftAppointmentModal";
+import { DemoWindow } from "@/components/demo-window";
+import { WavyBackground } from "@/components/ui/wavy-background";
+import { GradientButton } from "@/components/ui/gradient-button";
+import { CookieConsent } from "@/components/CookieConsent";
 
 interface Physiotherapist {
   id: string;
@@ -30,6 +36,11 @@ const Home = () => {
   const [isClient, setIsClient] = useState(false);
   const [token, setToken] = useState<string | null>(null);
   const apiBaseurl = getApiBaseUrl();
+  const [showDraftModal, setShowDraftModal] = useState(false);
+  const [draftData, setDraftData] = useState<any>(null);
+  const [returnUrl, setReturnUrl] = useState<string | null>(null);
+  const { dispatch } = useAppointment();
+
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -58,12 +69,14 @@ const Home = () => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
       const floatingImages = document.querySelectorAll(".floating-image");
-      
+
       // Only apply floating effect if screen is large enough
       if (window.innerWidth > 1240) {
         floatingImages.forEach((image, index) => {
           const offset = (index + 1) * 50;
-          (image as HTMLElement).style.transform = `translateX(${scrollY / offset}px)`;
+          (image as HTMLElement).style.transform = `translateX(${
+            scrollY / offset
+          }px)`;
         });
       }
     };
@@ -71,6 +84,41 @@ const Home = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Efecto para cargar el borrador unificado
+  useEffect(() => {
+    const storedDraft = sessionStorage.getItem("appointmentDraft");
+    if (storedDraft) {
+      const parsedDraft = JSON.parse(storedDraft);
+      setDraftData(parsedDraft);
+      setShowDraftModal(true);
+    }
+  }, []);
+
+  // Retomar borrador
+  const handleResumeDraft = () => {
+    if (draftData) {
+      // Cargamos el appointmentData en el context
+      dispatch({ type: "LOAD_DRAFT", payload: draftData.appointmentData });
+      setShowDraftModal(false);
+
+      // Redirigimos a la URL guardada (por ejemplo, Wizard)
+      if (draftData.returnUrl) {
+        router.push(draftData.returnUrl);
+      }
+    }
+  };
+
+  // Descartar borrador
+  const handleDiscardDraft = () => {
+    sessionStorage.removeItem("appointmentDraft");
+    dispatch({ type: "DESELECT_SERVICE" });
+    setDraftModal(false);
+  };
+
+  const setDraftModal = (value: boolean) => {
+    setShowDraftModal(value);
+  };
 
   // Datos de ejemplo para los fisioterapeutas destacados
   // const topPhysiotherapists: Physiotherapist[] = [
@@ -128,27 +176,36 @@ const Home = () => {
       const fetchSpecializations = async () => {
         try {
           const response = await axios.get(
-            `${getApiBaseUrl()}/api/sesion_invitado/specializations/`
+            `${getApiBaseUrl()}/api/guest_session/specializations/`
           );
+
           if (response.status === 200) {
-            setSpecializations(["", ...response.data]);
+            if (response.data && response.data.length > 0) {
+              setSpecializations(["", ...response.data]);
+            } else {
+              console.warn("Specializations list is empty.");
+              setSpecializations([]); // Set an empty list if no data is returned
+            }
+          } else {
+            console.warn("Unexpected response status:", response.status);
           }
         } catch (error) {
           console.error("Error fetching data:", error);
         }
       };
+
       fetchSpecializations();
     }, []);
 
     const handleSearch = async () => {
-      setSearchAttempted(true); // Marca que el usuario ha intentado buscar
+      setSearchAttempted(true);
 
       if (!specialization) {
         return;
       }
 
       try {
-        const searchUrl = `${apiBaseurl}/api/sesion_invitado/physios-with-specializations/?specialization=${specialization}`;
+        const searchUrl = `${apiBaseurl}/api/guest_session/physios-with-specializations/?specialization=${specialization}`;
         const response = await axios.get(searchUrl);
 
         if (response.status === 200) {
@@ -178,6 +235,13 @@ const Home = () => {
 
     return (
       <div className="w-full flex items-center relative">
+        {showDraftModal && draftData && (
+          <DraftModal
+            draftData={draftData}
+            onResume={handleResumeDraft}
+            onDiscard={handleDiscardDraft}
+          />
+        )}
         <section className="w-full py-4 relative overflow-hidden">
           <h2 className="text-3xl text-[#253240] font-bold mb-2 text-center">
             Encuentra a tu fisioterapeuta ideal
@@ -249,15 +313,13 @@ const Home = () => {
               <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {searchResults.map((physio, index) => (
                   <CardContainer key={index}>
-                    <CardBody className="bg-gradient-to-bl from-white to-[#65C2C9]/50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-blue-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-full min-h-[400px] rounded-xl p-6 border flex flex-col">
-                      {/* Nombre */}
+                    <CardBody className="bg-gradient-to-bl from-white to-[#65C2C9]/50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-blue-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-full min-h-[350px] rounded-xl p-6 border flex flex-col justify-between">
                       <CardItem
                         translateZ="50"
                         className="text-xl font-bold text-neutral-600 dark:text-white"
                       >
                         {physio.name}
                       </CardItem>
-                      {/* Especialidades */}
                       <CardItem
                         as="p"
                         translateZ="40"
@@ -265,26 +327,24 @@ const Home = () => {
                       >
                         {physio.specializations}
                       </CardItem>
-                      {/* Imagen estática del fisioterapeuta */}
-                      <CardItem translateZ="60" className="w-full mt-4 z-20">
+                      <CardItem translateZ="60" className="w-full">
                         <Image
-                          src="/static/fisioterapeuta_sample.jpeg"
-                          className="h-48 w-full object-cover rounded-xl group-hover/card:shadow-xl"
+                          src="/static/fisioterapeuta_sample.webp"
+                          className="h-40 w-full object-cover rounded-xl group-hover/card:shadow-xl"
                           alt="Fisioterapeuta"
                           width={500}
                           height={500}
                         />
                       </CardItem>
-                      {/* Botón para ver el perfil del fisioterapeuta */}
-                      <button>
+                      <div className="flex justify-center mt-4">
                         <CardItem
                           translateZ="20"
-                          className="px-4 py-2 rounded-xl bg-[#1E5ACD] text-white text-sm font-bold hover:bg-[#1848A3] transition-colors"
+                          className="px-6 py-2 rounded-xl bg-[#1E5ACD] hover:bg-[#5ab3a8] text-white text-sm font-bold transition-colors cursor-pointer"
                           onClick={() => router.push(`/appointments/create/${physio.id}`)}
                         >
                           Reservar cita
                         </CardItem>
-                      </button>
+                      </div>
                     </CardBody>
                   </CardContainer>
                 ))}
@@ -297,92 +357,67 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen w-full z=90">
+    <div className="min-h-screen w-full z=90" style={{ backgroundColor: "rgb(238, 251, 250)" }}>
+      {/* Add CookieConsent component */}
+      <CookieConsent />
       {/* Hero Section */}
-      <section className="flex flex-col items-center justify-center text-center relative overflow-hidden mb-8 py-12">
-        <div className="absolute top-0 left-0 w-full h-full">
-          <div className="floating-image" style={{ right: "70%", top: "35%" }}>
+      <section className="flex flex-col items-center justify-center text-center relative overflow-hidden mb-8">
+          <div className="absolute top-0 left-0 w-full h-full">
+            <div className="floating-image" style={{ right: "70%", top: "35%" }}>
+              <Image
+                src="/static/9_girl.webp"
+                alt="Floating Image 3"
+                width={250}
+                height={250}
+              />
+            </div>
+            <div className="floating-image" style={{ left: "30%", top: "10%" }}>
+              <Image
+                src="/static/1_heart.webp"
+                alt="Floating Image 1"
+                width={70}
+                height={70}
+              />
+            </div>
+            <div className="floating-image" style={{ right: "30%", top: "10%" }}>
+              <Image
+                src="/static/7_treatment.webp"
+                alt="Floating Image 3"
+                width={80}
+                height={80}
+              />
+            </div>
+            <div className="floating-image" style={{ right: "10%", top: "35%" }}>
+              <Image
+                src="/static/2_liftweights.webp"
+                alt="Floating Image 3"
+                width={150}
+                height={150}
+              />
+            </div>
+          </div>
+          <div className="flex flex-col items-center mt-8">
             <Image
-              src="/static/9_girl.webp"
-              alt="Floating Image 3"
+              src="/static/logo_fisio_find_smaller.webp"
+              alt="Fisio Find Logo"
               width={250}
               height={250}
+              className="mb-12 relative z-10 w-[250px] h-auto"
             />
+            <h1 className="text-7xl font-bold mb-12 font-alfa-slab-one relative z-10">
+              <span className="text-white drop-shadow-[0_2.5px_3.5px_#41B8D5]">Fisio Find</span>
+            </h1>
+            <p className="text-xl font-bold mb-14 max-w-2xl mx-auto relative z-10 text-[#253240] mt-16">
+              La plataforma especializada en fisioterapia online donde te conectamos
+              con el profesional que mejor se ajusta a tus necesidades.
+            </p>
           </div>
-          <div className="floating-image" style={{ left: "30%", top: "10%" }}>
-            <Image
-              src="/static/1_heart.webp"
-              alt="Floating Image 1"
-              width={70}
-              height={70}
-            />
-          </div>
-          <div
-            className="floating-image"
-            style={{ right: "38%", bottom: "29%" }}
-          >
-            <Image
-              src="/static/4_shine.webp"
-              alt="Floating Image 2"
-              width={40}
-              height={40}
-            />
-          </div>
-          <div
-            className="floating-image"
-            style={{ left: "37%", bottom: "41%" }}
-          >
-            <Image
-              src="/static/4_shine.webp"
-              alt="Floating Image 2"
-              width={40}
-              height={40}
-            />
-          </div>
-          <div className="floating-image" style={{ right: "30%", top: "10%" }}>
-            <Image
-              src="/static/7_treatment.webp"
-              alt="Floating Image 3"
-              width={80}
-              height={80}
-            />
-          </div>
-          <div className="floating-image" style={{ right: "10%", top: "55%" }}>
-            <Image
-              src="/static/2_liftweights.webp"
-              alt="Floating Image 3"
-              width={150}
-              height={150}
-            />
-          </div>
-        </div>
-        <Image
-          src="/static/logo_fisio_find_smaller.webp"
-          alt="Fisio Find Logo"
-          width={150}
-          height={150}
-          className="mb-4"
-        />
-        <h1 className="text-5xl font-bold mb-2 font-alfa-slab-one">
-          <span className="text-[#05668d]">Fisio </span>
-          <span className="text-[#018b89]">Find</span>
-        </h1>
-        <p className="text-lg mb-4 max-w-2xl">
-          La plataforma especializada en fisioterapia online donde te conectamos
-          con el profesional que mejor se ajusta a tus necesidades.
-        </p>
       </section>
 
-      
-
-      
 
       {/* Search Section */}
       {/* Unified Search Bar */}
       <SearchPhysiotherapists />
-
-
-
 
       {/* Focus Cards Section: solo se muestra si NO está autenticado */}
       {!isAuthenticated && (
@@ -396,39 +431,44 @@ const Home = () => {
             posibilidades.
           </p>
           <div className="flex flex-col gap-4">
-            <button
-              className="shadow__btn bg-[#1E5ACD] text-white px-4 py-3 rounded font-bold hover:bg-[#1848A3] transition-colors"
+            <GradientButton
+              variant="create" 
+              fullWidth
               onClick={() => router.push("/register")}
             >
               Crea una cuenta
-            </button>
+            </GradientButton>
             <p className="text-lg">Si ya tienes una cuenta ...</p>
-            <button
-              className="shadow__btn text-white rounded font-bold hover:bg-[#0A7487] transition-colors text-sm"
+            <GradientButton
+              variant="edit" 
+              fullWidth
               onClick={() => router.push("/login")}
-              style={{ "--shadow-color": "#0A7487" } as React.CSSProperties}
             >
               Inicia sesión
-            </button>
+            </GradientButton>
           </div>
-            <section className="w-full bg-[#1E5ACD] py-4 text-center text-white rounded-lg mx-auto mt-8 max-w-4xl shadow-lg">
+          <section className="w-full bg-[#1E5ACD] py-4 text-center text-white rounded-lg mx-auto mt-8 max-w-4xl shadow-lg">
             <div className="px-4 flex flex-col sm:flex-row items-center justify-center">
               <p className="font-bold text-lg sm:text-xl mb-2 sm:mb-0">
-              ¿Eres fisioterapeuta?
+                ¿Eres fisioterapeuta?
               </p>
               <button
-              className="ml-0 sm:ml-3 px-4 py-2 bg-white text-[#1E5ACD] rounded-md font-semibold hover:bg-gray-100 transition-all"
-              onClick={() => window.open("https://fisiofind-landing-page.netlify.app/", "_blank")}
+                className="ml-0 sm:ml-3 px-4 py-2 bg-white text-[#1E5ACD] rounded-md font-semibold hover:bg-gray-100 transition-all"
+                onClick={() =>
+                  window.open(
+                    "https://fisiofind-landing-page.netlify.app/",
+                    "_blank"
+                  )
+                }
               >
-              Para más información, accede aquí
+                Para más información, accede aquí
               </button>
             </div>
-            </section>
+          </section>
           <br />
         </section>
       )}
       {/* Sección “¿Eres fisioterapeuta?” */}
-
 
       {/* Top Physiotherapists Section */}
       <section className="max-w-7xl mx-auto px-4 mb-12">
@@ -484,19 +524,23 @@ const Home = () => {
 
       {/* Footer */}
       <footer className="py-12 px-4">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 pt-8 gap-8 border-t border-gray-700">
-          <div>
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 pt-8 gap-8 border-t border-gray-700 text-center">
+          <div className="flex flex-col items-center">
             <h3 className="text-lg font-bold mb-4">Sobre Fisio Find</h3>
             <p>
               Una plataforma innovadora diseñada para conectar pacientes con los
               mejores fisioterapeutas.
             </p>
           </div>
-          <div>
+          <div className="flex flex-col items-center">
             <h3 className="text-lg font-bold mb-4">Enlaces Útiles</h3>
             <ul>
               <li>
-                <a href="https://fisiofind-landing-page.netlify.app/" target="_blank" rel="noopener noreferrer">
+                <a
+                  href="https://fisiofind-landing-page.netlify.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   Conoce Fisio Find
                 </a>
               </li>
@@ -510,16 +554,16 @@ const Home = () => {
                 </a>
               </li>
               <li>
-                <a href="https://fisiofind.vercel.app">Documentación</a>
+                <a href="/terms">Política de Privacidad</a>
               </li>
               <li>
-                <Link href="/">Términos de Servicio</Link>
+                <Link href="/terms">Términos de Servicio</Link>
               </li>
             </ul>
           </div>
-          <div>
+          <div className="flex flex-col items-center">
             <h3 className="text-lg font-bold mb-4">Contacto</h3>
-            <p>Correo: support@fisiofind.com</p>
+            <p>Correo: <a href="mailto:support@fisiofind.com" className="hover:underline">support@fisiofind.com</a></p>
             <p>Ubicación: Sevilla, España</p>
           </div>
         </div>

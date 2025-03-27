@@ -1,21 +1,29 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useCallback, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import Image from "next/image";
 import { getApiBaseUrl } from "@/utils/api";
+import { Eye, EyeOff } from "lucide-react";
 
-export default function LoginPaciente() {
+function LoginPacienteForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get("redirect") || "/";
   const [formData, setFormData] = useState({ username: "", password: "" });
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   }, []);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -33,7 +41,7 @@ export default function LoginPaciente() {
         localStorage.setItem("token", response.data.access);
         setMessage("Inicio de sesión exitoso");
         setTimeout(() => {
-          router.push("/");
+          router.push(redirectUrl);
         }, 500);
       }
     } catch (error: any) {
@@ -105,16 +113,29 @@ export default function LoginPaciente() {
               >
                 Contraseña <span className="text-red-500">*</span>
               </label>
-              <input
-                type="password"
-                name="password"
-                id="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Contraseña"
-                required
-                className="w-full p-3 border border-[#05668D] rounded-md focus:outline-none focus:ring-2 focus:ring-[#41b8d5] text-[#0A7487]"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  id="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Contraseña"
+                  required
+                  className="w-full p-3 border border-[#05668D] rounded-md focus:outline-none focus:ring-2 focus:ring-[#41b8d5] text-[#0A7487] pr-10"
+                />
+            <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              className="absolute right-2 top-1/4 -translate-y-1/2 bg-transparent border-none cursor-pointer focus:outline-none z-10 hover:bg-transparent"
+            >
+              {showPassword ? (
+                <Eye className="text-blue-600" size={20} />
+              ) : (
+                <EyeOff className="text-blue-600" size={20} />
+              )}
+            </button>
+              </div>
             </div>
 
             <button
@@ -159,5 +180,14 @@ export default function LoginPaciente() {
         </div>
       </div>
     </div>
+  );
+}
+
+// Componente padre que envuelve en Suspense
+export default function LoginPaciente() {
+  return (
+    <Suspense fallback={<div className="text-center p-8">Cargando formulario...</div>}>
+      <LoginPacienteForm />
+    </Suspense>
   );
 }

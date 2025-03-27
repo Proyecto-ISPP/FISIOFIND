@@ -12,6 +12,8 @@ const ToolPanel = ({
   activePainMap,
   handlePainMapSelect,
   sendPainMapToPatient,
+  partsColored, // Añadido para pasarlo a mapa dolor
+  sendWebSocketMessage, // Añadido para pasarlo a mapa dolor
   userRole // Añadido para pasarlo a AnatomicalModel
 }) => {
   if (!selectedTool) return null;
@@ -27,6 +29,8 @@ const ToolPanel = ({
           activePainMap={activePainMap}
           handlePainMapSelect={handlePainMapSelect}
           sendPainMapToPatient={sendPainMapToPatient}
+          partsColored={partsColored}
+          sendWebSocketMessage={sendWebSocketMessage}
         />
       )}
       {selectedTool === 'cuestionarios' && <Cuestionarios />}
