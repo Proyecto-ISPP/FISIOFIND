@@ -35,10 +35,10 @@ classoption: "table"
 **ÍNDICE**
 - [1. INTRODUCCIÓN](#1-introducción)
 - [2. ACCESO A LA APLICACIÓN](#2-acceso-a-la-aplicación)
-- [3. DESCRIPCIÓN DE FUNCIONALIDADES NO TERMINADAS](#3-descripción-de-las-funcionalidades-no-terminadas)
-- [4. DESCRIPCIÓN DE LOS CASOS DE USO PRINCIPALES(CORE)](#4-descripcion-de-los-casos-de-uso-principales-(core))
+- [3. DESCRIPCIÓN DE FUNCIONALIDADES NO TERMINADAS](#3-descripción-de-funcionalidades-no-terminadas)
+- [4. DESCRIPCIÓN DE LOS CASOS DE USO MVP](#4-descripción-de-los-casos-de-uso-mvp)
   - [4.1. Cuestionario de preintervención](#41-cuestionario-de-preintervención)
-  - [4.2. Solicitud de una cita y notificaciones](#42-solicitud-de-una-cita-y-notificaciones)
+  - [4.2. Solicitud de una cita](#42-solicitud-de-una-cita)
   - [4.3. Gestión del calendario](#43-gestión-del-calendario)
   - [4.4. Videollamada y herramientas de la videollamada](#44-videollamada-y-herramientas-de-la-videollamada)
   - [4.5. Gestión de subida de archivos](#45-gestión-de-subida-de-archivos)
@@ -57,7 +57,7 @@ classoption: "table"
 - **Nombre del Proyecto:** FISIO FIND
 - **Número de Grupo:** Grupo 6
 
-- **Entregable:** #SPRINT 1
+- **Entregable:** #SPRINT 2
 
 - **Miembros del grupo:** Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes.
 
@@ -173,6 +173,12 @@ La aplicación implementa validación de fisioterapeutas por número de colegiad
 
 Las funcionalidades de cuestionarios en la videollamada y seguimiento está avanzado pero no está terminado. Por esta razón, estas funcionalidades se encuentran mockeadas.
 
+El siguiente caso de uso a veces da errores porque el servidor lo detecta como spam. En local si se ha conseguido que funcione el 100% de las veces. Por eso lo ponemos aquí. De todas formas, consideramos este caso de uso como un plus de funcionalidad.
+Caso de uso:
+1. El fisioterapeuta o el paciente modifica el estado de una cita (crea una cita, acepta una cita, etc.).
+2. Según la acción ejecutada, el fisioterapeuta o el paciente reciben un correo de notificación de la acción.
+3. Dependiendo de lo que ha causado la acción de notificación, se podrán hacer acciones desde el propio correo (botones que abren links en Fisio Find que ejecutan acciones).
+
 
 # 4. DESCRIPCIÓN DE LOS CASOS DE USO MVP
 
@@ -191,7 +197,7 @@ Caso de uso 2:
 3. El fisioterapeuta crea o edita un servicio o un cuestionario de preintervención.
 4. Cuando el fisioterapeuta guarda, el sistema queda actualizado.
 
-# 4.2. **Solicitud de una cita y notificaciones**
+# 4.2. **Solicitud de una cita**
 
 Caso de uso 3:
 1. Un usuario con rol paciente busca por especialidad en la página principal.
@@ -202,14 +208,9 @@ Caso de uso 3:
 6. En el proceso, el usuario puede pagar y generar una factura.
 7. El paciente finalmente la acepta.
 
-Caso de uso 4:
-1. El fisioterapeuta o el paciente modifica el estado de una cita (crea una cita, acepta una cita, etc.).
-2. Según la acción ejecutada, el fisioterapeuta o el paciente reciben un correo de notificación de la acción.
-3. Dependiendo de lo que ha causado la acción de notificación, se podrán hacer acciones desde el propio correo (botones que abren links en Fisio Find que ejecutan acciones).
-
 # 4.3. **Gestión del calendario**
 
-Caso de uso 5:
+Caso de uso 4:
 1. Un fisioterapeuta entra en la sección de sus citas.
 2. Puede visualizar las citas que han seleccionado los pacientes.
 3. El fisioterapeuta puede aceptar la cita, cancelarla o proponer un cambio. No puede cambiar el horario de la cita sin enviar una propuesta de cambio y que el paciente lo acepte.
@@ -218,38 +219,38 @@ Caso de uso 5:
 # 4.4. **Videollamada y herramientas de la videollamada**
 Actualmente esta funcionalidad tiene una sección que se plantea integrar en el siguiente sprint  y está mockeado en la vista de videollamada. No se ha eliminado para no tener que rehacerlo después.
 
-Caso de uso 6:
+Caso de uso 5:
 1. Un fisioterapeuta abre la sección de videollamadas.
 2. El sistema detecta que es un usuario con rol de fisioterapeuta y le deja crear una sala.
 3. Al crear la sala se crea un código de sala (necesario para que el paciente pueda acceder).
 4. El fisioterapeuta envía el código al paciente por un método fuera de la plataforma.
 5. El fisioterapeuta puede ver al paciente y hablar con él cuando este se conecte.
 
-Caso de uso 7:
+Caso de uso 6:
 1. Un paciente abre la sección de videollamadas.
 2. El sistema detecta que es un paciente y le permite introducir el código que le ha facilitado el fisioterapeuta.
 2. Se une a la sala con el código que le ha pasado el fisioterapeuta.
 3. El paciente puede ver al fisioterapeuta y hablar con él cuando este se conecta.
 
-Caso de uso 8:
+Caso de uso 7:
 1. Un fisioterapeuta se conecta con un paciente a una videollamada.
 2. El fisioterapeuta comparte su pantalla para compartir lo que necesite de su dispositivo.
 3. El paciente lo visualiza correctamente.
 4. El fisioterapeuta deja de compartir pantalla y vuelve a verse su cámara.
 
-Caso de uso 9:
+Caso de uso 8:
 1. Un fisioterapeuta se conecta con un paciente a una videollamada.
 2. El fisioterapeuta y el paciente tienen funcionalidades generales de videollamadas (silenciar audio, dejar de compartir cámara, etc.) y un chat para poder hablar.
 3. Estas funcionalidades pueden activarse y desactivarse y no causan problemas con la videollamada.
 
-Caso de uso 10:
+Caso de uso 9:
 1. Un fisioterapeuta se conecta con un paciente a una videollamada.
 2. El fisioterapeuta tiene acceso a mapas de dolor (cuerpos humanos con los que se puede interactuar) que puede enviar al paciente como herramienta para ejercer su labor.
 3. Cuando el paciente recibe el mapa de dolor, el fisioterapeuta y el paciente pueden interaccionar en tiempo real con el mapa de dolor.
 4. Cuando el fisioterapeuta deja de necesitar el mapa de dolor, puede dejar de compartirlo.
 5. Si el fisioterapeuta vuelve a enviar el mapa de dolor, el estado en el que se dejó se recupera. Esto solo funciona durante la videollamada (hasta que se cuelga o se recarga la página).
 
-Caso de uso 11:
+Caso de uso 10:
 1. Un fisioterapeuta se conecta con un paciente a una videollamada.
 2. El fisioterapeuta dispone de modelos 3D del cuerpo humano (sus músculos) y de ciertos músculos que resultan interesantes para un fisioterapeuta.
 3. El fisioterapeuta puede resolver sus dudas anatómicas o tener referencia para ayudar al paciente.
@@ -257,22 +258,22 @@ Caso de uso 11:
 
 # 4.5. **Gestión de subida de archivos**
 
-Actualmente, estamos trabajando en la funcionalidad de poder actualizar un archivo subido(editar título,descripción,etc.). Sin embargo, esta funcionalidad actualmente no está terminada, porque solo funciona con los ids de los pacientes. No la borramos para no tener que rehacerla, pero está pensada para terminarse en el S3.
+Actualmente, estamos trabajando en el plus de funcionalidad de poder actualizar un archivo subido(editar título,descripción,etc.). Sin embargo, esta funcionalidad actualmente no está terminada porque solo funciona con los ids de los pacientes. No la borramos para no tener que rehacerla, pero está pensada para terminarse en el S3 ya que es un añadido a la funcionalidad de subir archivo.
 
-Caso de uso 12:
+Caso de uso 11:
 1. El fisioterapeuta entra en la sección de subida de archivos.
 2. Selecciona el archivo que quiere subir y pone un título, una descripción, y los emails de los pacientes a los que quiere enviárselo.
 3. Si se equivoca en el correo (correo que no existe, mal escrito, que no pertenece a ningún paciente, etc.), el sistema lo notifica.
 4. Cuando completa el formulario, se añade una nueva entrada dentro del listado de archivos que ha subido.
 5. Cuando el fisio deja de querer compartir el material, borra la entrada y así el sistema se actualiza y se deja de compartir.
 
-Caso de uso 13:
+Caso de uso 12:
 1. El paciente entra en la sección de archivos.
 2. El paciente puede ver e interactuar con los archivos que les han enviado fisioterapeutas.
 
 # 4.6. **Planes de precio**
 
-Caso de uso 14:
+Caso de uso 13:
 1. Un fisioterapeuta no registrado quiere abrirse una cuenta en fisio find
 2. Accede a la vista de registrarse como fisioterapeuta
 3. Avanza rellenando campos hasta que se le da a elegir un plan de precio
@@ -280,13 +281,13 @@ Caso de uso 14:
 
 # 4.7. **Tratamientos**
 
-Caso de uso 15:
+Caso de uso 14:
 1. Un fisioterapeuta entra en la sección de tratamientos.
 2. En ella puede ver aquellos pacientes con los que tiene un tratamiento, que son aquellos con los que tiene una cita finalizada.
 3. El fisioterapeuta entra en uno de los tratamientos y ve un resumen de la información tratamiento (algunos elementos, como la gráfica, están mockeados).
 4. Entra en la sección de nuevo ejercicio y puede crear un nuevo ejercicio desde cero o seleccionar uno existente.
 
-Caso de uso 16:
+Caso de uso 15:
 1. Un fisioterapeuta entra en la sección de tratamientos
 2. En ella puede ver aquellos pacientes con los que tiene un tratamiento
 3. El fisioterapeuta entra en uno de los tratamientos y modifica algún dato
