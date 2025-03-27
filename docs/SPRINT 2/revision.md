@@ -142,7 +142,7 @@ Credenciales:
   - Password: 36372053Z36372053Z
 
 
-Video demo: [https://github.com/Proyecto-ISPP/FISIOFIND/blob/main/docs/demo_2.webp](https://github.com/Proyecto-ISPP/FISIOFIND/blob/main/docs/demo_2.webp)
+Video demo: [https://github.com/Proyecto-ISPP/FISIOFIND/blob/main/docs/demo_2.webp](https://github.com/Proyecto-ISPP/FISIOFIND/blob/main/docs/demo_2.webm)
 
 URL Clokify: [Tiempo S2](https://app.clockify.me/shared/67e5978c492c8e6e4f275422)
 
@@ -177,6 +177,7 @@ La aplicación implementa validación de fisioterapeutas por número de colegiad
 Las funcionalidades de cuestionarios en la videollamada y seguimiento está avanzado pero no está terminado. Por esta razón, estas funcionalidades se encuentran mockeadas.
 
 El siguiente caso de uso a veces da errores porque el servidor lo detecta como spam. En local si se ha conseguido que funcione el 100% de las veces. Por eso lo ponemos aquí. De todas formas, consideramos este caso de uso como un plus de funcionalidad.
+
 Caso de uso:
 1. El fisioterapeuta o el paciente modifica el estado de una cita (crea una cita, acepta una cita, etc.).
 2. Según la acción ejecutada, el fisioterapeuta o el paciente reciben un correo de notificación de la acción.
