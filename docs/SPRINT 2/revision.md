@@ -118,7 +118,10 @@ Una vez en nuestra aplicación, se podrá acceder sin necesidad de iniciar sesi�
 
 El panel de admin hemos decidido utilizar un subdominio para tenerlo. Esta práctica está recomendada desde el punto de vista de la seguridad y es una práctica extendida: https://s2-api.fisiofind.com/admin
 . No obstante, el administrador puede iniciar sesión en el frontend para editar los documentos legales más fácilmente.
+
 Credenciales: 
+
+- Administrador:
   - Username: Administrador
   - Password: 65471364R65471364R
 
