@@ -440,10 +440,11 @@ const FisioProfile = () => {
                 headers: { Authorization: "Bearer " + token, "Content-Type": "multipart/form-data" },
             });
 
-            if (response.status === 200) {
+            if (response.status === 200 && editingServiceIndex === null) {
                 alert("Perfil actualizado correctamente");
-                fetchFisioProfile();
             }
+
+            fetchFisioProfile();
         } catch (error) {
             console.error("Error updating profile:", error);
             if (error.response) {
@@ -787,7 +788,16 @@ const FisioProfile = () => {
         return (
             <div className="modal-overlay">
                 <div className="modal-content">
-                    <h2>{editingService ? "Editar servicio" : "Añadir servicio"}</h2>
+                    <div className="modal-header flex justify-between items-center">
+                        <h2>{editingService ? "Editar servicio" : "Añadir servicio"}</h2>
+                        <button
+                            className="schedule-modal-close text-white bg-white rounded-full"
+                            onClick={onClose}
+                            aria-label="Cerrar"
+                        >
+                            &times;
+                        </button>
+                    </div>
 
                     <label>Tipo de servicio:</label>
                     <select value={tipo} onChange={(e) => setTipo(e.target.value as string)}>
@@ -922,10 +932,52 @@ const FisioProfile = () => {
         );
     };
 
+    const saveScheduleToAPI = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                alert("No hay token disponible.");
+                return;
+            }
+
+            const { initialized, ...scheduleWithoutInitialized } = schedule;
+
+            // Fix the endpoint URL - the correct endpoint should be update/ not update-schedule/
+            const response = await axios.put(
+                `${getApiBaseUrl()}/api/app_user/physio/update/`,
+                { schedule: JSON.stringify(scheduleWithoutInitialized) },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            if (response.status === 200) {
+                alert("Horario guardado correctamente.");
+                setScheduleModalOpen(false);
+            } else {
+                throw new Error("Error al guardar el horario.");
+            }
+        } catch (error) {
+            console.error("Error al guardar el horario:", error);
+            alert(`Error al guardar el horario: ${error.message}`);
+        }
+    };
 
 
-    if (loading) return <p>Cargando perfil...</p>;
-    if (error) return <p>Error: {error}</p>;
+
+    if (loading) {
+        return (
+          <div className="min-h-screen flex items-center justify-center p-5" 
+               style={{ backgroundColor: "rgb(238, 251, 250)" }}>
+            <div className="bg-white rounded-3xl shadow-xl p-8 w-full max-w-md text-center">
+              <div className="animate-pulse flex flex-col items-center">
+                <div className="rounded-full bg-gray-200 h-32 w-32 mb-4"></div>
+                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+              </div>
+            </div>
+          </div>
+        );
+      }
+      if (error) return <p>Error: {error}</p>;
 
     return (
         <div 
@@ -934,7 +986,7 @@ const FisioProfile = () => {
         >
             <div className="w-full max-w-5xl bg-white shadow-lg rounded-2xl overflow-hidden grid grid-cols-3">
                 {/* Barra lateral izquierda - Sección de perfil */}
-                <div className="col-span-1 bg-blue-600 text-white p-6 flex flex-col items-center">
+                <div className="col-span-1 text-white p-6 flex flex-col items-center" style={{ backgroundColor: "#05668D" }}>
                     <div className="relative mb-4">
                         <img 
                             src={getImageSrc()} 
@@ -965,6 +1017,7 @@ const FisioProfile = () => {
                         <br></br>
                         <GradientButton 
                             variant="edit"
+                            className="px-6 py-2 font-medium rounded-xl flex items-center gap-2 mx-auto"
                             onClick={() => setScheduleModalOpen(true)}
                         >
                             Editar Horario
@@ -1072,6 +1125,7 @@ const FisioProfile = () => {
                                 <h3 className="text-lg font-semibold">Servicios</h3>
                                 <GradientButton 
                                     variant="create"
+                                    className="px-6 py-2 font-medium rounded-xl flex items-center gap-2 mx-auto"
                                     onClick={(e) => {
                                         e.preventDefault(); // Esto evita que se envíe el formulario
                                         setEditingServiceIndex(null);
@@ -1150,13 +1204,13 @@ const FisioProfile = () => {
                         <div className="schedule-modal-content">
                             <div className="schedule-modal-header">
                                 <h2 className="schedule-modal-title">Configuración de horario</h2>
-                                <GradientButton
-                                    className="schedule-modal-close"
+                                <button
+                                    className="schedule-modal-close text-white bg-white rounded-full"
                                     onClick={() => setScheduleModalOpen(false)}
                                     aria-label="Cerrar"
                                 >
                                     &times;
-                                </GradientButton>
+                                </button>
                             </div>
                             <div className="schedule-modal-body">
                                 <div className="schedule-calendar-container">
@@ -1166,6 +1220,22 @@ const FisioProfile = () => {
                                         className="schedule-calendar"
                                     />
                                 </div>
+                            </div>
+                            <div className="schedule-modal-footer flex justify-end space-x-6 mt-10 px-6 pb-6">
+                                <GradientButton
+                                    variant="edit"
+                                    onClick={saveScheduleToAPI}
+                                    className="px-6 py-2 font-medium rounded-xl"
+                                >
+                                    Guardar Horario
+                                </GradientButton>
+                                <GradientButton
+                                    variant="grey"
+                                    onClick={() => setScheduleModalOpen(false)}
+                                    className="px-6 py-2 font-medium rounded-xl"
+                                >
+                                    Cancelar
+                                </GradientButton>
                             </div>
                         </div>
                     </div>
