@@ -617,7 +617,7 @@ def delete_appointment(request, appointment_id):
     send_appointment_email(appointment.id, 'canceled', role)
 
     # Eliminar la cita
-    # appointment.delete()
+    appointment.delete()
     update_schedule(appointment)
     return Response({"message": "Cita eliminada correctamente"}, status=status.HTTP_204_NO_CONTENT)
 
