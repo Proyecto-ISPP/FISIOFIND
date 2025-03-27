@@ -8,6 +8,9 @@ from django.http import HttpResponse
 def home(request):
     return HttpResponse("¡Bienvenido a FisioFind!")
 
+admin.site.index_title = "Panel de administración"
+admin.site.site_title = "Fisio Find"
+admin.site.site_header = "Fisio Find"
 
 urlpatterns = [
     path('', home, name='home'),

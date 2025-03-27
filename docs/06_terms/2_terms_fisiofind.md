@@ -65,7 +65,7 @@ classoption: "table"
 
 - **Fecha de Creación:** 17/03/2025  
 
-- **Versión:** v1.3
+- **Versión:** v1.4
 
 <br>
 
@@ -80,6 +80,7 @@ classoption: "table"
 | 20/03/2025   | v1.1     | Antonio Macías Ferrera      | Adecuación del SLA a FISIO FIND |
 | 22/03/2025   | v1.2     | Delfín Santana Rubio     | Corrección y ampliación de algunos apartados |
 | 22/03/2025   | v1.3     | Antonio Macías Ferrera     | División del documento SLA en 3 documentos |
+| 26/03/2025   | v1.4     | Delfín Santana Rubio     | Añadido correo de privacidad@fisiofind.com |
 
 <br>
 
@@ -181,13 +182,13 @@ A continuación se detallan las funcionalidades que **Fisio Find** se compromete
 
 
 ### 4.5. Gestión de Citas
-- Los pacientes podrán reservar, modificar o cancelar citas con al menos 24 horas de antelación
+- Los pacientes podrán reservar, modificar o cancelar citas con al menos 48 horas de antelación
 
 - Los fisioterapeutas deben mantener actualizada su disponibilidad horaria
 
 - El sistema enviará recordatorios automáticos de citas mediante el correo corporativo
 
-- Las cancelaciones fuera de plazo podrán estar sujetas a cargos según la política del fisioterapeuta
+- Las cancelaciones fuera de plazo actualmente solo puede gestionarla el administrador del sistema. Estas solo se gestionarán en casos excepcionales. Puede contactar con la administración del sistema a través de info@fisiofind.com.
 
 <br>
 

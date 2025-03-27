@@ -19,6 +19,7 @@ import { getApiBaseUrl } from "@/utils/api";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
+import { GradientButton } from "@/components/ui/gradient-button";
 
 interface TermItem {
   id: number;
@@ -495,6 +496,7 @@ export default function TermsPage(): React.ReactElement {
     }
   }
 
+  // Add this right before the return statement or at the end of the component
   // -------------------- Render Principal --------------------
   return (
     <div className="container mx-auto py-16 px-4 sm:px-6 lg:px-8 max-w-7xl">
@@ -554,13 +556,13 @@ export default function TermsPage(): React.ReactElement {
           {isAdmin && (
             <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
               <h3 className="text-lg font-semibold mb-4">Panel de Administrador</h3>
-              <button
+              <GradientButton
                 onClick={() => setShowAddForm(true)}
-                className="px-6 py-2 bg-[#05AC9C] text-white font-medium rounded-xl transition-colors hover:bg-[#048F83] flex items-center gap-2 mx-auto"
+                className="px-6 py-2 font-medium rounded-xl flex items-center gap-2 mx-auto"
               >
                 <IconPlus className="h-5 w-5" />
                 Añadir Nuevo Término
-              </button>
+              </GradientButton>
             </div>
           )}
 
@@ -647,13 +649,13 @@ export default function TermsPage(): React.ReactElement {
           {/* Botón para añadir término si eres Admin y quedan tipos disponibles */}
           {isAdmin && (
             <div className="mb-10 text-center">
-              <button
+              <GradientButton
                 onClick={() => setShowAddForm(true)}
-                className="px-6 py-2 bg-[#05AC9C] text-white font-medium rounded-xl transition-colors hover:bg-[#048F83] flex items-center gap-2 inline-flex items-center"
+                className="px-6 py-2 font-medium rounded-xl flex items-center gap-2 mx-auto"
               >
                 <IconPlus className="h-5 w-5" />
                 Añadir Nuevo Término
-              </button>
+              </GradientButton>
             </div>
           )}
 
@@ -737,22 +739,22 @@ export default function TermsPage(): React.ReactElement {
                           </button>
 
                           {isAdmin && (
-                            <div className="flex space-x-2">
-                              <button
-                                onClick={() =>
-                                  handleEdit(term.id, term.content, term.version)
-                                }
-                                className="p-2 bg-[#05AC9C] text-white rounded-full hover:bg-[#048F83] transition-colors"
-                              >
-                                <IconEdit size={16} />
-                              </button>
-                              <button
-                                onClick={() => handleDelete(term.id)}
-                                className="p-2 bg-[#FF6B6B] text-white rounded-full hover:bg-[#FF5252] transition-colors"
-                              >
-                                <IconTrash size={16} />
-                              </button>
-                            </div>
+                          <div className="flex space-x-2">
+                          <button
+                          onClick={() =>
+                          handleEdit(term.id, term.content, term.version)
+                          }
+                          className="p-2 bg-[#05AC9C] text-white rounded-full hover:bg-[#048F83] transition-colors"
+                          >
+                          <IconEdit size={16} />
+                          </button>
+                          <button
+                          onClick={() => handleDelete(term.id)}
+                          className="p-2 bg-[#FF6B6B] text-white rounded-full hover:bg-[#FF5252] transition-colors"
+                          >
+                          <IconTrash size={16} />
+                          </button>
+                          </div>
                           )}
                         </div>
                       </div>
@@ -855,7 +857,7 @@ export default function TermsPage(): React.ReactElement {
                             link.click();
                             document.body.removeChild(link);
                           }}
-                          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center"
+                          className="px-4 py-2 bg-blue-600 text-white rounded-md hover-bg-blue-700 flex items-center"
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
