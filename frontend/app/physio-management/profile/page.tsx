@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Camera, Plus, Trash2, Edit, Save } from 'lucide-react';
+import { Camera, Plus, Trash2, Edit, Save, StarIcon } from 'lucide-react';
 import ScheduleCalendar from "@/components/ui/ScheduleCalendar";
 import { getApiBaseUrl } from "@/utils/api";
 import { GradientButton } from "@/components/ui/gradient-button";
@@ -58,6 +58,7 @@ const FisioProfile = () => {
         schedule: "",
         specializations: "",
         services: [] as Service[],
+        plan: ""
     });
 
     const [editingServiceIndex, setEditingServiceIndex] = useState<number | null>(null);
@@ -136,6 +137,7 @@ const FisioProfile = () => {
                 const response = await axios.get(`${getApiBaseUrl()}/api/app_user/current-user/`, {
                     headers: { Authorization: `Bearer ${storedToken}` },
                 });
+                console.log("response", response.data);
 
                 setProfile({
                     user: {
@@ -158,6 +160,7 @@ const FisioProfile = () => {
                     schedule: response.data.physio.schedule,
                     specializations: response.data.physio.specializations,
                     services: [],
+                    plan: response.data.physio.plan
                 });
                 try {
                     let parsedServices = [];
@@ -341,7 +344,7 @@ const FisioProfile = () => {
                 return `${daysOfWeek[day]}: ${timeRanges}`;
             })
             .filter(Boolean)
-            .join("\n") || "No se ha configurado horario";
+            .join("<br>") || "No se ha configurado horario";
     };
 
     // Manejar actualizaciones del calendario
@@ -427,7 +430,7 @@ const FisioProfile = () => {
             formData.append("collegiate_number", profile.collegiate_number || "");
             if (profile.bio && profile.bio.trim() !== "") {
                 formData.append("bio", profile.bio.trim());
-              }
+            }
             formData.append("rating_avg", profile.rating_avg || "");
             formData.append("specializations", JSON.stringify(selectedSpecializations));
             // Actualizar el schedule con los datos actuales del calendario
@@ -965,57 +968,64 @@ const FisioProfile = () => {
 
     if (loading) {
         return (
-          <div className="min-h-screen flex items-center justify-center p-5" 
-               style={{ backgroundColor: "rgb(238, 251, 250)" }}>
-            <div className="bg-white rounded-3xl shadow-xl p-8 w-full max-w-md text-center">
-              <div className="animate-pulse flex flex-col items-center">
-                <div className="rounded-full bg-gray-200 h-32 w-32 mb-4"></div>
-                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-              </div>
+            <div className="min-h-screen flex items-center justify-center p-5"
+                style={{ backgroundColor: "rgb(238, 251, 250)" }}>
+                <div className="bg-white rounded-3xl shadow-xl p-8 w-full max-w-md text-center">
+                    <div className="animate-pulse flex flex-col items-center">
+                        <div className="rounded-full bg-gray-200 h-32 w-32 mb-4"></div>
+                        <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                        <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                    </div>
+                </div>
             </div>
-          </div>
         );
-      }
-      if (error) return <p>Error: {error}</p>;
+    }
+    if (error) return <p>Error: {error}</p>;
 
     return (
-        <div 
-            className="min-h-screen flex items-center justify-center px-6" 
+        <div
+            className="min-h-screen flex items-center justify-center px-6"
             style={{ backgroundColor: "rgb(238, 251, 250)" }}
         >
             <div className="w-full max-w-5xl bg-white shadow-lg rounded-2xl overflow-hidden grid grid-cols-3">
                 {/* Barra lateral izquierda - Sección de perfil */}
                 <div className="col-span-1 text-white p-6 flex flex-col items-center" style={{ backgroundColor: "#05668D" }}>
                     <div className="relative mb-4">
-                        <img 
-                            src={getImageSrc()} 
-                            alt="Perfil" 
-                            className="w-40 h-40 rounded-full object-cover border-4 border-white"
+                        <img
+                            src={getImageSrc()}
+                            alt="Perfil"
+                            className={`w-40 h-40 rounded-full object-cover border-4 ${profile.plan === 2 ? "border-yellow-400" : "border-white"}`}
                         />
-                        <label 
-                            htmlFor="file-upload" 
+                        <label
+                            htmlFor="file-upload"
                             className="absolute bottom-0 right-0 bg-white text-blue-600 p-2 rounded-full cursor-pointer"
                         >
                             <Camera className="w-5 h-5" />
-                            <input 
-                                id="file-upload" 
-                                type="file" 
-                                className="hidden" 
-                                onChange={handleFileChange} 
+                            <input
+                                id="file-upload"
+                                type="file"
+                                className="hidden"
+                                onChange={handleFileChange}
                             />
                         </label>
                     </div>
-                    
+                    <label className="flex items-center gap-1">
+                        <StarIcon className="w-4 h-4 text-amber-500 fill-amber-500" />
+                        <span>Fisio GOLD</span>
+                        <StarIcon className="w-4 h-4 text-amber-500 fill-amber-500" />
+                    </label>
+
                     <h2 className="text-xl font-bold mb-2">{profile.user.username}</h2>
                     <p className="text-blue-200 mb-4">Profesional</p>
-                    
+
                     {/* Sección de horario */}
                     <div className="w-full mt-4">
                         <h3 className="text-lg font-semibold mb-2">Mi Horario</h3>
-                        <p className="text-blue-200">{getScheduleSummary()}</p>
+                        <div className="text-blue-200"
+                            dangerouslySetInnerHTML={{ __html: getScheduleSummary() }}>
+                        </div>
                         <br></br>
-                        <GradientButton 
+                        <GradientButton
                             variant="edit"
                             className="px-6 py-2 font-medium rounded-xl flex items-center gap-2 mx-auto"
                             onClick={() => setScheduleModalOpen(true)}
@@ -1031,22 +1041,22 @@ const FisioProfile = () => {
                     <form onSubmit={handleSubmit} className="space- y-4">
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <label className="block text-sm font-medium text-gray-700">Correo Electrónico</label>
-                                <input 
-                                    type="email" 
+                                <label className="block text-sm font-large text-gray-700 mb-0.5">Correo Electrónico</label>
+                                <input
+                                    type="email"
                                     name="email"
-                                    value={profile.user.email} 
+                                    value={profile.user.email}
                                     onChange={handleChange}
                                     className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
                                 />
                                 {formErrors.email && <span className="text-red-500 text-sm">{formErrors.email}</span>}
                             </div>
                             <div className="space-y-2">
-                                <label className="block text-sm font-medium text-gray-700">Teléfono</label>
-                                <input 
-                                    type="text" 
+                                <label className="block text-sm font-large text-gray-700 mb-0.5">Teléfono</label>
+                                <input
+                                    type="text"
                                     name="phone_number"
-                                    value={profile.user.phone_number} 
+                                    value={profile.user.phone_number}
                                     onChange={handleChange}
                                     className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
                                 />
@@ -1056,62 +1066,76 @@ const FisioProfile = () => {
 
                         {/* Desplegable de especializaciones */}
                         <div className="space-y-2">
-                            <label className="block text-sm font-medium text-gray-700">Especializaciones</label>
-                            <div className="relative">
-                                <div 
-                                    onClick={() => setDropdownOpen(!dropdownOpen)}
-                                    className="border border-gray-300 rounded-md py-2 px-3 cursor-pointer"
-                                >
-                                    {selectedSpecializations.length > 0 
-                                        ? `${selectedSpecializations.length} seleccionadas` 
-                                        : "Seleccionar Especializaciones"}
+                            <label className="block text-sm font-large text-gray-700 mb-4 mt-4">Especializaciones</label>
+                            <div className="specializations-container">
+                                <div className="selected-tags">
+                                    {selectedSpecializations.map((spec) => (
+                                        <div key={spec} className="tag">
+                                            {spec}
+                                            <span
+                                                className="remove-tag"
+                                                onClick={() => setSelectedSpecializations(prev => prev.filter(s => s !== spec))}
+                                            >
+                                                ×
+                                            </span>
+                                        </div>
+                                    ))}
                                 </div>
-                                {dropdownOpen && (
-                                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
-                                        <input 
-                                            type="text" 
-                                            placeholder="Buscar especializaciones..."
-                                            value={searchQuery}
-                                            onChange={(e) => setSearchQuery(e.target.value)}
-                                            className="w-full p-2 border-b"
-                                        />
-                                        {availableSpecializations
-                                            .filter(spec => 
-                                                spec.toLowerCase().includes(searchQuery.toLowerCase())
-                                            )
-                                            .map(spec => (
-                                                <div 
-                                                    key={spec} 
-                                                    className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
-                                                    onClick={() => {
-                                                        setSelectedSpecializations(prev => 
-                                                            prev.includes(spec) 
-                                                                ? prev.filter(s => s !== spec)
-                                                                : [...prev, spec]
-                                                        );
-                                                    }}
-                                                >
-                                                    <input 
-                                                        type="checkbox" 
-                                                        checked={selectedSpecializations.includes(spec)}
-                                                        readOnly
-                                                        className="mr-2"
-                                                    />
-                                                    {spec}
-                                                </div>
-                                            ))
-                                        }
+
+                                <div className="custom-dropdown">
+                                    <div
+                                        className="dropdown-header"
+                                        onClick={() => setDropdownOpen(!dropdownOpen)}
+                                    >
+                                        {selectedSpecializations.length > 0
+                                            ? `${selectedSpecializations.length} seleccionadas`
+                                            : "Selecciona especializaciones"}
+                                        <span className={`arrow ${dropdownOpen ? "open" : ""}`}>↓</span>
                                     </div>
-                                )}
+
+                                    {dropdownOpen && (
+                                        <div className="dropdown-options">
+                                            <input
+                                                type="text"
+                                                placeholder="Buscar especialización..."
+                                                className="search-input"
+                                                value={searchQuery}
+                                                onChange={(e) => setSearchQuery(e.target.value)}
+                                            />
+
+                                            {availableSpecializations
+                                                .filter(spec =>
+                                                    spec.toLowerCase().includes(searchQuery.toLowerCase())
+                                                )
+                                                .map((spec) => (
+                                                    <label key={spec} className="option">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={selectedSpecializations.includes(spec)}
+                                                            onChange={(e) => {
+                                                                if (e.target.checked) {
+                                                                    setSelectedSpecializations(prev => [...prev, spec]);
+                                                                } else {
+                                                                    setSelectedSpecializations(prev => prev.filter(s => s !== spec));
+                                                                }
+                                                            }}
+                                                        />
+                                                        <span className="checkmark"></span>
+                                                        {spec}
+                                                    </label>
+                                                ))}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
 
                         {/* Biografía */}
                         <div className="space-y-2">
-                            <label className="block text-sm font-medium text-gray-700">Biografía</label>
-                            <textarea 
+                            <label className="block text-sm font-large text-gray-700 mb-2 mt-4">Biografía</label>
+                            <textarea
                                 name="bio"
-                                value={profile.bio || ""} 
+                                value={profile.bio || ""}
                                 onChange={handleChange}
                                 rows={4}
                                 className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
@@ -1121,9 +1145,9 @@ const FisioProfile = () => {
 
                         {/* Sección de servicios */}
                         <div className="space-y-4">
-                            <div className="flex justify-between items-center">
+                            <div className="flex justify-between items-center mb-4 mt-4">
                                 <h3 className="text-lg font-semibold">Servicios</h3>
-                                <GradientButton 
+                                <GradientButton
                                     variant="create"
                                     className="px-6 py-2 font-medium rounded-xl flex items-center gap-2 mx-auto"
                                     onClick={(e) => {
@@ -1141,8 +1165,8 @@ const FisioProfile = () => {
                             ) : (
                                 <div className="space-y-3">
                                     {services.map((service, index) => (
-                                        <div 
-                                            key={index} 
+                                        <div
+                                            key={index}
                                             className="border rounded-md p-3 flex justify-between items-center"
                                         >
                                             <div>
@@ -1159,7 +1183,7 @@ const FisioProfile = () => {
                                                 >
                                                     <Edit className="w-4 h-4" />
                                                 </GradientButton>
-                                                <GradientButton 
+                                                <GradientButton
                                                     variant="danger"
                                                     onClick={(e) => {
                                                         e.preventDefault();
@@ -1186,8 +1210,8 @@ const FisioProfile = () => {
                     </form>
                 </div>
 
-                  {/* Modal para añadir/editar servicios */}
-                  {showServiceModal && (
+                {/* Modal para añadir/editar servicios */}
+                {showServiceModal && (
                     <ServiceModal
                         onClose={() => {
                             setShowServiceModal(false);
