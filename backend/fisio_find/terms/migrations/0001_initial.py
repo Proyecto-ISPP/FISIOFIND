@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
                 ('tag', models.CharField(choices=[('terms', 'Terms of Use'), ('cookies', 'Cookie Policy'), ('privacy', 'Privacy Policy'), ('license', 'License')], default='terms', max_length=20)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('modifier', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='users.admin')),
+                ('modifier', models.ForeignKey(on_delete=models.deletion.PROTECT, to='users.admin')),
             ],
             options={
                 'verbose_name': 'Term',
