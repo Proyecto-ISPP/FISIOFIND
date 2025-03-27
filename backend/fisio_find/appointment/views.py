@@ -21,6 +21,7 @@ from django.core import signing
 from django.core.signing import BadSignature, SignatureExpired
 from rest_framework.permissions import AllowAny
 from urllib.parse import unquote
+import json
 
 
 class StandardResultsSetPagination(PageNumberPagination):
@@ -40,7 +41,7 @@ def update_schedule(data):
     if not physiotherapist:
         return Response({"error": "Fisioterapeuta no encontrado"}, status=status.HTTP_404_NOT_FOUND)
     
-    current_schedule = physiotherapist.schedule
+    current_schedule = json.loads(physiotherapist.schedule)
     if not current_schedule:
         return Response({"error": "No se ha definido un horario para este fisioterapeuta"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -56,7 +57,7 @@ def update_schedule(data):
     ]
 
     # Guardar el schedule actualizado
-    physiotherapist.schedule = current_schedule
+    physiotherapist.schedule = json.dumps(current_schedule)
     physiotherapist.save()
     
 
@@ -616,7 +617,7 @@ def delete_appointment(request, appointment_id):
     send_appointment_email(appointment.id, 'canceled', role)
 
     # Eliminar la cita
-    # appointment.delete()
+    appointment.delete()
     update_schedule(appointment)
     return Response({"message": "Cita eliminada correctamente"}, status=status.HTTP_204_NO_CONTENT)
 

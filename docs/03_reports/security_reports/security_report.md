@@ -82,7 +82,7 @@ Para el análisis hemos usado la configuración por defecto de la herramienta pa
 
 # 3. RESULTADOS DEL ANÁLISIS
 
-Los resultados del análisis se pueden ver en el archivo generado por ZAP [2025-03-27-ZAP-Report-.html](https://github.com/Proyecto-ISPP/FISIOFIND/blob/main/docs/03_reports/security_reports/2025-03-27-ZAP-Report-.html). ZAP nos categoriza los avisos en informacional, bajo, medio y alto en función del riesgo que suponen. A continuación, hacemos un resumen de lo más importante de los resultados. 
+Los resultados del análisis se pueden ver en el archivo generado por ZAP [2025-03-27-ZAP-Report-.html](https://github.com/Proyecto-ISPP/FISIOFIND/blob/main/docs/03_reports/security_reports/2025-03-27-ZAP-Report-.html). ZAP categoriza los avisos en informativo, bajo, medio y alto en función del riesgo que suponen. A continuación, hacemos un resumen de lo más importante de los resultados. 
 
 |Nombre | 	Nivel de riesgo | 	Número de evidencias |
 |----|------------|------------------------|

@@ -111,6 +111,7 @@ Para mayor transparencia, el código fuente y documentación técnica del proyec
 
 ## 4. USO DE COOKIES
 
+
 FisioFind utiliza únicamente cookies técnicas esenciales con los siguientes objetivos:
 
 - **Gestión de sesión:** Cookies necesarias para mantener la sesión del usuario iniciada y garantizar el acceso seguro a su cuenta.
@@ -124,19 +125,17 @@ Es importante destacar que NO utilizamos cookies de terceros ni cookies publicit
 Para poder acceder a las funcionalidades completas de **FisioFind** más allá de la búsqueda básica de fisioterapeutas (como solicitar citas, realizar videollamadas, acceder al historial médico o visualizar informes), es necesario aceptar el uso de estas cookies técnicas esenciales, ya que son imprescindibles para el funcionamiento de estos servicios.
 
 El usuario podrá gestionar las cookies a través de la configuración de su navegador, teniendo en cuenta que el rechazo de las cookies técnicas esenciales impedirá el acceso a la mayoría de las funcionalidades de la plataforma que requieren autenticación. Aquí se dan links a tutoriales para desactivar las cookies en los principales navegadores:
-
 - [Google Chrome para Android](https://support.google.com/accounts/answer/61416?hl=es-419&co=GENIE.Platform%3DAndroid&oco=0)
 - [Google Chrome para escritorio](https://support.google.com/accounts/answer/61416?hl=es-419&co=GENIE.Platform%3DDesktop&oco=0)
 - [Google Chrome para IPhone y IPad](https://support.google.com/accounts/answer/61416?hl=es-419&co=GENIE.Platform%3DiOS&oco=0)
-- Tutorial deshabilitar cookies de terceros en [Firefox](https://support.mozilla.org/es/kb/Deshabilitar%20cookies%20de%20terceros).
+- Tutorial deshabilitar cookies de terceros en [Firefox](https://support.mozilla.org/es/kb/Deshabilitar%20cookies%20de%20terceros)
 
 A continuación, se da un listado de las cookies que utilizamos. Todas son técnicas:
-
-| Nombre       | Descripción                                                                                                                                                                  | Duración                                                                    |
-| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| sessionid    | Cookie destinada a guardar la sesión del usuario en la plataforma. Permite no tener que pedir que el usuario se autentique en cada acción que hace.                          | Hasta que el usuario cierra sesión                                          |
-| token        | Cookie destinada a guardar la sesión del usuario en la plataforma. Permite no tener que pedir que el usuario se autentique en cada acción que hace.                          | Hasta que el usuario cierra sesión                                          |
-| sb_csrftoken | Cookie utilizada por la herramienta de modelos 3D que utilizamos de [sketchfab.com](sketchfab.com) destinada a la seguridad de la conexión con la herramienta de modelos 3D. | Aproximadamente 1 año o hasta que el usuario deja de utilizar el modelo 3D. |
+| Nombre | Descripción | Duración |
+|--------|-------------|----------|
+|sessionid| Cookie destinada a guardar la sesión del usuario en la plataforma. Permite no tener que pedir que el usuario se autentique en cada acción que hace. | Hasta que el usuario cierra sesión |
+|token| Cookie destinada a guardar la sesión del usuario en la plataforma. Permite no tener que pedir que el usuario se autentique en cada acción que hace. | Hasta que el usuario cierra sesión |
+|sb_csrftoken| Cookie utilizada por la herramienta de modelos 3D que utilizamos de [sketchfab.com](sketchfab.com) destinada a la seguridad de la conexión con la herramienta de modelos 3D. | Aproximadamente 1 año o hasta que el usuario deja de utilizar el modelo 3D. |
 
 <br>
 

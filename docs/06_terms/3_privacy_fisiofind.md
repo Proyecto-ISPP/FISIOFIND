@@ -67,7 +67,7 @@ classoption: "table"
 
 - **Fecha de Creación:** 17/03/2025  
 
-- **Versión:** v1.3
+- **Versión:** v1.4
 
 <br>
 
@@ -82,6 +82,7 @@ classoption: "table"
 | 20/03/2025   | v1.1     | Antonio Macías Ferrera      | Adecuación del SLA a FISIO FIND |
 | 22/03/2025   | v1.2     | Delfín Santana Rubio     | Corrección y ampliación de algunos apartados |
 | 22/03/2025   | v1.3     | Antonio Macías Ferrera     | División del documento SLA en 3 documentos |
+| 26/03/2025   | v1.4     | Delfín Santana Rubio     | Añadido correo de privacidad@fisiofind.com |
 
 <br>
 
@@ -127,15 +128,21 @@ En **FisioFind**, nos comprometemos a procesar su información de manera transpa
 En general, todos los datos que se introduzcan en la plataforma serán recopilados. Debido a que existen muchos formularios en la plataforma, para asegurar la legibilidad de este documento a continuación damos una explicación aproximada centrándonos en los datos más importantes que recopilamos.
 
 **Para todos los usuarios:**
-Recopilamos información básica necesaria para el funcionamiento de la plataforma, incluyendo su nombre y dirección de correo electrónico. Esta información nos permite crear y gestionar su cuenta, así como comunicarnos con usted sobre aspectos importantes del servicio.
+Recopilamos información básica necesaria para el funcionamiento de la plataforma, incluyendo su nombre y dirección de correo electrónico. Esta información nos permite crear y gestionar su cuenta, así como comunicarnos con usted sobre aspectos importantes del servicio. Especificamente recogemos: 
+
+- Nombre de usuario
+- Nombre
+- Apellidos
+- Código postal
+- Fecha de nacimiento
 
 **Para pacientes:**
 Si usted es paciente, recopilaremos información adicional relacionada con su salud que sea relevante para la prestación de servicios fisioterapéuticos. Esto incluye su historial médico básico y cualquier condición específica que pueda afectar su tratamiento. Esta información será obtenida mediante los cuestionarios previos a la consulta rellenados por el propio paciente.
 
 **Para fisioterapeutas:**
 Los profesionales que se registran en nuestra plataforma deberán proporcionar información adicional que incluye:
+
 - Número de colegiado
-- Documento Nacional de Identidad (DNI)
 - Información sobre su consulta o centro
 
 También, cuando utiliza la herramienta de modelo 3D de [sketchfab.com](sketchfab.com), por lo que cuando utiliza este modelo usted está también sujeto a los [términos y servicios de la plataforma](https://sketchfab.com/terms) y su [política de privacidad](https://sketchfab.com/privacy). Actualmente, este servicio solo tiene disponible una versión en inglés de sus políticas, por lo que recomendamos utilizar un [traductor online](https://translate.google.es/?hl=es&sl=en&tl=es&op=translate).
@@ -216,11 +223,18 @@ Para cualquier consulta sobre privacidad o ejercer sus derechos, puede contactar
 
 - Delegado de Protección de Datos: Delfín Santana Rubio
 
-- **Correo Electrónico:**: denuncias@fisiofind.com
+- **Correo Electrónico:**: privacidad@fisiofind.com
 
 Los datos que comparta al hacer contacto con este correo también serán recopilados. La recopilación estará sujeta a lo estipulado en este documento.
 
 Nos comprometemos a responder a sus solicitudes en un plazo máximo de 14 días.
+
+Si se necesita un canal anónimo para contactar con el Delegado de Protección de Datos para denunciar cualquier tipo de situación, solicitud, infracción o información, puede hacerlo a través del canal que se da al final del párrafo. Actualmente, el canal anónimo implementado es por medio de correo electrónico. Para contactar con este correo, se necesita crear un correo con un pseudónimo para así garantizar el anonimato. En este [link](https://proton.me/es-es/mail) se da un servicio de correo recomendado para establecer contacto. A este correo solo tiene acceso el Delegado de Protección de Datos:
+  - denuncias@fisiofind.com
+
+Si se [conoce la técnica](https://www.incibe.es/empresas/blog/utiliza-el-correo-electronico-forma-segura-pgp), se pueden enviar correos cifrados.
+
+El servicio de correo electrónico que utiliza Fisio Find es [https://www.ionos.es/](https://www.ionos.es/). Este servicio implementa medidas de seguridad y cifrado de datos. Puede consultar en su página web su [Política de privacidad](https://www.ionos.es/terms-gtc/politica-de-privacidad/) y su [seguridad](https://www.ionos.es/soluciones-oficina/correo-electronico-seguro). 
 
 <br>
 

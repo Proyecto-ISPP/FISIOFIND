@@ -107,8 +107,9 @@ const CalendarPage = ({
                       service: {
                         type: event.service?.type || "Sin servicio",
                         duration: event.service?.duration || 0,
+                        questionaryResponses: event.questionaryResponses || null,
                       },
-                      alternatives: event.extendedProps?.alternatives || null,
+                      alternatives: event.alternatives || null,
                     })
                   }
                 >
@@ -225,7 +226,7 @@ const Calendar = ({
                 setPhysioId(response.data.physio.id);
               }
             } catch (error) {
-              console.error("Error fetching schedule:", error);
+              console.error("Error fetching current-user:", error);
             }
           };
           getCurrentUser();
@@ -244,21 +245,7 @@ const Calendar = ({
             `${getApiBaseUrl()}/api/appointment/schedule/${physioId}/`
           );
           if (response.status === 200) {
-            const parsed_schedule = {
-              schedule: {
-                exceptions: response.data.schedule.exceptions,
-                appointments: response.data.schedule.appointments,
-                weekly_schedule: {
-                  monday: response.data.schedule.weekly_schedule.monday,
-                  tuesday: response.data.schedule.weekly_schedule.tuesday,
-                  wednesday: response.data.schedule.weekly_schedule.wednesday,
-                  thursday: response.data.schedule.weekly_schedule.thursday,
-                  friday: response.data.schedule.weekly_schedule.friday,
-                  saturday: response.data.schedule.weekly_schedule.saturday,
-                  sunday: response.data.schedule.weekly_schedule.sunday,
-                },
-              },
-            }
+            const parsed_schedule = JSON.parse(response.data.schedule);
             setSchedule(parsed_schedule);
           }
         } catch (error) {
@@ -465,6 +452,7 @@ const Calendar = ({
               service: {
                 type: info.event.extendedProps.service?.type || "Sin servicio",
                 duration: info.event.extendedProps.service?.duration || 0,
+                questionaryResponses: info.event.extendedProps.questionaryResponses || null,
               },
               alternatives: info.event.extendedProps.alternatives || null,
             });

@@ -2,7 +2,7 @@
 title: "INFORME DE TIEMPO - #SPRINT 1 (21/02 - 13/03)"       # CHANGE IF NEEDED
 subtitle: "FISIO FIND - Grupo 6 - #SPRINT 1"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]
-date: "06/03/2025"                                        # CHANGE IF NEEDED
+date: "25/03/2025"                                        # CHANGE IF NEEDED
 subject: "ISPP"
 lang: "es"
 toc: true
@@ -14,7 +14,7 @@ colorlinks: true
 linkcolor: blue
 titlepage-background: "../../.backgrounds/background4V.pdf"  # CHANGE IF NEEDED
 header-left: "CLOCKIFY REPORT"                            # CHANGE IF NEEDED
-header-right: "13/03/2025"                                # CHANGE IF NEEDED
+header-right: "25/03/2025"                                # CHANGE IF NEEDED
 footer-left: "FISIO FIND"
 documentclass: scrartcl
 classoption: "table"
@@ -63,7 +63,7 @@ classoption: "table"
 
 - **Fecha de Creación:** 13/03/2025  
 
-- **Versión:** v1.0
+- **Versión:** v1.1
 
 <br>
 
@@ -77,6 +77,7 @@ classoption: "table"
 | Fecha      | Versión | Realizada por                    | Descripción de los cambios |
 |------------|---------|----------------------------------|----------------------------|
 | 13/03/2025 | v1.0    | Alberto Carmona Sicre            | Elaboración de la primera versión del documento de informe de tiempo del sprint 1 |
+| 25/03/2025 | v1.1    | Alberto Carmona Sicre            | Actualización de las horas faltantes tras la entrega del sprint. Renombrado del documento time_report_sprint_1 |
 
 
 <br>
@@ -86,9 +87,7 @@ classoption: "table"
 <br>
 
 
-# 1. PROYECTOS
-
-**IMPORTANTE: LAS HORAS SE HAN CALCULADO HASTA LAS 14:30 DEL DÍA 06/03/2025**  
+# 1. PROYECTOS  
 
 ## 1.1. Definición de cada proyecto
 A continuación, se muestran los posibles tipos de tareas en las que pueden trabajar los integrantes del equipo, junto con una breve definición de estas:
@@ -140,11 +139,11 @@ Durante estas semanas de trabajo se ha trabajado en los siguientes proyectos:
 
 Entre los proyectos más destacados, auqellos en los que se ha invertido más tiempo, encontramos los siguientes:  
 
-- **feat:** 304:47:03
+- **feat:** 324:11:05
 
-- **Clases/Vídeos:** 127:09:47
+- **Clases/Vídeos:** 129:36:47
 
--**docs:** 67:28:40
+-**docs:** 67:45:44
 
 Es bastante apreciable que el primer sprint ha tenido muchas horas de desarrollo de código.
 
@@ -152,7 +151,8 @@ Es bastante apreciable que el primer sprint ha tenido muchas horas de desarrollo
 
 
 # 2. HORAS TOTALES
-Para esta semana de trabajo, el tiempo total dedicado al proyecto ha sido de 6399 horas y 38 minutos.
+
+Para este sprint, el tiempo total dedicado al proyecto ha sido de 664 horas y 14 minutos.
   
 
 <br>
@@ -206,7 +206,7 @@ Ordenado de manera cronológica:
 
 - **Miércoles 12/03:** 48:49:04
 
-- **Jueves 13/03:** 08:59:00 (Incompleto)
+- **Jueves 13/03:** 33:35:01
 
 
 <br>
@@ -215,19 +215,19 @@ Ordenado de manera cronológica:
 
 Ordenado de mayor a menor tiempo dedicado en cada proyecto: 
 
-**1. feat:** 304:47:03
+**1. feat:** 324:11:05
 
-**2. Clases/Vídeos:** 127:09:47
+**2. Clases/Vídeos:** 129:36:47
 
-**3. docs:** 67:28:40
+**3. docs:** 67:45:44
 
-**4. Reuniones:** 47:22:45  
+**4. Reuniones:** 49:29:10  
 
 **5. Presentaciones / Diseños:** 29:40:03
 
 **6. Planificación:** 27:12:49  
 
-**7. fix / refactor / style:** 16:27:16   
+**7. fix / refactor / style:** 16:48:46   
 
 **8. Redes sociales:** 13:02:17
 
@@ -250,35 +250,35 @@ Ordenado por orden alfabético:
 
 **2. Antonio Macías Ferrera** -  46:46:35
 
-**3. Benjamín Ignacio Maureira Flores** -  44:46:36
+**3. Benjamín Ignacio Maureira Flores** -  46:56:22
 
-**4. Daniel Alors Romero** - 32:08:16
+**4. Daniel Alors Romero** - 31:44:16
 
 **5. Daniel Fernández Caballero** - 30:29:56
 
-**6. Daniel Ruiz López**  -  33:16:48
+**6. Daniel Ruiz López**  -  44:16:43
 
-**7. Daniel Tortorici Bartús** - 37:44:44
+**7. Daniel Tortorici Bartús** - 38:59:44
 
-**8. Daniel Vela Camacho** - 43:06:43
+**8. Daniel Vela Camacho** - 45:54:15
 
 **9. Delfín Santana Rubio** - 36:50:56
 
 **10. Francisco Capote García** -  34:34:16
 
-**11. Francisco Mateos Villarejo** -  31:11:42
+**11. Francisco Mateos Villarejo** -  32:18:27
 
 **12. Guadalupe Ridruejo Pineda** - 54:04:10
 
 **13. Julen Redondo Pacheco** -  29:56:43
 
-**14. Miguel Encina Martínez** -  42:16:00
+**14. Miguel Encina Martínez** -  43:26:00
 
 **15. Pablo Fernández Pérez** -  30:23:27
 
 **16. Ramón Gavira Sánchez**  -  35:24:46
 
-**17. Rafael Pulido Cifuentes** -  44:03:18
+**17. Rafael Pulido Cifuentes** -  49:34:11
 
 Diagrama de sectores para una mejor visualización:
 

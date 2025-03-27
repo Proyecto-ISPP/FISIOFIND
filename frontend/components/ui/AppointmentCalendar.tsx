@@ -87,14 +87,14 @@ export const getAvailableSlots = (
     .toLowerCase();
 
   // Obtenemos las franjas horarias para ese día; en la API vienen como array de objetos
-  const intervals = scheduleData.schedule.weekly_schedule[dayOfWeek] || [];
-  const exceptions = scheduleData.schedule.exceptions[dateStr] || [];
+  const intervals = scheduleData.weekly_schedule[dayOfWeek] || [];
+  const exceptions = scheduleData.exceptions[dateStr] || [];
 
   // Si por error se reciben arrays anidados, aplanamos (normalmente no sucede con la API)
   const flatIntervals = Array.isArray(intervals[0]) ? intervals.flat() : intervals;
 
   // Filtramos las citas (appointments) para la fecha indicada
-  const appointmentsForDate = scheduleData.schedule.appointments
+  const appointmentsForDate = scheduleData.appointments
     .filter((app: any) => app.start_time.startsWith(dateStr))
     .map((app: any) => {
       const startDate = new Date(app.start_time);
@@ -156,23 +156,9 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
           `${getApiBaseUrl()}/api/appointment/schedule/${id}/`
         );
         if (response.status === 200) {
-          console.log("Schedule fetched:", response.data);
-          const parsed_schedule = {
-            schedule: {
-              exceptions: response.data.schedule.exceptions,
-              appointments: response.data.schedule.appointments,
-              weekly_schedule: {
-                monday: response.data.schedule.weekly_schedule.monday,
-                tuesday: response.data.schedule.weekly_schedule.tuesday,
-                wednesday: response.data.schedule.weekly_schedule.wednesday,
-                thursday: response.data.schedule.weekly_schedule.thursday,
-                friday: response.data.schedule.weekly_schedule.friday,
-                saturday: response.data.schedule.weekly_schedule.saturday,
-                sunday: response.data.schedule.weekly_schedule.sunday,
-              },
-            },
+          if (response.data.schedule) {
+            setSchedule(JSON.parse(response.data.schedule));
           }
-          setSchedule(parsed_schedule);
         }
       } catch (error) {
         console.error("Error fetching schedule:", error);
@@ -199,6 +185,7 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
 
   // Al hacer click en una fecha del calendario
   const handleDateClick = (arg: any) => {
+    console.log("schedule", schedule);
     const dateStr = arg.dateStr;
     const today = new Date();
     today.setDate(today.getDate() + 2);
@@ -292,8 +279,8 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
                   key={index}
                   onClick={() => handleSlotClick(slot)}
                   className={`px-3 py-1 rounded border text-center transition-colors ${selectedSlot === slot
-                      ? "bg-[#05AC9C] text-white border-[#05AC9C]"
-                      : "bg-white text-black border-gray-300 hover:bg-gray-100"
+                    ? "bg-[#05AC9C] text-white border-[#05AC9C]"
+                    : "bg-white text-black border-gray-300 hover:bg-gray-100"
                     }`}
                 >
                   {slot}
