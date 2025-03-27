@@ -1,6 +1,6 @@
 ---
 title: "REPORTE BASE DE CONOCIMIENTO #SPRINT 2"            # CHANGE IF NEEDED
-subtitle: "FISIO FIND - Grupo 6 - #SPRINT 1"
+subtitle: "FISIO FIND - Grupo 6 - #SPRINT 2"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]
 date: "26/03/2025"                                          # CHANGE IF NEEDED
 subject: "ISPP"
@@ -14,7 +14,7 @@ titlepage-rule-height: 0
 colorlinks: true
 linkcolor: blue
 titlepage-background: "../.backgrounds/background2V.pdf"    # CHANGE IF NEEDED
-header-left: "REPORTE BASE DE CONOCIMIENTO #SPRINT 1"       # CHANGE IF NEEDED
+header-left: "REPORTE BASE DE CONOCIMIENTO #SPRINT 2"       # CHANGE IF NEEDED
 header-right: "26/03/2025"                                  # CHANGE IF NEEDED
 footer-left: "FISIO FIND"
 documentclass: scrartcl
@@ -35,9 +35,9 @@ classoption: "table"
 
 # **ÍNDICE**
 - [**ÍNDICE**](#índice)
-- [**1. INTRODUCCIÓN**](#1-introducción)
-- [**2. ACCESO A LA BASE DE CONOCIMIENTO**](#2-acceso-a-la-base-de-conocimiento)
-- [**3. USO Y GESTIÓN DE LA BASE DE CONOCIMIENTO**](#3-uso-y-gestión-de-la-base-de-conocimiento)
+- [1. INTRODUCCIÓN](#1-introducción)
+- [2. ACCESO A LA BASE DE CONOCIMIENTO](#2-acceso-a-la-base-de-conocimiento)
+- [3. USO Y GESTIÓN DE LA BASE DE CONOCIMIENTO](#3-uso-y-gestión-de-la-base-de-conocimiento)
   - [3.2. USO Y GESTIÓN GRUPAL](#32-uso-y-gestión-grupal)
     - [3.2.1. Organización](#321-organización)
     - [3.2.2. Planificación](#322-planificación)
@@ -48,7 +48,7 @@ classoption: "table"
     - [3.2.7. Términos](#327-términos)
     - [3.2.8. Sprint 1](#328-sprint-1)
   - [3.2 USO Y GESTIÓN GENERAL](#32-uso-y-gestión-general)
-- [**4. CONTRIBUCIONES DEL EQUIPO**](#4-contribuciones-del-equipo)
+- [4. CONTRIBUCIONES DEL EQUIPO](#4-contribuciones-del-equipo)
   - [4.1. CONTRIBUCIONES A LA BASE DE CONOCIMIENTO GRUPAL](#41-contribuciones-a-la-base-de-conocimiento-grupal)
     - [4.1.1. Organización](#411-organización)
     - [4.1.2. Planificación](#412-planificación)
@@ -59,40 +59,59 @@ classoption: "table"
     - [4.1.7. Términos](#417-términos)
     - [4.1.8. Sprint 1](#418-sprint-1)
   - [4.2 CONTRIBUCIONES A LA BASE DE CONOCIMIENTO GENERAL](#42-contribuciones-a-la-base-de-conocimiento-general)
-    - [4.2.1. Feedback individual del grupo 6](#421-feedback-individual-del-grupo-6)
-        - [Semana 6](#semana-6)
-        - [Semana 7](#semana-7)
-    - [4.2.2. Aportaciones generales](#422-aportaciones-generales)
-        - [Apartado Presentaciones](#apartado-presentaciones)
-        - [Apartado Idea de Negocio](#apartado-idea-de-negocio)
-- [**5. ACCIONES TOMADAS A PARTIR DEL FEEDBACK**](#5-acciones-tomadas-a-partir-del-feedback)
+  - [4.2.1. Feedback individual del grupo 6](#421-feedback-individual-del-grupo-6)
+    - [Semana 6](#semana-6)
+      - [Feedback relacionado con la presentación](#feedback-relacionado-con-la-presentación)
+      - [Feedback relacionado con el desarrollo del proyecto](#feedback-relacionado-con-el-desarrollo-del-proyecto)
+      - [Tareas a realizar para la siguiente semana](#tareas-a-realizar-para-la-siguiente-semana)
+    - [Semana 7](#semana-7)
+      - [Feedback relacionado con la presentación](#feedback-relacionado-con-la-presentación-1)
+      - [Feedback relacionado con el desarrollo del proyecto](#feedback-relacionado-con-el-desarrollo-del-proyecto-1)
+      - [Tareas a realizar para la siguiente semana](#tareas-a-realizar-para-la-siguiente-semana-1)
+  - [4.2.2. Aportaciones generales](#422-aportaciones-generales)
+    - [Apartado Presentaciones](#apartado-presentaciones)
+      - [Semana 10/03](#semana-1003)
+    - [Apartado Idea de Negocio](#apartado-idea-de-negocio)
+      - [Semana 03/02](#semana-0302)
+      - [Semana 10/03](#semana-1003-1)
+- [5. ACCIONES TOMADAS A PARTIR DEL FEEDBACK](#5-acciones-tomadas-a-partir-del-feedback)
   - [5.1. Resumen de mejoras tras el feedback del 14/03/2025](#51-resumen-de-mejoras-tras-el-feedback-del-14032025)
     - [5.1.1. Redefinición de las estimaciones](#511-redefinición-de-las-estimaciones)
     - [5.1.2. Mecanismo de puntos, asvisos y penalizaciones](#512-mecanismo-de-puntos-asvisos-y-penalizaciones)
     - [5.1.3. Historias de usuario provenientes de feedback](#513-historias-de-usuario-provenientes-de-feedback)
-  - [5.2. Resumen de mejoras tras el feedback del 21/03/2025](#52-resumen-de-mejoras-tras-el-feedback-del-21032025)
+  - [5.2. Resumen de mejoras tras el feedback del 07/03/2025](#52-resumen-de-mejoras-tras-el-feedback-del-07032025)
     - [5.2.1. Request for Change](#521-request-for-change)
     - [5.2.2. Rendimiento del equipo](#522-rendimiento-del-equipo)
     - [5.2.3. Gráficas](#523-gráficas)
 - [**6. ANEXO - RESUMEN DEL FEEDBACK POR GRUPO**](#6-anexo---resumen-del-feedback-por-grupo)
-   - [6.1 Feedback del día 14/03/2025 (semana 6)](#62-clase-del-día-7-032025) 
-        - [**Primer grupo (Holos):**](#primer-grupo-holos)
-        - [**Segundo grupo (Gastrostock):**](#segundo-grupo-gastrostock)
-        - [**Tercer grupo (Eventbride):**](#tercer-grupo-eventbride)
-        - [**Cuarto grupo (Borroo):**](#cuarto-grupo-borroo)
-        - [**Quinto grupo (CAMYO):**](#quinto-grupo-camyo)
-        - [**Sexto grupo (FISIO FIND):**](#sexto-grupo-fisio-find)
-        - [**ANÁLISIS DEL FEEDBACK**](#análisis-del-feedback)
-        - [**CONCLUSIONES Y OBSERVACIONES**](#conclusiones-y-observaciones)
-  - [6.2 Feedback del día 21/03/2025 (semana 7)](#62-feedback-del-día-21032025-semana-7)
-    - [**Primer grupo (Holos):**](#primer-grupo-holos-1)
-    - [**Segundo grupo (Gastrostock):**](#segundo-grupo-gastrostock-1)
-    - [**Tercer grupo (Eventbride):**](#tercer-grupo-eventbride-1)
-    - [**Cuarto grupo (BORROO):**](#cuarto-grupo-borroo-1)
-    - [**Quinto grupo (CAMYO):**](#quinto-grupo-camyo-1)
-    - [**Sexto grupo (FISIO FIND):**](#sexto-grupo-fisio-find-1)
-    - [**ANÁLISIS DEL FEEDBACK**](#análisis-del-feedback-1)
-    - [**CONCLUSIONES Y OBSERVACIONES**](#conclusiones-y-observaciones-1)
+    - [6.1. Feedback del día 14/03/2025 (semana 6)](#61-feedback-del-día-14032025-semana-6)
+- [**1. RESUMEN DEL FEEDBACK POR GRUPO**](#1-resumen-del-feedback-por-grupo)
+  - [**Primer grupo (Holos):**](#primer-grupo-holos)
+  - [**Segundo grupo (Gastrostock):**](#segundo-grupo-gastrostock)
+  - [**Tercer grupo (Eventbride):**](#tercer-grupo-eventbride)
+  - [**Cuarto grupo (BORROO):**](#cuarto-grupo-borroo)
+  - [**Quinto grupo (CAMYO):**](#quinto-grupo-camyo)
+  - [**Sexto grupo (FISIO FIND):**](#sexto-grupo-fisio-find)
+- [**ANÁLISIS DEL FEEDBACK**](#análisis-del-feedback)
+  - [**TENDENCIAS GENERALES**](#tendencias-generales)
+  - [**COMPARACIÓN DEL FEEDBACK DE NUESTRO GRUPO VS LOS OTROS**](#comparación-del-feedback-de-nuestro-grupo-vs-los-otros)
+  - [Discusión para la siguiente clase.](#discusión-para-la-siguiente-clase)
+      - [PRÓXIMA SEMANA](#próxima-semana)
+- [**CONCLUSIONES Y OBSERVACIONES**](#conclusiones-y-observaciones)
+- [6.2. Feedback del día 21/03/2025 (semana 7)](#62-feedback-del-día-21032025-semana-7)
+- [**1. RESUMEN DEL FEEDBACK POR GRUPO**](#1-resumen-del-feedback-por-grupo-1)
+  - [**Primer grupo (Holos):**](#primer-grupo-holos-1)
+  - [**Segundo grupo (Gastrostock):**](#segundo-grupo-gastrostock-1)
+  - [**Tercer grupo (Eventbride):**](#tercer-grupo-eventbride-1)
+  - [**Cuarto grupo (BORROO):**](#cuarto-grupo-borroo-1)
+  - [**Quinto grupo (CAMYO):**](#quinto-grupo-camyo-1)
+  - [**Sexto grupo (FISIO FIND):**](#sexto-grupo-fisio-find-1)
+- [**ANÁLISIS DEL FEEDBACK**](#análisis-del-feedback-1)
+  - [**TENDENCIAS GENERALES**](#tendencias-generales-1)
+  - [**COMPARACIÓN DEL FEEDBACK DE NUESTRO GRUPO VS LOS OTROS**](#comparación-del-feedback-de-nuestro-grupo-vs-los-otros-1)
+  - [Discusión para la siguiente clase.](#discusión-para-la-siguiente-clase-1)
+      - [PRÓXIMA SEMANA](#próxima-semana-1)
+- [**CONCLUSIONES Y OBSERVACIONES**](#conclusiones-y-observaciones-1)
 <!-- COMMENT WHEN EXPORTING TO PDF -->
 
 <br>
@@ -183,7 +202,7 @@ Para mejorar la eficiencia en la documentación de informes, se estableció un g
 
 En esta sección encontramos tres subapartados: Reuniones, Sprint 1 y Sprint 2.
 
-- En la sección de **Reuniones** se guardan cada una de las actas de las reuniones realizadas. La redacción de las actas de reuniones es responsabilidad del **Scrum Master**, Antonío Macías, o de los **Secretarios**, Alberto Carmona, Delfín Santan y Daniel Vela.
+- En la sección de **Reuniones** se guardan cada una de las actas de las reuniones realizadas. La redacción de las actas de reuniones es responsabilidad del **Scrum Master**, Antonio Macías, o de los **Secretarios**, Alberto Carmona, Delfín Santana y Daniel Vela.
 
 - En los apartados **Sprint 1** y **Sprint 2**, se almacenan los informes relacionados con el sprint en sí (planificación, retrospectiva, etc.). Documentos como la retrospectiva se encargaron al equipo de **QA**, mientras que la **planificación** fue responsabilidad del **Scrum Master**.
 
@@ -491,7 +510,7 @@ Tras el _feedback_ recibido en la sesión del 14/03/2025, se tomaron medidas par
 
 ### 5.1.2. Mecanismo de puntos, asvisos y penalizaciones
 
-- Aunque en el feedback del 14/03 se destacó el análsis de rendimiento de los compañeros, se generaron dudas acerca del mecanismo de quitar puntos, por lo que se hizo un reajuste para que se motivase con extras en vez de penalizar con menos puntos. Además, se implementaron los avisos, para no activar las penalizaciones tras el primer fallo.
+- Aunque en el feedback del 14/03 se destacó el análisis de rendimiento de los compañeros, se generaron dudas acerca del mecanismo de quitar puntos, por lo que se hizo un reajuste para que se motivase con extras en vez de penalizar con menos puntos. Además, se implementaron los avisos, para no activar las penalizaciones tras el primer fallo.
 
 ### 5.1.3. Historias de usuario provenientes de feedback
 
