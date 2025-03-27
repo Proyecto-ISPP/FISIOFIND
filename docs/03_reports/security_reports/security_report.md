@@ -76,7 +76,7 @@ classoption: "table"
 El presente informe tiene como objetivo mostrar los resultados de utilizar una herramienta automática de análisis de seguridad. Este análisis es fundamental para evaluar la seguridad del proyecto, detectar posibles vulnerabilidades y garantizar la privacidad, autenticidad e integridad de nuestra aplicación y de los datos que manejamos.
 
 # 2. HERRAMIENTA UTILIZADA
-La herramienta utilizada es la herramienta [ZAP](https://www.zaproxy.org/). Esta herramienta es ampliamente utilizada en el sector, y permite hacer análisis automáticos de seguridad a aplicaciones web. El análisis lo hace descubriendo las rutas de la página web(mediante scrapping y otras técnicas) y buscando de forma pasiva y activa patrones o evidencias de problemas de seguridad conocidos.
+La herramienta utilizada es la herramienta [ZAP](https://www.zaproxy.org/). Esta herramienta es ampliamente utilizada en el sector, y permite hacer análisis automáticos de seguridad a aplicaciones web. El análisis lo hace descubriendo las rutas de la página web (mediante scrapping y otras técnicas) y buscando de forma pasiva y activa patrones o evidencias de problemas de seguridad conocidos.
 
 Para el análisis hemos usado la configuración por defecto de la herramienta para facilitar la reproducibilidad del análisis.
 
@@ -98,9 +98,9 @@ Los resultados del análisis se pueden ver en el archivo generado por ZAP "2025-
 
 Los dos avisos de nivel medio como algunos de los avisos de nivel bajo hacen referencia a que falta poner headers de seguridad en las respuestas del header. Este aviso no es un problema de seguridad inminente y se puede implementar en el S3.
 
-Por ejemplo, el aviso "Server Leaks Information via "X-Powered-By" HTTP Response Header Field(s)" es que el servidor revela la tecnología que utiliza. Sabiendo esto, el atacante podría buscar ataques específicos para la tecnología que utilizamos(Next.js).
+Por ejemplo, el aviso "Server Leaks Information via "X-Powered-By" HTTP Response Header Field(s)" es que el servidor revela la tecnología que utiliza. Sabiendo esto, el atacante podría buscar ataques específicos para la tecnología que utilizamos (Next.js).
 
-Después, el "Information Disclosure - Suspicious Comments" hace referencia a que parece haber comentarios sospechosos en las respuestas del servidor. En el proceso de desarrollo los programadores pueden poner comentarios con información sensible y no ser borrados en producción. Sin embargo, analizando los resultados parece que son comentarios normales sin información sensible(sin api keys, sin credenciales de administración, etc.). Sin embargo, para el siguiente sprint deberían de eliminarse todos los comentarios de funcionalidades que no se utilicen.
+Después, el "Information Disclosure - Suspicious Comments" hace referencia a que parece haber comentarios sospechosos en las respuestas del servidor. En el proceso de desarrollo los programadores pueden poner comentarios con información sensible y no ser borrados en producción. Sin embargo, analizando los resultados parece que son comentarios normales sin información sensible (sin api keys, sin credenciales de administración, etc.). Sin embargo, para el siguiente sprint deberían de eliminarse todos los comentarios de funcionalidades que no se utilicen.
 
 # 4. CONCLUSIONES
 Fisio Find no presenta vulnerabilidades críticas que puedan ser encontradas con herramientas automáticas de análisis de seguridad. Los avisos que nos devuelve la aplicación no necesitan de acciones inminentes(de hecho muchas otras webs lo tienen). Sin embargo, se deben de tomar acciones correctivas para la siguiente entrega.
