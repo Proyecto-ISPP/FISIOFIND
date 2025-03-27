@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Camera, Plus, Trash2, Edit, Save, StarIcon } from 'lucide-react';
+import { Camera, Plus, Trash2, Edit, Save, StarIcon, Film } from 'lucide-react';
 import ScheduleCalendar from "@/components/ui/ScheduleCalendar";
 import { getApiBaseUrl } from "@/utils/api";
 import { GradientButton } from "@/components/ui/gradient-button";
+import Link from "next/link"; 
 
 const getAuthToken = () => {
     return localStorage.getItem("token"); // Obtiene el token JWT
@@ -1199,6 +1200,7 @@ const FisioProfile = () => {
                                 </div>
                             )}
                         </div>
+                        <div>
 
                         <GradientButton
                             variant="edit"
@@ -1207,6 +1209,16 @@ const FisioProfile = () => {
                             <Save size={18} className="mr-2" />
                             Actualizar Perfil
                         </GradientButton>
+                        <Link href="/physio-management/video" passHref>
+                            <GradientButton
+                                variant="edit"
+                                className="w-full py-2 px-4 bg-gradient-to-r from-[#1E5ACD] to-[#3a6fd8] text-white font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center"
+                            >
+                                <Film size={22} className="mr-2" />
+                                Subir vídeo
+                            </GradientButton>
+                        </Link>
+                        </div>
                     </form>
                 </div>
 

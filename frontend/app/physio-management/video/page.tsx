@@ -424,7 +424,7 @@ const UploadVideo = () => {
               <div className="relative">
                 <input
                   type="text"
-                  placeholder="IDs de pacientes (separados por coma)"
+                  placeholder="Email de pacientes (separados por coma)"
                   value={editPatients}
                   onChange={(e) => setEditPatients(e.target.value)}
                   className="w-full py-[14px] px-5 text-base border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
@@ -455,7 +455,7 @@ const UploadVideo = () => {
                   onChange={handleFileChange}
                   className="w-full py-[14px] px-5 text-base border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
                   // Add a key to force re-render when file is reset
-                  key={file ? "has-file" : "no-file"}
+                 // key={file ? "has-file" : "no-file"}
                 />
               </div>
               
@@ -482,7 +482,7 @@ const UploadVideo = () => {
               <div className="relative">
                 <input
                   type="text"
-                  placeholder="IDs de pacientes (separados por coma)"
+                  placeholder="Email de pacientes (separados por coma)"
                   value={patients}
                   onChange={handlePatientsChange}
                   className="w-full py-[14px] px-5 text-base border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
