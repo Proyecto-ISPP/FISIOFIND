@@ -12,8 +12,7 @@ const ToolsContainer = ({ selectedTool, setSelectedTool, toggleScreenShare }) =>
     { id: 'historial', name: 'Historial Clínico', icon: faHistory },
     { id: 'compartir', name: 'Compartir Pantalla', icon: faShare },
     { id: 'modelo3d', name: 'Modelo Anatómico', icon: faCubes },
-    { id: 'plantillas', name: 'Plantillas Test', icon: faClipboard },
-    { id: 'cuestionarios', name: 'Mis Cuestionarios', icon: faQuestionCircle }
+    { id: 'plantillas', name: 'Mapa dolor', icon: faClipboard }
   ];
 
   const selectTool = (toolId) => {

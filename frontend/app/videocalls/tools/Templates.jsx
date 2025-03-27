@@ -9,19 +9,7 @@ const Plantillas = ({ activePainMap, handlePainMapSelect, sendPainMapToPatient, 
 
   return (
     <div className={styles.toolPanel}>
-      <h4>Plantillas de Test y Evaluación</h4>
-      <div className={styles.searchContainer}>
-        <input type="text" placeholder="Buscar plantilla..." className={styles.searchInput} />
-      </div>
-
-      <div className={styles.templateCategories}>
-        <button className={`${styles.categoryBtn} ${styles.active}`}>Dolor</button>
-        <button className={styles.categoryBtn}>Rango Movimiento</button>
-        <button className={styles.categoryBtn}>Funcional</button>
-        <button className={styles.categoryBtn}>Postura</button>
-      </div>
-
-      {/* Mapa de dolor (ejemplo) */}
+      <h4>Mapas de dolor</h4>
       <div className={styles.painMapSection}>
         <h5 className={styles.subsectionTitle}>Mapas de Dolor</h5>
         <div className={styles.painMapGrid}>
@@ -65,24 +53,6 @@ const Plantillas = ({ activePainMap, handlePainMapSelect, sendPainMapToPatient, 
             </div>
           </div>
         )}
-      </div>
-
-      <div className={styles.scalesSection}>
-        <h5 className={styles.subsectionTitle}>Escalas de Evaluación</h5>
-        <ul className={styles.scalesList}>
-          <li className={styles.scaleItem}>
-            <span>Escala Visual Analógica (EVA)</span>
-            <button className={styles.smallButton}>Usar</button>
-          </li>
-          <li className={styles.scaleItem}>
-            <span>Índice de Discapacidad de Oswestry</span>
-            <button className={styles.smallButton}>Usar</button>
-          </li>
-          <li className={styles.scaleItem}>
-            <span>Escala de Daniels</span>
-            <button className={styles.smallButton}>Usar</button>
-          </li>
-        </ul>
       </div>
     </div>
   );
