@@ -932,6 +932,35 @@ const FisioProfile = () => {
         );
     };
 
+    const saveScheduleToAPI = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                alert("No hay token disponible.");
+                return;
+            }
+
+            const { initialized, ...scheduleWithoutInitialized } = schedule;
+
+            // Fix the endpoint URL - the correct endpoint should be update/ not update-schedule/
+            const response = await axios.put(
+                `${getApiBaseUrl()}/api/app_user/physio/update/`,
+                { schedule: JSON.stringify(scheduleWithoutInitialized) },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            if (response.status === 200) {
+                alert("Horario guardado correctamente.");
+                setScheduleModalOpen(false);
+            } else {
+                throw new Error("Error al guardar el horario.");
+            }
+        } catch (error) {
+            console.error("Error al guardar el horario:", error);
+            alert(`Error al guardar el horario: ${error.message}`);
+        }
+    };
+
 
 
     if (loading) {
@@ -1208,33 +1237,6 @@ const FisioProfile = () => {
             </div>
         </div>
     );
-};
-
-const saveScheduleToAPI = async () => {
-    try {
-        if (!token) {
-            alert("No hay token disponible.");
-            return;
-        }
-
-        const { initialized, ...scheduleWithoutInitialized } = schedule;
-
-        const response = await axios.put(
-            `${getApiBaseUrl()}/api/app_user/physio/update-schedule/`,
-            { schedule: JSON.stringify(scheduleWithoutInitialized) },
-            { headers: { Authorization: `Bearer ${token}` } }
-        );
-
-        if (response.status === 200) {
-            alert("Horario guardado correctamente.");
-            setScheduleModalOpen(false);
-        } else {
-            throw new Error("Error al guardar el horario.");
-        }
-    } catch (error) {
-        console.error("Error al guardar el horario:", error);
-        alert("Error al guardar el horario.");
-    }
 };
 
 export default FisioProfile;
