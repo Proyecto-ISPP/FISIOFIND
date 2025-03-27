@@ -78,6 +78,7 @@ classoption: "table"
 |------------|---------|----------------------------------|----------------------------|
 | 25/03/2025 | v1.0    | Alberto Carmona Sicre            | Elaboración de la primera versión del documento de informe de tiempo del sprint 2 |
 | 27/03/2025 | v1.1    | Alberto Carmona Sicre, Rafael Pulido Cifuentes            | Añadidas las horas de los días faltantes |
+| 27/03/2025 | v1.2    | Alberto Carmona Sicre            | Reactualización de horas |
 
 
 <br>
@@ -89,7 +90,7 @@ classoption: "table"
 
 # 1. PROYECTOS
 
-### IMPORTANTE: LAS HORAS ESTÁN CONTEMPLADAS HASTA LAS 17:00 DEL DÍA 27/03/2025
+### IMPORTANTE: LAS HORAS ESTÁN CONTEMPLADAS HASTA LAS 18:30 DEL DÍA 27/03/2025
 ## 1.1. Definición de cada proyecto
 
 A continuación, se muestran los posibles tipos de tareas en las que pueden trabajar los integrantes del equipo, junto con una breve definición de estas:
@@ -142,7 +143,7 @@ Entre los proyectos más destacados, auqellos en los que se ha invertido más ti
 
 - **feat:** 210:08:51
 
-- **Clases/Vídeos:** 117:05:00
+- **Clases/Vídeos:** 121:05:00
 
 -**fix/refactor/style:** 70:35:48
 
@@ -152,7 +153,7 @@ Es bastante apreciable que el segundo sprint también ha con muchas horas de des
 
 
 # 2. HORAS TOTALES
-Para este sprint, el tiempo total dedicado al proyecto ha sido de 475 horas y 51 minutos.
+Para este sprint, el tiempo total dedicado al proyecto ha sido de 488 horas y 9 minutos.
   
 
 <br>
@@ -180,7 +181,7 @@ Ordenado de manera cronológica:
 
 - **Jueves 20/03:** 37:07:01
 
-- **Viernes 21/03:** 55:57:17  
+- **Viernes 21/03:** 59:57:17  
 
 - **Sábado 22/03:** 27:14:26  
 
@@ -192,7 +193,7 @@ Ordenado de manera cronológica:
 
 - **Miércoles 26/03:** 29:37:54
 
-- **Jueves 27/03:** 09:48:21 (Incompleto)
+- **Jueves 27/03:** 18:06:40 (Incompleto)
 
 
 <br>
@@ -207,11 +208,11 @@ Ordenado de mayor a menor tiempo dedicado en cada proyecto:
 
 **3. fix / refactor / style:**  70:35:48
 
-**4. docs:** 27:35:06
+**4. docs:** 30:21:07
 
 **5. Presentaciones / Diseños:** 19:05:12
 
-**6. Reuniones:** 13:04:45 
+**6. Reuniones:** 16:01:45 
 
 **7. Usuarios Piloto:** 08:41:14
 
@@ -230,13 +231,13 @@ Diagrama de sectores para una mejor visualización de la división:
 
 Ordenado por orden alfabético:
 
-**1. Alberto Carmona Sicre** - 20:19:53
+**1. Alberto Carmona Sicre** - 25:48:31
 
 **2. Antonio Macías Ferrera** - 41:45:25
 
-**3. Benjamín Ignacio Maureira Flores** -  33:37:10
+**3. Benjamín Ignacio Maureira Flores** -  35:46:58
 
-**4. Daniel Alors Romero** - 19:47:01
+**4. Daniel Alors Romero** - 21:04:58
 
 **5. Daniel Fernández Caballero** - 26:48:06
 
@@ -254,9 +255,9 @@ Ordenado por orden alfabético:
 
 **12. Guadalupe Ridruejo Pineda** - 28:00:00
 
-**13. Julen Redondo Pacheco** -  20:15:27
+**13. Julen Redondo Pacheco** -  21:54:09
 
-**14. Miguel Encina Martínez** -  30:08:31
+**14. Miguel Encina Martínez** -  31:51:45
 
 **15. Pablo Fernández Pérez** -  25:07:50
 
