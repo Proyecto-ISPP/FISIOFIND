@@ -1,4 +1,4 @@
----
+<!-- ---
 title: "ACUERDO CON USUARIOS PILOTO"                      # CHANGE IF NEEDED
 subtitle: "FISIO FIND - Grupo 6 - #SPRINT 2"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]
@@ -18,7 +18,7 @@ header-right: "10/02/2025"                                # CHANGE IF NEEDED
 footer-left: "FISIO FIND"
 documentclass: scrartcl
 classoption: "table"
----
+--- -->
 
 
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
@@ -390,8 +390,7 @@ El período de pruebas se extenderá, como muy pronto, desde el comienzo de la p
 | **Rol de prueba**                         | Paciente                               |
 | **Teléfono (opcional)**                   | 601 04 84 66                           |
 |                                           |                                        |
-| **Firma del Usuario Piloto**              |
-| CBM                                       |
+| **Firma del Usuario Piloto**              | CBM                                    |
 
 
 | **Nombre y Apellidos del Usuario Piloto** | Andrea Ruiz                            |
@@ -401,8 +400,7 @@ El período de pruebas se extenderá, como muy pronto, desde el comienzo de la p
 | **Rol de prueba**                         | Paciente                               |
 | **Teléfono (opcional)**                   |                                        |
 |                                           |                                        |
-| **Firma del Usuario Piloto**              |
-| AR                                        |
+| **Firma del Usuario Piloto**              | AR                                     |
 
 
 | **Nombre y Apellidos del Usuario Piloto** | Antonio Macias Barrera                 |
@@ -412,8 +410,7 @@ El período de pruebas se extenderá, como muy pronto, desde el comienzo de la p
 | **Rol de prueba**                         | Paciente                               |
 | **Teléfono (opcional)**                   | 630279738                              |
 |                                           |                                        |
-| **Firma del Usuario Piloto**              |
-| AMB                                       |
+| **Firma del Usuario Piloto**              | AMB                                       |
 
 
 | **Nombre y Apellidos del Usuario Piloto** | M° Dolores Ferrera Ortiz               |
@@ -423,8 +420,7 @@ El período de pruebas se extenderá, como muy pronto, desde el comienzo de la p
 | **Rol de prueba**                         | Paciente                               |
 | **Teléfono (opcional)**                   | 609089803                              |
 |                                           |                                        |
-| **Firma del Usuario Piloto**              |
-| LFO                                       |
+| **Firma del Usuario Piloto**              | LFO                                    |
 
 
 | **Nombre y Apellidos del Usuario Piloto** | Rodrigo Macías Ferrera                 |
@@ -434,8 +430,7 @@ El período de pruebas se extenderá, como muy pronto, desde el comienzo de la p
 | **Rol de prueba**                         | Paciente                               |
 | **Teléfono (opcional)**                   | 648733222                              |
 |                                           |                                        |
-| **Firma del Usuario Piloto**              |
-| RMF                                       |
+| **Firma del Usuario Piloto**              | RMF                                       |
 
 
 | **Nombre y Apellidos del Usuario Piloto** | Leonor Moreno Ortiz                    |
@@ -445,8 +440,7 @@ El período de pruebas se extenderá, como muy pronto, desde el comienzo de la p
 | **Rol de prueba**                         | Paciente                               |
 | **Teléfono (opcional)**                   | 627815886                              |
 |                                           |                                        |
-| **Firma del Usuario Piloto**              |
-| LMO                                       |
+| **Firma del Usuario Piloto**              | LMO                                       |
 
 
 | **Nombre y Apellidos del Usuario Piloto** | Sara Allouani Mechfaoui                |
@@ -456,8 +450,7 @@ El período de pruebas se extenderá, como muy pronto, desde el comienzo de la p
 | **Rol de prueba**                         | Paciente                               |
 | **Teléfono (opcional)**                   |                                        |
 |                                           |                                        |
-| **Firma del Usuario Piloto**              |
-| SAM                                       |
+| **Firma del Usuario Piloto**              | SAM                                       |
 
 
 | **Nombre y Apellidos del Usuario Piloto** | Guadalupe Pineda Tejeda                |
@@ -467,8 +460,7 @@ El período de pruebas se extenderá, como muy pronto, desde el comienzo de la p
 | **Rol de prueba**                         | Paciente                               |
 | **Teléfono (opcional)**                   | 653951321                              |
 |                                           |                                        |
-| **Firma del Usuario Piloto**              |
-| GPT                                       |
+| **Firma del Usuario Piloto**              | GPT                                       |
 
 
 | **Nombre y Apellidos del Usuario Piloto** | Reyes Ismael Sanchez Parra             |
@@ -478,8 +470,7 @@ El período de pruebas se extenderá, como muy pronto, desde el comienzo de la p
 | **Rol de prueba**                         | Paciente                               |
 | **Teléfono (opcional)**                   | 633806753                              |
 |                                           |                                        |
-| **Firma del Usuario Piloto**              |
-| RISP                                      |
+| **Firma del Usuario Piloto**              | RISP                                      |
 
 
 | **Nombre y Apellidos del Usuario Piloto** | Laura Fuentes González                 |
@@ -489,8 +480,7 @@ El período de pruebas se extenderá, como muy pronto, desde el comienzo de la p
 | **Rol de prueba**                         | Paciente                               |
 | **Teléfono (opcional)**                   | 652878383                              |
 |                                           |                                        |
-| **Firma del Usuario Piloto**              |
-| LFG                                       |
+| **Firma del Usuario Piloto**              | LFG                                       |
 
 
 | **Nombre y Apellidos del Usuario Piloto** | Francisco Manuel Gomez Manzorro        |
@@ -500,8 +490,7 @@ El período de pruebas se extenderá, como muy pronto, desde el comienzo de la p
 | **Rol de prueba**                         | Paciente                               |
 | **Teléfono (opcional)**                   | 727734323                              |
 |                                           |                                        |
-| **Firma del Usuario Piloto**              |
-| FMG                                       |
+| **Firma del Usuario Piloto**              | FMG                                       |
 
 
 | **Nombre y Apellidos del Usuario Piloto** | Borja Lozano Marcos                    |
@@ -511,8 +500,7 @@ El período de pruebas se extenderá, como muy pronto, desde el comienzo de la p
 | **Rol de prueba**                         | Paciente                               |
 | **Teléfono (opcional)**                   | 722712004                              |
 |                                           |                                        |
-| **Firma del Usuario Piloto**              |
-| BLM                                       |
+| **Firma del Usuario Piloto**              | BLM                                       |
 
 
 | **Nombre y Apellidos del Usuario Piloto** | Ester Palomar Bonet                    |
@@ -522,8 +510,7 @@ El período de pruebas se extenderá, como muy pronto, desde el comienzo de la p
 | **Rol de prueba**                         | Paciente                               |
 | **Teléfono (opcional)**                   |                                        |
 |                                           |                                        |
-| **Firma del Usuario Piloto**              |
-| EPB                                       |
+| **Firma del Usuario Piloto**              | EPB                                       |
 
 
 | **Nombre y Apellidos del Usuario Piloto** | María Macías Barrera                   |
@@ -533,8 +520,7 @@ El período de pruebas se extenderá, como muy pronto, desde el comienzo de la p
 | **Rol de prueba**                         | Paciente                               |
 | **Teléfono (opcional)**                   |                                        |
 |                                           |                                        |
-| **Firma del Usuario Piloto**              |
-| MMB                                       |
+| **Firma del Usuario Piloto**              | MMB                                       |
 
 
 | **Nombre y Apellidos del Usuario Piloto** | Luis Manuel Martín Domínguez           |
@@ -544,8 +530,7 @@ El período de pruebas se extenderá, como muy pronto, desde el comienzo de la p
 | **Rol de prueba**                         | Paciente                               |
 | **Teléfono (opcional)**                   |                                        |
 |                                           |                                        |
-| **Firma del Usuario Piloto**              |
-| LMMD                                      |
+| **Firma del Usuario Piloto**              | LMMD                                      |
 
 
 | **Nombre y Apellidos del Usuario Piloto** | Antonio Daniel Porcar Aragón           |

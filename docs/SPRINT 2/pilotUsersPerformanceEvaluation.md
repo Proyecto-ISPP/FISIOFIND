@@ -1,4 +1,4 @@
----
+<!-- ---
 title: "INFORME DE USUARIOS PILOTO"                      # CHANGE IF NEEDED
 subtitle: "FISIO FIND - Grupo 6 - #SPRINT 2"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]
@@ -18,12 +18,12 @@ header-right: "26/03/2025"                                # CHANGE IF NEEDED
 footer-left: "FISIO FIND"
 documentclass: scrartcl
 classoption: "table"
----
+--- -->
 
 
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
 <p align="center">
-  <img src="../../.img/Logo_FisioFind_Verde_sin_fondo.webp" alt="Logo FisioFind" width="300" />
+  <img src="../.img/Logo_FisioFind_Verde_sin_fondo.webp" alt="Logo FisioFind" width="300" />
 </p>
 
 <h1 align="center" style="font-size: 30px; font-weight: bold;">
@@ -183,13 +183,14 @@ Este enfoque permitirá abordar de manera estructurada las áreas críticas de m
 Se detallan los principales problemas encontrados por los usuarios piloto durante la prueba de la plataforma, junto con su impacto y posibles soluciones.
 
 | Error                                      | Motivo                                                                                                                                                                                                                                            | Solución                                                                                                                                                                                                                                                                                                   | Prioridad | Impacto |
-|-------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------|---------|
+|-------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------|---------|
 | **Errores en el registro de fisioterapeutas** | Diferencia entre el número de colegiado en la tarjeta física (ej. 02300) y el registrado en la base de datos oficial (ej. 2300), lo que causa fallos en el script de validación.                                                                  | Incluir un enlace a la BBDD del colegio profesional correspondiente en el formulario para verificar el número antes de ingresarlo. Además, se hará una batería de pruebas con combinaciones comunes en diferentes comunidades autónomas.                                                                   | 1         | ALTO    |
 | **Problemas de conexión** | A pesar de estar registrados, los usuarios reportaron errores recurrentes de conexión que les impedían realizar las acciones que se les habían solicitado en la plataforma.                                                                  | Este error ya fue solucionado y tiene que ver con el tiempo de expiración y renovación del token de inicio de sesión. No obstante, se prestará especial atención a que esto no vuelva a suceder.                                                                   | 1         | ALTO    |
 | **Dependencia de datos** | Estar registrado con un nombre de usuario no permite cambiar el correo asociado en la edición del perfil. | Se revisará esta dependencia para mejorar la usabilidad en el proceso de edición de datos del perfil de usuario. | 1 | ALTO |
 | **Formularios que aceptan registros vacíos o datos inválidos** | Formularios como el de respuesta al cuestionario preintervención o el de creación de un servicio de fisioterapia admiten datos vacíos, cadenas de texto infinitamente largas o entradas que no corresponden al formato del campo que se está rellenando (p.e. registrar "123" para un número de teléfono). | Se revisarán cuidadosemante y se añadirán validaciones en TODOS los formularios de la plataforma. | 1 | ALTO |
 | **Carga de datos lenta**                      | No especificado en el informe. Posiblemente relacionado con optimización deficiente o problemas de red/conexión.                                                                                                                                  |Se requiere diagnóstico más profundo para determinar causa raíz y aplicar medidas correctivas como cacheo, optimización de consultas o manejo de errores de red.                                                                                                   | 4 | ALTO |
 | **Interfaz no responsiva en móviles**        | Formularios y botones no se adaptan correctamente a pantallas pequeñas, causando desalineaciones u ocultamiento de elementos. Esto se debe a que todo el desarrollo de la UI se ha hecho teniendo en cuenta la responsividad en un navegador de ordenador con tamaño estándar / medio                                                                                                          | Ajustar estilos CSS y layout para asegurar diseño responsivo (media queries, flexbox/grid adaptable). Realizar pruebas específicas en móviles y tablets.                                                                                                                                                    | 4 | MEDIO |
+
 
 
 ## 3.2. FUNCIONALIDADES VALORADAS POSITIVAMENTE
@@ -204,7 +205,7 @@ También, se valoró positivamente el formato y estética del formulario de part
 
 ## 3.3. PRINCIPALES OBSERVACIONES Y SUGERENCIAS
 
-Los usuarios piloto realizaron valiosas aportaciones sobre la experiencia general con la plataforma. A continuación, se recogen las sugerencias de mejora más repetidas, tanto para las funcinalidades ya implementadas para la fecha como para aquellas que aún están en desarrollo:
+Los usuarios piloto realizaron valiosas aportaciones sobre la experiencia general con la plataforma. A continuación, se recogen las sugerencias de mejora más repetidas, tanto para las funcionalidades ya implementadas para la fecha como para aquellas que aún están en desarrollo:
 
 - **Información del paciente**: Se valoró positivamente la posibilidad de visualizar el progreso de los pacientes, pero se solicitó que se integren gráficos o resúmenes visuales que faciliten la evaluación del tratamiento. *Esta funcionalidad ya está en desarrollo para la fecha de este documento.*
 

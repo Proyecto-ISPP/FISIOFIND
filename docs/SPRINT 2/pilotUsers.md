@@ -1,4 +1,4 @@
----
+<!-- ---
 title: "ACUERDO CON USUARIOS PILOTO"                      # CHANGE IF NEEDED
 subtitle: "FISIO FIND - Grupo 6 - #SPRINT 2"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]
@@ -18,7 +18,7 @@ header-right: "10/02/2025"                                # CHANGE IF NEEDED
 footer-left: "FISIO FIND"
 documentclass: scrartcl
 classoption: "table"
----
+--- -->
 
 
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
@@ -151,7 +151,7 @@ La estrategia empleada para captar usuarios piloto ha sido el **envío de un for
 
 Estos dos formularios se hicieron empleando la herramienta ***Google Forms***. En ambos casos, el formulario indicaba de forma explícita qué implica ser usuario piloto de una plataforma, en qué fechas deben estar disponibles (con cierta flexibilidad), a qué se comprometen aceptando los términos de participación y nuestro compromiso como equipo a no compartir los datos recogidos durante el periodo de pruebas con terceros. En el caso de los fisioterapeutas, se les explicó que su participación sería recompensada con una suscripción gratuita permanente a la plataforma, como agradecimiento por su colaboración. 
 
-En el caso de los **fisioterapeutas**, se envió un **primer correo** con un formulario adjunto de inscripción desde la dirección de *email corporativa* **info@fisiodind.com** a las 12 personas que mostraron un interés inicial en participar como usuarios piloto de la plataforma en el primer sonseo de viabilidad del proyecto. Este formulario, a parte de lo expuesto en el párrafo anterior, pretendía recoger también información sobre sus perfiles profesionales.
+En el caso de los **fisioterapeutas**, se envió un **primer correo** con un formulario adjunto de inscripción desde la dirección de *email corporativa* **info@fisiofind.com** a las 12 personas que mostraron un interés inicial en participar como usuarios piloto de la plataforma en el primer sondeo de viabilidad del proyecto. Este formulario, aparte de lo expuesto en el párrafo anterior, pretendía recoger también información sobre sus perfiles profesionales.
 De los 12 fisioterapeutas que recibieron el correo, solo 5 se inscribieron a través del formulario adjunto. Ante la falta de usuarios piloto, pedimos a nuestros conocidos fisioterapeutas que **compartieran el formulario por WhatsApp con sus compañeros de profesión**. El formulario llegó hasta el "Grupo de Fisioterapeutas de Extremadura", desde donde hemos recibido más participación y nos ha permitido alcanzar la cifra de 16 usuarios piloto fisioterapeutas.
 
 Para la captación de pacientes, se siguió una estrategia similar. Todos nuestros **conocidos** que, de manera informal habían mostrado interés en participar en las pruebas, recibieron un **mensaje de WhatsApp con el formulario** de inscripción. Además de los términos de participación ya expuestos, se hicieron algunas preguntas para elaborar un perfil demográfico de los pacientes inscritos y sobre su relación y experiencia con la fisioterapia como pacientes.
@@ -205,7 +205,7 @@ Los usuarios piloto podrán acceder a la plataforma y brindar su *feedback* en d
 Las fechas son estimadas y flexibles, por lo que no era imprescindible estar disponible exactamente en esos días.
 
 ### Estructura de las pruebas
-Cada sesión de prueba inclurá los siguientes pasos:  
+Cada sesión de prueba incluirá los siguientes pasos:  
 
 - Acceso a la plataforma a través de un enlace con instrucciones detalladas.  
 - Realización de una serie de interacciones dentro de la app.  
@@ -213,20 +213,20 @@ Cada sesión de prueba inclurá los siguientes pasos:
 
 Se estima que el tiempo de cada prueba estará en torno a los 15-20 minutos. 
 
-A todos los usuarios piloto se les enviará mediante el correo eletrónico proporcionado unas instrucciones acerca de las pruebas que deben realizar (pueden ir acompañados de vídeos) y un formulario en el que, tras realizar las pruebas indicadas, deberán valorar la usabilidad, rapidez y sencillez al realizar las acciones requeridas. Se les permitirá dejar comentarios y sugerencias con total libertad.
+A todos los usuarios piloto se les enviará mediante el correo electrónico proporcionado unas instrucciones acerca de las pruebas que deben realizar (pueden ir acompañados de vídeos) y un formulario en el que, tras realizar las pruebas indicadas, deberán valorar la usabilidad, rapidez y sencillez al realizar las acciones requeridas. Se les permitirá dejar comentarios y sugerencias con total libertad.
 
 Cabe recalcar que debido a la distinta naturaleza de los usuarios piloto, se establecerán distintos formularios sobre la experiencia en función del perfil.
 
 - Usuarios piloto **Externos**:
-    - Pacientes: su formulario contará de preguntas acerca de la usabilidad y sencillez de la aplicación puntuando de forma numérica (de 1 a 5) los distintos aspectos de la demo que han realizado. Contará con un aparatado de sugerencias y mejoras.
+    - Pacientes: su formulario contará de preguntas acerca de la usabilidad y sencillez de la aplicación puntuando de forma numérica (de 1 a 5) los distintos aspectos de la demo que han realizado. Contará con un apartado de sugerencias y mejoras.
 
-    - Fisioterapeutas: realizarán las pruebas de forma similar a los paciences, pero centrándose en funciones que atañen más a las tareas del fisioterapeuta (gestión de citas, calendario...) El fisioterapeuta podrá sugerir también nuevas funcionalidades o mejoras para enriquecer su experiencia profesional en la aplicación.
+    - Fisioterapeutas: realizarán las pruebas de forma similar a los pacientes, pero centrándose en funciones que atañen más a las tareas del fisioterapeuta (gestión de citas, calendario...) El fisioterapeuta podrá sugerir también nuevas funcionalidades o mejoras para enriquecer su experiencia profesional en la aplicación.
 
 - Usuarios piloto **Técnicos** (alumnos de ISPP):
     Aunque tendrán que realizar las mismas pruebas que el resto de usuarios, su cuestionario se centrará ADEMÁS en cuestiones técnicas como la navegabilidad (nº de pasos para realizar una acción), manejo de URLs, organización de ventanas, etc. Se hará un especial hincapié en la detección de errores fatales, bugs o comportamientos inesperados en cada una de las pantallas que se les asigne probar. Aunque su feedback será más técnico, en ningún caso se le pedirá realizar tests formales.
 
 
-Una vez los usuarios hayan realizado las pruebas y hayan completado los formularios, el equipo encargado de la gestión del feedback deberá procesar los datos de los formularios y elaborar un análisis del feedback obtenido. También deberá evaluar de forma cuantitiativa e individual el feedback aportado por los usuarios técnicos y reoprtar este informe a los profesores de la asignatura. 
+Una vez los usuarios hayan realizado las pruebas y hayan completado los formularios, el equipo encargado de la gestión del feedback deberá procesar los datos de los formularios y elaborar un análisis del feedback obtenido. También deberá evaluar de forma cuantitativa e individual el feedback aportado por los usuarios técnicos y reoprtar este informe a los profesores de la asignatura. 
 
 <br>
 
