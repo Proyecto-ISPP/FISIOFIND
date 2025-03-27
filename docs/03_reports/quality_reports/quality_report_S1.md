@@ -87,7 +87,7 @@ classoption: "table"
 # 1. INTRODUCCIÓN
 El presente informe tiene como objetivo analizar de manera cuantitativa la calidad del trabajo realizado durante las primeras dos semanas del Sprint 1, proporcionando métricas clave que reflejan el desempeño del equipo de desarrollo. Este análisis es fundamental para evaluar la eficiencia del equipo, detectar posibles áreas de mejora y garantizar el cumplimiento de los objetivos establecidos en esta fase del proyecto.
 
-A lo largo del documento, se presentan estadísticas relacionadas con la actividad en el repositorio, incluyendo el número de commits y pull requests generados. Asimismo, se examina el uso del tiempo por parte del equipo, considerando datos proporcionados por el equipo de control de tiempo, y se realiza un estudio sobre el progreso de las tareas en función de los reportes de GitHub Project y las gráficas Burn Down.
+A lo largo del documento, se presentan estadísticas relacionadas con la actividad en el repositorio, incluyendo el número de commits y pull requests generados. Asimismo, se examina el uso del tiempo por parte del equipo, considerando datos proporcionados por el equipo de control de tiempo, y se realiza un estudio sobre el progreso de las tareas en función de los reportes de GitHub Project y las gráficas Burn Up.
 
 Otro aspecto clave del análisis es el estudio de la comunicación dentro del equipo, con el fin de evaluar el respeto a los horarios establecidos, el uso adecuado de los distintos canales y la efectividad en la interacción entre los miembros del equipo. Finalmente, se revisa el uso de herramientas de inteligencia artificial en el desarrollo, con el fin de medir su impacto en la productividad y en la calidad del trabajo realizado.
 
@@ -141,7 +141,7 @@ El análisis de las tareas realizadas es fundamental para evaluar el avance del 
 
 Este estudio permite identificar posibles bloqueos en el desarrollo, evaluar la distribución del trabajo entre los miembros del equipo y detectar tendencias que puedan afectar la entrega del producto. Asimismo, proporciona información clave para mejorar la planificación en futuras iteraciones, optimizando la asignación de recursos y estableciendo estrategias más efectivas de gestión del flujo de trabajo.
 
-Fuente: GitHub Project, gráficas Burn Down.
+Fuente: GitHub Project, gráficas Burn Up.
 
 ## 4.1. GRÁFICA BURN UP
 ![Burn Up Chart](../../.img/burnup_chart_week_4-5.png)

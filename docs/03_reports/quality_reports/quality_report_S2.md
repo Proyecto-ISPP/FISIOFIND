@@ -1,5 +1,5 @@
 ---
-title: "REPORTE ANÁLISIS CUANTITATIVO DE LA CALIDAD SEMANAS 1 Y 2 SPRINT 1" # CHANGE IF NEEDED
+title: "REPORTE ANÁLISIS CUANTITATIVO DE LA CALIDAD SEMANAS 1 Y 2 #SPRINT 1" # CHANGE IF NEEDED
 subtitle: "FISIO FIND - Grupo 6 - #SPRINT 1"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]                                                # CHANGE IF NEEDED
 date: "06/03/2025"
@@ -26,7 +26,7 @@ classoption: "table"
 </p>
 
 <h1 align="center" style="font-size: 30px; font-weight: bold;">
-  REPORTE ANÁLISIS CUANTITATIVO DE LA CALIDAD SPRINT 1 (21/02/25) - (06/03/25)
+  REPORTE ANÁLISIS CUANTITATIVO DE LA CALIDAD #SPRINT 1 (21/02/25) - (06/03/25)
 </h1>
 
 **ÍNDICE**
@@ -63,7 +63,7 @@ classoption: "table"
 
 - **Fecha de Creación:** 04/03/2025  
 
-- **Versión:** v1.1
+- **Versión:** v2.0
 
 <br>
 
@@ -74,7 +74,9 @@ classoption: "table"
 | Fecha      | Versión | Realizada por   | Descripción de los cambios                       |
 | ---------- | ------- | --------------- | ------------------------------------------------ |
 | 04/03/2025 | v1.0    | Francisco Mateos Villarejo, Daniel Alors Romero | Elaboración de la estructura del documento para su posterior realización el día 06. |
-| 06/03/2025 | v1.1    | Francisco Mateos Villarejo, Daniel Alors Romero, Miguel Encina Martínez, Benjamín Ignacio Maureira Flores | Compleción del documento
+| 06/03/2025 | v1.1    | Francisco Mateos Villarejo, Daniel Alors Romero, Miguel Encina Martínez, Benjamín Ignacio Maureira Flores | Compleción del documento |
+| 13/03/2025 | v2.0    | Francisco Mateos Villarejo, Daniel Alors Romero, Miguel Encina Martínez, Benjamín Ignacio Maureira Flores | Actualización del documento |
+| 13/03/2025 | v3.0    | Francisco Mateos Villarejo, Daniel Alors Romero, Miguel Encina Martínez, Benjamín Ignacio Maureira Flores | Actualización del documento para el final del Sprint 2 |
 
 
 <br>
@@ -84,7 +86,7 @@ classoption: "table"
 <br>
 
 # 1. INTRODUCCIÓN
-El presente informe tiene como objetivo analizar de manera cuantitativa la calidad del trabajo realizado durante las primeras dos semanas del Sprint 1, proporcionando métricas clave que reflejan el desempeño del equipo de desarrollo. Este análisis es fundamental para evaluar la eficiencia del equipo, detectar posibles áreas de mejora y garantizar el cumplimiento de los objetivos establecidos en esta fase del proyecto.
+El presente informe tiene como objetivo analizar de manera cuantitativa la calidad del trabajo realizado durante las primeras dos semanas del Sprint 2, proporcionando métricas clave que reflejan el desempeño del equipo de desarrollo. Este análisis es fundamental para evaluar la eficiencia del equipo, detectar posibles áreas de mejora y garantizar el cumplimiento de los objetivos establecidos en esta fase del proyecto.
 
 A lo largo del documento, se presentan estadísticas relacionadas con la actividad en el repositorio, incluyendo el número de commits y pull requests generados. Asimismo, se examina el uso del tiempo por parte del equipo, considerando datos proporcionados por el equipo de control de tiempo, y se realiza un estudio sobre el progreso de las tareas en función de los reportes de GitHub Project y las gráficas Burn Up.
 
@@ -100,40 +102,40 @@ Los commits reflejan el nivel de actividad en el desarrollo, permitiendo identif
 A continuación, se presentan los datos recopilados durante este período.
 
 ## 2.1. NÚMERO DE COMMITS
-El número de commits que se van a evaluar son los mergeados a la rama de Develop, sabiendo que no son los únicos realizados durante la semana, se contabilizará el número total de commits y su comparativa con los realizados en la anterior semana.
-Commits totales: 236
-Commits Semanales: Al ser esta la primera vez que se contabilicen se considerarán como iguales los totales y semanales.
+El número de commits que se van a evaluar son los mergeados a la rama de Main, sabiendo que no son los únicos realizados durante la semana, se contabilizará el número total de commits y su comparativa con los realizados en la anterior semana.
+Commits totales: 1035
+Commits durante el Sprint: 511
 
 ### 2.1.1. NÚMERO DE COMMITS POR PERSONA
-Alberto Carmona Sicre: 10
-Antonio Macías Ferrera: 35
-Benjamín Ignacio Maureira Flores: 2
-Francisco Capote García: 1
-Daniel Alors Romero: 7
-Daniel Fernández Caballero: 15
-Daniel Ruiz López: 19
-Daniel Tortorici Bartús: 5
-Daniel Vela Camacho: 11
-Delfín Santana Rubio: 59
-Guadalupe Ridruejo Pineda: 6 
-Julen Redondo Pacheco: 4
-Miguel Encina Martínez: 12
-Francisco Mateos Villarejo: 4 
-Pablo Fernández Pérez: 1
-Ramón Gavira Sánchez: 6
-Rafael Pulido Cifuentes: 39
+Alberto Carmona Sicre: 30
+Antonio Macías Ferrera: 113
+Benjamín Ignacio Maureira Flores: 31
+Francisco Capote García: 30
+Daniel Alors Romero: 23
+Daniel Fernández Caballero: 37
+Daniel Ruiz López: 33
+Daniel Tortorici Bartús: 23
+Daniel Vela Camacho: 36
+Delfín Santana Rubio: 152
+Guadalupe Ridruejo Pineda: 64 
+Julen Redondo Pacheco: 23
+Miguel Encina Martínez: 66
+Francisco Mateos Villarejo: 20 
+Pablo Fernández Pérez: 19
+Ramón Gavira Sánchez: 31
+Rafael Pulido Cifuentes: 62
 
 ## 2.2. NÚMERO DE PULL REQUESTS
 El número de Pull Requests que se van a evaluar son las mergeadas a la rama de Develop, sabiendo que no son los únicas realizadas durante la semana, se contabilizará el número total de Pull Requests realizadas en el proyecto y su comparativa con las realizadas en la anterior semana.
-Pull Requests totales: 63
-Pull Requests Semanales: Al ser esta la primera vez que se contabilicen se considerarán como iguales los totales y semanales.
+Pull Requests totales: 161
+Pull Requests durante el Sprint: 65
 
 # 3. INFORME DE TIEMPO
 El análisis del tiempo de trabajo es un factor clave en la evaluación de la productividad y eficiencia del equipo. En esta sección, se presentan datos recopilados por el equipo de control de tiempo, los cuales permiten medir el desempeño en función de las horas trabajadas, el cumplimiento de los planes establecidos y las posibles desviaciones respecto a la planificación inicial.
 
 Este análisis ayuda a identificar patrones en la distribución del tiempo, evaluar la carga de trabajo y detectar oportunidades de mejora en la gestión del tiempo dentro del Sprint. Además, proporciona información valiosa para la planificación de futuras iteraciones y la optimización del flujo de trabajo del equipo.
 
-Fuente: Datos proporcionados por el equipo de control de tiempo en los reportes "time_report_week_4" y "time_report_week_5" en la carpeta "03_reports/time_reports".
+Fuente: Datos proporcionados por el equipo de control de tiempo en los reportes "time_report_week_7" y "time_report_week_8" en la carpeta "03_reports/time_reports".
 
 # 4. ANÁLISIS DE TAREAS REALIZADAS
 El análisis de las tareas realizadas es fundamental para evaluar el avance del Sprint y la eficiencia del equipo en la ejecución de las actividades planificadas. A través de la recopilación de datos en herramientas como GitHub Project y el uso de gráficas Burn Down, se obtiene una visión clara sobre el ritmo de trabajo y la capacidad del equipo para completar las tareas asignadas dentro de los plazos establecidos.
@@ -143,9 +145,8 @@ Este estudio permite identificar posibles bloqueos en el desarrollo, evaluar la 
 Fuente: GitHub Project, gráficas Burn Up.
 
 ## 4.1. GRÁFICA BURN UP
-![Burn Up Chart](../../.img/burnup_chart_week_4-5.png)
-
-Como podemos observar, hay un avance progresivo de las tareas durante estas primeras semanas de trabajo, lo que indica que el equipo está trabajando diariamente de forma equitativa. Sin embargo, si se quiere completar con todas las tareas planificadas para este primer Sprint, va a ser necesario incrementar la productividad y el esfuerzo dedicado. Aún así, cabe destacar que esta gráfica no representa el progreso de las tareas no finalizadas, por lo que no podemos profundizar más en el análisis.
+![Burn Up Chart](../../.img/burnup_chart_Sprint2.png)
+En este se puede apreciar un avance progresivo durante todo el Sprint. Como se puede observar somos más productivos durante los días jueves, viernes, sabado y domingo. Hemos conseguido cerrar la gran mayoría de las Issues, recordamos que ya hay tareas del sprint3 creadas, por lo que es normal que no hayamos cerrado todas las tareas.
 
 # 5. ANÁLISIS DE COMUNICACIONES
 La comunicación efectiva es un pilar fundamental en el éxito del equipo de desarrollo. En esta sección, se evalúa el respeto a los horarios establecidos, el uso correcto de los canales de comunicación y la eficiencia en la interacción entre los miembros del equipo. Un flujo de comunicación adecuado permite la resolución rápida de bloqueos, mejora la coordinación del trabajo y evita malentendidos.
@@ -169,6 +170,6 @@ El uso de herramientas de inteligencia artificial en el desarrollo de software h
 
 Este análisis busca evaluar cómo la inteligencia artificial ha influido en la productividad del equipo, si ha permitido reducir tiempos de desarrollo y si ha presentado algún desafío en su implementación. También se revisa el cumplimiento de buenas prácticas en su uso, garantizando que la IA se utilice como un complemento eficaz dentro del flujo de trabajo del equipo.
 
-Fuente: Datos proporcionados por el equipo de control de uso de IA en el documento "ia_report_week_4-5" en la carpeta "03_reports/ia_reports".
+Fuente: Datos proporcionados por el equipo de control de uso de IA en los documento "ia_report_week_7" e "ia_report_week_8" en la carpeta "03_reports/ia_reports".
 
 ---
