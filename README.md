@@ -1,7 +1,7 @@
 <p align="center">
   <img src="docs/.img/Logo_FisioFind_Verde_sin_fondo.webp" alt="Logo FisioFind" width="300" />
 </p>
-<p align="center"><h1 align="center">FISIOFIND</h1></p>
+<p align="center"><h1 align="center">Fisio Find</h1></p>
 <p align="center">
 	<em><code>The specialized online consultation platform for physiotherapists</code></em>
 </p>
@@ -40,7 +40,7 @@
 
 ##  Overview
 
-FISIOFIND is a specialized online consultation platform designed to connect physiotherapists with patients. The platform streamlines the process of finding and booking physiotherapy services, while providing professionals with tools to manage their practice efficiently.
+Fisio Find is a specialized online consultation platform designed to connect physiotherapists with patients. The platform streamlines the process of finding and booking physiotherapy services, while providing professionals with tools to manage their practice efficiently.
 
 ---
 
