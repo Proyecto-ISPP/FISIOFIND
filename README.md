@@ -40,7 +40,7 @@
 
 ##  Overview
 
-FISIOFIND is a specialized online consultation platform designed to connect physiotherapists with patients. The platform streamlines the process of finding and booking physiotherapy services, while providing professionals with tools to manage their practice efficiently.
+Fisio Find is a specialized online consultation platform designed to connect physiotherapists with patients. The platform streamlines the process of finding and booking physiotherapy services, while providing professionals with tools to manage their practice efficiently.
 
 ---
 
