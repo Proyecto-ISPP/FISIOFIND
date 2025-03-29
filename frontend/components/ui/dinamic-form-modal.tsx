@@ -8,17 +8,16 @@ interface DynamicFormModalProps {
     alternatives: Record<string, { start: string; end: string }[]>
   ) => void;
   schedule: {
-    schedule: {
-      exceptions: Record<string, { start: string; end: string }[]>;
-      appointments: Array<{
-        status: string;
-        start_time: string;
-        end_time: string;
-      }>;
-      weekly_schedule: Record<string, { start: string; end: string }[]>;
-    }
-  };
-}
+    exceptions: Record<string, { start: string; end: string }[]>;
+    appointments: Array<{
+      status: string;
+      start_time: string;
+      end_time: string;
+    }>;
+    weekly_schedule: Record<string, { start: string; end: string }[]>;
+  }
+};
+
 
 const addMinutesToTime = (start: string, duration: string): string => {
   const [hours, minutes] = start.split(":").map(Number);
@@ -56,12 +55,12 @@ const DynamicFormModal = ({
     const occupiedHours: { start: string; end: string }[] = [];
 
     // Añadir excepciones para la fecha
-    if (schedule.schedule.exceptions[date]) {
-      occupiedHours.push(...schedule.schedule.exceptions[date]);
+    if (schedule.exceptions[date]) {
+      occupiedHours.push(...schedule.exceptions[date]);
     }
 
     // Añadir citas para la fecha
-    schedule.schedule.appointments.forEach(appointment => {
+    schedule.appointments.forEach(appointment => {
       const appointmentDate = appointment.start_time.slice(0, 10);
       if (appointmentDate === date) {
         occupiedHours.push({

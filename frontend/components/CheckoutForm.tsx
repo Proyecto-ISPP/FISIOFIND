@@ -121,7 +121,20 @@ const CheckoutForm = ({ request, token }: CheckoutFormProps) => {
           "Content-Type": "application/json",
           Authorization: "Bearer " + tokenValue,
         },
-        body: JSON.stringify(request),
+        body: JSON.stringify({
+          start_time: appointmentData.start_time,
+          end_time: appointmentData.end_time,
+          is_online: appointmentData.is_online,
+          service: {
+            type: appointmentData?.service.type,
+            price: appointmentData?.service.price,
+            duration: appointmentData.service.duration,
+            questionaryResponses: appointmentData?.questionaryResponses,
+          },
+          physiotherapist: appointmentData.physiotherapist,
+          status: "booked",
+          alternatives: "",
+        }),
       });
 
       const data = await res.json();

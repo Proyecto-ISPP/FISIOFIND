@@ -203,6 +203,7 @@ export default function Home() {
                 selectedEvent={selectedEvent}
                 isClient={isClient}
                 token={token}
+                currentRole={currentRole}
               />
             </div>
             

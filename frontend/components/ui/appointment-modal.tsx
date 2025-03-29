@@ -129,20 +129,26 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
     if (!selectedEvent) return;
     if (isClient) {
       if (token) {
-        axios
-          .post(
-            `${getApiBaseUrl()}/api/payments/${selectedEvent.id}/cancel-physio/`,
-            {},
-            {
-              headers: {
-                Authorization: "Bearer " + token,
-              },
-            }
+        // let url = ""
+        // if (currentRole === "patient") {
+        //   url = `${getApiBaseUrl()}/api/payments/${selectedEvent.id}/cancel/`;
+        // } else if (currentRole === "physiotherapist") {
+        //   url = `${getApiBaseUrl()}/api/payments/${selectedEvent.id}/cancel-physio/`;
+        // }
+        // axios
+        //   .post(
+        //     url,
+        //     {},
+        //     {
+        //       headers: {
+        //         Authorization: "Bearer " + token,
+        //       },
+        //     }
 
-          ).then((response) =>
-            {
-              const status = response.status;
-              console.log(status);
+        //   ).then((response) =>
+        //     {
+              // const status = response.status;
+              // console.log(status);
               
               axios.delete(
                 `${getApiBaseUrl()}/api/appointment/delete/${selectedEvent.id}/`,
@@ -167,13 +173,13 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
                 }
               });
     
-          })
-          .catch((error) => {
-            if (error.response) {
-              const msg = error.response.data.error;
-              alert(msg);
-            }
-          });
+          // })
+          // .catch((error) => {
+          //   if (error.response) {
+          //     const msg = error.response.data.error;
+          //     alert(msg);
+          //   }
+          // });
       }
     }
   };

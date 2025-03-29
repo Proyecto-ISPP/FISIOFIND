@@ -3,8 +3,11 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { getApiBaseUrl } from "@/utils/api";
-import { Phone, Mail, MapPin, Calendar, FileText, Users, Camera, Save, Check, Lock } from 'lucide-react';
+import { Phone, Mail, MapPin, Calendar, FileText, Users, Camera, Save, Check, Lock, Film } from 'lucide-react';
 import { GradientButton } from "@/components/ui/gradient-button";
+import { Play } from "next/font/google";
+import Link from "next/link";
+
 
 const BASE_URL = `${getApiBaseUrl()}`;
 
@@ -89,9 +92,6 @@ const PatientProfile = () => {
         setLoading(false);
         return;
       }
-      const response = await axios.get(`${getApiBaseUrl()}/api/app_user/current-user/`, {
-        headers: { Authorization: "Bearer " + token },
-      });
 
       setProfile({
         user: {
@@ -602,13 +602,25 @@ if (loading)
                 </div>
               )}
 
-              <GradientButton
-                variant="edit"
-                className="mt-8 w-full py-4 px-6 bg-gradient-to-r from-[#1E5ACD] to-[#3a6fd8] text-white font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center"
-              >
-                <Save size={18} className="mr-2" />
-                Actualizar Perfil
-              </GradientButton>
+              <div className="flex gap-4 mt-8 w-full">
+                <GradientButton
+                  variant="edit"
+                  className="w-full py-2 px-4 bg-gradient-to-r from-[#1E5ACD] to-[#3a6fd8] text-white font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center"
+                >
+                  <Save size={18} className="mr-2" />
+                  Actualizar Perfil
+                </GradientButton>
+
+                <Link href="/patient-management/video" passHref>
+                  <GradientButton
+                    variant="edit"
+                    className="w-full py-2 px-4 bg-gradient-to-r from-[#1E5ACD] to-[#3a6fd8] text-white font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center"
+                  >
+                    <Film size={22} className="mr-2" />
+                    Ver vídeos
+                  </GradientButton>
+                </Link>
+              </div>
             </form>
           </div>
         </div>
