@@ -157,7 +157,7 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
         );
         if (response.status === 200) {
           if (response.data.schedule) {
-            setSchedule(JSON.parse(response.data.schedule));
+            setSchedule(response.data.schedule);
           }
         }
       } catch (error) {
