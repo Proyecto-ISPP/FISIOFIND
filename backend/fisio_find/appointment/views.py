@@ -21,7 +21,6 @@ from django.core import signing
 from django.core.signing import BadSignature, SignatureExpired
 from rest_framework.permissions import AllowAny
 from urllib.parse import unquote
-import json
 
 
 class StandardResultsSetPagination(PageNumberPagination):
@@ -41,7 +40,7 @@ def update_schedule(data):
     if not physiotherapist:
         return Response({"error": "Fisioterapeuta no encontrado"}, status=status.HTTP_404_NOT_FOUND)
     
-    current_schedule = json.loads(physiotherapist.schedule)
+    current_schedule = physiotherapist.schedule
     if not current_schedule:
         return Response({"error": "No se ha definido un horario para este fisioterapeuta"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -57,7 +56,7 @@ def update_schedule(data):
     ]
 
     # Guardar el schedule actualizado
-    physiotherapist.schedule = json.dumps(current_schedule)
+    physiotherapist.schedule = current_schedule
     physiotherapist.save()
     
 
@@ -475,7 +474,7 @@ def accept_alternative(request, appointment_id):
 
     if serializer.is_valid():
         serializer.save()
-        update_schedule(data)
+        update_schedule(appointment)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
