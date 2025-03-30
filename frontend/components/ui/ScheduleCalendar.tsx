@@ -53,8 +53,8 @@ export default function ScheduleCalendar({ initialSchedule = null, onScheduleCha
   useEffect(() => {
     if (initialSchedule && !schedule.initialized) {
       try {
-        const parsedSchedule = typeof initialSchedule === 'string' 
-          ? JSON.parse(initialSchedule) 
+        const parsedSchedule = typeof initialSchedule === 'string'
+          ? JSON.parse(initialSchedule)
           : initialSchedule;
         setSchedule({ ...parsedSchedule, initialized: true });
       } catch (error) {
@@ -100,7 +100,7 @@ export default function ScheduleCalendar({ initialSchedule = null, onScheduleCha
           weekly_schedule: {
             ...prev.weekly_schedule,
             // Se agrega el nuevo bloque (como un array con un único intervalo)
-            [dayName]: [...prev.weekly_schedule[dayName], [interval]],
+            [dayName]: [...prev.weekly_schedule[dayName], interval],
           },
         };
         return newSchedule;
@@ -130,19 +130,16 @@ export default function ScheduleCalendar({ initialSchedule = null, onScheduleCha
     // Eventos recurrentes (horario genérico)
     Object.entries(schedule.weekly_schedule).forEach(([dayName, blocks]) => {
       // Para cada bloque (cada bloque es un array de intervalos)
-      blocks.forEach((block) => {
-        // En este ejemplo, suponemos que cada bloque contiene un único intervalo
-        block.forEach((interval) => {
-          events.push({
-            id: interval.id,
-            title: "Horario Laboral",
-            daysOfWeek: [dayIndices[dayName]], // evento recurrente para ese día
-            startTime: interval.start,
-            endTime: interval.end,
-            backgroundColor: "green",
-            borderColor: "green",
-            extendedProps: { source: "weekly", day: dayName },
-          });
+      blocks.forEach((interval) => {
+        events.push({
+          id: interval.id,
+          title: "Horario Laboral",
+          daysOfWeek: [dayIndices[dayName]], // evento recurrente para ese día
+          startTime: interval.start,
+          endTime: interval.end,
+          backgroundColor: "green",
+          borderColor: "green",
+          extendedProps: { source: "weekly", day: dayName },
         });
       });
     });
@@ -182,16 +179,16 @@ export default function ScheduleCalendar({ initialSchedule = null, onScheduleCha
       if (source === "weekly") {
         const day = selectedCalendarEvent.extendedProps.day;
         // Se actualiza el array del día removiendo el bloque que contenga el intervalo con el id seleccionado
+        console.log("Eliminando evento semanal:", selectedCalendarEvent.id);
         setSchedule((prev) => {
+          console.log("Schedule antes de eliminar:", prev);
+          console.log("Intervalos", prev.weekly_schedule[day]);
           const newSchedule = {
             ...prev,
             weekly_schedule: {
               ...prev.weekly_schedule,
               [day]: prev.weekly_schedule[day].filter(
-                (block) =>
-                  !block.some(
-                    (interval) => interval.id === selectedCalendarEvent.id
-                  )
+                (interval) => interval.id !== selectedCalendarEvent.id
               ),
             },
           };
