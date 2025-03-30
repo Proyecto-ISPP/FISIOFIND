@@ -6,11 +6,14 @@ def validate_dni_structure(data_dni):
 
 def validate_dni_match_letter(data_dni):
     # Validar que la letra del DNI es correcta
-    dni_numbers = data_dni[:-1]
-    dni_letter = data_dni[-1].upper()
-    
-    letters = "TRWAGMYFPDXBNJZSQVHLCKE"
-    return letters[int(dni_numbers) % 23] != dni_letter
+    try:
+        dni_numbers = data_dni[:-1]
+        dni_letter = data_dni[-1].upper()
+        
+        letters = "TRWAGMYFPDXBNJZSQVHLCKE"
+        return letters[int(dni_numbers) % 23] != dni_letter
+    except ValueError:
+        return False
 
 def codigo_postal_no_mide_5(postal_code):
     return len(postal_code) != 5
