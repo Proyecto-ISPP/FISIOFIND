@@ -341,7 +341,7 @@ const FisioProfile = () => {
             .map(([day, ranges]) => {
                 if (ranges.length === 0) return null;
 
-                const timeRanges = ranges.map((interval) => `${interval[0].start} - ${interval[0].end}`).join(", ");
+                const timeRanges = ranges.map((interval) => `${interval.start} - ${interval.end}`).join(", ");
                 return `${daysOfWeek[day]}: ${timeRanges}`;
             })
             .filter(Boolean)
@@ -948,7 +948,7 @@ const FisioProfile = () => {
 
             // Fix the endpoint URL - the correct endpoint should be update/ not update-schedule/
             const response = await axios.put(
-                `${getApiBaseUrl()}/api/app_user/physio/update/`,
+                `${getApiBaseUrl()}/api/appointment/physio/schedule/weekly/`,
                 { schedule: scheduleWithoutInitialized },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
