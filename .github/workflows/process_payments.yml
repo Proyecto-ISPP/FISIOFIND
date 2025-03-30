@@ -1,0 +1,11 @@
+name: Process Payments
+on:
+  schedule:
+    - cron: '0 */12 * * *'
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call API to Process Payments
+        run: |
+          curl -X POST -H "X-API-KEY: ${{ secrets.PAYMENT_API_KEY }}" "$BASE_URL/api/payments/process-due/"

@@ -22,7 +22,7 @@ classoption: "table"
 
 <!-- Imagen del logo (comentar al exportar a PDF) -->
 <p align="center">
-  <img src="../../.img/Logo_FisioFind_Verde_sin_fondo.PNG" alt="Logo FisioFind" width="300" />
+  <img src="../../.img/Logo_FisioFind_Verde_sin_fondo.webp" alt="Logo FisioFind" width="300" />
 </p>
 
 <!-- Título centrado -->

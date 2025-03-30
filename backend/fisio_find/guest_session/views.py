@@ -4,32 +4,32 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import Q
 from users.models import Physiotherapist
-from users.serializers import PhysioSerializer
 from users.models import Specialization
+
 
 class SearchPhysiotherapistView(APIView):
     """
     Vista para buscar fisioterapeutas por nombre o apellido, incluyendo su especialidad.
     """
     permission_classes = [AllowAny]
-    
+
     def get(self, request):
         query = request.query_params.get('q', '')
         if not query:
             return Response({"error": "Indica un nombre."}, status=status.HTTP_400_BAD_REQUEST)
-        
+
         # Filtramos fisioterapeutas por nombre o apellido
         physiotherapists = Physiotherapist.objects.filter(
             Q(user__first_name__icontains=query) | Q(user__last_name__icontains=query)
         )
-        
+
         # Preparamos los datos que queremos devolver, incluyendo la especialidad
         results = []
         for physio in physiotherapists:
             # Recuperar especialidades del fisioterapeuta
             specializations = physio.specializations.all()  # Supuesto campo ManyToManyField
             specialization_names = [specialization.name for specialization in specializations]
-            
+
             # Preparar un diccionario con la información que se va a devolver
             physio_data = {
                 'first_name': physio.user.first_name,
@@ -39,13 +39,16 @@ class SearchPhysiotherapistView(APIView):
             results.append(physio_data)
 
         return Response(results, status=status.HTTP_200_OK)
-    
+
+
 class ListSpecializationsView(APIView):
     permission_classes = [AllowAny]
+
     def get(self, request):
         specializations = Specialization.objects.all()
         data = [specialization.name for specialization in specializations]
         return Response(data, status=status.HTTP_200_OK)
+
 
 class PhysiotherapistsWithSpecializationView(APIView):
     permission_classes = [AllowAny]
@@ -58,13 +61,13 @@ class PhysiotherapistsWithSpecializationView(APIView):
         try:
             specialization = Specialization.objects.get(name__iexact=specialization_name)
             physiotherapists = Physiotherapist.objects.filter(specializations=specialization)
-            
+
             # Preparamos los datos con las especialidades
             results = []
             for physio in physiotherapists:
                 specializations = physio.specializations.all()
                 specialization_names = [specialization.name for specialization in specializations]
-                
+
                 # Creamos el diccionario con los datos
                 physio_data = {
                     'id': physio.id,

@@ -32,7 +32,7 @@ const WizardHeader: React.FC<WizardHeaderProps> = ({ steps, currentStep }) => {
                 "polygon(85% 0%, 100% 50%, 85% 100%, 0% 100%, 15% 50%, 0% 0%)",
             }}
           >
-            <div className="px-4 py-2 flex flex-col items-center justify-center">
+            <div className="px-4 py-2 flex flex-col items-center justify-center min-w-44 min-h-20">
               <span className="font-semibold">Paso {s.step}</span>
               <span className="text-sm">{s.label}</span>
             </div>

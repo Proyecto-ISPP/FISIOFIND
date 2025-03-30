@@ -391,7 +391,7 @@ const useWebRTC = ({
           console.log('Recibido mensaje de finalización de llamada:', message);
           setTimeout(() => {
             closeConnection();
-            window.location.href = '/videollamadas';
+            window.location.href = '/videocalls';
           }, 1500);
           break;
         

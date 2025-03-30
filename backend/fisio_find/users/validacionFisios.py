@@ -74,12 +74,11 @@ def quitar_tildes(texto):
     return ''.join(c for c in unicodedata.normalize('NFD', texto) if unicodedata.category(c) != 'Mn')
 
 
-def validar_colegiacion(first_name: str, last_name: str, numero: str, comunidad: str) -> bool:
+def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
     """
     Valida si un fisioterapeuta está colegiado en su comunidad autónoma.
     Devuelve True o False según la validación y se asegura de cerrar el driver.
     """
-    nombre = first_name.upper() + " " + last_name.upper()
     scraper = SeleniumScraper()
     try:
         match comunidad.lower():

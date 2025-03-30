@@ -1,7 +1,7 @@
 "use client";
 import { cn } from "@/lib/utils";
 import Link, { LinkProps } from "next/link";
-import React, { useState, createContext, useContext } from "react";
+import React, { useState, createContext, useContext, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { IconMenu2, IconX } from "@tabler/icons-react";
 
@@ -45,6 +45,18 @@ export const SidebarProvider = ({
   const open = openProp !== undefined ? openProp : openState;
   const setOpen = setOpenProp !== undefined ? setOpenProp : setOpenState;
 
+  // Update main content margin when sidebar opens/closes
+  useEffect(() => {
+    const mainContent = document.querySelector('main');
+    if (mainContent) {
+      if (open) {
+        mainContent.style.marginLeft = '240px';
+      } else {
+        mainContent.style.marginLeft = '80px';
+      }
+    }
+  }, [open]);
+
   return (
     <SidebarContext.Provider value={{ open, setOpen, animate: animate }}>
       {children}
@@ -74,7 +86,6 @@ export const SidebarBody = (props: React.ComponentProps<typeof motion.div>) => {
   return (
     <>
       <DesktopSidebar {...props} />
-      {/* <MobileSidebar {...(props as React.ComponentProps<"div">)} /> */}
     </>
   );
 };
@@ -89,11 +100,11 @@ export const DesktopSidebar = ({
     <>
       <motion.div
         className={cn(
-          "h-full px-6 py-8 hidden md:flex md:flex-col bg-neutral-100 dark:bg-neutral-600 w-[80px] flex-shrink-0",
+          "h-full px-6 py-8 hidden md:flex md:flex-col bg-neutral-100 dark:bg-neutral-600 w-[90px] flex-shrink-0 fixed left-0 top-0 z-50 border-r border-gray-200 dark:border-neutral-800",
           className
         )}
         animate={{
-          width: animate ? (open ? "240px" : "80px") : "240px",
+          width: animate ? (open ? "250px" : "95px") : "260px",
         }}
         transition={{
           duration: 0.3,
@@ -158,7 +169,7 @@ export const MobileSidebar = ({
     <>
       <div
         className={cn(
-          "h-10 px-4 py-4 flex flex-row md:hidden  items-center justify-between bg-neutral-100 dark:bg-neutral-800 w-full"
+          "h-10 px-4 py-4 flex flex-row md:hidden items-center justify-between bg-neutral-100 dark:bg-neutral-800 w-full"
         )}
         {...props}
       >

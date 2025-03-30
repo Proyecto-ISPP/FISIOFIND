@@ -16,6 +16,7 @@ import os
 from dotenv import load_dotenv
 import environ
 
+
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,6 +28,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-temporary-key-for-deployment')
 
+PAYMENT_API_KEY = os.getenv("PAYMENT_API_KEY", 'key')
+                            
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'fisiofind-backend.azurewebsites.net', 'fisiofind.netlify.app']
@@ -54,7 +57,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'channels',
-    'videocall'
+    'videocall',
 ]
 
 # DJANGO REST FRAMEWORK
@@ -68,12 +71,14 @@ INSTALLED_APPS += [
 
 INSTALLED_APPS += [
     'users',
-    'gestion_citas',
+    'appointment',
     'terms',
     'guest_session',
     'questionnaire',
+    'treatments',
+    'gestion_survey',
+    'payment',
 ]
-
 
 INSTALLED_APPS += ['corsheaders', 'django_extensions', 'django_filters']
 
@@ -192,7 +197,7 @@ DATABASES = {
         'NAME': os.getenv('DATABASE_NAME', env('DATABASE_NAME', default='postgres')),
         'USER': os.getenv('DATABASE_USER', env('DATABASE_USER', default='postgres')),
         'PASSWORD': os.getenv('DATABASE_PASSWORD', env('DATABASE_PASSWORD', default='')),
-        'HOST': os.getenv('DATABASE_HOST', env('DATABASE_HOST', default='localhosts')),
+        'HOST': os.getenv('DATABASE_HOST', env('DATABASE_HOST', default='localhost')),
         'PORT': os.getenv('DATABASE_PORT', env('DATABASE_PORT', default='5432')),
         'OPTIONS': {
             'sslmode': 'require' if IS_PRODUCTION else 'prefer',
@@ -241,3 +246,26 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+#Stripe payment
+STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
+
+
+
+
+DIGITALOCEAN_ACCESS_KEY_ID = "DO801T22Y6LWLUV2R4RE"
+DIGITALOCEAN_SECRET_ACCESS_KEY = "hHkSrRsu61YP+BqQP3GL+GtGeqDfzPVpn8sMaLDVkVY"
+DIGITALOCEAN_SPACE_NAME = "fisiofind-repo"
+DIGITALOCEAN_REGION = "fra1"  # Ejemplo: nyc3, ams3, sgp1
+DIGITALOCEAN_ENDPOINT_URL = f"https://{DIGITALOCEAN_SPACE_NAME}.{DIGITALOCEAN_REGION}.digitaloceanspaces.com"
+
+# Configuración de almacenamiento en DigitalOcean Spaces
+DEFAULT_FILE_STORAGE = "backend.custom_storages.DigitalOceanMediaStorage"
+MEDIA_URL = f"{DIGITALOCEAN_ENDPOINT_URL}/"
+
+
+# Aumentar límite de tamaño de archivos subidos
+DATA_UPLOAD_MAX_MEMORY_SIZE = 524288000  # 500MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 524288000  # 500MB
+

@@ -104,30 +104,43 @@ const Room = ({ roomCode }) => {
   }, []);
 
   // Esperar a tener el rol antes de inicializar lógica pesada
-  useEffect(() => {
-    if (!loading && userRole) {
-      console.log(`Inicializando sala ${roomCode} como ${userRole}`);
-
-      const initAll = async () => {
-        try {
-          await mediaControls.initLocalMedia();
-          chat.addChatMessage('Sistema', 'Cámara y micrófono inicializados correctamente');
-          webSocket.connectWebSocket();
-        } catch (err) {
-          console.error('Error durante la inicialización:', err);
-          webRTC.setErrorMessage(`Error de inicialización: ${err.message}`);
-        }
-      };
-
-      initAll();
+useEffect(() => {
+  const validateAccess = async () => {
+    try {
+      const response = await axios.get(`${getApiBaseUrl()}/api/videocall/join-room/${roomCode}/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log("✅ Acceso validado con backend:", response.data);
+    } catch (error) {
+      console.error("❌ Acceso denegado por backend:", error.response?.data || error.message);
+      alert("No tienes permiso para acceder a esta sala.");
+      window.location.href = '/videocalls';
+      return;
     }
 
-    return () => {
-      webRTC.closeConnection();
-      webSocket.closeWebSocket();
-      mediaControls.cleanupMedia();
-    };
-  }, [loading, userRole]);
+    try {
+      console.log(`Inicializando sala ${roomCode} como ${userRole}`);
+      await mediaControls.initLocalMedia();
+      chat.addChatMessage('Sistema', 'Cámara y micrófono inicializados correctamente');
+      webSocket.connectWebSocket();
+    } catch (err) {
+      console.error('Error durante la inicialización:', err);
+      webRTC.setErrorMessage(`Error de inicialización: ${err.message}`);
+    }
+  };
+
+  if (!loading && userRole && token) {
+    validateAccess();
+  }
+
+  return () => {
+    webRTC.closeConnection();
+    webSocket.closeWebSocket();
+    mediaControls.cleanupMedia();
+  };
+}, [loading, userRole, token]);
 
   // WebSocket message handling
   useEffect(() => {

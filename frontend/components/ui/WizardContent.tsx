@@ -6,11 +6,21 @@ import { useAppointment } from "@/context/appointmentContext";
 import AppointmentCalendar from "./AppointmentCalendar";
 import { formatAppointment } from "@/lib/utils"; // Se importa la función de formateo
 import { useParams } from "next/navigation";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import CheckoutForm from "@/components/CheckoutForm";
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string); //me pidio añadir el as string
 import ServiceQuestionary from "./ServiceQuestionary";
+import { ServiceQuestionaryRef } from "./ServiceQuestionary"; // Asegúrate de importar la referencia
+
 
 interface WizardContentProps {
   currentStep: number;
   services: Service[];
+  token: string | null;
+  questionaryRef: React.RefObject<ServiceQuestionaryRef | null>; // Permitir null
+
 }
 
 // Función para calcular el máximo común divisor de dos números
@@ -23,7 +33,11 @@ const computeGCD = (arr: number[]): number => {
   return arr.reduce((prev, curr) => gcd(prev, curr));
 };
 
-const WizardContent: React.FC<WizardContentProps> = ({ currentStep, services }) => {
+const WizardContent: React.FC<WizardContentProps> = ({
+  currentStep,
+  services, questionaryRef,
+  token
+}) => {
   const { state, dispatch } = useAppointment();
   const appointmentData = state.appointmentData;
   const { id } = useParams();
@@ -31,13 +45,14 @@ const WizardContent: React.FC<WizardContentProps> = ({ currentStep, services }) 
 
 
   const handleSelectService = (service: Service) => {
-    if (appointmentData.service.type === service.title) {
+    if (appointmentData.service.id === service.id) {
       dispatch({ type: "DESELECT_SERVICE" });
     } else {
       dispatch({
         type: "SELECT_SERVICE",
         payload: {
           service: {
+            id: service.id,
             type: service.title,
             price: service.price,
             duration: parseInt(service.duration),
@@ -51,34 +66,73 @@ const WizardContent: React.FC<WizardContentProps> = ({ currentStep, services }) 
 
   if (currentStep === 1) {
     return (
-      <div>
-        <h3 className="text-lg font-bold mb-4">Selecciona el servicio</h3>
-        <div className="flex flex-col gap-4 w-full">
-          {services.map((svc) => (
-            <div
-              key={svc.id}
-              onClick={() => handleSelectService(svc)}
-              className={clsx(
-                "cursor-pointer p-4 border rounded-md shadow-sm transition-colors w-full",
-                appointmentData.service.type === svc.title
-                  ? "border-blue-500 bg-blue-50"
-                  : "border-gray-300 bg-white"
-              )}
-            >
-              <h2 className="text-lg font-bold mb-2">{svc.title}</h2>
-              <p className="text-gray-700 text-sm mb-1">Precio: {svc.price}€</p>
-              <p className="text-gray-700 text-sm mb-1">
-                Duración: {svc.duration}
-              </p>
-              <p className="text-gray-600 text-sm">{svc.description}</p>
-            </div>
-          ))}
-        </div>
+      <div className="service-selection-container">
+        <h3 className="service-selection-title">Selecciona el servicio</h3>
+        
+        {services.length > 0 ? (
+          <div className="service-selection-grid">
+            {services.map((svc) => {
+              const isSelected = appointmentData.service.id === svc.id;
+              
+              return (
+                <div
+                  key={svc.id}
+                  onClick={() => handleSelectService(svc)}
+                  className={`service-selection-card ${
+                    isSelected ? 'service-selection-card-selected' : 'service-selection-card-default'
+                  }`}
+                >
+                  <div className="service-selection-card-content">
+                    <div className="service-selection-card-header">
+                      <h3>{svc.title}</h3>
+                    </div>
+                    
+                    <div className="service-selection-card-description">
+                      {svc.description}
+                    </div>
+                    
+                    <div className="service-selection-card-footer">
+                      <div className="service-selection-card-footer-details">
+                        <span className="price">{svc.price}</span>
+                        <span className="duration">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                          </svg>
+                          {svc.duration} min
+                        </span>
+                      </div>
+                      
+                      <div className={`service-selection-card-footer-indicator ${
+                        isSelected ? 'service-selection-card-footer-indicator-selected' : 'service-selection-card-footer-indicator-unselected'
+                      }`}>
+                        {isSelected && (
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                          </svg>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="service-selection-empty">
+            <p>No hay servicios disponibles actualmente.</p>
+            <p>Por favor, vuelve más tarde.</p>
+          </div>
+        )}
       </div>
     );
   } else if (currentStep === 2) {
     if (!appointmentData.service.type) {
-      return <p className="text-gray-800">Por favor selecciona un servicio primero.</p>;
+      return (
+        <p className="text-gray-800">
+          Por favor selecciona un servicio primero.
+        </p>
+      );
     }
     // Calcula el GCD de las duraciones de todos los servicios para definir el slotInterval
     const serviceDurations = services.map((svc) => parseInt(svc.duration));
@@ -93,15 +147,8 @@ const WizardContent: React.FC<WizardContentProps> = ({ currentStep, services }) 
       </div>
     );
   } else if (currentStep === 3) {
-    return (
-      <div>
-        <h3 className="text-lg font-bold mb-4">Elige tu método de pago</h3>
-        {/* Aquí se podría agregar el selector de pago */}
-      </div>
-    );
+      return <ServiceQuestionary ref={questionaryRef} />;
   } else if (currentStep === 4) {
-      return <ServiceQuestionary />;
-  } else if (currentStep === 5) {
     // Se formatean las fechas de inicio y fin de forma separada
     const inicio = appointmentData.start_time ? formatAppointment(appointmentData.start_time) : { date: "", time: "" };
     const fin = appointmentData.end_time ? formatAppointment(appointmentData.end_time) : { time: "" };
@@ -168,6 +215,15 @@ const WizardContent: React.FC<WizardContentProps> = ({ currentStep, services }) 
             </div>
           </div>
         )}
+      </div>
+    );
+  } else if (currentStep === 5) {
+    return (
+      <div>
+        {/* <h3 className="text-lg font-bold mb-4">Elige tu método de pago</h3> */}
+        <Elements stripe={stripePromise}>
+            <CheckoutForm request={appointmentData} token={token}/>
+        </Elements>
       </div>
     );
   }

@@ -1,7 +1,7 @@
 <p align="center">
-  <img src="docs/.img/Logo_FisioFind_Verde_sin_fondo.PNG" alt="Logo FisioFind" width="300" />
+  <img src="docs/.img/Logo_FisioFind_Verde_sin_fondo.webp" alt="Logo FisioFind" width="300" />
 </p>
-<p align="center"><h1 align="center">FISIOFIND</h1></p>
+<p align="center"><h1 align="center">Fisio Find</h1></p>
 <p align="center">
 	<em><code>The specialized online consultation platform for physiotherapists</code></em>
 </p>
@@ -33,13 +33,14 @@
 	- [Sprint 2: Tools \& Payment](#sprint-2-tools--payment)
 	- [Sprint 3: Extras \& Testing](#sprint-3-extras--testing)
 - [Contributing](#contributing)
+- [License](#license)
 - [Acknowledgments](#acknowledgments)
 
 ---
 
 ##  Overview
 
-FISIOFIND is a specialized online consultation platform designed to connect physiotherapists with patients. The platform streamlines the process of finding and booking physiotherapy services, while providing professionals with tools to manage their practice efficiently.
+Fisio Find is a specialized online consultation platform designed to connect physiotherapists with patients. The platform streamlines the process of finding and booking physiotherapy services, while providing professionals with tools to manage their practice efficiently.
 
 ---
 
@@ -502,6 +503,11 @@ For the **techniacal pilot users** or any other interested contributor:
    </a>
 </p>
 </details>
+
+
+##  License
+
+This project is protected under the [MIT License](https://choosealicense.com/licenses/mit/) License. For more details, refer to the [LICENSE](LICENSE) file.
 
 
 ##  Acknowledgments

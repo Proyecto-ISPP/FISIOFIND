@@ -85,6 +85,22 @@ module.exports = {
         azulTitulos: "#1E5ACD",
         blanco: "#FFFFFF",
       },
+      keyframes: {
+        'slide-down': {
+          '0%': {
+            opacity: '0',
+            transform: 'translateY(-20%) translateX(-50%)',
+          },
+          '100%': {
+            opacity: '1',
+            transform: 'translateY(0) translateX(-50%)',
+          },
+        },
+      },
+      animation: {
+        'slide-down': 'slide-down 0.3s ease-out',
+      },
+      
     },
   },
   plugins: [addVariablesForColors, require("tailwindcss-animate")],
@@ -99,3 +115,4 @@ function addVariablesForColors({ addBase, theme }) {
     ":root": newVars,
   });
 }
+

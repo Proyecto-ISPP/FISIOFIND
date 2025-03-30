@@ -19,6 +19,7 @@ import { getApiBaseUrl } from "@/utils/api";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
+import { GradientButton } from "@/components/ui/gradient-button";
 
 interface TermItem {
   id: number;
@@ -495,6 +496,7 @@ export default function TermsPage(): React.ReactElement {
     }
   }
 
+  // Add this right before the return statement or at the end of the component
   // -------------------- Render Principal --------------------
   return (
     <div className="container mx-auto py-16 px-4 sm:px-6 lg:px-8 max-w-7xl">
@@ -554,12 +556,13 @@ export default function TermsPage(): React.ReactElement {
           {isAdmin && (
             <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
               <h3 className="text-lg font-semibold mb-4">Panel de Administrador</h3>
-              <button
+              <GradientButton
                 onClick={() => setShowAddForm(true)}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                className="px-6 py-2 font-medium rounded-xl flex items-center gap-2 mx-auto"
               >
+                <IconPlus className="h-5 w-5" />
                 Añadir Nuevo Término
-              </button>
+              </GradientButton>
             </div>
           )}
 
@@ -623,14 +626,16 @@ export default function TermsPage(): React.ReactElement {
                 <div className="flex justify-end space-x-2">
                   <button
                     onClick={() => setShowAddForm(false)}
-                    className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
+                    className="px-6 py-2 bg-gray-100 text-gray-600 font-medium rounded-xl transition-colors hover:bg-gray-200 flex items-center gap-2"
                   >
+                    <IconX className="h-5 w-5" />
                     Cancelar
                   </button>
                   <button
                     onClick={handleAddTerm}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                    className="px-6 py-2 bg-[#05AC9C] text-white font-medium rounded-xl transition-colors hover:bg-[#048F83] flex items-center gap-2"
                   >
+                    <IconCheck className="h-5 w-5" />
                     Guardar
                   </button>
                 </div>
@@ -642,15 +647,15 @@ export default function TermsPage(): React.ReactElement {
         // -------- Sí hay términos (vista normal) --------
         <>
           {/* Botón para añadir término si eres Admin y quedan tipos disponibles */}
-          {isAdmin && getAvailableTermTypes().length > 0 && (
+          {isAdmin && (
             <div className="mb-10 text-center">
-              <button
+              <GradientButton
                 onClick={() => setShowAddForm(true)}
-                className="px-5 py-2.5 bg-green-600 text-white rounded-md hover:bg-green-700 inline-flex items-center shadow-sm"
+                className="px-6 py-2 font-medium rounded-xl flex items-center gap-2 mx-auto"
               >
-                <IconPlus className="mr-2" size={16} />
+                <IconPlus className="h-5 w-5" />
                 Añadir Nuevo Término
-              </button>
+              </GradientButton>
             </div>
           )}
 
@@ -701,13 +706,13 @@ export default function TermsPage(): React.ReactElement {
                         <div className="flex justify-end space-x-2">
                           <button
                             onClick={() => setEditMode(null)}
-                            className="p-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
+                            className="p-2 bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300 transition-colors"
                           >
                             <IconX size={16} />
                           </button>
                           <button
                             onClick={() => handleSave(term.id)}
-                            className="p-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                            className="p-2 bg-[#05AC9C] text-white rounded-full hover:bg-[#048F83] transition-colors"
                           >
                             <IconCheck size={16} />
                           </button>
@@ -734,22 +739,22 @@ export default function TermsPage(): React.ReactElement {
                           </button>
 
                           {isAdmin && (
-                            <div className="flex space-x-2">
-                              <button
-                                onClick={() =>
-                                  handleEdit(term.id, term.content, term.version)
-                                }
-                                className="p-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                              >
-                                <IconEdit size={16} />
-                              </button>
-                              <button
-                                onClick={() => handleDelete(term.id)}
-                                className="p-2 bg-red-600 text-white rounded-md hover:bg-red-700"
-                              >
-                                <IconTrash size={16} />
-                              </button>
-                            </div>
+                          <div className="flex space-x-2">
+                          <button
+                          onClick={() =>
+                          handleEdit(term.id, term.content, term.version)
+                          }
+                          className="p-2 bg-[#05AC9C] text-white rounded-full hover:bg-[#048F83] transition-colors"
+                          >
+                          <IconEdit size={16} />
+                          </button>
+                          <button
+                          onClick={() => handleDelete(term.id)}
+                          className="p-2 bg-[#FF6B6B] text-white rounded-full hover:bg-[#FF5252] transition-colors"
+                          >
+                          <IconTrash size={16} />
+                          </button>
+                          </div>
                           )}
                         </div>
                       </div>
@@ -852,7 +857,7 @@ export default function TermsPage(): React.ReactElement {
                             link.click();
                             document.body.removeChild(link);
                           }}
-                          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center"
+                          className="px-4 py-2 bg-blue-600 text-white rounded-md hover-bg-blue-700 flex items-center"
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -937,14 +942,16 @@ export default function TermsPage(): React.ReactElement {
                 <div className="flex justify-end space-x-2">
                   <button
                     onClick={() => setShowAddForm(false)}
-                    className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
+                    className="px-6 py-2 bg-gray-100 text-gray-600 font-medium rounded-xl transition-colors hover:bg-gray-200 flex items-center gap-2"
                   >
+                    <IconX className="h-5 w-5" />
                     Cancelar
                   </button>
                   <button
                     onClick={handleAddTerm}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                    className="px-6 py-2 bg-[#05AC9C] text-white font-medium rounded-xl transition-colors hover:bg-[#048F83] flex items-center gap-2"
                   >
+                    <IconCheck className="h-5 w-5" />
                     Guardar
                   </button>
                 </div>
