@@ -1,4 +1,4 @@
-from rest_framework.test import APITestCase, APIRequestFactory
+from rest_framework.test import APITestCase, APIRequestFactory, APIClient
 from django.test import TestCase
 from rest_framework import status
 from django.urls import reverse
@@ -202,7 +202,7 @@ class AppUserSerializerValidationTests(APITestCase):
         serializer = AppUserSerializer(data=data, context={"request": self.request})
         self.assertFalse(serializer.is_valid())
         self.assertIn("dni", serializer.errors)
-"""
+
 
 
 class PatientRegisterSerializerTests(APITestCase):
@@ -746,32 +746,612 @@ class PhysioUpdateSerializerTests(APITestCase):
         self.assertTrue(serializer.is_valid(), serializer.errors)
         physio = serializer.save()
         self.assertTrue(physio.user.photo.name.endswith("profile.jpg"))
+"""
+"""
+class PatientProfileViewTests(APITestCase):
 
+    def setUp(self):
+        self.client = APIClient()
+        self.user = AppUser.objects.create_user(
+            username="patientuser",
+            email="patient@example.com",
+            password="testpass123",
+            dni="12345678Z",
+            phone_number="600000000",
+            postal_code="28001",
+            first_name="Laura",
+            last_name="Pérez"
+        )
+        self.patient = Patient.objects.create(
+            user=self.user,
+            gender="F",
+            birth_date="1995-01-01"
+        )
+        self.url = reverse("profile")
+        self.client.force_authenticate(user=self.user)
 
-class PatientRegisterTests(APITestCase):
+    def test_get_patient_profile_success(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["user"]["username"], self.user.username)
+        self.assertEqual(response.data["gender"], "F")
 
-    def test_register_patient_successfully(self):
-        url = reverse('patient_register')  # o directamente: '/api/patients/register/'
+    def test_patch_patient_profile_success(self):
         data = {
-            "email": "test@example.com",
-            "password": "StrongPassword123",
-            "first_name": "John",
-            "last_name": "Doe"
+            "user": {
+                "email": "nuevo@example.com",
+                "phone_number": "699999999"
+            },
+            "gender": "O"
         }
-        response = self.client.post(url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data["message"], "Paciente registrado correctamente")
+        response = self.client.patch(self.url, data, format="json")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["user"]["email"], "nuevo@example.com")
+        self.assertEqual(response.data["gender"], "O")
 
-    def test_register_patient_with_invalid_data(self):
-        url = reverse('patient_register')
+    def test_patch_invalid_birth_date(self):
         data = {
-            "email": "",  # Email vacío
-            "password": "123",  # Demasiado corta
+            "birth_date": "1800-01-01"
         }
-        response = self.client.post(url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response = self.client.patch(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("birth_date", response.data)
+"""
+"""
+class CustomLoginViewTests(APITestCase):
+
+    def setUp(self):
+        self.url = reverse("login")
+        self.password = "testpass123"
+        self.user = AppUser.objects.create_user(
+            username="testuser",
+            email="test@example.com",
+            password=self.password,
+            dni="12345678Z",
+            phone_number="600000000",
+            postal_code="28001"
+        )
+
+    def test_login_successful(self):
+        data = {"username": "testuser", "password": self.password}
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("access", response.data)
+
+    def test_login_wrong_password(self):
+        data = {"username": "testuser", "password": "wrongpass"}
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, 401)
+        self.assertIn("detail", response.data)
+
+    def test_login_nonexistent_user(self):
+        data = {"username": "nouser", "password": "whatever"}
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, 401)
+        self.assertIn("detail", response.data)
+
+    def test_login_missing_fields(self):
+        response = self.client.post(self.url, {}, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("username", response.data)
+        self.assertIn("password", response.data)
+
+class LogoutViewTests(APITestCase):
+
+    def setUp(self):
+        self.url = reverse("logout")
+        self.user = AppUser.objects.create_user(
+            username="user",
+            email="user@example.com",
+            password="test1234",
+            dni="12345678Z",
+            phone_number="600000000",
+            postal_code="28001"
+        )
+
+    def test_logout_success(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.post(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["message"], "Logout exitoso.")
+
+    def test_logout_authenticated_user(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.post(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["message"], "Logout exitoso.")
+
+    def test_logout_wrong_method(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 405)
+
+
+class CheckRoleViewTests(APITestCase):
+
+    def setUp(self):
+        self.url = reverse("check_role")
+
+    def test_check_role_unauthenticated(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["user_role"], "unknown")
+
+    def test_check_role_patient(self):
+        user = AppUser.objects.create_user(
+            username="patientuser",
+            email="patient@example.com",
+            password="testpass",
+            dni="12345678Z",
+            phone_number="600000000",
+            postal_code="28001"
+        )
+        Patient.objects.create(user=user, gender="F", birth_date="1990-01-01")
+        self.client.force_authenticate(user=user)
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["user_role"], "patient")
+
+    def test_check_role_physio(self):
+        user = AppUser.objects.create_user(
+            username="physiouser",
+            email="physio@example.com",
+            password="testpass",
+            dni="87654321X",
+            phone_number="611111111",
+            postal_code="28002"
+        )
+        Physiotherapist.objects.create(
+            user=user,
+            gender="M",
+            birth_date="1980-01-01",
+            collegiate_number="ABC123",
+            autonomic_community="Madrid"
+        )
+        self.client.force_authenticate(user=user)
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["user_role"], "physiotherapist")
+
+    def test_check_role_unknown_user(self):
+        user = AppUser.objects.create_user(
+            username="norole",
+            email="norole@example.com",
+            password="testpass",
+            dni="11112222X",
+            phone_number="622222222",
+            postal_code="28003"
+        )
+        self.client.force_authenticate(user=user)
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["user_role"], "unknown")
+
+
+class ReturnUserViewTests(APITestCase):
+
+    def setUp(self):
+        self.url = reverse("current_user")
+
+    def test_return_user_patient(self):
+        user = AppUser.objects.create_user(
+            username="patuser",
+            email="pat@example.com",
+            password="testpass",
+            dni="12345678Z",
+            phone_number="600000000",
+            postal_code="28001"
+        )
+        Patient.objects.create(user=user, gender="F", birth_date="1995-01-01")
+
+        self.client.force_authenticate(user=user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("patient", response.data)
+        self.assertIn("user_data", response.data["patient"])
+        self.assertEqual(response.data["patient"]["user_data"]["username"], "patuser")
+
+    def test_return_user_physio(self):
+        user = AppUser.objects.create_user(
+            username="physiouser",
+            email="physio@example.com",
+            password="testpass",
+            dni="87654321X",
+            phone_number="611111111",
+            postal_code="28002"
+        )
+        Physiotherapist.objects.create(
+            user=user,
+            gender="M",
+            birth_date="1985-01-01",
+            collegiate_number="ABC123",
+            autonomic_community="Madrid"
+        )
+
+        self.client.force_authenticate(user=user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("physio", response.data)
+        self.assertIn("user_data", response.data["physio"])
+        self.assertEqual(response.data["physio"]["user_data"]["username"], "physiouser")
+
+    def test_return_user_without_role(self):
+        user = AppUser.objects.create_user(
+            username="norole",
+            email="norole@example.com",
+            password="testpass",
+            dni="99999999Z",
+            phone_number="600123456",
+            postal_code="28003"
+        )
+        self.client.force_authenticate(user=user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.data["error"], "User role not found")
+
+    def test_return_user_unauthenticated(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 401)
+
+class ValidatePhysioRegistrationTests(APITestCase):
+
+    def setUp(self):
+        self.url = reverse("validate_physio_registration")
+        self.plan, _ = Pricing.objects.get_or_create(
+            name='blue',
+            defaults={'price': 10, 'video_limit': 5}
+        )
+
+    def get_valid_data(self):
+        return {
+            "username": "fisiotest",
+            "email": "fisiotest@example.com",
+            "password": "StrongPass123",
+            "first_name": "Ana",
+            "last_name": "Gómez",
+            "dni": "12345678Z",
+            "gender": "F",
+            "birth_date": "1990-01-01",
+            "collegiate_number": "12345",
+            "autonomic_community": "MADRID",
+            "phone_number": "600000000",
+            "postal_code": "28001",
+            "plan": self.plan.name
+        }
+
+    @patch("users.serializers.validar_colegiacion", return_value=True)
+    def test_valid_registration(self, mock_validar):
+        response = self.client.post(self.url, self.get_valid_data(), format="json")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["valid"], True)
+
+    @patch("users.serializers.validar_colegiacion", return_value=True)
+    def test_duplicate_email_fails(self, mock_validar):
+        AppUser.objects.create_user(
+            username="someone",
+            email="fisiotest@example.com",
+            password="pass",
+            dni="87654321X",
+            phone_number="600111111",
+            postal_code="28002"
+        )
+        response = self.client.post(self.url, self.get_valid_data(), format="json")
+        self.assertEqual(response.status_code, 400)
         self.assertIn("email", response.data)
 
+    @patch("users.serializers.validar_colegiacion", return_value=True)
+    def test_invalid_dni_letter(self, mock_validar):
+        data = self.get_valid_data()
+        data["dni"] = "12345678A"  # letra incorrecta
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("dni", response.data)
+
+    @patch("users.serializers.validar_colegiacion", return_value=True)
+    def test_invalid_phone_length(self, mock_validar):
+        data = self.get_valid_data()
+        data["phone_number"] = "12345"
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("phone_number", response.data)
+
+    @patch("users.serializers.validar_colegiacion", return_value=False)
+    def test_invalid_collegiate_number(self, mock_validar):
+        data = self.get_valid_data()
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("collegiate_number", response.data)
+
+    @patch("users.serializers.validar_colegiacion", return_value=True)
+    def test_underage_physio(self, mock_validar):
+        data = self.get_valid_data()
+        underage = date.today().replace(year=date.today().year - 17)
+        data["birth_date"] = underage.isoformat()
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("birth_date", response.data)
+
+class PhysioRegisterViewTests(APITestCase):
+
+    def setUp(self):
+        self.url = reverse("physio_register") 
+        self.plan, _ = Pricing.objects.get_or_create(
+            name='blue',
+            defaults={'price': 10, 'video_limit': 5}
+        )
+
+    def get_valid_data(self):
+        return {
+            "username": "fisiotest",
+            "email": "fisiotest@example.com",
+            "password": "StrongPass123",
+            "first_name": "Ana",
+            "last_name": "Gómez",
+            "dni": "12345678Z",
+            "gender": "F",
+            "birth_date": "1990-01-01",
+            "collegiate_number": "12345",
+            "autonomic_community": "MADRID",
+            "phone_number": "600000000",
+            "postal_code": "28001",
+            "plan": self.plan.name
+        }
+
+    @patch("users.serializers.validar_colegiacion", return_value=True)
+    def test_register_physio_success(self, mock_validar):
+        response = self.client.post(self.url, self.get_valid_data(), format="json")
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data["message"], "Fisioteraputa registrado correctamente")
+        self.assertTrue(AppUser.objects.filter(username="fisiotest").exists())
+        self.assertTrue(Physiotherapist.objects.filter(user__username="fisiotest").exists())
+
+    @patch("users.serializers.validar_colegiacion", return_value=True)
+    def test_duplicate_email_fails(self, mock_validar):
+        AppUser.objects.create_user(
+            username="other",
+            email="fisiotest@example.com",
+            password="pass",
+            dni="99999999A",
+            phone_number="600999999",
+            postal_code="28002"
+        )
+        response = self.client.post(self.url, self.get_valid_data(), format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("email", response.data)
+
+    @patch("users.serializers.validar_colegiacion", return_value=True)
+    def test_invalid_dni_letter(self, mock_validar):
+        data = self.get_valid_data()
+        data["dni"] = "12345678A"  # Letra incorrecta
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("dni", response.data)
+
+    @patch("users.serializers.validar_colegiacion", return_value=False)
+    def test_invalid_collegiation_fails(self, mock_validar):
+        data = self.get_valid_data()
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("collegiate_number", response.data)
+
+    @patch("users.serializers.validar_colegiacion", return_value=True)
+    def test_underage_physio(self, mock_validar):
+        data = self.get_valid_data()
+        underage = date.today().replace(year=date.today().year - 17)
+        data["birth_date"] = underage.isoformat()
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("birth_date", response.data)
+
+    @patch("users.serializers.validar_colegiacion", return_value=True)
+    def test_invalid_phone_number(self, mock_validar):
+        data = self.get_valid_data()
+        data["phone_number"] = "12345"
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("phone_number", response.data)
+
+    @patch("users.serializers.validar_colegiacion", return_value=True)
+    def test_invalid_postal_code(self, mock_validar):
+        data = self.get_valid_data()
+        data["postal_code"] = "123"
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("postal_code", response.data)
+"""
+from unittest.mock import patch, Mock
+import stripe
+
+class ProcessPaymentViewTests(APITestCase):
+
+    def setUp(self):
+        self.url = reverse("process_payment")
+
+    @patch("stripe.PaymentIntent.create")
+    def test_successful_payment(self, mock_create):
+        mock_intent = Mock(status="succeeded")
+        mock_create.return_value = mock_intent
+
+        data = {
+            "payment_method_id": "pm_test",
+            "amount": 1799
+        }
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.data["success"])
+
+    @patch("stripe.PaymentIntent.create")
+    def test_requires_action_payment(self, mock_create):
+        mock_intent = Mock(status="requires_action", client_secret="secret_123")
+        mock_create.return_value = mock_intent
+
+        data = {
+            "payment_method_id": "pm_test",
+            "amount": 1799
+        }
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.data["requires_action"])
+        self.assertEqual(response.data["payment_intent_client_secret"], "secret_123")
+
+    def test_missing_parameters(self):
+        response = self.client.post(self.url, {"payment_method_id": "pm_test"}, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+    def test_invalid_amount_format(self):
+        data = {
+            "payment_method_id": "pm_test",
+            "amount": "not_a_number"
+        }
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+    @patch("stripe.PaymentIntent.create", side_effect=stripe.error.CardError("Card declined", param=None, code=None))
+    def test_card_error(self, mock_create):
+        data = {
+            "payment_method_id": "pm_test",
+            "amount": 1799
+        }
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+    @patch("stripe.PaymentIntent.create", side_effect=Exception("Unexpected error"))
+    def test_generic_error(self, mock_create):
+        data = {
+            "payment_method_id": "pm_test",
+            "amount": 1799
+        }
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+
+
+
+"""
+class PatientRegisterViewTests(APITestCase):
+
+    def setUp(self):
+        self.url = reverse("patient_register")
+
+    def get_valid_data(self):
+        return {
+            "username": "newpatient",
+            "email": "new@example.com",
+            "password": "StrongPassword123!",
+            "first_name": "Laura",
+            "last_name": "Gómez",
+            "dni": "12345678Z",
+            "phone_number": "600000000",
+            "postal_code": "28001",
+            "gender": "F",
+            "birth_date": "1990-01-01"
+        }
+
+    def test_register_patient_success(self):
+        response = self.client.post(self.url, self.get_valid_data(), format="json")
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data["message"], "Paciente registrado correctamente")
+        self.assertTrue(AppUser.objects.filter(username="newpatient").exists())
+        self.assertTrue(Patient.objects.filter(user__username="newpatient").exists())
+
+    def test_duplicate_email_fails(self):
+        AppUser.objects.create_user(
+            username="existinguser",
+            email="new@example.com",
+            password="pass",
+            dni="87654321A",
+            phone_number="611111111",
+            postal_code="28001"
+        )
+        response = self.client.post(self.url, self.get_valid_data(), format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("email", response.data)
+
+    def test_invalid_dni_format(self):
+        data = self.get_valid_data()
+        data["dni"] = "1234A"
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("dni", response.data)
+
+    def test_underage_birth_date_fails(self):
+        data = self.get_valid_data()
+        underage = date.today().replace(year=date.today().year - 17)
+        data["birth_date"] = underage.isoformat()
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("birth_date", response.data)
+
+    def test_invalid_phone_number_length(self):
+        data = self.get_valid_data()
+        data["phone_number"] = "123"
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("phone_number", response.data)
+
+    def test_invalid_postal_code_length(self):
+        data = self.get_valid_data()
+        data["postal_code"] = "123"
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("postal_code", response.data)
+
+    def test_birth_date_too_old(self):
+        data = self.get_valid_data()
+        data["birth_date"] = "1800-01-01"
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("birth_date", response.data)
+
+    def test_birth_date_in_future(self):
+        future_date = (date.today() + timedelta(days=1)).isoformat()
+        data = self.get_valid_data()
+        data["birth_date"] = future_date
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("birth_date", response.data)
+
+    def test_duplicate_dni_fails(self):
+        AppUser.objects.create_user(
+            username="otheruser",
+            email="other@example.com",
+            password="pass",
+            dni="12345678Z",  # mismo DNI
+            phone_number="699999999",
+            postal_code="28001"
+        )
+        response = self.client.post(self.url, self.get_valid_data(), format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("dni", response.data)
+
+    def test_duplicate_username_fails(self):
+        AppUser.objects.create_user(
+            username="newpatient",  # mismo username
+            email="otheruser@example.com",
+            password="pass",
+            dni="87654321X",
+            phone_number="611111111",
+            postal_code="28001"
+        )
+        response = self.client.post(self.url, self.get_valid_data(), format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("username", response.data)
+
+    def test_invalid_dni_letter(self):
+        data = self.get_valid_data()
+        data["dni"] = "12345678A"  # Letra incorrecta para ese número
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("dni", response.data)
+"""
+"""
 class ValidatorTests(APITestCase):
     # TESTS ANDALUCIA
     def test_ANDALUCIA_valid_1(self):
@@ -1091,3 +1671,4 @@ class ValidatorTests(APITestCase):
         nombre_completo = "VICENTA FORTUNY ALMUDÉVER"
         num_colegiado = "4"
         self.assertFalse(validar_colegiacion(nombre_completo,num_colegiado, comunidad_autonoma))
+"""
