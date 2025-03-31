@@ -230,7 +230,7 @@ const TestPage = () => {
         {
           method: "DELETE",
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         }
       );
