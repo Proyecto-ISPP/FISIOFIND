@@ -20,4 +20,4 @@ jobs:
 
       - name: Deploy to DigitalOcean
         run: |
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.BACKEND_SSH_USER }}@${{ secrets.BACKEND_SERVER_IP }} 'bash -s' < deploy-s3.sh
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.BACKEND_SSH_USER }}@${{ secrets.BACKEND_SERVER_IP }} 'bash -s' < ./deploy-s3.sh
