@@ -85,8 +85,8 @@ const SessionsPage = ({ params }: { params: { id: string } }) => {
       const data = await response.json();
       console.log("Sesiones cargadas:", data);
       
-      // Fetch test information for each session
-      const sessionsWithTestInfo = await Promise.all(
+      // Fetch test and exercise information for each session
+      const sessionsWithInfo = await Promise.all(
         data.map(async (session: Session) => {
           try {
             // Check if the session has a test
@@ -126,18 +126,43 @@ const SessionsPage = ({ params }: { params: { id: string } }) => {
               session.tests_count = 0;
               session.completed_tests_count = 0;
             }
+
+            // Fetch exercises for the session
+            const exercisesResponse = await fetch(
+              `${getApiBaseUrl()}/api/treatments/sessions/${session.id}/exercises/`,
+              {
+                headers: {
+                  Authorization: `Bearer ${authToken}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+
+            if (exercisesResponse.ok) {
+              const exercisesData = await exercisesResponse.json();
+              session.exercises_count = exercisesData.length;
+              
+              // For now, set completed_exercises_count to 0
+              // In a future implementation, you could track completed exercises
+              session.completed_exercises_count = 0;
+            } else {
+              session.exercises_count = 0;
+              session.completed_exercises_count = 0;
+            }
           } catch (error) {
-            console.error(`Error fetching test info for session ${session.id}:`, error);
-            // If there's an error, assume no test
-            session.tests_count = 0;
-            session.completed_tests_count = 0;
+            console.error(`Error fetching info for session ${session.id}:`, error);
+            // If there's an error, set default values
+            session.tests_count = session.tests_count || 0;
+            session.completed_tests_count = session.completed_tests_count || 0;
+            session.exercises_count = session.exercises_count || 0;
+            session.completed_exercises_count = session.completed_exercises_count || 0;
           }
           
           return session;
         })
       );
       
-      setSessions(sessionsWithTestInfo);
+      setSessions(sessionsWithInfo);
     } catch (err) {
       console.error("Error:", err);
       setError(

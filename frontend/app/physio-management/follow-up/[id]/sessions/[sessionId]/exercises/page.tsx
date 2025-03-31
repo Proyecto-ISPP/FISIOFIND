@@ -3,33 +3,46 @@
 import { useState, useEffect, useCallback } from "react";
 import { getApiBaseUrl } from "@/utils/api";
 import { useRouter } from "next/navigation";
+import { use } from "react";
 
 type AreaChoice =
-  | "UPPER_BODY"
-  | "LOWER_BODY"
-  | "CORE"
-  | "FULL_BODY"
+  | "NECK"
   | "SHOULDER"
   | "ARM"
+  | "ELBOW"
+  | "WRIST_HAND"
   | "CHEST"
-  | "BACK"
+  | "UPPER_BACK"
+  | "LOWER_BACK"
+  | "CORE"
   | "QUADRICEPS"
   | "HAMSTRINGS"
-  | "GLUTES"
+  | "KNEE"
   | "CALVES"
-  | "NECK"
-  | "LOWER_BACK"
-  | "HIP"
-  | "BALANCE"
+  | "ANKLE_FOOT"
+  | "UPPER_BODY"
+  | "LOWER_BODY"
+  | "FULL_BODY";
+
+// Add a new type for exercise types
+type ExerciseType =
+  | "STRENGTH"
   | "MOBILITY"
   | "STRETCHING"
-  | "PROPRIOCEPTION";
+  | "BALANCE"
+  | "PROPRIOCEPTION"
+  | "COORDINATION"
+  | "BREATHING"
+  | "RELAXATION"
+  | "CARDIO"
+  | "FUNCTIONAL";
 
 interface Exercise {
   id: number;
   title: string;
   description: string;
-  area: AreaChoice;
+  body_region: AreaChoice; // Changed from 'area' to 'body_region'
+  exercise_type: ExerciseType; // New field
   physiotherapist: number;
 }
 
@@ -64,6 +77,9 @@ const ExercisesPage = ({
 }: {
   params: { id: string; sessionId: string };
 }) => {
+  const unwrappedParams = use(params as any);
+  const { id, sessionId } = unwrappedParams as { id: string; sessionId: string };
+
   const router = useRouter();
   const [exercises, setExercises] = useState<ExerciseSessionData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -74,7 +90,8 @@ const ExercisesPage = ({
   const [newExercise, setNewExercise] = useState({
     title: "",
     description: "",
-    area: "UPPER_BODY" as AreaChoice,
+    body_region: "UPPER_BODY" as AreaChoice, // Changed from 'area' to 'body_region'
+    exercise_type: "STRENGTH" as ExerciseType, // New field
   });
 
   const [series, setSeries] = useState<Series[]>([]);
@@ -98,28 +115,43 @@ const ExercisesPage = ({
 
   const formatAreaName = (areaCode: string): string => {
     const areaMap: Record<string, string> = {
-      UPPER_BODY: "Parte Superior del Cuerpo",
-      LOWER_BODY: "Parte Inferior del Cuerpo",
-      CORE: "Zona Media/Core",
-      FULL_BODY: "Cuerpo Completo",
+      NECK: "Cuello",
       SHOULDER: "Hombros",
       ARM: "Brazos (Bíceps, Tríceps)",
+      ELBOW: "Codo",
+      WRIST_HAND: "Muñeca y Mano",
       CHEST: "Pecho",
-      BACK: "Espalda",
+      UPPER_BACK: "Espalda Alta",
+      LOWER_BACK: "Zona Lumbar",
+      CORE: "Zona Media / Core",
       QUADRICEPS: "Cuádriceps",
       HAMSTRINGS: "Isquiotibiales",
-      GLUTES: "Glúteos",
+      KNEE: "Rodilla",
       CALVES: "Pantorrillas",
-      NECK: "Cuello",
-      LOWER_BACK: "Zona Lumbar",
-      HIP: "Caderas",
-      BALANCE: "Ejercicios de Equilibrio",
-      MOBILITY: "Movilidad",
-      STRETCHING: "Estiramientos",
-      PROPRIOCEPTION: "Propiocepción",
+      ANKLE_FOOT: "Tobillo y Pie",
+      UPPER_BODY: "Parte Superior del Cuerpo",
+      LOWER_BODY: "Parte Inferior del Cuerpo",
+      FULL_BODY: "Cuerpo Completo",
     };
 
     return areaMap[areaCode] || areaCode;
+  };
+
+  const formatExerciseTypeName = (typeCode: string): string => {
+    const typeMap: Record<string, string> = {
+      STRENGTH: "Fortalecimiento Muscular",
+      MOBILITY: "Movilidad Articular",
+      STRETCHING: "Estiramientos",
+      BALANCE: "Ejercicios de Equilibrio",
+      PROPRIOCEPTION: "Propiocepción",
+      COORDINATION: "Coordinación",
+      BREATHING: "Ejercicios Respiratorios",
+      RELAXATION: "Relajación / Descarga",
+      CARDIO: "Resistencia Cardiovascular",
+      FUNCTIONAL: "Ejercicio Funcional",
+    };
+
+    return typeMap[typeCode] || typeCode;
   };
 
   const loadAvailableExercises = async () => {
@@ -168,7 +200,7 @@ const ExercisesPage = ({
 
       const response = await fetch(
         `${getApiBaseUrl()}/api/treatments/sessions/${
-          params.sessionId
+          sessionId
         }/assign-exercise/`,
         {
           method: "POST",
@@ -238,8 +270,8 @@ const ExercisesPage = ({
 
       const response = await fetch(
         `${getApiBaseUrl()}/api/treatments/sessions/${
-          params.sessionId
-        }/exercises/`,
+          sessionId
+        }/exercises`,
         {
           method: "GET",
           headers: {
@@ -293,11 +325,11 @@ const ExercisesPage = ({
     } finally {
       setLoading(false);
     }
-  }, [params.sessionId]);
+  }, [sessionId]);
 
   useEffect(() => {
     loadSessionExercises();
-  }, []);
+  }, [loadSessionExercises]);
 
   // Add a state to track the form step
   const [formStep, setFormStep] = useState(1);
@@ -335,7 +367,7 @@ const ExercisesPage = ({
       // Asignar el ejercicio creado a la sesión
       const assignResponse = await fetch(
         `${getApiBaseUrl()}/api/treatments/sessions/${
-          params.sessionId
+          sessionId
         }/assign-exercise/`,
         {
           method: "POST",
@@ -684,7 +716,7 @@ const ExercisesPage = ({
       <div className="max-w-7xl mx-auto">
         <button
           onClick={() =>
-            router.push(`/physio-management/follow-up/${params.id}/sessions`)
+            router.push(`/physio-management/follow-up/${id}/sessions`)
           }
           className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-xl inline-flex items-center mb-6"
         >
@@ -727,15 +759,20 @@ const ExercisesPage = ({
                   <h3 className="text-xl font-semibold text-gray-800 mb-3">
                     {exercise.title}
                   </h3>
-                  <p className="text-gray-600 mb-3">{exercise.description}</p>
                   <p className="text-gray-600 mb-3">
-                    {exercise?.description || "Sin descripción"}
+                    {exercise.description || "Sin descripción"}
+                  </p>
+                  <p className="text-gray-500 mb-2">
+                    Área:{" "}
+                    {exercise?.body_region
+                      ? formatAreaName(exercise.body_region)
+                      : "No especificada"}
                   </p>
                   <p className="text-gray-500 mb-4">
-                    Área:{" "}
-                    {exercise?.area
-                      ? formatAreaName(exercise.area)
-                      : "No especificada"}
+                    Tipo:{" "}
+                    {exercise?.exercise_type
+                      ? formatExerciseTypeName(exercise.exercise_type)
+                      : "No especificado"}
                   </p>
                   <button
                     onClick={() => handleAssignExercise(exercise.id)}
@@ -805,39 +842,66 @@ const ExercisesPage = ({
                       Área
                     </label>
                     <select
-                      value={newExercise.area}
+                      value={newExercise.body_region}
                       onChange={(e) =>
                         setNewExercise({
                           ...newExercise,
-                          area: e.target.value as AreaChoice,
+                          body_region: e.target.value as AreaChoice,
                         })
                       }
                       className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-1 focus:ring-gray-300 focus:border-gray-300 transition-colors duration-200"
                       required
                     >
+                      <option value="NECK">Cuello</option>
+                      <option value="SHOULDER">Hombros</option>
+                      <option value="ARM">Brazos (Bíceps, Tríceps)</option>
+                      <option value="ELBOW">Codo</option>
+                      <option value="WRIST_HAND">Muñeca y Mano</option>
+                      <option value="CHEST">Pecho</option>
+                      <option value="UPPER_BACK">Espalda Alta</option>
+                      <option value="LOWER_BACK">Zona Lumbar</option>
+                      <option value="CORE">Zona Media / Core</option>
+                      <option value="QUADRICEPS">Cuádriceps</option>
+                      <option value="HAMSTRINGS">Isquiotibiales</option>
+                      <option value="KNEE">Rodilla</option>
+                      <option value="CALVES">Pantorrillas</option>
+                      <option value="ANKLE_FOOT">Tobillo y Pie</option>
                       <option value="UPPER_BODY">
                         Parte Superior del Cuerpo
                       </option>
                       <option value="LOWER_BODY">
                         Parte Inferior del Cuerpo
                       </option>
-                      <option value="CORE">Zona Media/Core</option>
                       <option value="FULL_BODY">Cuerpo Completo</option>
-                      <option value="SHOULDER">Hombros</option>
-                      <option value="ARM">Brazos (Bíceps, Tríceps)</option>
-                      <option value="CHEST">Pecho</option>
-                      <option value="BACK">Espalda</option>
-                      <option value="QUADRICEPS">Cuádriceps</option>
-                      <option value="HAMSTRINGS">Isquiotibiales</option>
-                      <option value="GLUTES">Glúteos</option>
-                      <option value="CALVES">Pantorrillas</option>
-                      <option value="NECK">Cuello</option>
-                      <option value="LOWER_BACK">Zona Lumbar</option>
-                      <option value="HIP">Caderas</option>
-                      <option value="BALANCE">Ejercicios de Equilibrio</option>
-                      <option value="MOBILITY">Movilidad</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700 mb-1">
+                      Tipo de Ejercicio
+                    </label>
+                    <select
+                      value={newExercise.exercise_type}
+                      onChange={(e) =>
+                        setNewExercise({
+                          ...newExercise,
+                          exercise_type: e.target.value as ExerciseType,
+                        })
+                      }
+                      className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-1 focus:ring-gray-300 focus:border-gray-300 transition-colors duration-200"
+                      required
+                    >
+                      <option value="STRENGTH">Fortalecimiento Muscular</option>
+                      <option value="MOBILITY">Movilidad Articular</option>
                       <option value="STRETCHING">Estiramientos</option>
+                      <option value="BALANCE">Ejercicios de Equilibrio</option>
                       <option value="PROPRIOCEPTION">Propiocepción</option>
+                      <option value="COORDINATION">Coordinación</option>
+                      <option value="BREATHING">
+                        Ejercicios Respiratorios
+                      </option>
+                      <option value="RELAXATION">Relajación / Descarga</option>
+                      <option value="CARDIO">Resistencia Cardiovascular</option>
+                      <option value="FUNCTIONAL">Ejercicio Funcional</option>
                     </select>
                   </div>
                   <div className="flex space-x-4 mt-6">
@@ -982,9 +1046,14 @@ const ExercisesPage = ({
               <p className="text-gray-600 mb-3">
                 {exercise?.description || "Sin descripción"}
               </p>
-              <p className="text-gray-500 mb-4">
-                Área: {formatAreaName(exercise.area)}
-              </p>
+              <div className="flex flex-wrap gap-2 mb-4">
+                <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                  {formatAreaName(exercise.body_region)}
+                </span>
+                <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                  {formatExerciseTypeName(exercise.exercise_type)}
+                </span>
+              </div>
 
               {/* Display series information */}
               {series && series.length > 0 ? (

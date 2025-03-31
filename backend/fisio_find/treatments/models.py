@@ -106,8 +106,8 @@ class Exercise(models.Model):
 
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
-    body_region = models.CharField(max_length=50, choices=BODY_REGION_CHOICES)
-    exercise_type = models.CharField(max_length=50, choices=EXERCISE_TYPE_CHOICES)
+    body_region = models.CharField(max_length=50, choices=BODY_REGION_CHOICES, default="UPPER_BODY")
+    exercise_type = models.CharField(max_length=50, choices=EXERCISE_TYPE_CHOICES, default="STRENGTH")
     physiotherapist = models.ForeignKey(
         Physiotherapist, 
         on_delete=models.CASCADE, 
