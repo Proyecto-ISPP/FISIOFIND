@@ -60,10 +60,20 @@ const useWebRTC = ({
     // Configuration for STUN/TURN servers to traverse NAT/Firewalls
     const configuration = {
       iceServers: [
-        { urls: 'stun:stun.l.google.com:19302' },
-        { urls: 'stun:stun1.l.google.com:19302' },
+        {
+          urls: [
+            'turn:turn.fisiofind.com:3478?transport=udp',
+            'turn:turn.fisiofind.com:3478?transport=tcp'
+          ],
+          username: 'webrtc',
+          credential: process.env.NEXT_PUBLIC_TURN_PASSWORD
+        },
+        {
+          urls: 'stun:stun.l.google.com:19302'
+        }
       ]
     };
+    
     
     const peerConnection = new RTCPeerConnection(configuration);
     console.log('RTCPeerConnection creada');
