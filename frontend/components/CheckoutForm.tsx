@@ -381,7 +381,7 @@ const CheckoutForm = ({ request, token }: CheckoutFormProps) => {
           disabled={!stripe || loading}
           style={buttonStyles}
         >
-          {loading ? "Procesando..." : `Pagar ${price} €`}
+          {loading ? "Procesando..." : `Autorizar ${price} €`}
         </button>
         {message && <div style={messageStyles}>{message}</div>}
       </form>
