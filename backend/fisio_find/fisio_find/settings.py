@@ -30,11 +30,18 @@ PAYMENT_API_KEY = os.getenv("PAYMENT_API_KEY", 'key')
                             
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'fisiofind-backend.azurewebsites.net', 'fisiofind.netlify.app',
-                '138.68.80.34',
-                '167.99.246.186',
-                's2.fisiofind.com',
-                's2-api.fisiofind.com',]
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    'fisiofind-backend.azurewebsites.net',
+    'fisiofind.netlify.app',
+    '138.68.80.34',
+    '167.99.246.186',
+    's2.fisiofind.com',
+    's2-api.fisiofind.com',
+    's3.fisiofind.com',
+    's3-api.fisiofind.com'
+]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://fisiofind-backend.azurewebsites.net",
@@ -42,7 +49,10 @@ CSRF_TRUSTED_ORIGINS = [
     "http://167.99.246.186",
     "https://s2.fisiofind.com",
     "https://s2-api.fisiofind.com",
-    "wss://s2-api.fisiofind.com"
+    "wss://s2-api.fisiofind.com",
+    "wss://s3-api.fisiofind.com",
+    "https://s3.fisiofind.com",
+    "https://s3-api.fisiofind.com"
 ]
 
 if not DEBUG:
@@ -148,15 +158,17 @@ SIMPLE_JWT = {
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://localhost:3000",
-    "http://127.0.0.1:3001",
-    "http://localhost:3001",
-    "https://fisiofind-backend.azurewebsites.net",  # Note the comma here
+    "https://fisiofind-backend.azurewebsites.net",
     "https://fisiofind.netlify.app",
     "http://138.68.80.34",
     "http://167.99.246.186",
     "https://s2-api.fisiofind.com",
     "https://s2.fisiofind.com",
-    "wss://s2-api.fisiofind.com"
+    "wss://s2-api.fisiofind.com",
+    "https://s3-api.fisiofind.com",
+    "https://s3.fisiofind.com",
+    "wss://s3-api.fisiofind.com"
+    
 ]
 
 ROOT_URLCONF = 'fisio_find.urls'
@@ -242,10 +254,14 @@ TIME_ZONE = 'Europe/Madrid'
 USE_I18N = True
 USE_TZ = True
 
-STATIC_URL = 'static/'
-if not DEBUG:
-    STATIC_ROOT = "/root/FISIOFIND_back/static/"
-STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_URL = '/static/'
+
+if DEBUG:
+    # Solo en desarrollo
+    STATICFILES_DIRS = [BASE_DIR / "static"]
+else:
+    # Solo en producción
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
