@@ -1,0 +1,23 @@
+name: Deploy frontend to DigitalOcean
+
+on:
+  push:
+    branches:
+      - main  # Cambia esto si usas otra rama
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest  # Usa un runner basado en Ubuntu
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up SSH key
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.FRONTEND_SSH_PRIVATE_KEY }}
+
+      - name: Deploy to DigitalOcean
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.FRONTEND_SSH_USER }}@${{ secrets.FRONTEND_SERVER_IP }} 'bash -s' < deploy.sh
