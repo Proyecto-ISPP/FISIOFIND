@@ -149,9 +149,15 @@ const CheckoutForm = ({ request, token }: CheckoutFormProps) => {
         setAppointmentId(data.id); // Guardamos el appointment_id
         const result = await createPayment(tokenValue, data.id); // ⚡ Llamamos a createPayment después de obtener la cita
         if (result) {
-          console.log({clientSecret: result.clientSecret, paymentId: result.paymentId});
-          
-          return { clientSecret: result.clientSecret, paymentId: result.paymentId };
+          console.log({
+            clientSecret: result.clientSecret,
+            paymentId: result.paymentId,
+          });
+
+          return {
+            clientSecret: result.clientSecret,
+            paymentId: result.paymentId,
+          };
         }
       } else {
         setMessage("Error al crear la cita.");
@@ -162,7 +168,10 @@ const CheckoutForm = ({ request, token }: CheckoutFormProps) => {
     }
   }
 
-  async function createPayment(tokenValue: string | null, appointmentId: number) {
+  async function createPayment(
+    tokenValue: string | null,
+    appointmentId: number
+  ) {
     console.log(tokenValue);
 
     try {
@@ -181,7 +190,7 @@ const CheckoutForm = ({ request, token }: CheckoutFormProps) => {
       const data = await res.json();
       console.log("Status", res.status);
       console.log("Appointment ID", appointmentId);
-      
+
       console.log("Respuesta del backend (pago creado):", data);
       console.log("client secret", data.client_secret);
       console.log("payment", data.payment);
@@ -233,7 +242,9 @@ const CheckoutForm = ({ request, token }: CheckoutFormProps) => {
     });
 
     if (result.error) {
-      setMessage(result.error.message || "Error al confirmar el método de pago.");
+      setMessage(
+        result.error.message || "Error al confirmar el método de pago."
+      );
       console.error(result.error.message);
     } else {
       console.log(token);
@@ -256,10 +267,15 @@ const CheckoutForm = ({ request, token }: CheckoutFormProps) => {
         );
         const updateData = await updateRes.json();
         console.log("Método de pago actualizado:", updateData);
-        setMessage("Método de pago guardado. Se te cobrará 48h antes de la cita.");
+        setMessage(
+          "Método de pago guardado. Se te cobrará 48h antes de la cita."
+        );
         setShowModal(true); // Mostrar el modal de éxito
       } catch (error) {
-        console.error("Error al actualizar el método de pago en el backend:", error);
+        console.error(
+          "Error al actualizar el método de pago en el backend:",
+          error
+        );
         setMessage("Error al guardar el método de pago.");
       }
     }
@@ -283,8 +299,8 @@ const CheckoutForm = ({ request, token }: CheckoutFormProps) => {
         color: "#fa755a",
         iconColor: "#fa755a",
       },
-      hidePostalCode: true,
     },
+    hidePostalCode: true,
   };
 
   // Función para guardar el borrador unificado y redirigir
@@ -312,7 +328,51 @@ const CheckoutForm = ({ request, token }: CheckoutFormProps) => {
   return (
     <>
       <form onSubmit={handleSubmit} style={formStyles}>
-        <h2 style={headingStyles}>Completa tu pago</h2>
+        <div className="flex items-center justify-center ml-7">
+          <h2 style={headingStyles}>
+            Ingrese los datos de su tarjeta.
+          </h2>
+          <div className="relative inline-block group ml-3 mb-6">
+            <div className="cursor-default">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-4 h-4"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="#1C274C"
+                  strokeWidth="1.5"
+                />
+                <path
+                  d="M12 17V11"
+                  stroke="#1C274C"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+                <circle
+                  cx="1"
+                  cy="1"
+                  r="1"
+                  transform="matrix(1 0 0 -1 11 9)"
+                  fill="#1C274C"
+                />
+              </svg>
+            </div>
+            <div className="absolute mb-1 bottom-full left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-85 transition-opacity duration-300 pointer-events-none">
+              <div className="bg-gray-700 text-white text-xs rounded py-2 px-2 w-60">
+                Necesita introducir los datos de su tarjeta para confirmar la cita.
+                <br/>
+                <div className="mb-2"/>
+                El pago se procesará 48 horas antes del comienzo de la cita.
+              </div>
+              <div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-gray-700 absolute top-full left-1/2 transform -translate-x-1/2"></div>
+            </div>
+          </div>{" "}
+        </div>
         <div style={cardElementContainer}>
           <CardElement options={cardStyle} />
         </div>
@@ -348,7 +408,11 @@ const CheckoutForm = ({ request, token }: CheckoutFormProps) => {
 
                   if (!response.ok) {
                     const errorData = await response.json();
-                    alert(`Error: ${errorData.error || "No se pudo descargar la factura"}`);
+                    alert(
+                      `Error: ${
+                        errorData.error || "No se pudo descargar la factura"
+                      }`
+                    );
                     return;
                   }
 
@@ -490,6 +554,5 @@ const modalButton: React.CSSProperties = {
   cursor: "pointer",
   marginRight: "10px",
 };
-
 
 export default CheckoutForm;
