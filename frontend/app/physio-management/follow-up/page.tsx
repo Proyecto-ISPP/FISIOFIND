@@ -832,13 +832,6 @@ const SeguimientoPage = () => {
                       </span>
                     </div>
                   </div>
-
-                  <div className="border-t pt-4">
-                    <h4 className="font-semibold mb-2">Deberes asignados:</h4>
-                    <p className="text-gray-700 text-sm line-clamp-2">
-                      {treatment.homework}
-                    </p>
-                  </div>
                 </div>
 
                 <div className="bg-gray-50 px-6 py-3 flex justify-center">

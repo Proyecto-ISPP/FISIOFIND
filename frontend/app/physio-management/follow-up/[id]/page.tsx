@@ -506,19 +506,6 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Deberes asignados
-                  </label>
-                  <textarea
-                    name="homework"
-                    value={editedTreatment.homework || treatment.homework}
-                    onChange={handleInputChange}
-                    rows={5}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-
                 <div className="flex items-center">
                   <input
                     type="checkbox"
@@ -568,12 +555,6 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
                 <p>
                   <span className="font-medium">Fin:</span>{" "}
                   {new Date(treatment.end_time).toLocaleDateString("es-ES")}
-                </p>
-                <p>
-                  <span className="font-medium">Deberes asignados:</span>
-                </p>
-                <p className="bg-gray-50 p-3 rounded mt-1">
-                  {treatment.homework}
                 </p>
               </>
             )}
