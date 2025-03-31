@@ -1,23 +1,22 @@
-name: Deploy frontend to DigitalOcean
+name: Deploy Frontend Sprint 3
 
 on:
   push:
     branches:
-      - main  # Cambia esto si usas otra rama
+      - main
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest  # Usa un runner basado en Ubuntu
+    name: Connect & Deploy
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up SSH key
-        uses: webfactory/ssh-agent@v0.5.3
+      - name: Ejecutar script en el servidor por SSH
+        uses: appleboy/ssh-action@v1.0.0
         with:
-          ssh-private-key: ${{ secrets.FRONTEND_SSH_PRIVATE_KEY }}
-
-      - name: Deploy to DigitalOcean
-        run: |
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.FRONTEND_SSH_USER }}@${{ secrets.FRONTEND_SERVER_IP }} 'bash -s' < ./deploy.sh
+          host: ${{ secrets.FRONTEND_SERVER_IP }}
+          username: ${{ secrets.FRONTEND_SSH_USER }}
+          key: ${{ secrets.FRONTEND_SSH_PRIVATE_KEY }}
+          script: |
+            cd /root
+            ./deploy_s3.sh
