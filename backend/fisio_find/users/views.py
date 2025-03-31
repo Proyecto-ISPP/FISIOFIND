@@ -254,8 +254,33 @@ def physio_update_view(request):
     # Ensure services are parsed as JSON if provided
     if "services" in request_data and isinstance(request_data["services"], str):
         try:
-            request_data["services"] = json.loads(request_data["services"])
+            # Comprueba si la entrada es str o dict, si es str intenta parsearlo
+            # si es dict directamente lo coge, sino simplemente lanza error
+            if isinstance(request_data["services"], str):
+                request_data["services"] = json.loads(request_data["services"])
+            elif isinstance(request_data["services"], dict):
+                request_data["services"] = request_data["services"]
+            else:
+                raise json.JSONDecodeError()
+            
+            for key, service in request_data["services"].items():
+                required_fields = {"id", "title", "price", "description", "duration", "custom_questionnaire"}
+
+                if not isinstance(service, dict):
+                    raise json.JSONDecodeError()
+
+                if not required_fields.issubset(service.keys()):
+                    raise json.JSONDecodeError()
+
+                if not isinstance(service["price"], int):
+                    raise json.JSONDecodeError()
+
+                if not isinstance(service["duration"], int):
+                    raise json.JSONDecodeError()
+                
         except json.JSONDecodeError:
+            return Response({"error": "Formato de servicios inválido."}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception:
             return Response({"error": "Formato de servicios inválido."}, status=status.HTTP_400_BAD_REQUEST)
 
     # Serialize and validate the data
@@ -313,9 +338,38 @@ def physio_create_service_view(request):
     
     # Obtener servicios existentes
     existing_services = physio.services or {}
+
     
-    # Obtener nuevos servicios del request
-    new_service = request.data
+    try:
+        # Comprueba si la entrada es str o dict, si es str intenta parsearlo
+        # si es dict directamente lo coge, sino simplemente lanza error
+        if isinstance(request.data, str):
+            new_service = json.loads(request.data)
+        elif isinstance(request.data, dict):
+            new_service = request.data
+        else:
+            raise json.JSONDecodeError()
+            
+        
+        required_fields = {"id", "title", "price", "description", "duration", "custom_questionnaire"}
+
+        if not isinstance(new_service, dict):
+            raise json.JSONDecodeError()
+
+        if not required_fields.issubset(new_service.keys()):
+            raise json.JSONDecodeError()
+
+        if not isinstance(new_service["price"], int):
+            raise json.JSONDecodeError()
+
+        if not isinstance(new_service["duration"], int):
+            raise json.JSONDecodeError()
+                
+    except json.JSONDecodeError:
+        return Response({"error": "Formato de servicios inválido."}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception:
+        return Response({"error": "Formato de servicios inválido."}, status=status.HTTP_400_BAD_REQUEST)
+    
     
     # Actualizar servicios existentes o añadir nuevos
     service_title = new_service.get('id')
@@ -416,50 +470,7 @@ def physio_delete_service_view(request, service_id):
     
     return Response({"message": "Servicio eliminado correctamente", "services": services}, status=status.HTTP_200_OK)
 
-@api_view(['GET'])
-@permission_classes([IsAdmin])
-def admin_search_patients_by_user(request, query):
-    matched_users = AppUser.objects.filter(
-        Q(dni__icontains=query) |
-        Q(first_name__icontains=query) |
-        Q(last_name__icontains=query) |
-        Q(email__icontains=query)
-    )
 
-    patients = Patient.objects.filter(user__in=matched_users)
-    serializer = PatientSerializer(patients, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-@api_view(['GET'])
-@permission_classes([IsAdmin])
-def admin_search_physios_by_user(request, query):
-    matched_users = AppUser.objects.filter(
-        Q(dni__icontains=query) |
-        Q(first_name__icontains=query) |
-        Q(last_name__icontains=query) |
-        Q(email__icontains=query)
-    )
-
-    physios = Physiotherapist.objects.filter(user__in=matched_users)
-    serializer = PhysioSerializer(physios, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
-
-class AdminPatientDetail(generics.RetrieveAPIView):
-    '''
-    API endpoint que retorna un solo paciente por su id para admin.
-    '''
-    permission_classes = [IsAdmin]
-    queryset = Patient.objects.all()
-    serializer_class = PatientSerializer
-    
-class AdminPhysioDetail(generics.RetrieveAPIView):
-    '''
-    API endpoint que retorna un solo paciente por su id para admin.
-    '''
-    permission_classes = [IsAdmin]
-    queryset = Physiotherapist.objects.all()
-    serializer_class = PhysioSerializer
 
 @api_view(['POST'])
 @permission_classes([IsPhysiotherapist])
