@@ -14,8 +14,6 @@ from datetime import timedelta
 from pathlib import Path
 import os
 from dotenv import load_dotenv
-import environ
-
 
 load_dotenv()
 
@@ -32,19 +30,31 @@ PAYMENT_API_KEY = os.getenv("PAYMENT_API_KEY", 'key')
                             
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'fisiofind-backend.azurewebsites.net', 'fisiofind.netlify.app']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'fisiofind-backend.azurewebsites.net', 'fisiofind.netlify.app',
+                '138.68.80.34',
+                '167.99.246.186',
+                's2.fisiofind.com',
+                's2-api.fisiofind.com',]
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://fisiofind-backend.azurewebsites.net"
+    "https://fisiofind-backend.azurewebsites.net",
+    "http://138.68.80.34",
+    "http://167.99.246.186",
+    "https://s2.fisiofind.com",
+    "https://s2-api.fisiofind.com",
+    "wss://s2-api.fisiofind.com"
 ]
-# SECURE_PROXY_SSL_HEADER = ("X-Forwarded-Proto", "https")
-# SESSION_COOKIE_SECURE = True
-# CSRF_COOKIE_SECURE = True
-# CSRF_USE_SESSIONS = True
-SECURE_PROXY_SSL_HEADER = None
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
-CSRF_USE_SESSIONS = True
+
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ("X-Forwarded-Proto", "https")
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    CSRF_USE_SESSIONS = True
+else:
+    SECURE_PROXY_SSL_HEADER = None
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
+    CSRF_USE_SESSIONS = True
 
 # Application definition
 
@@ -141,7 +151,12 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3001",
     "http://localhost:3001",
     "https://fisiofind-backend.azurewebsites.net",  # Note the comma here
-    "https://fisiofind.netlify.app"
+    "https://fisiofind.netlify.app",
+    "http://138.68.80.34",
+    "http://167.99.246.186",
+    "https://s2-api.fisiofind.com",
+    "https://s2.fisiofind.com",
+    "wss://s2-api.fisiofind.com"
 ]
 
 ROOT_URLCONF = 'fisio_find.urls'
@@ -165,41 +180,35 @@ TEMPLATES = [
 WSGI_APPLICATION = 'fisio_find.wsgi.application'
 ASGI_APPLICATION = 'fisio_find.asgi.application'
 
-CHANNEL_LAYERS = {
+
+if not DEBUG:
+    # Configurar Redis como backend de WebSockets
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [("127.0.0.1", 6379)],
+            },
+        },
+    }
+else:
+    CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels.layers.InMemoryChannelLayer',
     },
 }
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': os.getenv('DATABASE_NAME'),
-#         'USER': os.getenv('DATABASE_USER'),
-#         'PASSWORD': os.getenv('DATABASE_PASSWORD'),
-#         'HOST': os.getenv('DATABASE_HOST'),
-#         'PORT': os.getenv('DATABASE_PORT'),
-#     }
-# }
-
-env = environ.Env()
-environ.Env.read_env()
-
-
-IS_PRODUCTION = os.getenv('DJANGO_PRODUCTION', env.bool('DJANGO_PRODUCTION', default=False))
-
-DEBUG = not IS_PRODUCTION
+    
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DATABASE_NAME', env('DATABASE_NAME', default='postgres')),
-        'USER': os.getenv('DATABASE_USER', env('DATABASE_USER', default='postgres')),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD', env('DATABASE_PASSWORD', default='')),
-        'HOST': os.getenv('DATABASE_HOST', env('DATABASE_HOST', default='localhost')),
-        'PORT': os.getenv('DATABASE_PORT', env('DATABASE_PORT', default='5432')),
+        'NAME': os.getenv('DATABASE_NAME', 'postgres'),
+        'USER': os.getenv('DATABASE_USER', 'postgres'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD', ''),
+        'HOST': os.getenv('DATABASE_HOST', 'localhost'),
+        'PORT': os.getenv('DATABASE_PORT', '5432'),
         'OPTIONS': {
-            'sslmode': 'require' if IS_PRODUCTION else 'prefer',
+            'sslmode': 'require' if not DEBUG else 'prefer',
         },
     }
 }
@@ -214,11 +223,6 @@ EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER)
 
-# Default email para los correos enviados
-DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default=env('EMAIL_HOST_USER'))
-
-
-ALLOWED_HOSTS = ['*'] if DEBUG else ['fisiofind-backend.azurewebsites.net']
 
 AUTH_USER_MODEL = 'users.AppUser'
 
@@ -239,6 +243,8 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
+if not DEBUG:
+    STATIC_ROOT = "/root/FISIOFIND_back/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
