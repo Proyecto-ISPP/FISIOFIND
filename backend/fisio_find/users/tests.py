@@ -1161,7 +1161,7 @@ class PhysioRegisterViewTests(APITestCase):
         response = self.client.post(self.url, data, format="json")
         self.assertEqual(response.status_code, 400)
         self.assertIn("postal_code", response.data)
-"""
+
 from unittest.mock import patch, Mock
 import stripe
 
@@ -1230,9 +1230,273 @@ class ProcessPaymentViewTests(APITestCase):
         response = self.client.post(self.url, data, format="json")
         self.assertEqual(response.status_code, 400)
         self.assertIn("error", response.data)
+"""
+"""
+import json
 
+class PhysioUpdateViewTests(APITestCase):
 
+    def setUp(self):
+        self.url = reverse("physio_update")
+        self.plan, _ = Pricing.objects.get_or_create(
+            name='blue',
+            defaults={'price': 10, 'video_limit': 5}
+        )
 
+        self.user = AppUser.objects.create_user(
+            username="physio1",
+            email="physio1@example.com",
+            password="testpass",
+            dni="12345678Z",
+            phone_number="600000000",
+            postal_code="28001"
+        )
+
+        self.physio = Physiotherapist.objects.create(
+            user=self.user,
+            gender="F",
+            birth_date="1990-01-01",
+            collegiate_number="COL123",
+            autonomic_community="MADRID",
+            plan=self.plan
+        )
+
+        self.client.force_authenticate(user=self.user)
+
+    def test_physio_update_success(self):
+        data = {
+            "user.email": "updated@example.com",
+            "bio": "Actualización desde test",
+            "services": '{"Servicio 1": {"id": 1, "title": "Primera consulta", "price": 30, "description": "Evaluaremos tu estado f\\u00edsico, hablaremos sobre tus molestias y realizaremos pruebas para dise\\u00f1ar un plan de tratamiento personalizado que se adapte a tus necesidades y estilo de vida.", "duration": 45, "custom_questionnaire": {"UI Schema": {"type": "Group", "label": "Cuestionario Personalizado", "elements": [{"type": "Control", "label": "\\u00bfQu\\u00e9 te duele?", "scope": "#/properties/q1"}, {"type": "Control", "label": "\\u00bfC\\u00f3mo describir\\u00edas el dolor?", "scope": "#/properties/q2"}]}}}}',
+            "schedule": '{"lunes": ["10:00", "12:00"]}',
+            "specializations": '["Traumatología", "Deportiva"]'
+        }
+
+        response = self.client.put(self.url, data, format="json")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["message"], "Fisioterapeuta actualizado correctamente")
+
+        self.physio.refresh_from_db()
+        self.assertEqual(self.physio.user.email, "updated@example.com")
+        self.assertEqual(self.physio.bio, "Actualización desde test")
+        self.assertIn("Servicio 1", self.physio.services)
+        self.assertEqual(self.physio.specializations.count(), 2)
+
+    def test_invalid_services_format(self):
+        data = {
+            "services": "esto no es json"
+        }
+        response = self.client.put(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+    def test_specializations_as_csv(self):
+        data = {
+            "specializations": "Neurológica, Deportiva"
+        }
+        response = self.client.put(self.url, data, format="json")
+        self.assertEqual(response.status_code, 200)
+        self.physio.refresh_from_db()
+        names = list(self.physio.specializations.values_list("name", flat=True))
+        self.assertCountEqual(names, ["Neurológica", "Deportiva"])
+
+    def test_specializations_as_single_string(self):
+        data = {
+            "specializations": "Pediátrica"
+        }
+        response = self.client.put(self.url, data, format="json")
+        self.assertEqual(response.status_code, 200)
+        self.physio.refresh_from_db()
+        names = list(self.physio.specializations.values_list("name", flat=True))
+        self.assertEqual(names, ["Pediátrica"])
+
+    def test_unauthenticated_user(self):
+        self.client.force_authenticate(user=None)
+        response = self.client.put(self.url, {}, format="json")
+        self.assertIn(response.status_code, [401, 403])  # depende del auth backend
+
+    def test_invalid_services_not_dict(self):
+        data = {
+            "services": json.dumps({
+                "Servicio 1": "esto debería ser un objeto, no un string"
+            })
+        }
+        response = self.client.put(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+    def test_invalid_services_missing_required_fields(self):
+        base_service = {
+            "id": 1,
+            "title": "Primera consulta",
+            "price": 30,
+            "description": "Descripción",
+            "duration": 45,
+            "custom_questionnaire": {
+                "UI Schema": {
+                    "type": "Group",
+                    "label": "Cuestionario",
+                    "elements": []
+                }
+            }
+        }
+
+        required_fields = ["id", "title", "price", "description", "duration"]
+
+        for field in required_fields:
+            service_copy = base_service.copy()
+            service_copy.pop(field)
+
+            data = {
+                "services": json.dumps({
+                    "Servicio 1": service_copy
+                })
+            }
+
+            response = self.client.put(self.url, data, format="json")
+            self.assertEqual(
+                response.status_code, 400,
+            )
+            self.assertIn("error", response.data)
+    def test_services_as_json_string(self):
+        data = {
+            "services": json.dumps({
+                "Servicio 1": {
+                    "id": 1,
+                    "title": "Primera consulta",
+                    "price": 30,
+                    "description": "Evaluación inicial",
+                    "duration": 45,
+                    "custom_questionnaire": {
+                        "UI Schema": {
+                            "type": "Group",
+                            "label": "Cuestionario",
+                            "elements": []
+                        }
+                    }
+                }
+            })
+        }
+        response = self.client.put(self.url, data, format="json")
+        self.assertEqual(response.status_code, 200)
+        self.physio.refresh_from_db()
+        self.assertIn("Servicio 1", self.physio.services)
+
+    def test_services_as_dict_direct(self):
+        data = {
+            "services": {
+                "Servicio 1": {
+                    "id": 2,
+                    "title": "Seguimiento",
+                    "price": 25,
+                    "description": "Consulta de seguimiento",
+                    "duration": 30,
+                    "custom_questionnaire": {
+                        "UI Schema": {
+                            "type": "Group",
+                            "label": "Seguimiento",
+                            "elements": []
+                        }
+                    }
+                }
+            }
+        }
+        response = self.client.put(self.url, data, format="json")
+        self.assertEqual(response.status_code, 200)
+        self.physio.refresh_from_db()
+        self.assertIn("Servicio 1", self.physio.services)
+
+    def test_services_invalid_type(self):
+        data = {
+            "services": 12345  # ❌ ni str ni dict
+        }
+        response = self.client.put(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("services", response.data)
+"""
+"""
+class PhysioCreateServiceViewTests(APITestCase):
+
+    def setUp(self):
+        self.url = reverse("physio_create_service")
+        self.plan, _ = Pricing.objects.get_or_create(
+            name='blue',
+            defaults={'price': 10, 'video_limit': 5}
+        )
+
+        self.user = AppUser.objects.create_user(
+            username="physio2",
+            email="physio2@example.com",
+            password="testpass",
+            dni="12345678Y",
+            phone_number="600111111",
+            postal_code="28001"
+        )
+
+        self.physio = Physiotherapist.objects.create(
+            user=self.user,
+            gender="M",
+            birth_date="1990-05-05",
+            collegiate_number="C12345",
+            autonomic_community="MADRID",
+            plan=self.plan,
+            services={}  # empieza vacío
+        )
+
+        self.client.force_authenticate(user=self.user)
+
+        self.valid_service = {
+            "id": 1,
+            "title": "Consulta inicial",
+            "price": 30,
+            "description": "Descripción del servicio",
+            "duration": 45,
+            "custom_questionnaire": {
+                "UI Schema": {
+                    "type": "Group",
+                    "label": "Formulario",
+                    "elements": []
+                }
+            }
+        }
+
+    def test_create_new_service(self):
+        response = self.client.post(self.url, self.valid_service, format="json")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("services", response.data)
+        self.assertEqual(len(response.data["services"]), 1)
+
+    def test_service_as_string(self):
+        response = self.client.post(self.url, json.dumps(self.valid_service), content_type="application/json")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("services", response.data)
+
+    def test_invalid_format_list(self):
+        response = self.client.post(self.url, [self.valid_service], format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+    def test_missing_required_field(self):
+        invalid_service = self.valid_service.copy()
+        invalid_service.pop("price")
+        response = self.client.post(self.url, invalid_service, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+    def test_price_not_int(self):
+        invalid_service = self.valid_service.copy()
+        invalid_service["price"] = "treinta"
+        response = self.client.post(self.url, invalid_service, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+    def test_duration_not_int(self):
+        invalid_service = self.valid_service.copy()
+        invalid_service["duration"] = "cuarenta"
+        response = self.client.post(self.url, invalid_service, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+"""
 
 """
 class PatientRegisterViewTests(APITestCase):
