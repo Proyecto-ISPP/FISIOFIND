@@ -75,7 +75,11 @@ export function SidebarDemo() {
     },
     {
       label: "Tratamientos",
-      href: isAuthenticated? "/physio-management/follow-up" : "/login",
+      href: isAuthenticated 
+        ? (urlPerfil.includes("patient") 
+           ? "/patient-management/follow-up" 
+           : "/physio-management/follow-up") 
+        : "/login",
       icon: (
         <IconStethoscope className="text-[#05918F] h-5 w-5 flex-shrink-0 mx-auto" />
       ),
