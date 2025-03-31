@@ -19,4 +19,4 @@ jobs:
           key: ${{ secrets.FRONTEND_SSH_PRIVATE_KEY }}
           script: |
             cd /root
-            ./deploy_s3.sh
+            ./deploy.sh
