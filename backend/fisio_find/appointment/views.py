@@ -22,6 +22,7 @@ from django.core.signing import BadSignature, SignatureExpired
 from rest_framework.permissions import AllowAny
 from urllib.parse import unquote
 import json
+from videocall.models import Room
 
 
 class StandardResultsSetPagination(PageNumberPagination):
@@ -73,10 +74,19 @@ def create_appointment_patient(request):
 
     serializer = AppointmentSerializer(data=data)
     if serializer.is_valid():
-        serializer.save()
-        send_appointment_email(serializer.data['id'], 'booked')
+        appointment = serializer.save()
+        send_appointment_email(appointment.id, 'booked')
         update_schedule(data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        # Crear videollamada
+        Room.objects.create(
+            physiotherapist=appointment.physiotherapist,
+            patient=appointment.patient,
+            appointment=appointment
+        )
+        
+
+        return Response(AppointmentSerializer(appointment).data, status=status.HTTP_201_CREATED)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -93,11 +103,20 @@ def create_appointment_physio(request):
 
     serializer = AppointmentSerializer(data=data)
     if serializer.is_valid():
-        serializer.save()
+        appointment = serializer.save()
         update_schedule(data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        # Crear videollamada
+        Room.objects.create(
+            physiotherapist=appointment.physiotherapist,
+            patient=appointment.patient,
+            appointment=appointment
+        )
+       
+        return Response(AppointmentSerializer(appointment).data, status=status.HTTP_201_CREATED)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 # Buscar una forma de filtrar mas sencilla *funciona pero muchas lineas*
 
@@ -615,6 +634,9 @@ def delete_appointment(request, appointment_id):
     
     # Enviar el correo con el rol del usuario
     send_appointment_email(appointment.id, 'canceled', role)
+
+    # Eliminar la sala asociada, si existe
+    Room.objects.filter(appointment=appointment).delete()
 
     # Eliminar la cita
     appointment.delete()
