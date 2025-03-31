@@ -172,9 +172,9 @@ def list_appointments_physio(request):
     physiotherapist = request.user.physio
     appointments = Appointment.objects.filter(physiotherapist=physiotherapist)
 
-    status = request.query_params.get('status', None)
-    if status:
-        appointments = appointments.filter(status=status)
+    appointment_status = request.query_params.get('status', None)
+    if appointment_status:
+        appointments = appointments.filter(status=appointment_status)
 
     is_online = request.query_params.get('is_online', None)
     if is_online is not None:
@@ -183,7 +183,13 @@ def list_appointments_physio(request):
 
     patient = request.query_params.get('patient', None)
     if patient:
+        try:
+            patient = Patient.objects.get(id=patient)
+        except Patient.DoesNotExist:
+            return Response({"error": "Paciente no encontrado"}, status=status.HTTP_404_NOT_FOUND)
         appointments = appointments.filter(patient=patient)
+        if appointments.count() == 0:
+            return Response({"error": "No hay citas para este paciente"}, status=status.HTTP_404_NOT_FOUND)
 
     search_filter = SearchFilter()
     search_fields = ['status']

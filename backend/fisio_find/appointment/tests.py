@@ -1,11 +1,13 @@
 from rest_framework.test import APITestCase, APIRequestFactory, APIClient
 from django.shortcuts import render
-from appointment.models import Appointment
+from appointment.models import Appointment, StatusChoices
 from appointment.serializers import AppointmentSerializer
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from users.models import AppUser, Patient, Physiotherapist, Specialization, PhysiotherapistSpecialization
 from users.serializers import PhysioSerializer, PatientSerializer, AppUserSerializer
+from django.utils import timezone
+from datetime import timedelta
 
 class CreateAppointmentTests(APITestCase):
     def setUp(self):
@@ -155,7 +157,6 @@ class CreateAppointmentTests(APITestCase):
             'alternatives': ""
         }
         response = self.client.post(url, data, format='json')
-        print(response.data)
         physiotherapist = Physiotherapist.objects.get(id=response.data['physiotherapist'])
         physio_scheule_appointments = physiotherapist.schedule['appointments'] 
         appointment_added = False
@@ -437,12 +438,12 @@ class CreateAppointmentTests(APITestCase):
         
         self.assertEqual(response.status_code, 201)
         self.assertEqual(Appointment.objects.count(), 2)
-        self.assertEqual(Appointment.objects.get(id=2).start_time.isoformat().replace('+00:00', 'Z'), '2026-02-03T10:00:00Z')
-        self.assertEqual(Appointment.objects.get(id=2).end_time.isoformat().replace('+00:00', 'Z'), '2026-02-03T11:00:00Z')
-        self.assertEqual(Appointment.objects.get(id=2).patient.id, self.patient.id)
-        self.assertEqual(Appointment.objects.get(id=2).physiotherapist.id, self.physio.id)
-        self.assertEqual(Appointment.objects.get(id=2).status, 'booked')
-        self.assertEqual(Appointment.objects.get(id=2).alternatives, "")
+        self.assertEqual(Appointment.objects.get(id=response.data['id']).start_time.isoformat().replace('+00:00', 'Z'), '2026-02-03T10:00:00Z')
+        self.assertEqual(Appointment.objects.get(id=response.data['id']).end_time.isoformat().replace('+00:00', 'Z'), '2026-02-03T11:00:00Z')
+        self.assertEqual(Appointment.objects.get(id=response.data['id']).patient.id, self.patient.id)
+        self.assertEqual(Appointment.objects.get(id=response.data['id']).physiotherapist.id, self.physio.id)
+        self.assertEqual(Appointment.objects.get(id=response.data['id']).status, 'booked')
+        self.assertEqual(Appointment.objects.get(id=response.data['id']).alternatives, "")
         self.assertEqual(appointment_added, True)
 
     def test_create_appointment_as_physio_without_authentication(self):
@@ -722,3 +723,525 @@ class CreateAppointmentTests(APITestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['non_field_errors'][0], 'El fisioterapeuta ya tiene una cita en ese horario.')
         self.assertEqual(Appointment.objects.count(), 1)
+
+class ListAppointmentTests(APITestCase):
+    def setUp(self):
+        self.factory = APIRequestFactory()
+        self.client = APIClient()
+        
+        # Create physiotherapist user
+        self.physio_user = AppUser.objects.create_user(
+            username="jorgito",
+            email="jorgito@sample.com",
+            password="pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw=",
+            dni="77860168Q",
+            phone_number="666666666",
+            postal_code="41960",
+            account_status="ACTIVE",
+            first_name="Jorge",
+            last_name="García Chaparro"
+        )
+        
+        # Create physiotherapist profile
+        self.physio = Physiotherapist.objects.create(
+            user=self.physio_user,
+            bio="Bio example",
+            autonomic_community="EXTREMADURA",
+            rating_avg=4.5,
+            schedule={
+                "exceptions": {},
+                "appointments": [],
+                "weekly_schedule": {
+                    "monday": [{"start": "10:00", "end": "14:00"}],
+                    "tuesday": [{"start": "10:00", "end": "15:00"}],
+                    "wednesday": [],
+                    "thursday": [],
+                    "friday": [],
+                    "saturday": [],
+                    "sunday": []
+                }
+            },
+            birth_date="1980-01-01",
+            collegiate_number="COL1",
+            services={
+                "Servicio 1": {
+                    "id": 1,
+                    "title": "Primera consulta",
+                    "price": 30,
+                    "description": "Evaluación física personalizada",
+                    "duration": 45
+                }
+            },
+            gender="M"
+        )
+        
+        # Create a second physiotherapist for testing
+        self.physio_user2 = AppUser.objects.create_user(
+            username="physio2",
+            email="physio2@sample.com",
+            password="pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw=",
+            dni="77860169Q",
+            phone_number="666666667",
+            postal_code="41961",
+            account_status="ACTIVE",
+            first_name="Ana",
+            last_name="Martínez López"
+        )
+        
+        self.physio2 = Physiotherapist.objects.create(
+            user=self.physio_user2,
+            bio="Another physio",
+            autonomic_community="ANDALUCIA",
+            rating_avg=4.2,
+            schedule={
+                "exceptions": {},
+                "appointments": [],
+                "weekly_schedule": {
+                    "monday": [{"start": "09:00", "end": "13:00"}],
+                    "tuesday": [],
+                    "wednesday": [{"start": "10:00", "end": "15:00"}],
+                    "thursday": [],
+                    "friday": [{"start": "09:00", "end": "14:00"}],
+                    "saturday": [],
+                    "sunday": []
+                }
+            },
+            birth_date="1985-02-15",
+            collegiate_number="COL2",
+            services={
+                "Servicio 1": {
+                    "id": 1,
+                    "title": "Consulta",
+                    "price": 35,
+                    "description": "Consulta general",
+                    "duration": 40
+                }
+            },
+            gender="F"
+        )
+        
+        # Create patient user
+        self.patient_user = AppUser.objects.create_user(
+            username="patient1",
+            email="patient1@sample.com",
+            password="pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw=",
+            dni="76543211B",
+            phone_number="666666666",
+            postal_code="41960",
+            account_status="ACTIVE",
+            first_name="Juan",
+            last_name="Rodríguez García"
+        )
+        
+        # Create patient profile
+        self.patient = Patient.objects.create(
+            user=self.patient_user,
+            gender="M",
+            birth_date="1990-01-01"
+        )
+        
+        # Create a second patient for testing
+        self.patient_user2 = AppUser.objects.create_user(
+            username="patient2",
+            email="patient2@sample.com",
+            password="pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw=",
+            dni="76543212B",
+            phone_number="666666668",
+            postal_code="41962",
+            account_status="ACTIVE",
+            first_name="María",
+            last_name="Sánchez Pérez"
+        )
+        
+        self.patient2 = Patient.objects.create(
+            user=self.patient_user2,
+            gender="F",
+            birth_date="1992-05-15"
+        )
+        
+        # Create future date for appointments
+        future_date = timezone.now() + timedelta(days=365)
+        base_date = future_date.replace(hour=10, minute=0, second=0, microsecond=0)
+        
+        # Create appointments with different statuses for testing
+        # Appointments for physio1 with patient1
+        self.appointment1 = Appointment.objects.create(
+            start_time=base_date,
+            end_time=base_date + timedelta(hours=1),
+            is_online=True,
+            service='{"service": "Servicio 1"}',
+            patient=self.patient,
+            physiotherapist=self.physio,
+            status=StatusChoices.BOOKED,
+            alternatives=""
+        )
+        
+        self.appointment2 = Appointment.objects.create(
+            start_time=base_date + timedelta(days=1),
+            end_time=base_date + timedelta(days=1, hours=1),
+            is_online=False,
+            service='{"service": "Servicio 1"}',
+            patient=self.patient,
+            physiotherapist=self.physio,
+            status=StatusChoices.CONFIRMED,
+            alternatives=""
+        )
+        
+        self.appointment3 = Appointment.objects.create(
+            start_time=base_date + timedelta(days=2),
+            end_time=base_date + timedelta(days=2, hours=1),
+            is_online=True,
+            service='{"service": "Servicio 1"}',
+            patient=self.patient,
+            physiotherapist=self.physio,
+            status=StatusChoices.CANCELED,
+            alternatives=""
+        )
+        
+        # Appointments for physio1 with patient2
+        self.appointment4 = Appointment.objects.create(
+            start_time=base_date + timedelta(days=3),
+            end_time=base_date + timedelta(days=3, hours=1),
+            is_online=True,
+            service='{"service": "Servicio 1"}',
+            patient=self.patient2,
+            physiotherapist=self.physio,
+            status=StatusChoices.FINISHED,
+            alternatives=""
+        )
+        
+        self.appointment5 = Appointment.objects.create(
+            start_time=base_date + timedelta(days=4),
+            end_time=base_date + timedelta(days=4, hours=1),
+            is_online=False,
+            service='{"service": "Servicio 1"}',
+            patient=self.patient2,
+            physiotherapist=self.physio,
+            status=StatusChoices.PENDING,
+            alternatives=""
+        )
+        
+        # Appointments for physio2 with patient1
+        self.appointment6 = Appointment.objects.create(
+            start_time=base_date + timedelta(days=5),
+            end_time=base_date + timedelta(days=5, hours=1),
+            is_online=True,
+            service='{"service": "Servicio 1"}',
+            patient=self.patient,
+            physiotherapist=self.physio2,
+            status=StatusChoices.BOOKED,
+            alternatives=""
+        )
+        
+        # Appointments for physio2 with patient2
+        self.appointment7 = Appointment.objects.create(
+            start_time=base_date + timedelta(days=6),
+            end_time=base_date + timedelta(days=6, hours=1),
+            is_online=False,
+            service='{"service": "Servicio 1"}',
+            patient=self.patient2,
+            physiotherapist=self.physio2,
+            status=StatusChoices.CONFIRMED,
+            alternatives=""
+        )
+    
+    def test_list_appointments_physio_without_authentication(self):
+        url = '/api/appointment/physio/list/'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 401)
+    
+    def test_list_appointments_physio_with_patient_credentials(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'patient1',
+            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+        
+        url = '/api/appointment/physio/list/'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)
+    
+    def test_list_appointments_physio_all(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'jorgito',
+            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+        
+        url = '/api/appointment/physio/list/'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        
+        # Check that we get the correct number of appointments for this physiotherapist
+        self.assertEqual(response.data['count'], 5)
+        
+        # Verify all appointments belong to the authenticated physiotherapist
+        for appointment in response.data['results']:
+            self.assertEqual(appointment['physiotherapist'], self.physio.id)
+    
+    def test_list_appointments_physio_filter_by_status(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'jorgito',
+            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+        
+        # Test filter by status="booked"
+        url = '/api/appointment/physio/list/?status=booked'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['count'], 1)
+        self.assertEqual(response.data['results'][0]['id'], self.appointment1.id)
+        
+        # Test filter by status="confirmed"
+        url = '/api/appointment/physio/list/?status=confirmed'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['count'], 1)
+        self.assertEqual(response.data['results'][0]['id'], self.appointment2.id)
+        
+        # Test filter by status="canceled"
+        url = '/api/appointment/physio/list/?status=canceled'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['count'], 1)
+        self.assertEqual(response.data['results'][0]['id'], self.appointment3.id)
+        
+        # Test filter by status="finished"
+        url = '/api/appointment/physio/list/?status=finished'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['count'], 1)
+        self.assertEqual(response.data['results'][0]['id'], self.appointment4.id)
+        
+        # Test filter by status="pending"
+        url = '/api/appointment/physio/list/?status=pending'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['count'], 1)
+        self.assertEqual(response.data['results'][0]['id'], self.appointment5.id)
+        
+        # Test filter by non-existent status
+        url = '/api/appointment/physio/list/?status=nonexistent'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['count'], 0)
+    
+    def test_list_appointments_physio_filter_by_is_online(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'jorgito',
+            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+        
+        # Test filter by is_online=true
+        url = '/api/appointment/physio/list/?is_online=true'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['count'], 3)  # Appointments 1, 3, 4 are online
+        
+        # Test filter by is_online=false
+        url = '/api/appointment/physio/list/?is_online=false'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['count'], 2)  # Appointments 2, 5 are not online
+    
+    def test_list_appointments_physio_filter_by_patient(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'jorgito',
+            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+        
+        # Test filter by patient=patient1
+        url = f'/api/appointment/physio/list/?patient={self.patient.id}'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['count'], 3)  # Appointments 1, 2, 3 are for patient1
+        
+        # Test filter by patient=patient2
+        url = f'/api/appointment/physio/list/?patient={self.patient2.id}'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['count'], 2)  # Appointments 4, 5 are for patient2
+        
+        # Test with non-existent patient ID
+        url = '/api/appointment/physio/list/?patient=999'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.data['error'], 'Paciente no encontrado')
+    
+    # def test_list_appointments_physio_search(self):
+    #     login_response = self.client.post('/api/app_user/login/', {
+    #         'username': 'jorgito',
+    #         'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+    #     })
+    #     token = login_response.data['access']
+    #     self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+        
+    #     # Test search functionality
+    #     url = '/api/appointment/physio/list/?search=book'
+    #     response = self.client.get(url)
+    #     self.assertEqual(response.status_code, 200)
+    #     self.assertEqual(response.data['count'], 1)  # Should find the "booked" appointment
+        
+    #     url = '/api/appointment/physio/list/?search=conf'
+    #     response = self.client.get(url)
+    #     self.assertEqual(response.status_code, 200)
+    #     self.assertEqual(response.data['count'], 1)  # Should find the "confirmed" appointment
+    
+    def test_list_appointments_physio_ordering(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'jorgito',
+            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+        
+        # Test ordering ascending by start_time
+        url = '/api/appointment/physio/list/?ordering=start_time'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['count'], 5)
+        # Check that dates are in ascending order
+        start_times = [appointment['start_time'] for appointment in response.data['results']]
+        self.assertEqual(start_times, sorted(start_times))
+        
+        # Test ordering descending by start_time
+        url = '/api/appointment/physio/list/?ordering=-start_time'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['count'], 5)
+        # Check that dates are in descending order
+        start_times = [appointment['start_time'] for appointment in response.data['results']]
+        self.assertEqual(start_times, sorted(start_times, reverse=True))
+        
+        # Test ordering by end_time
+        url = '/api/appointment/physio/list/?ordering=end_time'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['count'], 5)
+        # Check that dates are in ascending order
+        end_times = [appointment['end_time'] for appointment in response.data['results']]
+        self.assertEqual(end_times, sorted(end_times))
+    
+    def test_list_appointments_physio_multiple_filters(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'jorgito',
+            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+        
+        # Test filter by online=true and status=booked
+        url = '/api/appointment/physio/list/?is_online=true&status=booked'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['count'], 1)  # Only appointment1 is both online and booked
+        
+        # Test filter by patient=patient1 and is_online=false
+        url = f'/api/appointment/physio/list/?patient={self.patient.id}&is_online=false'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['count'], 1)  # Only appointment2 is for patient1 and not online
+        
+        # Test filter by patient=patient2 and status=pending
+        url = f'/api/appointment/physio/list/?patient={self.patient2.id}&status=pending'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['count'], 1)  # Only appointment5 is for patient2 and pending
+    
+    def test_list_appointments_physio_pagination(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'jorgito',
+            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+        
+        # Test default pagination (should return all 5 appointments in one page with default settings)
+        url = '/api/appointment/physio/list/'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['count'], 5)
+        
+        # Test with page size parameter (assuming StandardResultsSetPagination allows page_size as query parameter)
+        url = '/api/appointment/physio/list/?page_size=2'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['count'], 5)  # Total count should still be 5
+        self.assertEqual(len(response.data['results']), 2)  # But only 2 results per page
+        
+        # Check the second page
+        url = '/api/appointment/physio/list/?page=2&page_size=2'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['count'], 5)
+        self.assertEqual(len(response.data['results']), 2)
+        
+        # Check the third page (should have only one result)
+        url = '/api/appointment/physio/list/?page=3&page_size=2'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['count'], 5)
+        self.assertEqual(len(response.data['results']), 1)
+    
+    def test_list_appointments_patient_without_authentication(self):
+        url = '/api/appointment/patient/list/'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 401)
+    
+    def test_list_appointments_patient_with_physio_credentials(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'jorgito',
+            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+        
+        url = '/api/appointment/patient/list/'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)
+    
+    def test_list_appointments_patient_all(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'patient1',
+            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+        
+        url = '/api/appointment/patient/list/'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        
+        # Should return all 4 appointments for patient1 (3 with physio1 and 1 with physio2)
+        self.assertEqual(len(response.data), 4)
+        
+        # Verify all appointments belong to the authenticated patient
+        patient_ids = [appointment['patient'] for appointment in response.data]
+        self.assertTrue(all(pid == self.patient.id for pid in patient_ids))
+    
+    def test_list_appointments_patient2_all(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'patient2',
+            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+        
+        url = '/api/appointment/patient/list/'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        
+        # Should return all 3 appointments for patient2 (2 with physio1 and 1 with physio2)
+        self.assertEqual(len(response.data), 3)
+        
+        # Verify all appointments belong to the authenticated patient
+        patient_ids = [appointment['patient'] for appointment in response.data]
+        self.assertTrue(all(pid == self.patient2.id for pid in patient_ids))
