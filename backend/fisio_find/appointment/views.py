@@ -440,6 +440,8 @@ def update_appointment(request, appointment_id):
             return Response({"error": "Solo puedes modificar citas con al menos 48 horas de antelación"}, status=status.HTTP_403_FORBIDDEN)
 
         alternatives = data.get("alternatives", {})
+        if not isinstance(alternatives, dict):
+            return Response({"error": "Alternatives debe ser un diccionario"}, status=status.HTTP_400_BAD_REQUEST) 
 
         # Validar que haya al menos dos fechas diferentes
         # if not isinstance(alternatives, dict) or len(alternatives.keys()) < 2:
@@ -447,17 +449,16 @@ def update_appointment(request, appointment_id):
 
         # Validar que las fechas y horas sean únicas y que no incluyan la fecha actual de la cita
         appointment_start_time = appointment.start_time.strftime(
-            "%Y-%m-%dT%H:%M:%SZ")  # Convertir a string
+            "%H:%M")  # Convertir a string
         validated_alternatives = defaultdict(set)
 
         for date, slots in alternatives.items():
             for slot in slots:
                 slot_start = slot["start"]
                 slot_end = slot["end"]
-
-                if slot_start == appointment_start_time:
+                if slot_start == appointment_start_time and date == appointment.start_time.date().isoformat():
                     return Response({"error": f"No puedes agregar la fecha actual de la cita ({appointment_start_time}) en 'alternatives'"}, status=status.HTTP_400_BAD_REQUEST)
-
+                
                 if slot_start >= slot_end:
                     return Response({"error": f"En {date}, la hora de inicio debe ser menor que la de fin"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -474,6 +475,8 @@ def update_appointment(request, appointment_id):
         }
 
         data["status"] = "pending"
+        data["start_time"] = appointment.start_time
+        data["end_time"] = appointment.end_time
     else:
         return Response({"error": "No tienes permisos para modificar esta cita"}, status=status.HTTP_403_FORBIDDEN)
 
