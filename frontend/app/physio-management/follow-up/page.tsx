@@ -804,7 +804,7 @@ const SeguimientoPage = () => {
 
                   <div className="mb-4">
                     <div className="flex justify-between mb-1">
-                      <span className="text-gray-600">Inicio:</span>
+                      <span className="text-gray-600">Inicio</span>
                       <span>
                         {new Date(treatment.start_time).toLocaleDateString(
                           "es-ES"
@@ -812,7 +812,7 @@ const SeguimientoPage = () => {
                       </span>
                     </div>
                     <div className="flex justify-between mb-1">
-                      <span className="text-gray-600">Fin:</span>
+                      <span className="text-gray-600">Fin</span>
                       <span>
                         {new Date(treatment.end_time).toLocaleDateString(
                           "es-ES"
@@ -820,7 +820,7 @@ const SeguimientoPage = () => {
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Estado:</span>
+                      <span className="text-gray-600">Estado</span>
                       <span
                         className={
                           treatment.is_active
@@ -831,13 +831,6 @@ const SeguimientoPage = () => {
                         {treatment.is_active ? "Activo" : "Inactivo"}
                       </span>
                     </div>
-                  </div>
-
-                  <div className="border-t pt-4">
-                    <h4 className="font-semibold mb-2">Deberes asignados:</h4>
-                    <p className="text-gray-700 text-sm line-clamp-2">
-                      {treatment.homework}
-                    </p>
                   </div>
                 </div>
 
