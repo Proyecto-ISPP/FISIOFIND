@@ -40,7 +40,8 @@ ALLOWED_HOSTS = [
     's2.fisiofind.com',
     's2-api.fisiofind.com',
     's3.fisiofind.com',
-    's3-api.fisiofind.com'
+    's3-api.fisiofind.com',
+    'turn.fisiofind.com',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
