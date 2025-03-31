@@ -50,9 +50,17 @@ class TreatmentDetailSerializer(serializers.ModelSerializer):
         
 class ExerciseSerializer(serializers.ModelSerializer):
     physiotherapist = serializers.PrimaryKeyRelatedField(queryset=Physiotherapist.objects.all())
+
     class Meta:
         model = Exercise
-        fields = ['id', 'title', 'description', 'area', 'physiotherapist']
+        fields = [
+            'id',
+            'title',
+            'description',
+            'body_region',
+            'exercise_type',
+            'physiotherapist'
+        ]
         read_only_fields = ['id']
         
 class ExerciseSessionSerializer(serializers.ModelSerializer):

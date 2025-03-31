@@ -69,33 +69,50 @@ class SessionTestResponse(models.Model):
         return f"Respuesta de {self.patient.user.username} al test {self.test.question} en sesión {self.test.session.id}"
 
 class Exercise(models.Model):
-    """ Catálogo de ejercicios disponibles """
-    AREA_CHOICES = [
-        ("UPPER_BODY", "Parte Superior del Cuerpo"),
-        ("LOWER_BODY", "Parte Inferior del Cuerpo"),
-        ("CORE", "Zona Media/Core"),
-        ("FULL_BODY", "Cuerpo Completo"),
+    """ Catálogo de ejercicios disponibles para fisioterapia """
+
+    BODY_REGION_CHOICES = [
+        ("NECK", "Cuello"),
         ("SHOULDER", "Hombros"),
         ("ARM", "Brazos (Bíceps, Tríceps)"),
+        ("ELBOW", "Codo"),
+        ("WRIST_HAND", "Muñeca y Mano"),
         ("CHEST", "Pecho"),
-        ("BACK", "Espalda"),
+        ("UPPER_BACK", "Espalda Alta"),
+        ("LOWER_BACK", "Zona Lumbar"),
+        ("CORE", "Zona Media / Core"),
         ("QUADRICEPS", "Cuádriceps"),
         ("HAMSTRINGS", "Isquiotibiales"),
-        ("GLUTES", "Glúteos"),
+        ("KNEE", "Rodilla"),
         ("CALVES", "Pantorrillas"),
-        ("NECK", "Cuello"),
-        ("LOWER_BACK", "Zona Lumbar"),
-        ("HIP", "Caderas"),
-        ("BALANCE", "Ejercicios de Equilibrio"),
-        ("MOBILITY", "Movilidad"),
+        ("ANKLE_FOOT", "Tobillo y Pie"),
+        ("UPPER_BODY", "Parte Superior del Cuerpo"),
+        ("LOWER_BODY", "Parte Inferior del Cuerpo"),
+        ("FULL_BODY", "Cuerpo Completo"),
+    ]
+
+    EXERCISE_TYPE_CHOICES = [
+        ("STRENGTH", "Fortalecimiento Muscular"),
+        ("MOBILITY", "Movilidad Articular"),
         ("STRETCHING", "Estiramientos"),
+        ("BALANCE", "Ejercicios de Equilibrio"),
         ("PROPRIOCEPTION", "Propiocepción"),
+        ("COORDINATION", "Coordinación"),
+        ("BREATHING", "Ejercicios Respiratorios"),
+        ("RELAXATION", "Relajación / Descarga"),
+        ("CARDIO", "Resistencia Cardiovascular"),
+        ("FUNCTIONAL", "Ejercicio Funcional"),
     ]
 
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
-    area = models.CharField(max_length=255, choices=AREA_CHOICES)
-    physiotherapist = models.ForeignKey(Physiotherapist, on_delete=models.CASCADE, related_name='exercises')
+    body_region = models.CharField(max_length=50, choices=BODY_REGION_CHOICES)
+    exercise_type = models.CharField(max_length=50, choices=EXERCISE_TYPE_CHOICES)
+    physiotherapist = models.ForeignKey(
+        Physiotherapist, 
+        on_delete=models.CASCADE, 
+        related_name='exercises'
+    )
 
     def __str__(self):
         return self.title
