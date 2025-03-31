@@ -20,4 +20,4 @@ jobs:
 
       - name: Deploy to DigitalOcean
         run: |
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.FRONTEND_SSH_USER }}@${{ secrets.FRONTEND_SERVER_IP }} 'bash -s' < deploy.sh
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.FRONTEND_SSH_USER }}@${{ secrets.FRONTEND_SERVER_IP }} 'bash -s' < ./deploy.sh
