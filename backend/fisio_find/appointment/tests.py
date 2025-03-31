@@ -8,6 +8,7 @@ from users.models import AppUser, Patient, Physiotherapist, Specialization, Phys
 from users.serializers import PhysioSerializer, PatientSerializer, AppUserSerializer
 from django.utils import timezone
 from datetime import timedelta
+import json
 
 class CreateAppointmentTests(APITestCase):
     def setUp(self):
@@ -16,7 +17,7 @@ class CreateAppointmentTests(APITestCase):
         self.physio_user = AppUser.objects.create_user(
             username = "jorgito",
             email = "jorgito@sample.com",
-            password = "pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw=",
+            password = "Usuar1o_1",
             dni = "77860168Q",
             phone_number = "666666666",
             postal_code = "41960",
@@ -105,7 +106,7 @@ class CreateAppointmentTests(APITestCase):
         self.patient_user = AppUser.objects.create_user(
             username = "patient1",
             email = "patient1@sample.com",
-            password = "pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw=",
+            password = "Usuar1o_1",
             dni = "76543211B",
             phone_number = "666666666",
             postal_code = "41960",
@@ -141,7 +142,7 @@ class CreateAppointmentTests(APITestCase):
     def test_create_appointment_as_patient(self):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'patient1',
-            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+            'password': 'Usuar1o_1'
         })
         token = login_response.data['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
@@ -195,7 +196,7 @@ class CreateAppointmentTests(APITestCase):
     def test_create_appointment_as_patient_invalid_start_end_time(self):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'patient1',
-            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+            'password': 'Usuar1o_1'
         })
         token = login_response.data['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
@@ -219,7 +220,7 @@ class CreateAppointmentTests(APITestCase):
     def test_create_appointment_as_patient_invalid_start_end_date(self):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'patient1',
-            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+            'password': 'Usuar1o_1'
         })
         token = login_response.data['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
@@ -243,7 +244,7 @@ class CreateAppointmentTests(APITestCase):
     def test_create_appointment_as_patient_invalid_schedule_day(self):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'patient1',
-            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+            'password': 'Usuar1o_1'
         })
         token = login_response.data['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
@@ -267,7 +268,7 @@ class CreateAppointmentTests(APITestCase):
     def test_create_appointment_as_patient_invalid_schedule_time(self):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'patient1',
-            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+            'password': 'Usuar1o_1'
         })
         token = login_response.data['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
@@ -291,7 +292,7 @@ class CreateAppointmentTests(APITestCase):
     def test_create_appointment_as_patient_already_appointment_exists(self):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'patient1',
-            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+            'password': 'Usuar1o_1'
         })
         token = login_response.data['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
@@ -315,7 +316,7 @@ class CreateAppointmentTests(APITestCase):
     def test_create_appointment_as_patient_in_exception_date(self):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'patient1',
-            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+            'password': 'Usuar1o_1'
         })
         token = login_response.data['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
@@ -339,7 +340,7 @@ class CreateAppointmentTests(APITestCase):
     def test_create_appointment_as_patient_in_past_date(self):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'patient1',
-            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+            'password': 'Usuar1o_1'
         })
         token = login_response.data['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
@@ -363,7 +364,7 @@ class CreateAppointmentTests(APITestCase):
     def test_create_appointment_as_patient_with_physio_credentials(self):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'jorgito',
-            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+            'password': 'Usuar1o_1'
         })
         token = login_response.data['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
@@ -386,7 +387,7 @@ class CreateAppointmentTests(APITestCase):
     def test_create_appointment_as_patient_invalid_physio(self):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'patient1',
-            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+            'password': 'Usuar1o_1'
         })
         token = login_response.data['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
@@ -410,7 +411,7 @@ class CreateAppointmentTests(APITestCase):
     def test_create_appointment_as_physio(self):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'jorgito',
-            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+            'password': 'Usuar1o_1'
         })
         token = login_response.data['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
@@ -464,7 +465,7 @@ class CreateAppointmentTests(APITestCase):
     def test_create_appointment_as_physio_with_patient_credentials(self):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'patient1',
-            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+            'password': 'Usuar1o_1'
         })
         token = login_response.data['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
@@ -486,7 +487,7 @@ class CreateAppointmentTests(APITestCase):
     def test_create_appointment_as_physio_invalid_start_end_time(self):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'jorgito',
-            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+            'password': 'Usuar1o_1'
         })
         token = login_response.data['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
@@ -509,7 +510,7 @@ class CreateAppointmentTests(APITestCase):
     def test_create_appointment_as_physio_invalid_start_end_date(self):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'jorgito',
-            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+            'password': 'Usuar1o_1'
         })
         token = login_response.data['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
@@ -534,7 +535,7 @@ class CreateAppointmentTests(APITestCase):
         other_physio_user = AppUser.objects.create_user(
             username = "other_fisio",
             email = "other_fisio@sample.com",
-            password = "pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw=",
+            password = "Usuar1o_1",
             dni = "76543212B",
             phone_number = "666666666",
             postal_code = "41960",
@@ -634,7 +635,7 @@ class CreateAppointmentTests(APITestCase):
 
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'jorgito',
-            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+            'password': 'Usuar1o_1'
         })
         token = login_response.data['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
@@ -657,7 +658,7 @@ class CreateAppointmentTests(APITestCase):
     def test_create_appointment_as_physio_invalid_patient(self):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'jorgito',
-            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+            'password': 'Usuar1o_1'
         })
         token = login_response.data['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
@@ -681,7 +682,7 @@ class CreateAppointmentTests(APITestCase):
     def test_create_appointment_as_physio_missing_required_fields(self):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'jorgito',
-            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+            'password': 'Usuar1o_1'
         })
         token = login_response.data['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
@@ -704,7 +705,7 @@ class CreateAppointmentTests(APITestCase):
     def test_create_appointment_as_physio_same_time_conflict(self):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'jorgito',
-            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+            'password': 'Usuar1o_1'
         })
         token = login_response.data['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
@@ -733,7 +734,7 @@ class ListAppointmentTests(APITestCase):
         self.physio_user = AppUser.objects.create_user(
             username="jorgito",
             email="jorgito@sample.com",
-            password="pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw=",
+            password="Usuar1o_1",
             dni="77860168Q",
             phone_number="666666666",
             postal_code="41960",
@@ -779,7 +780,7 @@ class ListAppointmentTests(APITestCase):
         self.physio_user2 = AppUser.objects.create_user(
             username="physio2",
             email="physio2@sample.com",
-            password="pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw=",
+            password="Usuar1o_1",
             dni="77860169Q",
             phone_number="666666667",
             postal_code="41961",
@@ -824,7 +825,7 @@ class ListAppointmentTests(APITestCase):
         self.patient_user = AppUser.objects.create_user(
             username="patient1",
             email="patient1@sample.com",
-            password="pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw=",
+            password="Usuar1o_1",
             dni="76543211B",
             phone_number="666666666",
             postal_code="41960",
@@ -844,7 +845,7 @@ class ListAppointmentTests(APITestCase):
         self.patient_user2 = AppUser.objects.create_user(
             username="patient2",
             email="patient2@sample.com",
-            password="pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw=",
+            password="Usuar1o_1",
             dni="76543212B",
             phone_number="666666668",
             postal_code="41962",
@@ -953,7 +954,7 @@ class ListAppointmentTests(APITestCase):
     def test_list_appointments_physio_with_patient_credentials(self):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'patient1',
-            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+            'password': 'Usuar1o_1'
         })
         token = login_response.data['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
@@ -965,7 +966,7 @@ class ListAppointmentTests(APITestCase):
     def test_list_appointments_physio_all(self):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'jorgito',
-            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+            'password': 'Usuar1o_1'
         })
         token = login_response.data['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
@@ -984,7 +985,7 @@ class ListAppointmentTests(APITestCase):
     def test_list_appointments_physio_filter_by_status(self):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'jorgito',
-            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+            'password': 'Usuar1o_1'
         })
         token = login_response.data['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
@@ -1033,7 +1034,7 @@ class ListAppointmentTests(APITestCase):
     def test_list_appointments_physio_filter_by_is_online(self):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'jorgito',
-            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+            'password': 'Usuar1o_1'
         })
         token = login_response.data['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
@@ -1053,7 +1054,7 @@ class ListAppointmentTests(APITestCase):
     def test_list_appointments_physio_filter_by_patient(self):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'jorgito',
-            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+            'password': 'Usuar1o_1'
         })
         token = login_response.data['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
@@ -1079,7 +1080,7 @@ class ListAppointmentTests(APITestCase):
     # def test_list_appointments_physio_search(self):
     #     login_response = self.client.post('/api/app_user/login/', {
     #         'username': 'jorgito',
-    #         'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+    #         'password': 'Usuar1o_1'
     #     })
     #     token = login_response.data['access']
     #     self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
@@ -1098,7 +1099,7 @@ class ListAppointmentTests(APITestCase):
     def test_list_appointments_physio_ordering(self):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'jorgito',
-            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+            'password': 'Usuar1o_1'
         })
         token = login_response.data['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
@@ -1133,7 +1134,7 @@ class ListAppointmentTests(APITestCase):
     def test_list_appointments_physio_multiple_filters(self):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'jorgito',
-            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+            'password': 'Usuar1o_1'
         })
         token = login_response.data['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
@@ -1159,7 +1160,7 @@ class ListAppointmentTests(APITestCase):
     def test_list_appointments_physio_pagination(self):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'jorgito',
-            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+            'password': 'Usuar1o_1'
         })
         token = login_response.data['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
@@ -1199,7 +1200,7 @@ class ListAppointmentTests(APITestCase):
     def test_list_appointments_patient_with_physio_credentials(self):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'jorgito',
-            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+            'password': 'Usuar1o_1'
         })
         token = login_response.data['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
@@ -1211,7 +1212,7 @@ class ListAppointmentTests(APITestCase):
     def test_list_appointments_patient_all(self):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'patient1',
-            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+            'password': 'Usuar1o_1'
         })
         token = login_response.data['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
@@ -1230,7 +1231,7 @@ class ListAppointmentTests(APITestCase):
     def test_list_appointments_patient2_all(self):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'patient2',
-            'password': 'pbkdf2_sha256$870000$3QqCfXSf9kmYHVoGHNxxiP$nQrFTWfdh8L2ap9wOVTulFJoqDrw2UD7wheiXkgJMXw='
+            'password': 'Usuar1o_1'
         })
         token = login_response.data['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
@@ -1245,3 +1246,352 @@ class ListAppointmentTests(APITestCase):
         # Verify all appointments belong to the authenticated patient
         patient_ids = [appointment['patient'] for appointment in response.data]
         self.assertTrue(all(pid == self.patient2.id for pid in patient_ids))
+
+    def test_get_appointment_by_id_as_patient(self):
+        # Autenticar como el paciente
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'patient1',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        # Obtener la cita
+        url = f'/api/appointment/{self.appointment1.id}/'
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['id'], self.appointment1.id)
+        self.assertEqual(response.data['patient'], self.patient.id)
+        self.assertEqual(response.data['physiotherapist'], self.physio.id)
+
+    def test_get_appointment_by_id_as_physio(self):
+        # Autenticar como el fisioterapeuta
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'jorgito',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        # Obtener la cita
+        url = f'/api/appointment/{self.appointment1.id}/'
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['id'], self.appointment1.id)
+        self.assertEqual(response.data['patient'], self.patient.id)
+        self.assertEqual(response.data['physiotherapist'], self.physio.id)
+
+    def test_get_appointment_by_id_without_permission(self):
+        # Crear un usuario sin relación con la cita
+        other_user = AppUser.objects.create_user(
+            username="other_user",
+            email="other_user@sample.com",
+            password="Usuar1o_1"
+        )
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'other_user',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        # Intentar obtener la cita
+        url = f'/api/appointment/{self.appointment1.id}/'
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.data['error'], "No tienes permisos para ver esta cita")
+
+    def test_get_appointment_by_id_not_found(self):
+        # Autenticar como el paciente
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'patient1',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        # Intentar obtener una cita inexistente
+        url = '/api/appointment/999/'
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.data['error'], "Cita no encontrada")
+
+    def test_get_appointment_by_id_without_authentication(self):
+        # Intentar obtener la cita sin autenticación
+        url = f'/api/appointment/{self.appointment1.id}/'
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 401)
+
+
+class UpdateAppointmentTests(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        
+        # Crear usuario fisioterapeuta
+        self.physio_user = AppUser.objects.create_user(
+            username="jorgito",
+            email="jorgito@sample.com",
+            password="Usuar1o_1",
+            dni="77860168Q",
+            phone_number="666666666",
+            postal_code="41960",
+            account_status="ACTIVE",
+            first_name="Jorge",
+            last_name="García Chaparro"
+        )
+        
+        self.physio = Physiotherapist.objects.create(
+            user=self.physio_user,
+            bio="Bio example",
+            autonomic_community="EXTREMADURA",
+            rating_avg=4.5,
+            schedule={
+                "exceptions": {},
+                "appointments": [],
+                "weekly_schedule": {
+                    "monday": [{"start": "10:00", "end": "14:00"}],
+                    "tuesday": [{"start": "10:00", "end": "15:00"}],
+                    "wednesday": [],
+                    "thursday": [],
+                    "friday": [],
+                    "saturday": [],
+                    "sunday": []
+                }
+            },
+            birth_date="1980-01-01",
+            collegiate_number="COL1",
+            services={"Servicio 1": {"id": 1, "title": "Consulta", "price": 30, "duration": 45}},
+            gender="M"
+        )
+        
+        # Crear usuario paciente
+        self.patient_user = AppUser.objects.create_user(
+            username="patient1",
+            email="patient1@sample.com",
+            password="Usuar1o_1",
+            dni="76543211B",
+            phone_number="666666666",
+            postal_code="41960",
+            account_status="ACTIVE",
+            first_name="Juan",
+            last_name="Rodríguez García"
+        )
+        
+        self.patient = Patient.objects.create(
+            user=self.patient_user,
+            gender="M",
+            birth_date="1990-01-01"
+        )
+        
+        # Crear cita futura (más de 48 horas desde ahora)
+        self.future_date = timezone.now() + timedelta(days=5)
+        self.appointment = Appointment.objects.create(
+            start_time=self.future_date.replace(hour=10, minute=0, second=0, microsecond=0),
+            end_time=self.future_date.replace(hour=11, minute=0, second=0, microsecond=0),
+            is_online=True,
+            service='{"service": "Servicio 1"}',
+            patient=self.patient,
+            physiotherapist=self.physio,
+            status=StatusChoices.BOOKED,
+            alternatives=""
+        )
+        
+        # Crear cita cercana (menos de 48 horas)
+        self.close_date = timezone.now() + timedelta(hours=24)
+        self.close_appointment = Appointment.objects.create(
+            start_time=self.close_date.replace(hour=10, minute=0, second=0, microsecond=0),
+            end_time=self.close_date.replace(hour=11, minute=0, second=0, microsecond=0),
+            is_online=True,
+            service='{"service": "Servicio 1"}',
+            patient=self.patient,
+            physiotherapist=self.physio,
+            status=StatusChoices.BOOKED,
+            alternatives=""
+        )
+
+    def test_update_appointment_success(self):
+        # Login como fisioterapeuta
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'jorgito',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        url = f'/api/appointment/update/{self.appointment.id}/'
+        data = {
+            "alternatives": {
+                "2026-02-06": [{"start": "10:00", "end": "11:00"}],
+                "2026-02-06": [{"start": "11:00", "end": "12:00"}]
+            }
+        }
+        response = self.client.put(url, data, format='json')
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['status'], 'pending')
+        self.assertEqual(response.data['alternatives'], data['alternatives'])
+
+    def test_update_appointment_without_authentication(self):
+        url = f'/api/appointment/update/{self.appointment.id}/'
+        data = {
+            "alternatives": {
+                "2026-02-05": [{"start": "10:00", "end": "11:00"}],
+                "2026-02-06": [{"start": "11:00", "end": "12:00"}]
+            }
+        }
+        response = self.client.put(url, data, format='json')
+        
+        self.assertEqual(response.status_code, 401)
+
+    def test_update_appointment_as_patient(self):
+        # Login como paciente
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'patient1',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        url = f'/api/appointment/update/{self.appointment.id}/'
+        data = {
+            "alternatives": {
+                "2026-02-05": [{"start": "10:00", "end": "11:00"}],
+                "2026-02-06": [{"start": "11:00", "end": "12:00"}]
+            }
+        }
+        response = self.client.put(url, data, format='json')
+        
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.data['detail'], "Usted no tiene permiso para realizar esta acción.")
+
+    def test_update_appointment_less_than_48_hours(self):
+        # Login como fisioterapeuta
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'jorgito',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        url = f'/api/appointment/update/{self.close_appointment.id}/'
+        data = {
+            "alternatives": {
+                "2026-02-05": [{"start": "10:00", "end": "11:00"}],
+                "2026-02-06": [{"start": "11:00", "end": "12:00"}]
+            }
+        }
+        response = self.client.put(url, data, format='json')
+        
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.data['error'], "Solo puedes modificar citas con al menos 48 horas de antelación")
+
+    def test_update_appointment_invalid_time_order(self):
+        # Login como fisioterapeuta
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'jorgito',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        url = f'/api/appointment/update/{self.appointment.id}/'
+        data = {
+            "alternatives": {
+                "2026-02-05": [{"start": "11:00", "end": "10:00"}],
+                "2026-02-06": [{"start": "11:00", "end": "12:00"}]
+            }
+        }
+        response = self.client.put(url, data, format='json')
+        
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("la hora de inicio debe ser menor que la de fin", response.data['error'])
+
+    def test_update_appointment_with_current_time(self):
+        # Login como fisioterapeuta
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'jorgito',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        current_start_time = self.appointment.start_time.strftime("%H:%M")
+        current_start_date = self.appointment.start_time.strftime("%Y-%m-%d")
+        url = f'/api/appointment/update/{self.appointment.id}/'
+        data = {
+            "alternatives": {
+                current_start_date: [{"start": current_start_time, "end": "11:00"}],
+                "2026-02-06": [{"start": "11:00", "end": "12:00"}]
+            }
+        }
+        response = self.client.put(url, data, format='json')
+        
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("No puedes agregar la fecha actual de la cita", response.data['error'])
+
+    def test_update_appointment_duplicate_slots(self):
+        # Login como fisioterapeuta
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'jorgito',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        url = f'/api/appointment/update/{self.appointment.id}/'
+        data = {
+            "alternatives": {
+                "2026-02-06": [
+                    {"start": "10:00", "end": "11:00"},
+                    {"start": "10:00", "end": "11:00"}
+                ]
+            }
+        }
+        response = self.client.put(url, data, format='json')
+        
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("ya existe en 'alternatives'", response.data['error'])
+
+    def test_update_appointment_not_found(self):
+        # Login como fisioterapeuta
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'jorgito',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        url = '/api/appointment/update/999/'
+        data = {
+            "alternatives": {
+                "2026-02-05": [{"start": "10:00", "end": "11:00"}],
+                "2026-02-06": [{"start": "11:00", "end": "12:00"}]
+            }
+        }
+        response = self.client.put(url, data, format='json')
+        
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.data['error'], "Cita no encontrada")
+
+    def test_update_appointment_invalid_data(self):
+        # Login como fisioterapeuta
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'jorgito',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        url = f'/api/appointment/update/{self.appointment.id}/'
+        data = {
+            "alternatives": "invalid_data"  # Formato incorrecto
+        }
+        response = self.client.put(url, data, format='json')
+        
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data['error'], "Alternatives debe ser un diccionario")
