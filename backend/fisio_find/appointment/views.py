@@ -2,7 +2,7 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 from rest_framework import generics
 from rest_framework.filters import SearchFilter, OrderingFilter
-from appointment.models import Appointment, Physiotherapist
+from appointment.models import Appointment, Physiotherapist, Patient
 from appointment.serializers import AppointmentSerializer
 from rest_framework.permissions import IsAuthenticated
 from payment.views import cancel_payment_pyshio
@@ -15,6 +15,7 @@ from rest_framework.pagination import PageNumberPagination
 from django.core.exceptions import ValidationError
 from rest_framework.views import APIView
 from django.utils.timezone import make_aware, is_aware
+from django.utils.dateparse import parse_datetime
 from datetime import datetime, timezone, timedelta
 from appointment.emailUtils import send_appointment_email
 from django.core import signing
@@ -67,9 +68,67 @@ def create_appointment_patient(request):
     patient = request.user.patient
     if hasattr(request.user, 'physio'):
         return Response({"error": "Los fisioterapeutas no pueden crear citas como pacientes"}, status=status.HTTP_403_FORBIDDEN)
+    
+    weekly_days = {
+        "monday": "lunes",
+        "tuesday": "martes",
+        "wednesday": "miércoles",
+        "thursday": "jueves",
+        "friday": "viernes",
+        "saturday": "sábado",
+        "sunday": "domingo"
+    }
 
     data = request.data.copy()
     data['patient'] = patient.id
+    data['status'] = "booked"
+
+    try:
+        physiotherapist = Physiotherapist.objects.get(id=data['physiotherapist'])
+    except Physiotherapist.DoesNotExist:
+        return Response({"error": "Fisioterapeuta no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+    
+    schedule = physiotherapist.schedule
+    weekly_schedule = schedule.get('weekly_schedule', {})
+    exceptions = schedule.get('exceptions', {})
+    appointments = schedule.get('appointments', [])
+
+    # Parsear fechas de la solicitud
+    start_time = parse_datetime(data['start_time'])
+    if not is_aware(start_time):
+        start_time = make_aware(start_time)
+    end_time = parse_datetime(data['end_time'])
+    if not is_aware(end_time):
+        end_time = make_aware(end_time)
+    appointment_day = start_time.strftime('%A').lower()  # "monday", "tuesday", etc.
+
+    # Verificar que la fecha no sea pasada
+    if start_time.date() < datetime.now().date():
+        return Response({"error": "No puedes crear una cita en el pasado"}, status=status.HTTP_400_BAD_REQUEST)
+
+    # 1. Verificar si el fisioterapeuta trabaja ese día
+    if appointment_day not in weekly_schedule or not weekly_schedule[appointment_day]:
+        return Response({"error": f"El fisioterapeuta no trabaja los {weekly_days[appointment_day]}"}, status=status.HTTP_400_BAD_REQUEST)
+
+    # 2. Verificar si la cita está dentro del horario del fisioterapeuta
+    valid_time_slot = False
+    for slot in weekly_schedule[appointment_day]:
+        slot_start = datetime.strptime(slot['start'], "%H:%M").time()
+        slot_end = datetime.strptime(slot['end'], "%H:%M").time()
+        if slot_start <= start_time.time() and end_time.time() <= slot_end:
+            valid_time_slot = True
+            break
+
+    if not valid_time_slot:
+        return Response({"error": "El horario solicitado no está dentro del horario del fisioterapeuta"}, status=status.HTTP_400_BAD_REQUEST)
+
+    # 3. Verificar si la fecha está en excepciones
+    exception_slots = exceptions.get(start_time.date().isoformat(), [])
+    for ex in exception_slots:
+        ex_start = datetime.strptime(ex['start'], "%H:%M").time()
+        ex_end = datetime.strptime(ex['end'], "%H:%M").time()
+        if ex_start <= start_time.time() < ex_end or ex_start < end_time.time() <= ex_end:
+            return Response({"error": "El fisioterapeuta no está disponible en ese horario debido a una excepción"}, status=status.HTTP_400_BAD_REQUEST)
 
     serializer = AppointmentSerializer(data=data)
     if serializer.is_valid():
@@ -90,6 +149,11 @@ def create_appointment_physio(request):
 
     data = request.data.copy()
     data['physiotherapist'] = physiotherapist.id
+
+    try:
+        patient = Patient.objects.get(id=data['patient'])
+    except Patient.DoesNotExist:
+        return Response({"error": "Paciente no encontrado"}, status=status.HTTP_404_NOT_FOUND)
 
     serializer = AppointmentSerializer(data=data)
     if serializer.is_valid():
