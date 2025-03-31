@@ -110,6 +110,7 @@ const SessionDetailPage = ({ params }: { params: { id: string; sessionId: string
     }
   }, [isClient, params.sessionId]);
 
+
   const loadSessionData = async (authToken: string, sessionId: string) => {
     try {
       setLoading(true);
@@ -144,8 +145,68 @@ const SessionDetailPage = ({ params }: { params: { id: string; sessionId: string
       );
 
       if (exercisesResponse.ok) {
-        const exercisesData = await exercisesResponse.json();
-        setExercises(exercisesData);
+        const exerciseSessions = await exercisesResponse.json();
+        console.log("Exercise sessions:", exerciseSessions);
+        
+        // Fetch detailed information for each exercise
+        const exercisesWithDetails = await Promise.all(
+          exerciseSessions.map(async (exerciseSession: any) => {
+            try {
+              // Get the exercise ID (either from exerciseSession.exercise.id or exerciseSession.exercise if it's just an ID)
+              const exerciseId = typeof exerciseSession.exercise === 'object' ? 
+                exerciseSession.exercise.id : exerciseSession.exercise;
+              
+              const exerciseDetailResponse = await fetch(
+                `${getApiBaseUrl()}/api/treatments/exercises/${exerciseId}/`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${authToken}`,
+                    "Content-Type": "application/json",
+                  },
+                }
+              );
+              
+              if (exerciseDetailResponse.ok) {
+                const exerciseDetail = await exerciseDetailResponse.json();
+                console.log(`Exercise ${exerciseId} details:`, exerciseDetail);
+                
+                // Get the series for this exercise session
+                const seriesResponse = await fetch(
+                  `${getApiBaseUrl()}/api/treatments/exercise-sessions/${exerciseSession.id}/series/`,
+                  {
+                    headers: {
+                      Authorization: `Bearer ${authToken}`,
+                      "Content-Type": "application/json",
+                    },
+                  }
+                );
+                
+                let series = [];
+                if (seriesResponse.ok) {
+                  series = await seriesResponse.json();
+                  console.log(`Series for exercise session ${exerciseSession.id}:`, series);
+                }
+                
+                // Create a complete exercise session object with all details
+                return {
+                  id: exerciseSession.id,
+                  session: exerciseSession.session,
+                  exercise: exerciseDetail,
+                  series: series
+                };
+              }
+              return null;
+            } catch (error) {
+              console.error(`Error fetching details for exercise session ${exerciseSession.id}:`, error);
+              return null;
+            }
+          })
+        );
+        
+        // Filter out any null values from failed requests
+        const validExercises = exercisesWithDetails.filter(ex => ex !== null);
+        console.log("Exercises with details:", validExercises);
+        setExercises(validExercises);
       }
 
       // Load test for this session
@@ -282,6 +343,49 @@ const SessionDetailPage = ({ params }: { params: { id: string; sessionId: string
     return days.map(day => dayMap[day] || day).join(", ");
   };
 
+  const formatBodyRegion = (bodyRegion: string): string => {
+    const bodyRegionMap: Record<string, string> = {
+      "NECK": "Cuello",
+      "SHOULDER": "Hombros",
+      "ARM": "Brazos (Bíceps, Tríceps)",
+      "ELBOW": "Codo",
+      "WRIST_HAND": "Muñeca y Mano",
+      "CHEST": "Pecho",
+      "UPPER_BACK": "Espalda Alta",
+      "LOWER_BACK": "Zona Lumbar",
+      "CORE": "Zona Media / Core",
+      "QUADRICEPS": "Cuádriceps",
+      "HAMSTRINGS": "Isquiotibiales",
+      "KNEE": "Rodilla",
+      "CALVES": "Pantorrillas",
+      "ANKLE_FOOT": "Tobillo y Pie",
+      "UPPER_BODY": "Parte Superior del Cuerpo",
+      "LOWER_BODY": "Parte Inferior del Cuerpo",
+      "FULL_BODY": "Cuerpo Completo",
+      "UNKNOWN": "No especificada"
+    };
+    
+    return bodyRegionMap[bodyRegion] || bodyRegion;
+  };
+    
+  const formatExerciseType = (exerciseType: string): string => {
+    const exerciseTypeMap: Record<string, string> = {
+      "STRENGTH": "Fortalecimiento Muscular",
+      "MOBILITY": "Movilidad Articular",
+      "STRETCHING": "Estiramientos",
+      "BALANCE": "Ejercicios de Equilibrio",
+      "PROPRIOCEPTION": "Propiocepción",
+      "COORDINATION": "Coordinación",
+      "BREATHING": "Ejercicios Respiratorios",
+      "RELAXATION": "Relajación / Descarga",
+      "CARDIO": "Resistencia Cardiovascular",
+      "FUNCTIONAL": "Ejercicio Funcional",
+      "UNKNOWN": "No especificado"
+    };
+    
+    return exerciseTypeMap[exerciseType] || exerciseType;
+  };
+
   if (!isClient) {
     return null;
   }
@@ -353,11 +457,11 @@ const SessionDetailPage = ({ params }: { params: { id: string; sessionId: string
               ) : (
                 <div className="space-y-4">
                   {exercises.map((exerciseSession) => (
-                    <div key={exerciseSession.id} className="border rounded-lg overflow-hidden">
+                    <div key={exerciseSession.id} className="border rounded-xl overflow-hidden">
                       <div className="bg-blue-50 p-4">
                         <h3 className="font-bold text-lg">{exerciseSession.exercise.title}</h3>
                         <p className="text-sm text-gray-600 mt-1">
-                          {exerciseSession.exercise.body_region} - {exerciseSession.exercise.exercise_type}
+                          {formatBodyRegion(exerciseSession.exercise.body_region)} - {formatExerciseType(exerciseSession.exercise.exercise_type)}
                         </p>
                       </div>
                       
@@ -373,7 +477,6 @@ const SessionDetailPage = ({ params }: { params: { id: string; sessionId: string
                               <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
                                   <tr>
-                                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Serie</th>
                                     <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Repeticiones</th>
                                     {exerciseSession.series.some(s => s.weight !== undefined) && (
                                       <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Peso</th>
@@ -389,21 +492,21 @@ const SessionDetailPage = ({ params }: { params: { id: string; sessionId: string
                                 <tbody className="bg-white divide-y divide-gray-200">
                                   {exerciseSession.series.map((serie) => (
                                     <tr key={serie.id}>
-                                      <td className="px-3 py-2 whitespace-nowrap text-sm">{serie.series_number}</td>
+                                      
                                       <td className="px-3 py-2 whitespace-nowrap text-sm">{serie.repetitions}</td>
-                                      {exerciseSession.series.some(s => s.weight !== undefined) && (
+                                      {exerciseSession.series.some(s => s.weight !== undefined && s.weight !== null) && (
                                         <td className="px-3 py-2 whitespace-nowrap text-sm">
-                                          {serie.weight !== undefined ? `${serie.weight} kg` : '-'}
+                                          {serie.weight !== undefined && serie.weight !== null ? `${serie.weight} kg` : 'hola'}
                                         </td>
                                       )}
-                                      {exerciseSession.series.some(s => s.time !== undefined) && (
+                                      {exerciseSession.series.some(s => s.time !== undefined && s.time !== null) && (
                                         <td className="px-3 py-2 whitespace-nowrap text-sm">
-                                          {serie.time !== undefined ? serie.time : '-'}
+                                          {serie.time !== undefined && serie.time !== null ? serie.time : '-'}
                                         </td>
                                       )}
-                                      {exerciseSession.series.some(s => s.distance !== undefined) && (
+                                      {exerciseSession.series.some(s => s.distance !== undefined && s.distance !== null) && (
                                         <td className="px-3 py-2 whitespace-nowrap text-sm">
-                                          {serie.distance !== undefined ? `${serie.distance} m` : '-'}
+                                          {serie.distance !== undefined && serie.distance !== null ? `${serie.distance} m` : '-'}
                                         </td>
                                       )}
                                     </tr>

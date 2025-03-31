@@ -564,9 +564,10 @@ class ExerciseListView(APIView):
 class ExerciseDetailView(APIView):
     """
     Vista para ver, editar y eliminar un ejercicio.
-    Solo el fisioterapeuta que creó el ejercicio tiene permiso para realizar estas acciones.
+    El fisioterapeuta que creó el ejercicio tiene permiso para realizar todas las acciones.
+    Los pacientes pueden ver los ejercicios que forman parte de sus tratamientos.
     """
-    permission_classes = [IsPhysiotherapist]
+    permission_classes = [IsPhysioOrPatient]
 
     def get(self, request, pk):
         """
@@ -574,16 +575,31 @@ class ExerciseDetailView(APIView):
         """
         try:
             exercise = Exercise.objects.get(pk=pk)
+            user = request.user
 
-            # Verificar que el usuario sea el fisioterapeuta que creó el ejercicio
-            if exercise.physiotherapist.user != request.user:
-                return Response(
-                    {'detail': 'No tiene permiso para ver este ejercicio'},
-                    status=status.HTTP_403_FORBIDDEN
+            # Si es fisioterapeuta, verificar que sea el creador del ejercicio
+            if hasattr(user, 'physio') and user.physio:
+                if exercise.physiotherapist.user == user:
+                    serializer = ExerciseSerializer(exercise)
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+                
+            # Si es paciente, verificar que el ejercicio esté en alguna de sus sesiones de tratamiento
+            elif hasattr(user, 'patient') and user.patient:
+                # Buscar si el ejercicio está en alguna sesión de tratamiento del paciente
+                exercise_sessions = ExerciseSession.objects.filter(
+                    exercise=exercise,
+                    session__treatment__patient=user.patient
                 )
-
-            serializer = ExerciseSerializer(exercise)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+                
+                if exercise_sessions.exists():
+                    serializer = ExerciseSerializer(exercise)
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+            
+            # Si no cumple ninguna de las condiciones anteriores, denegar acceso
+            return Response(
+                {'detail': 'No tiene permiso para ver este ejercicio'},
+                status=status.HTTP_403_FORBIDDEN
+            )
 
         except Exercise.DoesNotExist:
             return Response(
