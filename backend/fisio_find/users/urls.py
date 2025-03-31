@@ -13,7 +13,7 @@ urlpatterns = [
     path('physio/payment/', process_payment, name='process_payment'),
     path('physio/update/', physio_update_view, name='physio_update'),
     path('physio/add-service/', physio_create_service_view, name='physio_create_service'),
-    path('physio/update-service/<int:service_id>/', physio_update_service_view, name='physio_create_service'),
+    path('physio/update-service/<int:service_id>/', physio_update_service_view, name='physio_update_service'),
     path('physio/delete-service/<int:service_id>/', physio_delete_service_view, name='physio_delete_service'),
     # To this
     path('physio/delete-service/<str:service_name>/', physio_delete_service_view, name='physio_delete_service'),
