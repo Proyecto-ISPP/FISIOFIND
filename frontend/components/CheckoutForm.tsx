@@ -149,6 +149,8 @@ const CheckoutForm = ({ request, token }: CheckoutFormProps) => {
         setAppointmentId(data.id); // Guardamos el appointment_id
         const result = await createPayment(tokenValue, data.id); // ⚡ Llamamos a createPayment después de obtener la cita
         if (result) {
+          console.log({clientSecret: result.clientSecret, paymentId: result.paymentId});
+          
           return { clientSecret: result.clientSecret, paymentId: result.paymentId };
         }
       } else {
@@ -177,6 +179,9 @@ const CheckoutForm = ({ request, token }: CheckoutFormProps) => {
       });
 
       const data = await res.json();
+      console.log("Status", res.status);
+      console.log("Appointment ID", appointmentId);
+      
       console.log("Respuesta del backend (pago creado):", data);
       console.log("client secret", data.client_secret);
       console.log("payment", data.payment);

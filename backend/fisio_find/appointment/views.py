@@ -5,7 +5,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from appointment.models import Appointment, Physiotherapist
 from appointment.serializers import AppointmentSerializer
 from rest_framework.permissions import IsAuthenticated
-from payment.views import cancel_payment_pyshio
+from payment.views import cancel_payment_patient, cancel_payment_pyshio
 from users.permissions import IsPhysiotherapist, IsPatient, IsPhysioOrPatient
 from users.permissions import IsAdmin
 from rest_framework.decorators import api_view, permission_classes
@@ -612,6 +612,16 @@ def delete_appointment(request, appointment_id):
     # Verificar si quedan menos de 48 horas para el inicio de la cita
     if hasattr(user, 'patient') and appointment.start_time - now < timedelta(hours=48):
         return Response({"error": "No puedes borrar una cita con menos de 48 horas de antelación"}, status=status.HTTP_403_FORBIDDEN)
+
+    try:
+        if hasattr(user, 'patient'):
+            cancel_payment_patient(appointment.id)
+        elif hasattr(user, 'physio'):
+            cancel_payment_pyshio(appointment.id)
+
+    except Exception as e:
+        print(e)
+        return Response({'error': 'An internal error has occurred. Please try again later.'}, status=status.HTTP_400_BAD_REQUEST)
     
     # Enviar el correo con el rol del usuario
     send_appointment_email(appointment.id, 'canceled', role)
