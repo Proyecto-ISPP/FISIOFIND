@@ -19,4 +19,4 @@ jobs:
           key: ${{ secrets.BACKEND_SSH_PRIVATE_KEY }}
           script: |
             cd /root
-            ./deploy-s3.sh
+            ./deploy_s3.sh
