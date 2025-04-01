@@ -350,8 +350,7 @@ def physio_create_service_view(request):
         else:
             raise json.JSONDecodeError()
             
-        
-        required_fields = {"id", "title", "price", "description", "duration", "custom_questionnaire"}
+        required_fields = {"title", "price", "description", "duration", "tipo", "custom_questionnaire"}
 
         if not isinstance(new_service, dict):
             raise json.JSONDecodeError()
@@ -364,7 +363,37 @@ def physio_create_service_view(request):
 
         if not isinstance(new_service["duration"], int):
             raise json.JSONDecodeError()
-                
+        
+        if new_service["custom_questionnaire"] is not None:
+            if not isinstance(new_service["custom_questionnaire"],dict):
+                raise json.JSONDecodeError()
+            elif not "UI Schema" in new_service["custom_questionnaire"]:
+                raise json.JSONDecodeError()
+            elif not isinstance(new_service["custom_questionnaire"]["UI Schema"],dict):
+                raise json.JSONDecodeError()
+            
+            questionaries = new_service["custom_questionnaire"]["UI Schema"]
+            if not "type" in questionaries or questionaries["type"] != "Group":
+                raise json.JSONDecodeError()
+            elif not "label" in questionaries or not isinstance(questionaries["label"],str):
+                raise json.JSONDecodeError()
+            elif not "elements" in questionaries or not isinstance(questionaries["elements"],list):
+                raise json.JSONDecodeError()
+            
+            questionaries = questionaries["elements"]
+            necesary = [{'type': 'Number', 'label': 'Peso (kg)', 'scope': '#/properties/peso'}, {'type': 'Number', 'label': 'Altura (cm)', 'scope': '#/properties/altura'}, {'type': 'Number', 'label': 'Edad', 'scope': '#/properties/edad'}, {'type': 'Control', 'label': 'Nivel de actividad física', 'scope': '#/properties/actividad_fisica'}, {'type': 'Control', 'label': 'Motivo de la consulta', 'scope': '#/properties/motivo_consulta'}]
+            for quest in questionaries:
+                if quest in necesary:
+                    necesary.remove(quest)
+                else:
+                    if not "type" in quest or quest["type"] not in ["Number","Control"]:
+                        raise json.JSONDecodeError()
+                    elif not "label" in quest or not isinstance(quest["label"],str):
+                        raise json.JSONDecodeError()
+                    elif not "scope" in quest or not isinstance(quest["scope"],str) or not quest["scope"].startswith("#/properties/"):
+                        raise json.JSONDecodeError()
+            if len(necesary) != 0:
+                raise json.JSONDecodeError()
     except json.JSONDecodeError:
         return Response({"error": "Formato de servicios inválido."}, status=status.HTTP_400_BAD_REQUEST)
     except Exception:
@@ -418,9 +447,8 @@ def physio_update_service_view(request, service_id):
             new_service = request.data
         else:
             raise json.JSONDecodeError()
-            
-        
-        required_fields = {"id", "title", "price", "description", "duration", "custom_questionnaire"}
+
+        required_fields = {"title", "price", "description", "duration", "tipo", "custom_questionnaire"}
 
         if not isinstance(new_service, dict):
             raise json.JSONDecodeError()
@@ -433,7 +461,42 @@ def physio_update_service_view(request, service_id):
 
         if not isinstance(new_service["duration"], int):
             raise json.JSONDecodeError()
-                
+
+        if new_service["custom_questionnaire"] is not None:
+            if not isinstance(new_service["custom_questionnaire"],dict):
+                raise json.JSONDecodeError()
+            elif not "UI Schema" in new_service["custom_questionnaire"]:
+                raise json.JSONDecodeError()
+            elif not isinstance(new_service["custom_questionnaire"]["UI Schema"],dict):
+                raise json.JSONDecodeError()
+            
+            questionaries = new_service["custom_questionnaire"]["UI Schema"]
+            if not "type" in questionaries or questionaries["type"] != "Group":
+                raise json.JSONDecodeError()
+            elif not "label" in questionaries or not isinstance(questionaries["label"],str):
+                raise json.JSONDecodeError()
+            elif not "elements" in questionaries or not isinstance(questionaries["elements"],list):
+                raise json.JSONDecodeError()
+            
+            questionaries = questionaries["elements"]
+            necesary = [{'type': 'Number', 'label': 'Peso (kg)', 'scope': '#/properties/peso'}, {'type': 'Number', 'label': 'Altura (cm)', 'scope': '#/properties/altura'}, {'type': 'Number', 'label': 'Edad', 'scope': '#/properties/edad'}, {'type': 'Control', 'label': 'Nivel de actividad física', 'scope': '#/properties/actividad_fisica'}, {'type': 'Control', 'label': 'Motivo de la consulta', 'scope': '#/properties/motivo_consulta'}]
+            for quest in questionaries:
+                if quest in necesary:
+                    necesary.remove(quest)
+                else:
+                    if not "type" in quest or quest["type"] not in ["Number","Control"]:
+                        print("7")
+                        raise json.JSONDecodeError()
+                    elif not "label" in quest or not isinstance(quest["label"],str):
+                        print("8")
+                        raise json.JSONDecodeError()
+                    elif not "scope" in quest or not isinstance(quest["scope"],str) or not quest["scope"].startswith("#/properties/"):
+                        print("9")
+                        raise json.JSONDecodeError()
+            if len(necesary) != 0:
+                raise json.JSONDecodeError()
+
+      
     except json.JSONDecodeError:
         return Response({"error": "Formato de servicios inválido."}, status=status.HTTP_400_BAD_REQUEST)
     except Exception:
