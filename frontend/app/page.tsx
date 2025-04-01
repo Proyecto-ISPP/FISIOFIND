@@ -251,7 +251,7 @@ const Home = () => {
               <button
                 type="button"
                 className="flex items-center space-x-3 bg-[#1E5ACD] hover:bg-[#5ab3a8] text-white font-bold py-2 px-6 rounded-full shadow transition-all"
-                onClick={() => router.push('/search')}
+                onClick={() => router.push('/advanced-search')}
               >
                 <Image
                   src="/static/search.svg"

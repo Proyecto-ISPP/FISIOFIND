@@ -86,9 +86,9 @@ const SearchPage = () => {
 
           <select name="schedule" value={filters.schedule} onChange={handleInputChange} className="border px-4 py-2 rounded-md">
             <option value="">Preferencia horaria</option>
-            <option value="mañana">Mañana</option>
-            <option value="tarde">Tarde</option>
-            <option value="noche">Noche</option>
+            <option value="mañana">Mañana (06:00 - 14:00)</option>
+            <option value="tarde">Tarde (14:00 - 20:00)</option>
+            <option value="noche">Noche (20:00 - 23:00)</option>
           </select>
 
           <input name="maxPrice" type="number" placeholder="Precio máximo (€)" value={filters.maxPrice} onChange={handleInputChange} className="border px-4 py-2 rounded-md" />
