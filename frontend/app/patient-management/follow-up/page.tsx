@@ -207,7 +207,7 @@ const PatientFollowUpPage = () => {
 
       {/* Existing treatments section */}
       <div>
-        <div className="bg-white rounded-lg shadow p-4 mb-6">
+        <div className="bg-white rounded-xl shadow p-4 mb-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between">
             <div className="mb-4 md:mb-0">
               <h2 className="text-lg font-semibold mb-2">Filtrar por estado</h2>
@@ -255,7 +255,7 @@ const PatientFollowUpPage = () => {
               <input
                 type="text"
                 id="search"
-                placeholder="Nombre del fisioterapeuta..."
+                placeholder="Nombre del fisio..."
                 value={searchTerm}
                 onChange={(e) => handleSearch(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
