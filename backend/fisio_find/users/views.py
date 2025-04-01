@@ -409,7 +409,36 @@ def physio_update_service_view(request, service_id):
     existing_services = physio.services or {}
     
     # Obtener nuevos servicios del request
-    new_service = request.data
+    try:
+        # Comprueba si la entrada es str o dict, si es str intenta parsearlo
+        # si es dict directamente lo coge, sino simplemente lanza error
+        if isinstance(request.data, str):
+            new_service = json.loads(request.data)
+        elif isinstance(request.data, dict):
+            new_service = request.data
+        else:
+            raise json.JSONDecodeError()
+            
+        
+        required_fields = {"id", "title", "price", "description", "duration", "custom_questionnaire"}
+
+        if not isinstance(new_service, dict):
+            raise json.JSONDecodeError()
+
+        if not required_fields.issubset(new_service.keys()):
+            raise json.JSONDecodeError()
+
+        if not isinstance(new_service["price"], int):
+            raise json.JSONDecodeError()
+
+        if not isinstance(new_service["duration"], int):
+            raise json.JSONDecodeError()
+                
+    except json.JSONDecodeError:
+        return Response({"error": "Formato de servicios inválido."}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception:
+        return Response({"error": "Formato de servicios inválido."}, status=status.HTTP_400_BAD_REQUEST)
+    
     
     if str(service_id) not in existing_services:
         return Response({"error": "El servicio no existe"}, status=status.HTTP_404_NOT_FOUND)
@@ -438,7 +467,8 @@ def physio_get_services_view(request, physio_id):
     }
     return Response(response_data)
 
-
+""" 
+Parece que esta función no se utiliza porque esta duplicada, la comento por si acaso
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated, IsPhysiotherapist])
 def physio_delete_service_view(request, service_name):
@@ -452,7 +482,7 @@ def physio_delete_service_view(request, service_name):
     except Exception as e:
         logging.error("Error retrieving services for physiotherapist %s: %s", physio_id, str(e))
         return Response({"error": "An internal error has occurred."}, status=status.HTTP_400_BAD_REQUEST)
-
+"""
 
 @api_view(['DELETE'])
 def physio_delete_service_view(request, service_id):

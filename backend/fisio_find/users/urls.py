@@ -16,7 +16,7 @@ urlpatterns = [
     path('physio/update-service/<int:service_id>/', physio_update_service_view, name='physio_update_service'),
     path('physio/delete-service/<int:service_id>/', physio_delete_service_view, name='physio_delete_service'),
     # To this
-    path('physio/delete-service/<str:service_name>/', physio_delete_service_view, name='physio_delete_service'),
+    #path('physio/delete-service/<str:service_name>/', physio_delete_service_view, name='physio_delete_service'),
     path('profile/', PatientProfileView.as_view(), name='profile'),
     path('current-user/', return_user, name='current_user'),
 
