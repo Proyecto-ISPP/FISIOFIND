@@ -26,7 +26,7 @@ jobs:
           --health-retries 5
 
     env:
-      DEBUG: 'False'
+      DEBUG: 'True'
       DATABASE_NAME: sample
       DATABASE_USER: sample
       DATABASE_PASSWORD: S3cur3P@ssw0rd2024
