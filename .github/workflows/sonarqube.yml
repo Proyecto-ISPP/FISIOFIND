@@ -69,6 +69,8 @@ jobs:
     - name: Run Django tests with coverage
       working-directory: backend/fisio_find
       run: |
+        python3 manage.py makemigrations
+        python3 manage.py migrate
         coverage run manage.py test
         coverage xml
 
