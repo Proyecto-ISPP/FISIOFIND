@@ -146,8 +146,8 @@ class PatientFile(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
-    file_key = models.CharField(max_length=500, unique=True)  # Almacena la clave en el almacenamiento externo
-    file_type = models.CharField(max_length=50, blank=True, null=True)  # Tipo MIME opcional
+    file_key = models.CharField(max_length=500, unique=True)  
+    file_type = models.CharField(max_length=50, blank=True, null=True)  
 
     def __str__(self):
         return self.title

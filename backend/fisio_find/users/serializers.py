@@ -659,14 +659,22 @@ class PatientFileSerializer(serializers.ModelSerializer):
         return files
 
     def create(self, validated_data):
-        """Maneja la subida de múltiples archivos a DigitalOcean Spaces."""
+        """Sube los archivos a DigitalOcean Spaces y actualiza la BD en una misma subida."""
         request = self.context["request"]
-        patient = request.user.patient  # Se asume que el paciente hace la petición
+        patient = request.user.patient
+        files = validated_data.pop('files')
 
-        files = validated_data.pop('files')  # Obtener los archivos subidos
-        file_keys = []  # Lista para almacenar las claves de los archivos subidos
+        # 🔍 Intentamos recuperar una subida previa con el mismo título
+        patient_file, created = PatientFile.objects.get_or_create(
+            patient=patient,
+            title=validated_data.get("title"),
+            defaults={"description": validated_data.get("description"), "file_key": ""}
+        )
 
-        # Conectar a DigitalOcean Spaces
+        # Inicializamos la lista de claves de archivos
+        file_keys = patient_file.file_key.split(",") if patient_file.file_key else []
+
+        # 🔗 Conectar a DigitalOcean Spaces
         s3_client = boto3.client(
             "s3",
             aws_access_key_id=settings.DIGITALOCEAN_ACCESS_KEY_ID,
@@ -675,35 +683,26 @@ class PatientFileSerializer(serializers.ModelSerializer):
         )
 
         for file in files:
-            # Generar un nombre único para el archivo para evitar sobrescribir
             file_extension = file.name.split(".")[-1]
             file_key = f"patient_files/{patient.id}/{uuid.uuid4()}.{file_extension}"
 
-            # Intentar subir el archivo
             try:
                 s3_client.upload_fileobj(
                     file,
                     settings.DIGITALOCEAN_SPACE_NAME,
                     file_key,
-                    ExtraArgs={"ACL": "private"},  # El archivo será privado
+                    ExtraArgs={"ACL": "private"},  # Mantener privado
                 )
+                file_keys.append(file_key)  # 🔥 Agregamos el archivo a la lista
             except Exception as e:
                 raise serializers.ValidationError(f"Error al subir archivo: {str(e)}")
 
-            file_keys.append(file_key)  # Guardar la clave del archivo
-
-        # Crear las instancias de PatientFile para los archivos subidos
-        patient_file = PatientFile.objects.create(
-            patient=patient,
-            **validated_data,  # Agregar el título y la descripción
-        )
-
-        # Asociar los archivos con el archivo creado
-        patient_file.file_key = file_keys  # Guardamos las claves de los archivos
+        # 🔄 Guardamos la nueva lista de archivos en el modelo
+        patient_file.file_key = ",".join(file_keys)
         patient_file.save()
 
         return patient_file
 
     def get_file_urls(self, obj):
-        """Devuelve la URL pública de los archivos subidos."""
-        return [f"{settings.DIGITALOCEAN_ENDPOINT_URL}/{settings.DIGITALOCEAN_SPACE_NAME}/{key}" for key in obj.file_key]
+        """Devuelve la URL completa del archivo."""
+        return f"{settings.DIGITALOCEAN_ENDPOINT_URL}/{obj.file_key}"
