@@ -358,6 +358,18 @@ def physio_create_service_view(request):
         if not required_fields.issubset(new_service.keys()):
             raise json.JSONDecodeError()
 
+        if not isinstance(new_service["title"], str):
+            raise json.JSONDecodeError()
+
+        if not isinstance(new_service["tipo"], str) and new_service["tipo"] not in ["PRIMERA_CONSULTA", "CONTINUAR_TRATAMIENTO", "OTRO"]:
+            raise json.JSONDecodeError()
+
+        if new_service["tipo"] == "PRIMERA_CONSULTA" and new_service["title"] != "Primera consulta":
+            raise json.JSONDecodeError()
+
+        if new_service["tipo"] == "CONTINUAR_TRATAMIENTO" and new_service["title"] != "Continuación de tratamiento":
+            raise json.JSONDecodeError()
+
         if not isinstance(new_service["price"], int):
             raise json.JSONDecodeError()
 
@@ -454,6 +466,18 @@ def physio_update_service_view(request, service_id):
             raise json.JSONDecodeError()
 
         if not required_fields.issubset(new_service.keys()):
+            raise json.JSONDecodeError()
+
+        if not isinstance(new_service["title"], str):
+            raise json.JSONDecodeError()
+
+        if not isinstance(new_service["tipo"], str) and new_service["tipo"] not in ["PRIMERA_CONSULTA", "CONTINUAR_TRATAMIENTO", "OTRO"]:
+            raise json.JSONDecodeError()
+
+        if new_service["tipo"] == "PRIMERA_CONSULTA" and new_service["title"] != "Primera consulta":
+            raise json.JSONDecodeError()
+
+        if new_service["tipo"] == "CONTINUAR_TRATAMIENTO" and new_service["title"] != "Continuación de tratamiento":
             raise json.JSONDecodeError()
 
         if not isinstance(new_service["price"], int):
