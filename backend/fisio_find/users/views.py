@@ -821,7 +821,7 @@ def upload_patient_files(request):
         return Response(
             {
                 "message": "Archivo creado correctamente",
-                "video": PatientFileSerializer(file).data
+                "file": PatientFileSerializer(file).data
             },
             status=status.HTTP_201_CREATED
         )

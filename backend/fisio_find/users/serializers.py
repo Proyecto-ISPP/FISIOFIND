@@ -650,6 +650,14 @@ class PatientFileSerializer(serializers.ModelSerializer):
             "file_key": {"read_only": True},  # La clave del archivo es solo de lectura
         }
 
+    def validate_files(self, files):
+        """Valida que todos los archivos tengan una extensión permitida."""
+        allowed_extensions = (".pdf", ".jpg", ".jpeg", ".png", ".dicom")
+        for file in files:
+            if not file.name.lower().endswith(allowed_extensions):
+                raise serializers.ValidationError(f"Solo se permiten archivos con extensiones {', '.join(allowed_extensions)}.")
+        return files
+
     def create(self, validated_data):
         """Maneja la subida de múltiples archivos a DigitalOcean Spaces."""
         request = self.context["request"]
