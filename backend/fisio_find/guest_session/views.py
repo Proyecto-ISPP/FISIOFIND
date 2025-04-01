@@ -224,7 +224,7 @@ def weighted_shuffle(physios):
     return shuffled
 
 def is_gold_physio(physio):
-    return physio.plan and physio.plan.price == Decimal('24.99')
+    return physio.plan and physio.plan.name == 'Gold'
 
 def time_to_minutes(time_str):
     """Convierte un string de tiempo HH:MM a minutos desde medianoche."""
