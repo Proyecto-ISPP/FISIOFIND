@@ -13,6 +13,7 @@ from users.serializers import (PatientRegisterSerializer,PatientSerializer,
 from users.models import AppUser, Patient, Physiotherapist, Pricing
 from datetime import date, timedelta
 from unittest.mock import patch
+import json
 
 def get_fake_image(name="photo.jpg"):
     image = Image.new("RGB", (100, 100), color="red")
@@ -20,7 +21,7 @@ def get_fake_image(name="photo.jpg"):
     image.save(buffer, format="JPEG")
     buffer.seek(0)
     return SimpleUploadedFile(name=name, content=buffer.read(), content_type="image/jpeg")
-"""
+
 class AppUserRequiredFieldsTests(APITestCase):
 
     def setUp(self):
@@ -746,8 +747,7 @@ class PhysioUpdateSerializerTests(APITestCase):
         self.assertTrue(serializer.is_valid(), serializer.errors)
         physio = serializer.save()
         self.assertTrue(physio.user.photo.name.endswith("profile.jpg"))
-"""
-"""
+
 class PatientProfileViewTests(APITestCase):
 
     def setUp(self):
@@ -796,8 +796,7 @@ class PatientProfileViewTests(APITestCase):
         response = self.client.patch(self.url, data, format="json")
         self.assertEqual(response.status_code, 400)
         self.assertIn("birth_date", response.data)
-"""
-"""
+
 class CustomLoginViewTests(APITestCase):
 
     def setUp(self):
@@ -1230,9 +1229,6 @@ class ProcessPaymentViewTests(APITestCase):
         response = self.client.post(self.url, data, format="json")
         self.assertEqual(response.status_code, 400)
         self.assertIn("error", response.data)
-"""
-"""
-import json
 
 class PhysioUpdateViewTests(APITestCase):
 
@@ -1408,13 +1404,12 @@ class PhysioUpdateViewTests(APITestCase):
 
     def test_services_invalid_type(self):
         data = {
-            "services": 12345  # ❌ ni str ni dict
+            "services": 12345 
         }
         response = self.client.put(self.url, data, format="json")
         self.assertEqual(response.status_code, 400)
         self.assertIn("services", response.data)
-"""
-"""
+
 class PhysioCreateServiceViewTests(APITestCase):
 
     def setUp(self):
@@ -1496,9 +1491,173 @@ class PhysioCreateServiceViewTests(APITestCase):
         response = self.client.post(self.url, invalid_service, format="json")
         self.assertEqual(response.status_code, 400)
         self.assertIn("error", response.data)
-"""
 
-"""
+class PhysioUpdateSpecificServiceTests(APITestCase):
+
+    def setUp(self):
+        self.plan, _ = Pricing.objects.get_or_create(
+            name='blue',
+            defaults={'price': 10, 'video_limit': 5}
+        )
+        self.user = AppUser.objects.create_user(
+            username="physio3",
+            email="physio3@example.com",
+            password="testpass",
+            dni="12345678X",
+            phone_number="600222222",
+            postal_code="28001"
+        )
+        self.physio = Physiotherapist.objects.create(
+            user=self.user,
+            gender="M",
+            birth_date="1980-05-05",
+            collegiate_number="C54321",
+            autonomic_community="MADRID",
+            plan=self.plan,
+            services={
+                "1": {
+                    "id": 1,
+                    "title": "Consulta previa",
+                    "price": 30,
+                    "description": "Sesión inicial",
+                    "duration": 45,
+                    "custom_questionnaire": {
+                        "UI Schema": {
+                            "type": "Group",
+                            "label": "Formulario",
+                            "elements": []
+                        }
+                    }
+                }
+            }
+        )
+        self.client.force_authenticate(user=self.user)
+        self.url = lambda sid: reverse("physio_update_service", args=[sid])
+
+        self.valid_update = {
+            "id": 1,
+            "title": "Consulta actualizada",
+            "price": 35,
+            "description": "Descripción actualizada",
+            "duration": 50,
+            "custom_questionnaire": {
+                "UI Schema": {
+                    "type": "Group",
+                    "label": "Formulario nuevo",
+                    "elements": []
+                }
+            }
+        }
+
+    def test_update_existing_service_success(self):
+        response = self.client.put(self.url(1), self.valid_update, format="json")
+        self.assertEqual(response.status_code, 200)  # Este test asume que completarás la lógica de guardado
+        self.physio.refresh_from_db()
+        self.assertEqual(self.physio.services["1"]["title"], "Consulta actualizada")
+        self.assertEqual(self.physio.services["1"]["price"], 35)
+
+    def test_update_nonexistent_service(self):
+        response = self.client.put(self.url(99), self.valid_update, format="json")
+        self.assertEqual(response.status_code, 404)
+
+    def test_update_with_invalid_format(self):
+        response = self.client.put(self.url(1), [self.valid_update], format="json")  # lista inválida
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+    def test_update_with_missing_required_fields(self):
+        invalid = self.valid_update.copy()
+        invalid.pop("price")
+        response = self.client.put(self.url(1), invalid, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+    def test_update_with_non_integer_price(self):
+        invalid = self.valid_update.copy()
+        invalid["price"] = "treinta"
+        response = self.client.put(self.url(1), invalid, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+    def test_update_with_non_integer_duration(self):
+        invalid = self.valid_update.copy()
+        invalid["duration"] = "cuarenta"
+        response = self.client.put(self.url(1), invalid, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+    def test_update_with_random_string_as_body(self):
+        response = self.client.put(
+            self.url(1),
+            data="esto no es un JSON válido",
+            content_type="application/json"  # simula que el cliente dice que es JSON
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+
+class PhysioDeleteServiceTests(APITestCase):
+
+    def setUp(self):
+        self.url = lambda sid: reverse("physio_delete_service", args=[sid])
+
+        self.plan, _ = Pricing.objects.get_or_create(
+            name='blue',
+            defaults={'price': 10, 'video_limit': 5}
+        )
+
+        self.user = AppUser.objects.create_user(
+            username="physiodelete",
+            email="physiodelete@example.com",
+            password="testpass",
+            dni="87654321Z",
+            phone_number="600123456",
+            postal_code="28001"
+        )
+
+        self.physio = Physiotherapist.objects.create(
+            user=self.user,
+            gender="F",
+            birth_date="1980-05-05",
+            collegiate_number="DEL123",
+            autonomic_community="MADRID",
+            plan=self.plan,
+            services={
+                "1": {
+                    "id": 1,
+                    "title": "Eliminar esto",
+                    "price": 30,
+                    "description": "Prueba",
+                    "duration": 45,
+                    "custom_questionnaire": {
+                        "UI Schema": {
+                            "type": "Group",
+                            "label": "Q",
+                            "elements": []
+                        }
+                    }
+                }
+            }
+        )
+
+    def test_delete_existing_service(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.delete(self.url(1))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["message"], "Servicio eliminado correctamente")
+        self.physio.refresh_from_db()
+        self.assertNotIn("1", self.physio.services)
+
+    def test_delete_nonexistent_service(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.delete(self.url(99))
+        self.assertEqual(response.status_code, 404)
+        self.assertIn("error", response.data)
+
+    def test_delete_unauthenticated(self):
+        response = self.client.delete(self.url(1))
+        self.assertIn(response.status_code, [401, 403])
+
 class PatientRegisterViewTests(APITestCase):
 
     def setUp(self):
@@ -1614,8 +1773,7 @@ class PatientRegisterViewTests(APITestCase):
         response = self.client.post(self.url, data, format="json")
         self.assertEqual(response.status_code, 400)
         self.assertIn("dni", response.data)
-"""
-"""
+
 class ValidatorTests(APITestCase):
     # TESTS ANDALUCIA
     def test_ANDALUCIA_valid_1(self):
@@ -1935,4 +2093,3 @@ class ValidatorTests(APITestCase):
         nombre_completo = "VICENTA FORTUNY ALMUDÉVER"
         num_colegiado = "4"
         self.assertFalse(validar_colegiacion(nombre_completo,num_colegiado, comunidad_autonoma))
-"""
