@@ -50,14 +50,14 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
-
-    - name: Install Chrome for Selenium
-      run: |
-        sudo apt update
-        sudo apt install -y wget gnupg unzip xvfb libnss3 libxss1 libatk-bridge2.0-0 libgtk-3-0
-        wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-        sudo dpkg -i google-chrome-stable_current_amd64.deb || sudo apt-get -f install -y
-        google-chrome --version
+# Descomentar cuando se quiera hacer coverage con selenium
+#    - name: Install Chrome for Selenium
+#      run: |
+#        sudo apt update
+#        sudo apt install -y wget gnupg unzip xvfb libnss3 libxss1 libatk-bridge2.0-0 libgtk-3-0
+#        wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+#        sudo dpkg -i google-chrome-stable_current_amd64.deb || sudo apt-get -f install -y
+#        google-chrome --version
 
     - name: Install backend dependencies
       working-directory: backend/
@@ -71,11 +71,8 @@ jobs:
       run: |
         python3 manage.py makemigrations
         python3 manage.py migrate
-        coverage run manage.py test terms || true
+        coverage run manage.py test || true
         coverage xml
-    - name: Show coverage summary
-      working-directory: backend/fisio_find
-      run: coverage report || true
 
     - name: Run SonarCloud analysis (scans full repo, uses backend coverage)
       uses: sonarsource/sonarcloud-github-action@master
