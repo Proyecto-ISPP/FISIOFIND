@@ -1218,3 +1218,53 @@ class ExerciseLogDetailView(APIView):
                 {'detail': 'No se ha encontrado el registro'},
                 status=status.HTTP_404_NOT_FOUND
             )
+            
+            
+class ExerciseLogEvolutionView(APIView):
+    permission_classes = [IsPhysioOrPatient]
+
+    def get(self, request, treatment_id):
+        try:
+            treatment = Treatment.objects.get(id=treatment_id)
+            user = request.user
+
+            if treatment.physiotherapist.user != user and treatment.patient.user != user:
+                return Response({'detail': 'No tiene permiso'}, status=403)
+
+            logs = ExerciseLog.objects.filter(
+                series__exercise_session__session__treatment=treatment,
+                patient=treatment.patient
+            ).select_related('series__exercise_session__exercise')
+
+            # Estructura: { ejercicio: { serie: [datos por fecha] } }
+            data = defaultdict(lambda: defaultdict(list))
+
+            for log in logs:
+                exercise = log.series.exercise_session.exercise.title
+                serie_number = log.series.series_number
+                date_str = log.date.strftime("%d/%m")
+
+                # Valor pautado según prioridad: peso > tiempo > distancia
+                if log.series.weight is not None:
+                    metric_value = log.series.weight
+                    metric_type = "weight"
+                elif log.series.time is not None:
+                    metric_value = log.series.time.total_seconds()
+                    metric_type = "time"
+                elif log.series.distance is not None:
+                    metric_value = log.series.distance
+                    metric_type = "distance"
+                else:
+                    continue
+
+                data[exercise][f"Serie {serie_number}"].append({
+                    "date": date_str,
+                    "value": metric_value,
+                    "metric": metric_type,
+                })
+
+            return Response(data, status=200)
+
+        except Treatment.DoesNotExist:
+            return Response({'detail': 'Tratamiento no encontrado'}, status=404)
+
