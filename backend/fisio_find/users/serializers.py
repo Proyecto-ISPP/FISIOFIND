@@ -14,7 +14,7 @@ from django.core.validators import RegexValidator
 from datetime import date, datetime
 import boto3, uuid
 from users.util import validate_dni_match_letter, codigo_postal_no_mide_5, telefono_no_mide_9, validate_dni_structure
-from .models import AppUser, Patient, Physiotherapist, PhysiotherapistSpecialization, Specialization, Video
+from .models import AppUser, Patient, Physiotherapist, PhysiotherapistSpecialization, Specialization, Video, PatientFile
 
 
 class AppUserSerializer(serializers.ModelSerializer):
@@ -634,3 +634,68 @@ class VideoSerializer(serializers.ModelSerializer):
     def get_file_url(self, obj):
         """Devuelve la URL completa del archivo."""
         return f"{settings.DIGITALOCEAN_ENDPOINT_URL}/{obj.file_key}"
+
+
+class PatientFileSerializer(serializers.ModelSerializer):
+    files = serializers.ListField(
+        child=serializers.FileField(),  # Para manejar múltiples archivos
+        write_only=True
+    )
+    file_urls = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PatientFile
+        fields = ["id", "title", "description", "uploaded_at", "file_key", "file_urls", "files"]
+        extra_kwargs = {
+            "file_key": {"read_only": True},  # La clave del archivo es solo de lectura
+        }
+
+    def create(self, validated_data):
+        """Maneja la subida de múltiples archivos a DigitalOcean Spaces."""
+        request = self.context["request"]
+        patient = request.user.patient  # Se asume que el paciente hace la petición
+
+        files = validated_data.pop('files')  # Obtener los archivos subidos
+        file_keys = []  # Lista para almacenar las claves de los archivos subidos
+
+        # Conectar a DigitalOcean Spaces
+        s3_client = boto3.client(
+            "s3",
+            aws_access_key_id=settings.DIGITALOCEAN_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.DIGITALOCEAN_SECRET_ACCESS_KEY,
+            endpoint_url=settings.DIGITALOCEAN_ENDPOINT_URL
+        )
+
+        for file in files:
+            # Generar un nombre único para el archivo para evitar sobrescribir
+            file_extension = file.name.split(".")[-1]
+            file_key = f"patient_files/{patient.id}/{uuid.uuid4()}.{file_extension}"
+
+            # Intentar subir el archivo
+            try:
+                s3_client.upload_fileobj(
+                    file,
+                    settings.DIGITALOCEAN_SPACE_NAME,
+                    file_key,
+                    ExtraArgs={"ACL": "private"},  # El archivo será privado
+                )
+            except Exception as e:
+                raise serializers.ValidationError(f"Error al subir archivo: {str(e)}")
+
+            file_keys.append(file_key)  # Guardar la clave del archivo
+
+        # Crear las instancias de PatientFile para los archivos subidos
+        patient_file = PatientFile.objects.create(
+            patient=patient,
+            **validated_data,  # Agregar el título y la descripción
+        )
+
+        # Asociar los archivos con el archivo creado
+        patient_file.file_key = file_keys  # Guardamos las claves de los archivos
+        patient_file.save()
+
+        return patient_file
+
+    def get_file_urls(self, obj):
+        """Devuelve la URL pública de los archivos subidos."""
+        return [f"{settings.DIGITALOCEAN_ENDPOINT_URL}/{settings.DIGITALOCEAN_SPACE_NAME}/{key}" for key in obj.file_key]

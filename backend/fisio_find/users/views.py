@@ -31,6 +31,7 @@ from .serializers import (
     AppUserSerializer,
     VideoSerializer,
     PhysioUpdateSerializer,
+    PatientFileSerializer
 )
 from .models import Physiotherapist, Patient, AppUser, Video
 from .permissions import (
@@ -578,7 +579,7 @@ class AdminPatientDelete(generics.DestroyAPIView):
 
 @api_view(['POST'])
 @permission_classes([IsPhysiotherapist])
-def create_file(request):
+def create_video(request):
     print("🔍 Datos recibidos:", request.data)
 
     # Convertir request.data en un diccionario mutable (para modificar el QueryDict)
@@ -798,4 +799,39 @@ def update_video(request, video_id):
         serializer.save()
         return Response({"message": "Video actualizado correctamente", "video": serializer.data}, status=status.HTTP_200_OK)
     
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+#Subida de archivos a la nube
+@api_view(['POST'])
+@permission_classes([IsPhysioOrPatient])
+def upload_patient_files(request):
+    print("🔍 Datos recibidos:", request.data)
+
+    # Convertir request.data en un diccionario mutable (para modificar el QueryDict)
+    mutable_data = request.data.copy()
+
+    # Extraer archivos subidos
+    files = mutable_data.getlist("files")
+
+    if not files:
+        return Response({"error": "Debes proporcionar al menos un archivo."}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Crear una instancia del serializer para manejar los archivos
+    serializer = PatientFileSerializer(data=mutable_data, context={"request": request})
+
+    if serializer.is_valid():
+        # Guardar los archivos en DigitalOcean
+        patient_file = serializer.save()
+
+        # Aquí podrías devolver la URL de los archivos o cualquier otro dato relevante
+        return Response(
+            {
+                "message": "Archivos subidos correctamente",
+                "files": PatientFileSerializer(patient_file).data  # Aquí se devuelven los datos del archivo
+            },
+            status=status.HTTP_201_CREATED
+        )
+
+    # Si el serializer no es válido, devolver los errores
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
