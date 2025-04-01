@@ -162,9 +162,13 @@ class PatientFile(models.Model):
         )
 
         try:
+            # Intentar borrar el archivo de DigitalOcean
+            print(f"Eliminando archivo de DigitalOcean: {self.file_key}")  # Log para depuración
             s3_client.delete_object(Bucket=settings.DIGITALOCEAN_SPACE_NAME, Key=self.file_key)
+            print(f"Archivo eliminado correctamente de DigitalOcean: {self.file_key}")  # Log para depuración
         except Exception as e:
-            print(f"Error al eliminar el archivo de Spaces: {e}")
+            print(f"Error al eliminar el archivo de DigitalOcean: {e}")
+            raise  # Lanzamos la excepción para que se capture si hay un error
     
     @property
     def file_url(self):

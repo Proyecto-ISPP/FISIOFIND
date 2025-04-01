@@ -14,7 +14,7 @@ from rest_framework import status, generics
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from .serializers import PatientRegisterSerializer, PhysioUpdateSerializer, PhysioRegisterSerializer
 from .serializers import PhysioSerializer, PatientSerializer, AppUserSerializer
-from .models import AppUser, Physiotherapist, Patient, Specialization
+from .models import AppUser, Physiotherapist, Patient, Specialization, PatientFile
 from rest_framework import generics
 from .permissions import IsPhysiotherapist
 from .permissions import IsPatient
@@ -827,3 +827,25 @@ def upload_patient_files(request):
         )
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['DELETE'])
+@permission_classes([IsPatient])
+def delete_patient_file(request, file_id):
+    user = request.user
+    print(user.patient.id)  # Depuración
+    print(f"Usuario autenticado: {user}, Rol: {getattr(user, 'patient', None)}")  # Depuración
+    try:
+        file = PatientFile.objects.get(id=file_id)
+        print(f"Archivo encontrado: {file}")  # Depuración
+    
+        if not hasattr(user, 'patient') or file.patient.id != user.patient.id:
+            return Response({"error": "No tienes permiso para eliminar este archivo"}, status=status.HTTP_403_FORBIDDEN)
+
+        file.delete_from_storage()
+        file.delete()
+
+        return Response({"message": "Archivo eliminado correctamente"}, status=status.HTTP_200_OK)
+
+    except PatientFile.DoesNotExist:
+        return Response({"error": "Archivo no encontrado"}, status=status.HTTP_404_NOT_FOUND)
