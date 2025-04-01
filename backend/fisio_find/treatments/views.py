@@ -1114,21 +1114,35 @@ class ExerciseLogListView(APIView):
         try:
             # Verificar que la sesión de ejercicios existe
             exercise_session = ExerciseSession.objects.get(id=exercise_session_id)
-            treatment = exercise_session.session.treatment
+            
+            # Query ExerciseLog model directly
+            exercise_logs = ExerciseLog.objects.filter(
+                series__exercise_session=exercise_session
+            )
+            
+            # Verificar permisos - Fix the permission check
             user = request.user
-
-            # Verificar que el usuario sea el fisioterapeuta o el paciente asociado
-            if treatment.physiotherapist.user != user and treatment.patient.user != user:
+            if hasattr(user, 'physio') and user.physio:
+                if exercise_session.session.treatment.physiotherapist != user.physio:
+                    return Response(
+                        {'detail': 'No tiene permiso para ver estos registros'},
+                        status=status.HTTP_403_FORBIDDEN
+                    )
+            elif hasattr(user, 'patient') and user.patient:
+                if exercise_session.session.treatment.patient != user.patient:
+                    return Response(
+                        {'detail': 'No tiene permiso para ver estos registros'},
+                        status=status.HTTP_403_FORBIDDEN
+                    )
+            else:
                 return Response(
-                    {'detail': 'No tiene permiso para ver los registros de este ejercicio'},
+                    {'detail': 'Usuario no autorizado'},
                     status=status.HTTP_403_FORBIDDEN
                 )
-
-            # Obtener los registros de progreso
-            exercise_logs = exercise_session.exercise_logs.all()
+            
             serializer = ExerciseLogSerializer(exercise_logs, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-
+            return Response(serializer.data)
+            
         except ExerciseSession.DoesNotExist:
             return Response(
                 {'detail': 'No se ha encontrado la sesión de ejercicios'},
