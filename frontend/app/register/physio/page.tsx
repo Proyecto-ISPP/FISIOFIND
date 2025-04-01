@@ -8,13 +8,14 @@ import { getApiBaseUrl } from "@/utils/api";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Info } from "lucide-react";
 
 // Tipado de los datos del formulario
 interface FormData {
   username: string;
   email: string;
   password: string;
+  confirm_password: string;
   first_name: string;
   last_name: string;
   dni: string;
@@ -27,11 +28,13 @@ interface FormData {
   plan: string;
 }
 
-// Opciones de género
+// Opciones de género (sin valor por defecto)
 const GENDER_OPTIONS = [
+  { value: "", label: "Seleccione género" },
   { value: "M", label: "Masculino" },
   { value: "F", label: "Femenino" },
   { value: "O", label: "Otro" },
+  { value: "ND", label: "Prefiero no decirlo" },
 ];
 
 // Opciones de comunidad autónoma
@@ -77,6 +80,18 @@ const StarIcon = ({ className }: { className?: string }) => (
 );
 
 // Componente reutilizable para los campos del formulario
+interface FormFieldProps {
+  name: string;
+  label: string;
+  type?: string;
+  options?: { value: string; label: string }[];
+  required?: boolean;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+  error?: string;
+  info?: string; // dato opcional para mostrar botón de info
+}
+
 const FormField = ({
   name,
   label,
@@ -86,16 +101,8 @@ const FormField = ({
   value,
   onChange,
   error,
-}: {
-  name: string;
-  label: string;
-  type?: string;
-  options?: { value: string; label: string }[];
-  required?: boolean;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
-  error?: string;
-}) => {
+  info,
+}: FormFieldProps) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const togglePasswordVisibility = () => {
@@ -109,6 +116,15 @@ const FormField = ({
         className="block text-sm font-medium text-gray-700 dark:text-white mb-1"
       >
         {label} {required && <span className="text-red-500">*</span>}
+        {info && (
+          <span
+            title={info}
+            className="ml-1 mt-0 text-gray-400 hover:text-gray-600 cursor-pointer"
+            style={{ display: 'inline-block', verticalAlign: 'middle' }}
+          >
+            <Info size={16} />
+          </span>
+        )}
       </label>
       {type === "select" ? (
         <select
@@ -265,17 +281,18 @@ const PhysioSignUpForm = () => {
   // currentStep: 1→2→3→4→5
   const [currentStep, setCurrentStep] = useState<number>(1);
 
-  // Datos del formulario
+  // Datos del formulario (se agregó confirm_password y se puso género vacío)
   const [formData, setFormData] = useState<FormData>({
     username: "",
     email: "",
     password: "",
+    confirm_password: "",
     first_name: "",
     last_name: "",
     dni: "",
     phone_number: "",
     postal_code: "",
-    gender: "M",
+    gender: "",
     birth_date: "",
     collegiate_number: "",
     autonomic_community: "MADRID",
@@ -332,6 +349,16 @@ const PhysioSignUpForm = () => {
         newErrors.password = "La contraseña debe tener al menos 8 caracteres";
         isValid = false;
       }
+      if (!formData.confirm_password.trim()) {
+        newErrors.confirm_password = "La confirmación de la contraseña es obligatoria";
+        isValid = false;
+      } else if (formData.confirm_password.length < 8) {
+        newErrors.confirm_password = "La contraseña debe tener al menos 8 caracteres";
+        isValid = false;
+      } else if (formData.confirm_password !== formData.password) {
+        newErrors.confirm_password = "Las contraseñas no coinciden";
+        isValid = false;
+      }
     } else if (step === 2) {
       if (!formData.first_name.trim()) {
         newErrors.first_name = "El nombre es obligatorio";
@@ -364,8 +391,7 @@ const PhysioSignUpForm = () => {
         isValid = false;
       }
     } else if (step === 3) {
-      // Ejemplo: podrías validar si el numero colegiado no está vacío
-      // (Aquí lo dejamos sencillo)
+      // Ejemplo: podrías validar si el número colegiado no está vacío (se deja sencillo)
     } else if (step === 4) {
       if (!formData.plan) {
         newErrors.plan = "Selecciona un plan para continuar";
@@ -390,7 +416,7 @@ const PhysioSignUpForm = () => {
 
   // Validar datos en backend antes de ir al pago (paso 5)
   const handleProceedToPayment = async () => {
-    // Validamos 1, 2, 4 (y 3 si quieres) antes de pasar
+    // Validamos 1, 2, 4 (y 3 si lo deseas) antes de pasar
     if (!validateStep(1) || !validateStep(2) || !validateStep(3) || !validateStep(4)) {
       setValidationMessage("Corrige los errores antes de proceder.");
       return;
@@ -488,65 +514,56 @@ const PhysioSignUpForm = () => {
             <div className="flex items-center w-full mb-8">
               {/* Paso 1 */}
               <div
-                className={`flex items-center justify-center w-10 h-10 rounded-full ${
-                  currentStep >= 1 ? "bg-[#1E5ACD] text-white" : "bg-gray-200 text-gray-600"
-                }`}
+                className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 1 ? "bg-[#1E5ACD] text-white" : "bg-gray-200 text-gray-600"
+                  }`}
               >
                 1
               </div>
               <div
-                className={`h-1 flex-1 mx-2 ${
-                  currentStep >= 2 ? "bg-[#1E5ACD]" : "bg-gray-200"
-                }`}
+                className={`h-1 flex-1 mx-2 ${currentStep >= 2 ? "bg-[#1E5ACD]" : "bg-gray-200"
+                  }`}
               ></div>
 
               {/* Paso 2 */}
               <div
-                className={`flex items-center justify-center w-10 h-10 rounded-full ${
-                  currentStep >= 2 ? "bg-[#1E5ACD] text-white" : "bg-gray-200 text-gray-600"
-                }`}
+                className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 2 ? "bg-[#1E5ACD] text-white" : "bg-gray-200 text-gray-600"
+                  }`}
               >
                 2
               </div>
               <div
-                className={`h-1 flex-1 mx-2 ${
-                  currentStep >= 3 ? "bg-[#1E5ACD]" : "bg-gray-200"
-                }`}
+                className={`h-1 flex-1 mx-2 ${currentStep >= 3 ? "bg-[#1E5ACD]" : "bg-gray-200"
+                  }`}
               ></div>
 
               {/* Paso 3 */}
               <div
-                className={`flex items-center justify-center w-10 h-10 rounded-full ${
-                  currentStep >= 3 ? "bg-[#1E5ACD] text-white" : "bg-gray-200 text-gray-600"
-                }`}
+                className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 3 ? "bg-[#1E5ACD] text-white" : "bg-gray-200 text-gray-600"
+                  }`}
               >
                 3
               </div>
               <div
-                className={`h-1 flex-1 mx-2 ${
-                  currentStep >= 4 ? "bg-[#1E5ACD]" : "bg-gray-200"
-                }`}
+                className={`h-1 flex-1 mx-2 ${currentStep >= 4 ? "bg-[#1E5ACD]" : "bg-gray-200"
+                  }`}
               ></div>
 
               {/* Paso 4 */}
               <div
-                className={`flex items-center justify-center w-10 h-10 rounded-full ${
-                  currentStep >= 4 ? "bg-[#1E5ACD] text-white" : "bg-gray-200 text-gray-600"
-                }`}
+                className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 4 ? "bg-[#1E5ACD] text-white" : "bg-gray-200 text-gray-600"
+                  }`}
               >
                 4
               </div>
               <div
-                className={`h-1 flex-1 mx-2 ${
-                  currentStep >= 5 ? "bg-[#1E5ACD]" : "bg-gray-200"
-                }`}
+                className={`h-1 flex-1 mx-2 ${currentStep >= 5 ? "bg-[#1E5ACD]" : "bg-gray-200"
+                  }`}
               ></div>
 
               {/* Paso 5 */}
               <div
-                className={`flex items-center justify-center w-10 h-10 rounded-full ${
-                  currentStep >= 5 ? "bg-[#1E5ACD] text-white" : "bg-gray-200 text-gray-600"
-                }`}
+                className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 5 ? "bg-[#1E5ACD] text-white" : "bg-gray-200 text-gray-600"
+                  }`}
               >
                 5
               </div>
@@ -586,6 +603,14 @@ const PhysioSignUpForm = () => {
                       onChange={handleChange}
                       error={errors.password}
                     />
+                    <FormField
+                      name="confirm_password"
+                      label="Confirmar contraseña"
+                      type="password"
+                      value={formData.confirm_password}
+                      onChange={handleChange}
+                      error={errors.confirm_password}
+                    />
                   </div>
                 </div>
               )}
@@ -615,6 +640,7 @@ const PhysioSignUpForm = () => {
                       value={formData.dni}
                       onChange={handleChange}
                       error={errors.dni}
+                      info="Necesitamos tu DNI para verificar tu identidad."
                     />
                     <FormField
                       name="phone_number"
@@ -686,11 +712,10 @@ const PhysioSignUpForm = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
                     {/* Fisio Blue */}
                     <label
-                      className={`relative cursor-pointer p-6 rounded-xl border-2 transition-all ${
-                        formData.plan === "blue"
+                      className={`relative cursor-pointer p-6 rounded-xl border-2 transition-all ${formData.plan === "blue"
                           ? "border-[#1E5ACD] bg-blue-50 dark:bg-blue-900/30"
                           : "border-gray-200 hover:border-blue-200 dark:border-neutral-700 dark:hover:border-blue-600"
-                      }`}
+                        }`}
                     >
                       <div className="flex items-start gap-4">
                         <div className="mt-1">
@@ -740,11 +765,10 @@ const PhysioSignUpForm = () => {
 
                     {/* Fisio Gold */}
                     <label
-                      className={`relative cursor-pointer p-6 rounded-xl border-2 transition-all ${
-                        formData.plan === "gold"
+                      className={`relative cursor-pointer p-6 rounded-xl border-2 transition-all ${formData.plan === "gold"
                           ? "border-amber-400 bg-amber-50 dark:bg-amber-900/30"
                           : "border-gray-200 hover:border-amber-200 dark:border-neutral-700 dark:hover:border-amber-600"
-                      }`}
+                        }`}
                     >
                       <div className="flex items-start gap-4">
                         <div className="mt-1">
@@ -843,12 +867,11 @@ const PhysioSignUpForm = () => {
               )}
               {validationMessage && !isValidating && (
                 <p
-                  className={`text-center mt-4 ${
-                    validationMessage.toLowerCase().includes("corrige") ||
-                    validationMessage.toLowerCase().includes("errores")
+                  className={`text-center mt-4 ${validationMessage.toLowerCase().includes("corrige") ||
+                      validationMessage.toLowerCase().includes("errores")
                       ? "text-red-600"
                       : "text-green-600"
-                  }`}
+                    }`}
                 >
                   {validationMessage}
                 </p>
