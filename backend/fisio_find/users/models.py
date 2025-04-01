@@ -142,7 +142,7 @@ class Video(models.Model):
 
 class PatientFile(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='files')
-    physiotherapist = models.ForeignKey(Physiotherapist, on_delete=models.CASCADE, related_name='patient_files')
+    #physiotherapist = models.ForeignKey(Physiotherapist, on_delete=models.CASCADE, related_name='patient_files')
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)

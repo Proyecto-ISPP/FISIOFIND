@@ -811,27 +811,19 @@ def upload_patient_files(request):
     # Convertir request.data en un diccionario mutable (para modificar el QueryDict)
     mutable_data = request.data.copy()
 
-    # Extraer archivos subidos
-    files = mutable_data.getlist("files")
+    print("📌 Datos después de procesar:", mutable_data)  # Para depuración
 
-    if not files:
-        return Response({"error": "Debes proporcionar al menos un archivo."}, status=status.HTTP_400_BAD_REQUEST)
-
-    # Crear una instancia del serializer para manejar los archivos
+    # Pasamos mutable_data en lugar de request.data al serializer
     serializer = PatientFileSerializer(data=mutable_data, context={"request": request})
 
     if serializer.is_valid():
-        # Guardar los archivos en DigitalOcean
-        patient_file = serializer.save()
-
-        # Aquí podrías devolver la URL de los archivos o cualquier otro dato relevante
+        file = serializer.save()
         return Response(
             {
-                "message": "Archivos subidos correctamente",
-                "files": PatientFileSerializer(patient_file).data  # Aquí se devuelven los datos del archivo
+                "message": "Archivo creado correctamente",
+                "video": PatientFileSerializer(file).data
             },
             status=status.HTTP_201_CREATED
         )
 
-    # Si el serializer no es válido, devolver los errores
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
