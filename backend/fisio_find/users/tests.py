@@ -1237,6 +1237,7 @@ class ProcessPaymentViewTests(APITestCase):
         self.assertEqual(response.status_code, 400)
         self.assertIn("error", response.data)
 
+
 class PhysioUpdateViewTests(APITestCase):
 
     def setUp(self):
@@ -1270,7 +1271,31 @@ class PhysioUpdateViewTests(APITestCase):
         data = {
             "user.email": "updated@example.com",
             "bio": "Actualización desde test",
-            "services": '{"Servicio 1": {"id": 1, "title": "Primera consulta", "price": 30, "description": "Evaluaremos tu estado f\\u00edsico, hablaremos sobre tus molestias y realizaremos pruebas para dise\\u00f1ar un plan de tratamiento personalizado que se adapte a tus necesidades y estilo de vida.", "duration": 45, "custom_questionnaire": {"UI Schema": {"type": "Group", "label": "Cuestionario Personalizado", "elements": [{"type": "Control", "label": "\\u00bfQu\\u00e9 te duele?", "scope": "#/properties/q1"}, {"type": "Control", "label": "\\u00bfC\\u00f3mo describir\\u00edas el dolor?", "scope": "#/properties/q2"}]}}}}',
+            "services": json.dumps({
+                "Servicio 1": {
+                    "id": 1,
+                    "title": "Primera consulta",
+                    "price": 30,
+                    "description": "Evaluaremos tu estado físico, hablaremos sobre tus molestias y realizaremos pruebas para diseñar un plan de tratamiento personalizado que se adapte a tus necesidades y estilo de vida.",
+                    "duration": 45,
+                    "tipo": "PRIMERA_CONSULTA",
+                    "custom_questionnaire": {
+                        "UI Schema": {
+                            "type": "Group",
+                            "label": "Cuestionario Personalizado",
+                            "elements": [
+                                {"type": "Number", "label": "Peso (kg)", "scope": "#/properties/peso"},
+                                {"type": "Number", "label": "Altura (cm)", "scope": "#/properties/altura"},
+                                {"type": "Number", "label": "Edad", "scope": "#/properties/edad"},
+                                {"type": "Control", "label": "Nivel de actividad física", "scope": "#/properties/actividad_fisica"},
+                                {"type": "Control", "label": "Motivo de la consulta", "scope": "#/properties/motivo_consulta"},
+                                {"type": "Control", "label": "¿Qué te duele?", "scope": "#/properties/q1"},
+                                {"type": "Control", "label": "¿Cómo describirías el dolor?", "scope": "#/properties/q2"}
+                            ]
+                        }
+                    }
+                }
+            }),
             "schedule": '{"lunes": ["10:00", "12:00"]}',
             "specializations": '["Traumatología", "Deportiva"]'
         }
@@ -1370,11 +1395,20 @@ class PhysioUpdateViewTests(APITestCase):
                     "price": 30,
                     "description": "Evaluación inicial",
                     "duration": 45,
+                    "tipo": "PRIMERA_CONSULTA",
                     "custom_questionnaire": {
                         "UI Schema": {
                             "type": "Group",
-                            "label": "Cuestionario",
-                            "elements": []
+                            "label": "Cuestionario Personalizado",
+                            "elements": [
+                                {"type": "Number", "label": "Peso (kg)", "scope": "#/properties/peso"},
+                                {"type": "Number", "label": "Altura (cm)", "scope": "#/properties/altura"},
+                                {"type": "Number", "label": "Edad", "scope": "#/properties/edad"},
+                                {"type": "Control", "label": "Nivel de actividad física", "scope": "#/properties/actividad_fisica"},
+                                {"type": "Control", "label": "Motivo de la consulta", "scope": "#/properties/motivo_consulta"},
+                                {"type": "Control", "label": "¿Qué te duele?", "scope": "#/properties/q1"},
+                                {"type": "Control", "label": "¿Cómo describirías el dolor?", "scope": "#/properties/q2"}
+                            ]
                         }
                     }
                 }
@@ -1416,6 +1450,295 @@ class PhysioUpdateViewTests(APITestCase):
         response = self.client.put(self.url, data, format="json")
         self.assertEqual(response.status_code, 400)
         self.assertIn("services", response.data)
+    
+    def test_missing_required_custom_elements(self):
+        elements = [  # Solo uno de los necesarios
+            {'type': 'Number', 'label': 'Peso (kg)', 'scope': '#/properties/peso'}
+        ]
+
+        service = {
+            "id": 1,
+            "title": "Primera consulta",
+            "price": 30,
+            "description": "Descripción",
+            "duration": 45,
+            "tipo": "PRIMERA_CONSULTA",
+            "custom_questionnaire": {
+                "UI Schema": {
+                    "type": "Group",
+                    "label": "Cuestionario Personalizado",
+                    "elements": elements
+                }
+            }
+        }
+
+        data = {
+            "services": json.dumps({"Servicio 1": service})
+        }
+
+        response = self.client.put(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+
+    def test_missing_ui_schema_in_questionnaire(self):
+        service = {
+            "id": 1,
+            "title": "Primera consulta",
+            "price": 30,
+            "description": "Descripción",
+            "duration": 45,
+            "tipo": "PRIMERA_CONSULTA",
+            "custom_questionnaire": {}  # Falta 'UI Schema'
+        }
+
+        data = {
+            "services": json.dumps({"Servicio 1": service})
+        }
+
+        response = self.client.put(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+    def test_invalid_custom_questionnaire_element(self):
+        service = {
+            "id": 1,
+            "title": "Primera consulta",
+            "price": 30,
+            "description": "Descripción",
+            "duration": 45,
+            "tipo": "PRIMERA_CONSULTA",
+            "custom_questionnaire": {
+                "UI Schema": {
+                    "type": "Group",
+                    "label": "Cuestionario Personalizado",
+                    "elements": [
+                        {"type": "InvalidType", "label": "Pregunta", "scope": "#/properties/q1"}
+                    ]
+                }
+            }
+        }
+
+        data = {
+            "services": json.dumps({"Servicio 1": service})
+        }
+
+        response = self.client.put(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+
+    def test_invalid_tipo_value(self):
+        service = {
+            "id": 1,
+            "title": "Algo raro",
+            "price": 30,
+            "description": "Descripción",
+            "duration": 45,
+            "tipo": "TIPO_INVALIDO",  # No permitido
+            "custom_questionnaire": {
+                "UI Schema": {
+                    "type": "Group",
+                    "label": "Cuestionario",
+                    "elements": []
+                }
+            }
+        }
+
+        data = {
+            "services": json.dumps({"Servicio 1": service})
+        }
+
+        response = self.client.put(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+    def test_invalid_tipo_title_mismatch(self):
+        service = {
+            "id": 1,
+            "title": "Consulta Inicial",
+            "price": 30,
+            "description": "Descripción",
+            "duration": 45,
+            "tipo": "PRIMERA_CONSULTA",  # Debe ir con título "Primera consulta"
+            "custom_questionnaire": {
+                "UI Schema": {
+                    "type": "Group",
+                    "label": "Cuestionario",
+                    "elements": []
+                }
+            }
+        }
+
+        data = {
+            "services": json.dumps({"Servicio 1": service})
+        }
+
+        response = self.client.put(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+    def test_custom_questionnaire_is_string(self):
+        service = {
+            "id": 1,
+            "title": "Primera consulta",
+            "price": 30,
+            "description": "Desc",
+            "duration": 45,
+            "tipo": "PRIMERA_CONSULTA",
+            "custom_questionnaire": "debería ser dict"
+        }
+        data = {
+            "services": json.dumps({"Servicio 1": service})
+        }
+        response = self.client.put(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+    def test_ui_schema_not_dict(self):
+        service = {
+            "id": 1,
+            "title": "Primera consulta",
+            "price": 30,
+            "description": "Desc",
+            "duration": 45,
+            "tipo": "PRIMERA_CONSULTA",
+            "custom_questionnaire": {
+                "UI Schema": "esto debería ser un dict"
+            }
+        }
+        data = {
+            "services": json.dumps({"Servicio 1": service})
+        }
+        response = self.client.put(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+    def test_elements_is_not_list(self):
+        service = {
+            "id": 1,
+            "title": "Primera consulta",
+            "price": 30,
+            "description": "Desc",
+            "duration": 45,
+            "tipo": "PRIMERA_CONSULTA",
+            "custom_questionnaire": {
+                "UI Schema": {
+                    "type": "Group",
+                    "label": "Test",
+                    "elements": "debería ser una lista"
+                }
+            }
+        }
+        data = {
+            "services": json.dumps({"Servicio 1": service})
+        }
+        response = self.client.put(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+    def test_element_scope_missing_properties_prefix(self):
+        elements = [
+            {"type": "Control", "label": "Pregunta", "scope": "q1"}
+        ]
+        service = {
+            "id": 1,
+            "title": "Primera consulta",
+            "price": 30,
+            "description": "Desc",
+            "duration": 45,
+            "tipo": "PRIMERA_CONSULTA",
+            "custom_questionnaire": {
+                "UI Schema": {
+                    "type": "Group",
+                    "label": "Test",
+                    "elements": elements
+                }
+            }
+        }
+        data = {
+            "services": json.dumps({"Servicio 1": service})
+        }
+        response = self.client.put(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+    def test_element_missing_label_field(self):
+        elements = [
+            {"type": "Control", "scope": "#/properties/q1"}  # Falta 'label'
+        ]
+        service = {
+            "id": 1,
+            "title": "Primera consulta",
+            "price": 30,
+            "description": "Desc",
+            "duration": 45,
+            "tipo": "PRIMERA_CONSULTA",
+            "custom_questionnaire": {
+                "UI Schema": {
+                    "type": "Group",
+                    "label": "Test",
+                    "elements": elements
+                }
+            }
+        }
+        data = {
+            "services": json.dumps({"Servicio 1": service})
+        }
+        response = self.client.put(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+    def test_element_label_not_string(self):
+        elements = [
+            {"type": "Control", "label": 123, "scope": "#/properties/q1"}  # label inválido
+        ]
+        service = {
+            "id": 1,
+            "title": "Primera consulta",
+            "price": 30,
+            "description": "Desc",
+            "duration": 45,
+            "tipo": "PRIMERA_CONSULTA",
+            "custom_questionnaire": {
+                "UI Schema": {
+                    "type": "Group",
+                    "label": "Test",
+                    "elements": elements
+                }
+            }
+        }
+        data = {
+            "services": json.dumps({"Servicio 1": service})
+        }
+        response = self.client.put(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+    def test_questionnaire_type_not_group(self):
+        service = {
+            "id": 1,
+            "title": "Primera consulta",
+            "price": 30,
+            "description": "Desc",
+            "duration": 45,
+            "tipo": "PRIMERA_CONSULTA",
+            "custom_questionnaire": {
+                "UI Schema": {
+                    "type": "Section",  # inválido
+                    "label": "Test",
+                    "elements": []
+                }
+            }
+        }
+        data = {
+            "services": json.dumps({"Servicio 1": service})
+        }
+        response = self.client.put(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+
 
 class PhysioCreateServiceViewTests(APITestCase):
 
@@ -1442,24 +1765,33 @@ class PhysioCreateServiceViewTests(APITestCase):
             collegiate_number="C12345",
             autonomic_community="MADRID",
             plan=self.plan,
-            services={}  # empieza vacío
+            services=None
         )
 
         self.client.force_authenticate(user=self.user)
 
         self.valid_service = {
             "id": 1,
-            "title": "Consulta inicial",
+            "title": "Primera consulta",
             "price": 30,
-            "description": "Descripción del servicio",
+            "description": "Descripción",
             "duration": 45,
+            "tipo": "PRIMERA_CONSULTA",
             "custom_questionnaire": {
                 "UI Schema": {
                     "type": "Group",
-                    "label": "Formulario",
-                    "elements": []
+                    "label": "Cuestionario Personalizado",
+                    "elements": [
+                        {"type": "Number", "label": "Peso (kg)", "scope": "#/properties/peso"},
+                        {"type": "Number", "label": "Altura (cm)", "scope": "#/properties/altura"},
+                        {"type": "Number", "label": "Edad", "scope": "#/properties/edad"},
+                        {"type": "Control", "label": "Nivel de actividad física", "scope": "#/properties/actividad_fisica"},
+                        {"type": "Control", "label": "Motivo de la consulta", "scope": "#/properties/motivo_consulta"},
+                        {"type": "Control", "label": "¿Qué te duele?", "scope": "#/properties/q1"},
+                        {"type": "Control", "label": "¿Cómo describirías el dolor?", "scope": "#/properties/q2"}
+                        ]
+                    }
                 }
-            }
         }
 
     def test_create_new_service(self):
@@ -1499,6 +1831,154 @@ class PhysioCreateServiceViewTests(APITestCase):
         self.assertEqual(response.status_code, 400)
         self.assertIn("error", response.data)
 
+    def test_create_service_missing_tipo(self):
+        invalid = self.valid_service.copy()
+        invalid.pop("tipo")
+        response = self.client.post(self.url, invalid, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+    def test_create_service_invalid_tipo(self):
+        invalid = self.valid_service.copy()
+        invalid["tipo"] = "INVALIDO"
+        response = self.client.post(self.url, invalid, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+    def test_create_service_title_tipo_mismatch(self):
+        invalid = self.valid_service.copy()
+        invalid["tipo"] = "PRIMERA_CONSULTA"
+        invalid["title"] = "Cualquier otra cosa"
+        response = self.client.post(self.url, invalid, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+    def test_create_service_invalid_custom_questionnaire_structure(self):
+        invalid = self.valid_service.copy()
+        invalid["tipo"] = "PRIMERA_CONSULTA"
+        invalid["custom_questionnaire"] = "debería ser un dict"
+        response = self.client.post(self.url, invalid, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+    def test_create_service_missing_required_elements(self):
+        invalid = self.valid_service.copy()
+        invalid["tipo"] = "PRIMERA_CONSULTA"
+        invalid["custom_questionnaire"]["UI Schema"]["elements"] = [
+            {"type": "Control", "label": "Pregunta libre", "scope": "#/properties/libre"}
+        ]
+        response = self.client.post(self.url, invalid, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+    def test_create_service_title_not_string(self):
+        invalid = self.valid_service.copy()
+        invalid["tipo"] = "PRIMERA_CONSULTA"
+        invalid["title"] = 1234
+        response = self.client.post(self.url, invalid, format="json")
+        self.assertEqual(response.status_code, 400)
+
+    def test_create_service_description_not_string(self):
+        invalid = self.valid_service.copy()
+        invalid["tipo"] = "PRIMERA_CONSULTA"
+        invalid["description"] = {"text": "Esto no debería ser un dict"}
+        response = self.client.post(self.url, invalid, format="json")
+        self.assertEqual(response.status_code, 400)
+
+    def test_create_service_tipo_not_string(self):
+        invalid = self.valid_service.copy()
+        invalid["tipo"] = 100  # debería ser string
+        response = self.client.post(self.url, invalid, format="json")
+        self.assertEqual(response.status_code, 400)
+
+    def test_create_service_questionnaire_not_dict(self):
+        invalid = self.valid_service.copy()
+        invalid["tipo"] = "PRIMERA_CONSULTA"
+        invalid["custom_questionnaire"] = 42  # inválido
+        response = self.client.post(self.url, invalid, format="json")
+        self.assertEqual(response.status_code, 400)
+
+    def test_create_service_ui_schema_label_not_string(self):
+        invalid = self.valid_service.copy()
+        invalid["tipo"] = "PRIMERA_CONSULTA"
+        invalid["custom_questionnaire"]["UI Schema"]["label"] = {"texto": "algo"}
+        response = self.client.post(self.url, invalid, format="json")
+        self.assertEqual(response.status_code, 400)
+
+    def test_create_service_ui_schema_elements_not_list(self):
+        invalid = self.valid_service.copy()
+        invalid["tipo"] = "PRIMERA_CONSULTA"
+        invalid["custom_questionnaire"]["UI Schema"]["elements"] = "no soy una lista"
+        response = self.client.post(self.url, invalid, format="json")
+        self.assertEqual(response.status_code, 400)
+
+    def test_create_service_element_missing_type(self):
+        invalid = self.valid_service.copy()
+        invalid["tipo"] = "PRIMERA_CONSULTA"
+        invalid["custom_questionnaire"]["UI Schema"]["elements"] = [
+            {"label": "Algo", "scope": "#/properties/x"}
+        ]
+        response = self.client.post(self.url, invalid, format="json")
+        self.assertEqual(response.status_code, 400)
+
+    def test_create_service_element_type_invalid(self):
+        invalid = self.valid_service.copy()
+        invalid["tipo"] = "PRIMERA_CONSULTA"
+        invalid["custom_questionnaire"]["UI Schema"]["elements"] = [
+            {"type": "TextoLibre", "label": "Algo", "scope": "#/properties/x"}
+        ]
+        response = self.client.post(self.url, invalid, format="json")
+        self.assertEqual(response.status_code, 400)
+
+    def test_create_service_element_scope_not_string(self):
+        invalid = self.valid_service.copy()
+        invalid["tipo"] = "PRIMERA_CONSULTA"
+        invalid["custom_questionnaire"]["UI Schema"]["elements"] = [
+            {"type": "Control", "label": "Algo", "scope": 123}
+        ]
+        response = self.client.post(self.url, invalid, format="json")
+        self.assertEqual(response.status_code, 400)
+
+    def test_create_service_element_scope_invalid_prefix(self):
+        invalid = self.valid_service.copy()
+        invalid["tipo"] = "PRIMERA_CONSULTA"
+        invalid["custom_questionnaire"]["UI Schema"]["elements"] = [
+            {"type": "Control", "label": "Algo", "scope": "q1"}
+        ]
+        response = self.client.post(self.url, invalid, format="json")
+        self.assertEqual(response.status_code, 400)
+
+    def test_create_service_questionnaire_ui_schema_missing_elements(self):
+        invalid = self.valid_service.copy()
+        invalid["tipo"] = "PRIMERA_CONSULTA"
+        invalid["custom_questionnaire"]["UI Schema"].pop("elements")
+        response = self.client.post(self.url, invalid, format="json")
+        self.assertEqual(response.status_code, 400)
+
+    def test_create_service_element_missing_scope(self):
+        invalid = self.valid_service.copy()
+        invalid["tipo"] = "PRIMERA_CONSULTA"
+        invalid["custom_questionnaire"]["UI Schema"]["elements"] = [
+            {"type": "Control", "label": "Sin scope"}
+        ]
+        response = self.client.post(self.url, invalid, format="json")
+        self.assertEqual(response.status_code, 400)
+
+    def test_create_service_duplicate_elements(self):
+        invalid = self.valid_service.copy()
+        invalid["tipo"] = "PRIMERA_CONSULTA"
+        base_elements = [
+            {"type": "Number", "label": "Peso (kg)", "scope": "#/properties/peso"},
+            {"type": "Number", "label": "Altura (cm)", "scope": "#/properties/altura"},
+            {"type": "Number", "label": "Edad", "scope": "#/properties/edad"},
+            {"type": "Control", "label": "Motivo de la consulta", "scope": "#/properties/motivo_consulta"},
+            {"type": "Control", "label": "Motivo de la consulta", "scope": "#/properties/motivo_consulta"},  # duplicado
+            {"type": "Control", "label": "Nivel de actividad física", "scope": "#/properties/actividad_fisica"}
+        ]
+        invalid["custom_questionnaire"]["UI Schema"]["elements"] = base_elements
+        response = self.client.post(self.url, invalid, format="json")
+        self.assertEqual(response.status_code, 400)
+
 class PhysioUpdateSpecificServiceTests(APITestCase):
 
     def setUp(self):
@@ -1524,17 +2004,12 @@ class PhysioUpdateSpecificServiceTests(APITestCase):
             services={
                 "1": {
                     "id": 1,
-                    "title": "Consulta previa",
+                    "title": "Primera consulta",
                     "price": 30,
-                    "description": "Sesión inicial",
+                    "description": "Descripción",
                     "duration": 45,
-                    "custom_questionnaire": {
-                        "UI Schema": {
-                            "type": "Group",
-                            "label": "Formulario",
-                            "elements": []
-                        }
-                    }
+                    "tipo": "PRIMERA_CONSULTA",
+                    "custom_questionnaire": None
                 }
             }
         )
@@ -1547,11 +2022,20 @@ class PhysioUpdateSpecificServiceTests(APITestCase):
             "price": 35,
             "description": "Descripción actualizada",
             "duration": 50,
+            "tipo": "OTRO",
             "custom_questionnaire": {
                 "UI Schema": {
                     "type": "Group",
-                    "label": "Formulario nuevo",
-                    "elements": []
+                    "label": "Cuestionario Personalizado",
+                    "elements": [
+                        {"type": "Number", "label": "Peso (kg)", "scope": "#/properties/peso"},
+                        {"type": "Number", "label": "Altura (cm)", "scope": "#/properties/altura"},
+                        {"type": "Number", "label": "Edad", "scope": "#/properties/edad"},
+                        {"type": "Control", "label": "Nivel de actividad física", "scope": "#/properties/actividad_fisica"},
+                        {"type": "Control", "label": "Motivo de la consulta", "scope": "#/properties/motivo_consulta"},
+                        {"type": "Control", "label": "¿Qué te duele?", "scope": "#/properties/q1"},
+                        {"type": "Control", "label": "¿Cómo describirías el dolor?", "scope": "#/properties/q2"}
+                    ]
                 }
             }
         }
@@ -1601,6 +2085,110 @@ class PhysioUpdateSpecificServiceTests(APITestCase):
         )
         self.assertEqual(response.status_code, 400)
         self.assertIn("error", response.data)
+
+    def test_update_service_missing_tipo(self):
+        invalid = self.valid_update.copy()
+        invalid.pop("tipo")
+        response = self.client.put(self.url(1), invalid, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+    def test_update_service_invalid_tipo(self):
+        invalid = self.valid_update.copy()
+        invalid["tipo"] = "NO_VALIDO"
+        response = self.client.put(self.url(1), invalid, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+    def test_update_service_mismatch_title_tipo(self):
+        invalid = self.valid_update.copy()
+        invalid["tipo"] = "PRIMERA_CONSULTA"
+        invalid["title"] = "Otra cosa"
+        response = self.client.put(self.url(1), invalid, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+    def test_update_service_questionnaire_ui_schema_not_dict(self):
+        invalid = self.valid_update.copy()
+        invalid["tipo"] = "PRIMERA_CONSULTA"
+        invalid["custom_questionnaire"] = {
+            "UI Schema": "esto debería ser un dict"
+        }
+        response = self.client.put(self.url(1), invalid, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+    def test_update_service_missing_questionnaire_elements(self):
+        invalid = self.valid_update.copy()
+        invalid["tipo"] = "PRIMERA_CONSULTA"
+        invalid["custom_questionnaire"]["UI Schema"]["elements"] = [
+            {"type": "Control", "label": "Otra pregunta", "scope": "#/properties/libre"}
+        ]
+        response = self.client.put(self.url(1), invalid, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+    def test_update_service_title_not_string(self):
+        invalid = self.valid_update.copy()
+        invalid["tipo"] = "PRIMERA_CONSULTA"
+        invalid["title"] = 123
+        response = self.client.put(self.url(1), invalid, format="json")
+        self.assertEqual(response.status_code, 400)
+
+    def test_update_service_description_not_string(self):
+        invalid = self.valid_update.copy()
+        invalid["tipo"] = "PRIMERA_CONSULTA"
+        invalid["description"] = ["lista"]
+        response = self.client.put(self.url(1), invalid, format="json")
+        self.assertEqual(response.status_code, 400)
+
+    def test_update_service_price_float(self):
+        invalid = self.valid_update.copy()
+        invalid["tipo"] = "PRIMERA_CONSULTA"
+        invalid["price"] = 30.5  # float en lugar de int
+        response = self.client.put(self.url(1), invalid, format="json")
+        self.assertEqual(response.status_code, 400)
+
+    def test_update_service_duration_float(self):
+        invalid = self.valid_update.copy()
+        invalid["tipo"] = "PRIMERA_CONSULTA"
+        invalid["duration"] = 45.0  # también inválido si solo aceptas int
+        response = self.client.put(self.url(1), invalid, format="json")
+        self.assertEqual(response.status_code, 400)
+
+    def test_update_service_ui_schema_type_not_group(self):
+        invalid = self.valid_update.copy()
+        invalid["tipo"] = "PRIMERA_CONSULTA"
+        invalid["custom_questionnaire"]["UI Schema"]["type"] = "Panel"
+        response = self.client.put(self.url(1), invalid, format="json")
+        self.assertEqual(response.status_code, 400)
+
+    def test_update_service_element_type_unexpected_case(self):
+        invalid = self.valid_update.copy()
+        invalid["tipo"] = "PRIMERA_CONSULTA"
+        invalid["custom_questionnaire"]["UI Schema"]["elements"] = [
+            {"type": "control", "label": "Algo", "scope": "#/properties/x"}
+        ]
+        response = self.client.put(self.url(1), invalid, format="json")
+        self.assertEqual(response.status_code, 400)
+
+    def test_update_service_element_label_not_string(self):
+        invalid = self.valid_update.copy()
+        invalid["tipo"] = "PRIMERA_CONSULTA"
+        invalid["custom_questionnaire"]["UI Schema"]["elements"] = [
+            {"type": "Control", "label": 123, "scope": "#/properties/q1"}
+        ]
+        response = self.client.put(self.url(1), invalid, format="json")
+        self.assertEqual(response.status_code, 400)
+
+    def test_update_service_element_scope_is_empty_string(self):
+        invalid = self.valid_update.copy()
+        invalid["tipo"] = "PRIMERA_CONSULTA"
+        invalid["custom_questionnaire"]["UI Schema"]["elements"] = [
+            {"type": "Control", "label": "Algo", "scope": ""}
+        ]
+        response = self.client.put(self.url(1), invalid, format="json")
+        self.assertEqual(response.status_code, 400)
 
 
 class PhysioDeleteServiceTests(APITestCase):
@@ -1780,6 +2368,7 @@ class PatientRegisterViewTests(APITestCase):
         response = self.client.post(self.url, data, format="json")
         self.assertEqual(response.status_code, 400)
         self.assertIn("dni", response.data)
+
 """
 class ValidatorTests(APITestCase):
     # TESTS ANDALUCIA
