@@ -1,4 +1,4 @@
-name: Generar Changelog Automático
+name: Generate Changelog
 
 on:
   push:
@@ -6,26 +6,24 @@ on:
       - feat/changelog.yml
 
 jobs:
-  generate-changelog:
+  changelog:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout del repositorio
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Configurar Git User
+      - name: Install git-cliff
         run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
+          curl -sSL https://github.com/orhun/git-cliff/releases/latest/download/git-cliff-$(uname -s)-$(uname -m) -o /usr/local/bin/git-cliff
+          chmod +x /usr/local/bin/git-cliff
 
-      - name: Instalar auto-changelog
-        run: npm install -g auto-changelog
-        
-      - name: Generar Changelog
-        run: auto-changelog --output CHANGELOG.md --commit-limit false --starting-commit $(git rev-list --max-parents=0 HEAD)
+      - name: Generate Changelog
+        run: git-cliff -c cliff.toml -o CHANGELOG.md
 
-
-      - name: Commit y Push del Changelog
+      - name: Commit and Push Changelog
         run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add CHANGELOG.md
-          git commit -m "🔖 Actualización automática del Changelog"
-          git push origin feat/changelog.yml
+          git commit -m "🔄 Update Changelog"
+          git push
