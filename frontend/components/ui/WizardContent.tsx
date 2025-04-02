@@ -147,7 +147,15 @@ const WizardContent: React.FC<WizardContentProps> = ({
       </div>
     );
   } else if (currentStep === 3) {
+    if (!appointmentData.start_time && !appointmentData.end_time) {
+      return (
+        <p className="text-gray-800">
+        Por favor selecciona un tramo horario primero.
+      </p>
+      );
+    } else {
       return <ServiceQuestionary ref={questionaryRef} />;
+    }
   } else if (currentStep === 4) {
     // Se formatean las fechas de inicio y fin de forma separada
     const inicio = appointmentData.start_time ? formatAppointment(appointmentData.start_time) : { date: "", time: "" };
