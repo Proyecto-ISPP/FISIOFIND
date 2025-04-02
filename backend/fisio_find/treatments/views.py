@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from django.utils import timezone
 
 from users.permissions import IsPatient, IsPhysioOrPatient, IsPhysiotherapist
-from .models import Exercise, ExerciseLog, ExerciseSession, Series, Session, SessionTest, Treatment
+from .models import Exercise, ExerciseLog, ExerciseSession, Series, Session, SessionTest, Treatment, SessionTestResponse
 from appointment.models import Appointment
 from .serializers import ExerciseLogSerializer, ExerciseSerializer, ExerciseSessionSerializer, SeriesSerializer, SessionSerializer, SessionTestResponseSerializer, SessionTestSerializer, TreatmentSerializer, TreatmentDetailSerializer
 
@@ -505,7 +505,8 @@ class SessionTestResponseView(APIView):
             
             serializer = SessionTestResponseSerializer(data=data)
             if serializer.is_valid():
-                response = serializer.save()
+                # Pass patient explicitly to save method to ensure it's set
+                response = serializer.save(patient=patient, test=test)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             
