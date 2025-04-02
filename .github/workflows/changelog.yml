@@ -19,9 +19,9 @@ jobs:
 
       - name: Instalar auto-changelog
         run: npm install -g auto-changelog
-
+        
       - name: Generar Changelog
-        run: auto-changelog --commit-limit false --unreleased --output CHANGELOG.md
+        run: auto-changelog --output CHANGELOG.md --commit-limit false --starting-commit $(git rev-list --max-parents=0 HEAD)
 
 
       - name: Commit y Push del Changelog
