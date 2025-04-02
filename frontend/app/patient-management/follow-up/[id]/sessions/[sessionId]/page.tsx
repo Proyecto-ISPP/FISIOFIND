@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import RestrictedAccess from "@/components/RestrictedAccess";
 import { getApiBaseUrl } from "@/utils/api";
@@ -67,23 +67,35 @@ interface ExerciseLog {
   patient: number;
 }
 
-const SessionDetailPage = ({ params }: { params: { id: string; sessionId: string } }) => {
+const SessionDetailPage = ({
+  params,
+}: {
+  params: { id: string; sessionId: string };
+}) => {
   const router = useRouter();
   const [session, setSession] = useState<Session | null>(null);
   const [exercises, setExercises] = useState<ExerciseSession[]>([]);
   const [test, setTest] = useState<Test | null>(null);
-  const [testResponse, setTestResponse] = useState<TestResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
-  
+
   // For test response
   const [textResponse, setTextResponse] = useState("");
   const [scaleResponse, setScaleResponse] = useState<number | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [responseSuccess, setResponseSuccess] = useState(false);
   const [responseError, setResponseError] = useState<string | null>(null);
+  const [testResponses, setTestResponses] = useState<TestResponse[]>([]);
+  const [showTestWarning, setShowTestWarning] = useState(false);
+  const [canSubmitTest, setCanSubmitTest] = useState<{
+    canSubmit: boolean;
+    reason: string | null;
+  }>({
+    canSubmit: false,
+    reason: null,
+  });
 
   //For logs
   const [exerciseLogs, setExerciseLogs] = useState<
@@ -150,7 +162,7 @@ const SessionDetailPage = ({ params }: { params: { id: string; sessionId: string
   const loadSessionData = async (authToken: string, sessionId: string) => {
     try {
       setLoading(true);
-      
+
       // Load session details
       const sessionResponse = await fetch(
         `${getApiBaseUrl()}/api/treatments/sessions/${sessionId}/`,
@@ -183,15 +195,17 @@ const SessionDetailPage = ({ params }: { params: { id: string; sessionId: string
       if (exercisesResponse.ok) {
         const exerciseSessions = await exercisesResponse.json();
         console.log("Exercise sessions:", exerciseSessions);
-        
+
         // Fetch detailed information for each exercise
         const exercisesWithDetails = await Promise.all(
-          exerciseSessions.map(async (exerciseSession: any) => {
+          exerciseSessions.map(async (exerciseSession: ExerciseSession) => {
             try {
               // Get the exercise ID (either from exerciseSession.exercise.id or exerciseSession.exercise if it's just an ID)
-              const exerciseId = typeof exerciseSession.exercise === 'object' ? 
-                exerciseSession.exercise.id : exerciseSession.exercise;
-              
+              const exerciseId =
+                typeof exerciseSession.exercise === "object"
+                  ? exerciseSession.exercise.id
+                  : exerciseSession.exercise;
+
               const exerciseDetailResponse = await fetch(
                 `${getApiBaseUrl()}/api/treatments/exercises/${exerciseId}/`,
                 {
@@ -201,14 +215,16 @@ const SessionDetailPage = ({ params }: { params: { id: string; sessionId: string
                   },
                 }
               );
-              
+
               if (exerciseDetailResponse.ok) {
                 const exerciseDetail = await exerciseDetailResponse.json();
                 console.log(`Exercise ${exerciseId} details:`, exerciseDetail);
-                
+
                 // Get the series for this exercise session
                 const seriesResponse = await fetch(
-                  `${getApiBaseUrl()}/api/treatments/exercise-sessions/${exerciseSession.id}/series/`,
+                  `${getApiBaseUrl()}/api/treatments/exercise-sessions/${
+                    exerciseSession.id
+                  }/series/`,
                   {
                     headers: {
                       Authorization: `Bearer ${authToken}`,
@@ -216,31 +232,37 @@ const SessionDetailPage = ({ params }: { params: { id: string; sessionId: string
                     },
                   }
                 );
-                
+
                 let series = [];
                 if (seriesResponse.ok) {
                   series = await seriesResponse.json();
-                  console.log(`Series for exercise session ${exerciseSession.id}:`, series);
+                  console.log(
+                    `Series for exercise session ${exerciseSession.id}:`,
+                    series
+                  );
                 }
-                
+
                 // Create a complete exercise session object with all details
                 return {
                   id: exerciseSession.id,
                   session: exerciseSession.session,
                   exercise: exerciseDetail,
-                  series: series
+                  series: series,
                 };
               }
               return null;
             } catch (error) {
-              console.error(`Error fetching details for exercise session ${exerciseSession.id}:`, error);
+              console.error(
+                `Error fetching details for exercise session ${exerciseSession.id}:`,
+                error
+              );
               return null;
             }
           })
         );
-        
+
         // Filter out any null values from failed requests
-        const validExercises = exercisesWithDetails.filter(ex => ex !== null);
+        const validExercises = exercisesWithDetails.filter((ex) => ex !== null);
         console.log("Exercises with details:", validExercises);
         setExercises(validExercises);
 
@@ -314,8 +336,10 @@ const SessionDetailPage = ({ params }: { params: { id: string; sessionId: string
 
           if (testResponsesResponse.ok) {
             const testResponsesData = await testResponsesResponse.json();
+            setTestResponses(testResponsesData);
+
+            // If there are responses, set the most recent one as the current response
             if (testResponsesData.length > 0) {
-              setTestResponse(testResponsesData[0]);
               if (testData.test_type === "text") {
                 setTextResponse(testResponsesData[0].response_text || "");
               } else if (testData.test_type === "scale") {
@@ -331,74 +355,12 @@ const SessionDetailPage = ({ params }: { params: { id: string; sessionId: string
     } catch (err) {
       console.error("Error:", err);
       setError(
-        err instanceof Error ? err.message : "Error al cargar los datos de la sesión"
+        err instanceof Error
+          ? err.message
+          : "Error al cargar los datos de la sesión"
       );
     } finally {
       setLoading(false);
-    }
-  };
-
-  // Test Response Submittion
-  const handleSubmitTestResponse = async () => {
-    if (!test) return;
-    
-    setSubmitting(true);
-    setResponseError(null);
-    setResponseSuccess(false);
-
-    try {
-      const storedToken = localStorage.getItem("token");
-      if (!storedToken) {
-        throw new Error("No se ha encontrado el token de autenticación");
-      }
-
-      const payload: { 
-        test: number;
-        response_text?: string;
-        response_scale?: number;
-      } = {
-        test: test.id
-      };
-
-      if (test.test_type === "text") {
-        if (!textResponse.trim()) {
-          throw new Error("Por favor, ingrese una respuesta");
-        }
-        payload.response_text = textResponse;
-      } else if (test.test_type === "scale") {
-        if (scaleResponse === null) {
-          throw new Error("Por favor, seleccione un valor en la escala");
-        }
-        payload.response_scale = scaleResponse;
-      }
-
-      const response = await fetch(
-        `${getApiBaseUrl()}/api/treatments/sessions/${params.sessionId}/test/respond/`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${storedToken}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || "Error al enviar la respuesta");
-      }
-
-      const responseData = await response.json();
-      setTestResponse(responseData);
-      setResponseSuccess(true);
-    } catch (err) {
-      console.error("Error:", err);
-      setResponseError(
-        err instanceof Error ? err.message : "Error al enviar la respuesta"
-      );
-    } finally {
-      setSubmitting(false);
     }
   };
 
@@ -542,64 +504,234 @@ const SessionDetailPage = ({ params }: { params: { id: string; sessionId: string
     return { canCreate: true, reason: null };
   };
 
+  // Handler for test response submittion
+  const handleSubmitTestResponse = async () => {
+    if (!test) return;
+
+    // Check if the patient can submit a test response
+    const { canSubmit, reason } = canSubmitTestResponse();
+
+    if (!canSubmit) {
+      setResponseError(reason);
+      return;
+    }
+
+    if (reason) {
+      // Show warning but allow submission
+      setShowTestWarning(true);
+      return;
+    }
+
+    // Continue with submission
+    submitTestResponse();
+  };
+
+  // Function to check if the patient can submit a test response
+  const canSubmitTestResponse = useCallback((): {
+    canSubmit: boolean;
+    reason: string | null;
+  } => {
+    if (!session || !session.day_of_week) {
+      return {
+        canSubmit: false,
+        reason: "No se puede determinar los días de la sesión",
+      };
+    }
+
+    // Check if the number of responses exceeds the number of days in the session
+    if (testResponses.length >= session.day_of_week.length) {
+      return {
+        canSubmit: false,
+        reason: `Ya has completado el máximo de ${session.day_of_week.length} respuestas para este test`,
+      };
+    }
+
+    const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD format
+    const respondedToday = testResponses.some(
+      (response) => response.submitted_at.split("T")[0] === today
+    );
+
+    if (respondedToday) {
+      return {
+        canSubmit: false,
+        reason: "Ya has respondido al test hoy",
+      };
+    }
+
+    // Check if all exercises have logs for today
+    let allExercisesLogged = true;
+    const missingSeries = [];
+
+    for (const exerciseSession of exercises) {
+      if (exerciseSession.series && exerciseSession.series.length > 0) {
+        for (const series of exerciseSession.series) {
+          const logs = exerciseLogs[series.id] || [];
+          const loggedToday = logs.some(
+            (log) => log.date.split("T")[0] === today
+          );
+
+          if (!loggedToday) {
+            allExercisesLogged = false;
+            missingSeries.push(
+              `${exerciseSession.exercise.title} (Serie ${series.series_number})`
+            );
+          }
+        }
+      }
+    }
+
+    if (!allExercisesLogged) {
+      return {
+        canSubmit: true, // Still allow submission but with warning
+        reason: `No has registrado el progreso de todos los ejercicios hoy. Faltan: ${missingSeries.join(
+          ", "
+        )}`,
+      };
+    }
+
+    return { canSubmit: true, reason: null };
+  }, [session, testResponses, exercises, exerciseLogs]);
+
+  // Function to submit the test response
+  const submitTestResponse = async () => {
+    setSubmitting(true);
+    setResponseError(null);
+    setResponseSuccess(false);
+    setShowTestWarning(false);
+
+    try {
+      const storedToken = localStorage.getItem("token");
+      if (!storedToken) {
+        throw new Error("No se ha encontrado el token de autenticación");
+      }
+
+      const payload: {
+        test: number;
+        response_text?: string;
+        response_scale?: number;
+      } = {
+        test: test!.id,
+      };
+
+      if (test!.test_type === "text") {
+        if (!textResponse.trim()) {
+          throw new Error("Por favor, ingrese una respuesta");
+        }
+        payload.response_text = textResponse;
+      } else if (test!.test_type === "scale") {
+        if (scaleResponse === null) {
+          throw new Error("Por favor, seleccione un valor en la escala");
+        }
+        payload.response_scale = scaleResponse;
+      }
+
+      const response = await fetch(
+        `${getApiBaseUrl()}/api/treatments/sessions/${
+          params.sessionId
+        }/test/respond/`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${storedToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || "Error al enviar la respuesta");
+      }
+
+      const responseData = await response.json();
+
+      // Update the responses state
+      setTestResponses((prev) => [responseData, ...prev]);
+      setResponseSuccess(true);
+
+      // Reset form after successful submission
+      if (test!.test_type === "text") {
+        setTextResponse("");
+      } else if (test!.test_type === "scale") {
+        setScaleResponse(null);
+      }
+    } catch (err) {
+      console.error("Error:", err);
+      setResponseError(
+        err instanceof Error ? err.message : "Error al enviar la respuesta"
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // Check if the patient can submit a test response
+  useEffect(() => {
+    if (test && exercises.length > 0) {
+      const result = canSubmitTestResponse();
+      setCanSubmitTest(result);
+    }
+  }, [test, exercises, exerciseLogs, testResponses, canSubmitTestResponse]);
+
   const handleGoBack = () => {
     router.push(`/patient-management/follow-up/${params.id}/sessions`);
   };
 
   const formatDaysOfWeek = (days: string[]): string => {
     const dayMap: Record<string, string> = {
-      "Monday": "Lunes",
-      "Tuesday": "Martes",
-      "Wednesday": "Miércoles",
-      "Thursday": "Jueves",
-      "Friday": "Viernes",
-      "Saturday": "Sábado",
-      "Sunday": "Domingo"
+      Monday: "Lunes",
+      Tuesday: "Martes",
+      Wednesday: "Miércoles",
+      Thursday: "Jueves",
+      Friday: "Viernes",
+      Saturday: "Sábado",
+      Sunday: "Domingo",
     };
-    
-    return days.map(day => dayMap[day] || day).join(", ");
+
+    return days.map((day) => dayMap[day] || day).join(", ");
   };
 
   const formatBodyRegion = (bodyRegion: string): string => {
     const bodyRegionMap: Record<string, string> = {
-      "NECK": "Cuello",
-      "SHOULDER": "Hombros",
-      "ARM": "Brazos (Bíceps, Tríceps)",
-      "ELBOW": "Codo",
-      "WRIST_HAND": "Muñeca y Mano",
-      "CHEST": "Pecho",
-      "UPPER_BACK": "Espalda Alta",
-      "LOWER_BACK": "Zona Lumbar",
-      "CORE": "Zona Media / Core",
-      "QUADRICEPS": "Cuádriceps",
-      "HAMSTRINGS": "Isquiotibiales",
-      "KNEE": "Rodilla",
-      "CALVES": "Pantorrillas",
-      "ANKLE_FOOT": "Tobillo y Pie",
-      "UPPER_BODY": "Parte Superior del Cuerpo",
-      "LOWER_BODY": "Parte Inferior del Cuerpo",
-      "FULL_BODY": "Cuerpo Completo",
-      "UNKNOWN": "No especificada"
+      NECK: "Cuello",
+      SHOULDER: "Hombros",
+      ARM: "Brazos (Bíceps, Tríceps)",
+      ELBOW: "Codo",
+      WRIST_HAND: "Muñeca y Mano",
+      CHEST: "Pecho",
+      UPPER_BACK: "Espalda Alta",
+      LOWER_BACK: "Zona Lumbar",
+      CORE: "Zona Media / Core",
+      QUADRICEPS: "Cuádriceps",
+      HAMSTRINGS: "Isquiotibiales",
+      KNEE: "Rodilla",
+      CALVES: "Pantorrillas",
+      ANKLE_FOOT: "Tobillo y Pie",
+      UPPER_BODY: "Parte Superior del Cuerpo",
+      LOWER_BODY: "Parte Inferior del Cuerpo",
+      FULL_BODY: "Cuerpo Completo",
+      UNKNOWN: "No especificada",
     };
-    
+
     return bodyRegionMap[bodyRegion] || bodyRegion;
   };
-    
+
   const formatExerciseType = (exerciseType: string): string => {
     const exerciseTypeMap: Record<string, string> = {
-      "STRENGTH": "Fortalecimiento Muscular",
-      "MOBILITY": "Movilidad Articular",
-      "STRETCHING": "Estiramientos",
-      "BALANCE": "Ejercicios de Equilibrio",
-      "PROPRIOCEPTION": "Propiocepción",
-      "COORDINATION": "Coordinación",
-      "BREATHING": "Ejercicios Respiratorios",
-      "RELAXATION": "Relajación / Descarga",
-      "CARDIO": "Resistencia Cardiovascular",
-      "FUNCTIONAL": "Ejercicio Funcional",
-      "UNKNOWN": "No especificado"
+      STRENGTH: "Fortalecimiento Muscular",
+      MOBILITY: "Movilidad Articular",
+      STRETCHING: "Estiramientos",
+      BALANCE: "Ejercicios de Equilibrio",
+      PROPRIOCEPTION: "Propiocepción",
+      COORDINATION: "Coordinación",
+      BREATHING: "Ejercicios Respiratorios",
+      RELAXATION: "Relajación / Descarga",
+      CARDIO: "Resistencia Cardiovascular",
+      FUNCTIONAL: "Ejercicio Funcional",
+      UNKNOWN: "No especificado",
     };
-    
+
     return exerciseTypeMap[exerciseType] || exerciseType;
   };
 
@@ -608,7 +740,9 @@ const SessionDetailPage = ({ params }: { params: { id: string; sessionId: string
   }
 
   if (userRole && userRole !== "patient") {
-    return <RestrictedAccess message="Solo los pacientes pueden acceder a esta página" />;
+    return (
+      <RestrictedAccess message="Solo los pacientes pueden acceder a esta página" />
+    );
   }
 
   return (
@@ -863,135 +997,159 @@ const SessionDetailPage = ({ params }: { params: { id: string; sessionId: string
               )}
             </div>
 
-            {/* Test */}
+            {/* Test Section */}
             {test && (
-              <div className="border rounded-xl overflow-hidden">
-                <div className="bg-green-50 p-4">
-                  <div className="flex items-center">
-                    <h2 className="text-xl font-semibold">
-                      Test de evaluación
-                    </h2>
-                    {testResponse && (
-                      <span className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded ml-2">
-                        Completado
-                      </span>
-                    )}
-                  </div>
+              <div className="bg-white rounded-xl shadow-lg overflow-hidden mt-8">
+                <div className="bg-[#05668d] p-4 text-white">
+                  <h2 className="text-xl font-bold">
+                    Cuestionario de seguimiento
+                  </h2>
                 </div>
 
                 <div className="p-6">
-                  <div className="mb-4">
-                    <h3 className="font-semibold text-lg mb-2">
-                      {test.question}
-                    </h3>
+                  <h3 className="text-lg font-semibold mb-4">
+                    {test.question}
+                  </h3>
 
-                    {testResponse ? (
-                      <div className="mt-4 bg-gray-50 p-4 rounded-lg">
-                        <h4 className="font-medium text-gray-700 mb-2">
-                          Tu respuesta:
-                        </h4>
-                        {test.test_type === "text" ? (
-                          <p className="text-gray-800">
-                            {testResponse.response_text}
-                          </p>
-                        ) : (
-                          <div>
-                            <p className="text-gray-800 font-bold">
-                              {testResponse.response_scale}
-                            </p>
-                            {test.scale_labels &&
-                              testResponse.response_scale !== undefined && (
-                                <p className="text-gray-600 text-sm mt-1">
-                                  {
-                                    test.scale_labels[
-                                      testResponse.response_scale.toString()
+                  {/* Test response history */}
+                  {testResponses.length > 0 && (
+                    <div className="mb-6">
+                      <h4 className="font-semibold mb-2">
+                        Historial de respuestas ({testResponses.length}/
+                        {session?.day_of_week.length}):
+                      </h4>
+                      <div className="bg-gray-50 p-4 rounded-xl">
+                        {testResponses.map((resp) => (
+                          <div
+                            key={resp.id}
+                            className="mb-2 pb-2 border-b border-gray-200 last:border-0"
+                          >
+                            <div className="flex justify-between text-sm">
+                              <span className="font-medium">
+                                {new Date(resp.submitted_at).toLocaleDateString(
+                                  "es-ES"
+                                )}
+                              </span>
+                              <span>
+                                {test.test_type === "text"
+                                  ? resp.response_text
+                                  : test.scale_labels
+                                  ? test.scale_labels[
+                                      resp.response_scale?.toString() || ""
                                     ]
-                                  }
-                                </p>
-                              )}
+                                  : resp.response_scale}
+                              </span>
+                            </div>
                           </div>
-                        )}
-                        <p className="text-xs text-gray-500 mt-3">
-                          Enviado el{" "}
-                          {new Date(testResponse.submitted_at).toLocaleString(
-                            "es-ES"
-                          )}
-                        </p>
+                        ))}
                       </div>
-                    ) : (
-                      <div className="mt-4">
-                        {test.test_type === "text" ? (
-                          <div className="mb-4">
-                            <label
-                              htmlFor="textResponse"
-                              className="block text-sm font-medium text-gray-700 mb-1"
-                            >
-                              Tu respuesta:
-                            </label>
-                            <textarea
-                              id="textResponse"
-                              rows={4}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                              value={textResponse}
-                              onChange={(e) => setTextResponse(e.target.value)}
-                              disabled={submitting}
-                            ></textarea>
-                          </div>
-                        ) : (
-                          <div className="mb-4">
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Selecciona un valor:
-                            </label>
-                            {test.scale_labels && (
-                              <div className="flex flex-wrap gap-2">
-                                {Object.entries(test.scale_labels).map(
-                                  ([value, label]) => (
-                                    <button
-                                      key={value}
-                                      type="button"
-                                      className={`px-4 py-2 rounded-md border ${
+                    </div>
+                  )}
+
+                  {/* Warning modal */}
+                  {showTestWarning && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                      <div className="bg-white rounded-xl p-6 max-w-md w-full">
+                        <h3 className="text-xl font-bold mb-4 text-amber-600">
+                          Advertencia
+                        </h3>
+                        <p className="mb-6">{canSubmitTest.reason}</p>
+                        <p className="mb-6">
+                          Se recomienda registrar el progreso de todos los
+                          ejercicios antes de responder al test.
+                        </p>
+                        <div className="flex justify-end space-x-4">
+                          <button
+                            onClick={() => setShowTestWarning(false)}
+                            className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300"
+                          >
+                            Cancelar
+                          </button>
+                          <button
+                            onClick={submitTestResponse}
+                            className="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600"
+                          >
+                            Continuar de todos modos
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Test response form */}
+                  {canSubmitTest.canSubmit ? (
+                    <div>
+                      {test.test_type === "text" ? (
+                        <div className="mb-4">
+                          <textarea
+                            value={textResponse}
+                            onChange={(e) => setTextResponse(e.target.value)}
+                            className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            rows={4}
+                            placeholder="Escribe tu respuesta aquí..."
+                            disabled={submitting || responseSuccess}
+                          ></textarea>
+                        </div>
+                      ) : (
+                        <div className="mb-4">
+                          <div className="flex flex-col space-y-2">
+                            {test.scale_labels &&
+                              Object.entries(test.scale_labels).map(
+                                ([value, label]) => (
+                                  <label
+                                    key={value}
+                                    className="flex items-center space-x-2"
+                                  >
+                                    <input
+                                      type="radio"
+                                      name="scale"
+                                      value={value}
+                                      checked={
                                         scaleResponse === parseInt(value)
-                                          ? "bg-blue-100 border-blue-500 text-blue-700"
-                                          : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
-                                      }`}
-                                      onClick={() =>
+                                      }
+                                      onChange={() =>
                                         setScaleResponse(parseInt(value))
                                       }
-                                      disabled={submitting}
-                                    >
-                                      <div className="font-bold">{value}</div>
-                                      <div className="text-xs">{label}</div>
-                                    </button>
-                                  )
-                                )}
-                              </div>
-                            )}
+                                      disabled={submitting || responseSuccess}
+                                      className="h-4 w-4 text-blue-600"
+                                    />
+                                    <span>{label}</span>
+                                  </label>
+                                )
+                              )}
                           </div>
-                        )}
+                        </div>
+                      )}
 
-                        {responseError && (
-                          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                            {responseError}
-                          </div>
-                        )}
+                      <button
+                        onClick={handleSubmitTestResponse}
+                        disabled={submitting || responseSuccess}
+                        className={`px-4 py-2 rounded-xl ${
+                          submitting || responseSuccess
+                            ? "bg-gray-400 cursor-not-allowed"
+                            : "bg-[#6bc9be] hover:bg-[#5eb5ab] text-white"
+                        }`}
+                      >
+                        {submitting ? "Enviando..." : "Enviar respuesta"}
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="bg-yellow-50 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-4">
+                      {canSubmitTest.reason}
+                    </div>
+                  )}
 
-                        {responseSuccess && (
-                          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                            Respuesta enviada correctamente
-                          </div>
-                        )}
+                  {responseError && (
+                    <div className="mt-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                      {responseError}
+                    </div>
+                  )}
 
-                        <button
-                          type="button"
-                          className="w-full md:w-auto px-4 py-2 bg-[#05668d] text-white rounded-md hover:bg-[#045a7c] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                          onClick={handleSubmitTestResponse}
-                          disabled={submitting}
-                        >
-                          {submitting ? "Enviando..." : "Enviar respuesta"}
-                        </button>
-                      </div>
-                    )}
-                  </div>
+                  {responseSuccess && (
+                    <div className="mt-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+                      Respuesta enviada correctamente
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -1029,22 +1187,20 @@ const SessionDetailPage = ({ params }: { params: { id: string; sessionId: string
                       />
                     </div>
 
-                    {logFormData.weight !== undefined && (
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Peso utilizado (kg)
-                        </label>
-                        <input
-                          type="number"
-                          name="weight"
-                          value={logFormData.weight}
-                          onChange={handleLogFormChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-xl"
-                          min="0"
-                          step="0.5"
-                        />
-                      </div>
-                    )}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Peso utilizado (kg)
+                      </label>
+                      <input
+                        type="number"
+                        name="weight"
+                        value={logFormData.weight || ""}
+                        onChange={handleLogFormChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-xl"
+                        min="0"
+                        step="0.5"
+                      />
+                    </div>
 
                     {logFormData.time !== undefined && (
                       <div>
