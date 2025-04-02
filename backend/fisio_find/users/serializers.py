@@ -333,9 +333,15 @@ class PhysioRegisterSerializer(serializers.ModelSerializer):
         last_name = data.get("last_name", "")
         collegiate_number = data.get("collegiate_number", "")
         autonomic_community = data.get("autonomic_community", "")
+        if Physiotherapist.objects.filter(
+            user__first_name__iexact=first_name,  # Búsqueda insensible a mayúsculas
+            user__last_name__iexact=last_name,
+            collegiate_number=collegiate_number,
+            autonomic_community=autonomic_community
+        ).exists():
+            validation_errors["collegiate_number"] = "Ya existe un fisioterapeuta con este nombre, apellido, número de colegiado y comunidad autónoma."
         
         full_name_uppercase = first_name.upper() + " " + last_name.upper()
-                # Validar número de colegiado
         valid_physio = validar_colegiacion(full_name_uppercase, collegiate_number, autonomic_community)
         if not valid_physio:
             validation_errors["collegiate_number"] = "El número de colegiado o nombre no son válidos."
