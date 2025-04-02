@@ -55,53 +55,10 @@ const CheckoutForm = ({ request, token }: CheckoutFormProps) => {
           setCurrentRole(response.data.user_role);
         })
         .catch((error) => {
-          console.error("Error fetching data:", error);
+          console.log("Error fetching data:", error);
         });
     }
   }, [token]);
-
-  // Función para crear la cita en el backend
-  // const createAppointment = () => {
-  //   if (!token) {
-  //     setShowAuthModal(true);
-  //     return;
-  //   }
-
-  //   if (currentRole !== "patient") {
-  //     alert("Debes estar registrado como paciente para confirmar la cita.");
-  //     router.push("/register");
-  //     return;
-  //   }
-
-  //   axios
-  //     .post(
-  //       `${getApiBaseUrl()}/api/appointment/patient/`,
-  //       {
-  //         start_time: appointmentData.start_time,
-  //         end_time: appointmentData.end_time,
-  //         is_online: appointmentData.is_online,
-  //         service: appointmentData.service,
-  //         physiotherapist: appointmentData.physiotherapist,
-  //         status: "booked",
-  //         alternatives: "",
-  //       },
-  //       {
-  //         headers: { Authorization: `Bearer ${token}` },
-  //       }
-  //     )
-  //     .then((response) => {
-  //       alert("La cita se realizó correctamente.");
-  //       // Eliminamos el borrador unificado
-  //       localStorage.removeItem("appointmentDraft");
-  //       localStorage.removeItem("physioName");
-  //       dispatch({ type: "DESELECT_SERVICE" });
-  //       createPayment(token, response.data.id); // ⚡ Llamamos a createPayment después de obtener la cita
-  //       router.push("/my-appointments");
-  //     })
-  //     .catch((error) => {
-  //       alert("Error en la creación de la cita: " + error);
-  //     });
-  // };
 
   async function createAppointment(tokenValue: string | null) {
     if (!token) {
@@ -159,6 +116,7 @@ const CheckoutForm = ({ request, token }: CheckoutFormProps) => {
           return {
             clientSecret: data.payment_data.client_secret,
             paymentId: data.payment_data.payment.id,
+            appointmentId: data.appointment_data.id,
           };
         }
       } else {
@@ -166,7 +124,7 @@ const CheckoutForm = ({ request, token }: CheckoutFormProps) => {
         setLoading(false);
       }
     } catch (error) {
-      console.error("Error al crear la cita:", error);
+      console.log("Error al crear la cita:", error);
       setMessage("Error al crear la cita.");
       setLoading(false);
     }
@@ -177,20 +135,22 @@ const CheckoutForm = ({ request, token }: CheckoutFormProps) => {
     setLoading(true);
     let dataClientSecret = "";
     let dataPaymentId = null;
+    let appointmentId = null;
 
     try {
       const result = await createAppointment(token);
       if (result) {
         dataClientSecret = result.clientSecret;
         dataPaymentId = result.paymentId;
+        appointmentId = result.appointmentId;
       }
     } catch (error) {
-      console.error("Error al crear la cita:", error);
+      console.log("Error al crear la cita:", error);
       setMessage("Error al crear la cita.");
       setLoading(false);
     }
     console.log("client secret", dataClientSecret);
-    if (!stripe || !elements || !dataClientSecret || !dataPaymentId) return;
+    if (!stripe || !elements || !dataClientSecret || !dataPaymentId || !appointmentId) return;
 
     // Confirmar el SetupIntent para almacenar el método de pago
     const result = await stripe.confirmCardSetup(dataClientSecret, {
@@ -203,10 +163,18 @@ const CheckoutForm = ({ request, token }: CheckoutFormProps) => {
     });
 
     if (result.error) {
+      axios.delete(
+        `${getApiBaseUrl()}/api/appointment/delete/${appointmentId}/`,
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      )
       setMessage(
         result.error.message || "Error al confirmar el método de pago."
       );
-      console.error(result.error.message);
+      console.log(result.error.message);
     } else {
       console.log(token);
 
@@ -233,7 +201,7 @@ const CheckoutForm = ({ request, token }: CheckoutFormProps) => {
         );
         setShowModal(true); // Mostrar el modal de éxito
       } catch (error) {
-        console.error(
+        console.log(
           "Error al actualizar el método de pago en el backend:",
           error
         );
@@ -326,8 +294,8 @@ const CheckoutForm = ({ request, token }: CheckoutFormProps) => {
             <div className="absolute mb-1 bottom-full left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-85 transition-opacity duration-300 pointer-events-none">
               <div className="bg-gray-700 text-white text-xs rounded py-2 px-2 w-60">
                 Necesita introducir los datos de su tarjeta para confirmar la cita.
-                <br/>
-                <div className="mb-2"/>
+                <br />
+                <div className="mb-2" />
                 El pago se procesará 48 horas antes del comienzo de la cita.
               </div>
               <div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-gray-700 absolute top-full left-1/2 transform -translate-x-1/2"></div>
@@ -370,8 +338,7 @@ const CheckoutForm = ({ request, token }: CheckoutFormProps) => {
                   if (!response.ok) {
                     const errorData = await response.json();
                     alert(
-                      `Error: ${
-                        errorData.error || "No se pudo descargar la factura"
+                      `Error: ${errorData.error || "No se pudo descargar la factura"
                       }`
                     );
                     return;
@@ -387,7 +354,7 @@ const CheckoutForm = ({ request, token }: CheckoutFormProps) => {
                   a.click();
                   document.body.removeChild(a);
                 } catch (error) {
-                  console.error("Error al descargar la factura:", error);
+                  console.log("Error al descargar la factura:", error);
                   alert("Error al descargar la factura.");
                 }
               }}
