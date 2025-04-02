@@ -53,7 +53,9 @@ const WizardContent: React.FC<WizardContentProps> = ({
         payload: {
           service: {
             id: service.id,
+            title: service.title,
             type: service.title,
+            tipo: service.tipo,
             price: service.price,
             duration: parseInt(service.duration),
             questionary: service.questionary,
