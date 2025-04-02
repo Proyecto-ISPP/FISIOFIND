@@ -1,0 +1,19 @@
+[changelog]
+header = "# Changelog"
+body = """
+{% for group, commits in commits | group_by(attribute="group") %}
+## {{ group | upper }}
+{% for commit in commits %}
+- {{ commit.message }}
+{% endfor %}
+{% endfor %}
+"""
+footer = "### Fin del Changelog"
+
+[git]
+tag_pattern = "v[0-9]*"
+commit_parsers = [
+  { pattern = "feat", group = "🚀 Nuevas Funcionalidades" },
+  { pattern = "fix", group = "🐛 Correcciones" },
+  { pattern = "chore", group = "🛠 Mantenimiento" }
+]
