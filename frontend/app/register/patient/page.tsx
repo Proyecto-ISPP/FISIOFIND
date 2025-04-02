@@ -7,7 +7,6 @@ import Image from "next/image";
 import { getApiBaseUrl } from "@/utils/api";
 import { Eye, EyeOff, Info } from "lucide-react";
 
-
 interface FormData {
   username: string;
   email: string;
@@ -371,9 +370,7 @@ const PatientRegistrationForm = () => {
           <form onSubmit={handleSubmit} className="p-6">
             {currentStep === 1 && (
               <div className="space-y-4">
-                <h2 className="text-xl font-semibold mb-4">
-                  Información de Cuenta
-                </h2>
+                <h2 className="text-xl font-semibold mb-4">Información de Cuenta</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="md:col-span-2">
                     <FormField
@@ -400,14 +397,32 @@ const PatientRegistrationForm = () => {
                     onChange={handleChange}
                     error={errors.password}
                   />
-                  <FormField
-                    name="confirm_password"
-                    label="Confirmar contraseña"
-                    type="password"
-                    value={formData.confirm_password}
-                    onChange={handleChange}
-                    error={errors.confirm_password}
-                  />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:col-span-2">
+                    <div>
+                      <FormField
+                        name="confirm_password"
+                        label="Confirmar contraseña"
+                        type="password"
+                        value={formData.confirm_password}
+                        onChange={handleChange}
+                        error={errors.confirm_password}
+                      />
+                    </div>
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex flex-col justify-center h-full">
+                      <h3 className="text-sm font-medium text-blue-800 mb-2 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Requisitos de contraseña
+                      </h3>
+                      <ul className="text-xs text-blue-700 space-y-1 ml-7 list-disc">
+                        <li>Mínimo 8 caracteres</li>
+                        <li>No debe ser similar a tu información personal</li>
+                        <li>No debe ser una contraseña común</li>
+                        <li>No puede ser únicamente numérica</li>
+                      </ul>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
@@ -523,7 +538,7 @@ const PatientRegistrationForm = () => {
             className="mt-4 text-gray-500 hover:text-gray-700 flex items-center gap-2 mx-auto"
           >
             <svg
-              xmlns="www.w3.org/2000/svg"
+              xmlns="http://www.w3.org/2000/svg"
               width="16"
               height="16"
               viewBox="0 0 24 24"

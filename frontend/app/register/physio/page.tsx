@@ -570,50 +570,70 @@ const PhysioSignUpForm = () => {
             </div>
           </div>
 
-          {/* Formulario pasos 1 a 4 */}
-          {currentStep < 5 && (
-            <form onSubmit={handleSubmit} className="p-6">
-              {/* Paso 1: Cuenta */}
-              {currentStep === 1 && (
-                <div className="space-y-4">
-                  <h2 className="text-xl font-semibold mb-4">Información de Cuenta</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="md:col-span-2">
+            {/* Formulario pasos 1 a 4 */}
+            {currentStep < 5 && (
+              <form onSubmit={handleSubmit} className="p-6">
+                {/* Paso 1: Cuenta */}
+                {currentStep === 1 && (
+                  <div className="space-y-4">
+                    <h2 className="text-xl font-semibold mb-4">Información de Cuenta</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="md:col-span-2">
+                        <FormField
+                          name="username"
+                          label="Nombre de usuario"
+                          value={formData.username}
+                          onChange={handleChange}
+                          error={errors.username}
+                        />
+                      </div>
                       <FormField
-                        name="username"
-                        label="Nombre de usuario"
-                        value={formData.username}
+                        name="email"
+                        label="Email"
+                        type="email"
+                        value={formData.email}
                         onChange={handleChange}
-                        error={errors.username}
+                        error={errors.email}
                       />
+                      <FormField
+                        name="password"
+                        label="Contraseña"
+                        type="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        error={errors.password}
+                      />
+                      {/* Confirmar contraseña y requisitos en la misma fila */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:col-span-2">
+                        <div>
+                          <FormField
+                            name="confirm_password"
+                            label="Confirmar contraseña"
+                            type="password"
+                            value={formData.confirm_password}
+                            onChange={handleChange}
+                            error={errors.confirm_password}
+                          />
+                        </div>
+                        {/* Componente de requisitos de contraseña a la derecha */}
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex flex-col justify-center h-full">
+                          <h3 className="text-sm font-medium text-blue-800 mb-2 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Requisitos de contraseña
+                          </h3>
+                          <ul className="text-xs text-blue-700 space-y-1 ml-7 list-disc">
+                            <li>Mínimo 8 caracteres</li>
+                            <li>No debe ser similar a tu información personal</li>
+                            <li>No debe ser una contraseña común</li>
+                            <li>No puede ser únicamente numérica</li>
+                          </ul>
+                        </div>
+                      </div>
                     </div>
-                    <FormField
-                      name="email"
-                      label="Email"
-                      type="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      error={errors.email}
-                    />
-                    <FormField
-                      name="password"
-                      label="Contraseña"
-                      type="password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      error={errors.password}
-                    />
-                    <FormField
-                      name="confirm_password"
-                      label="Confirmar contraseña"
-                      type="password"
-                      value={formData.confirm_password}
-                      onChange={handleChange}
-                      error={errors.confirm_password}
-                    />
                   </div>
-                </div>
-              )}
+    )}
 
               {/* Paso 2: Personal */}
               {currentStep === 2 && (
