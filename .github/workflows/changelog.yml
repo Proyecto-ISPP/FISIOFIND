@@ -17,15 +17,11 @@ jobs:
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
 
-      - name: Instalar git-cliff
-        run: |
-          curl -sSL https://github.com/orhun/git-cliff/releases/latest/download/git-cliff-linux-x86_64.tar.gz -o git-cliff.tar.gz
-          tar -xzf git-cliff.tar.gz
-          sudo mv git-cliff /usr/local/bin/
+      - name: Instalar auto-changelog
+        run: npm install -g auto-changelog
 
       - name: Generar Changelog
-        run: |
-          git-cliff --config cliff.toml --output CHANGELOG.md
+        run: auto-changelog -p
 
       - name: Commit y Push del Changelog
         run: |
