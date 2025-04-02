@@ -98,6 +98,7 @@ INSTALLED_APPS += [
     'treatments',
     'gestion_survey',
     'payment',
+    'ratings',
 ]
 
 INSTALLED_APPS += ['corsheaders', 'django_extensions', 'django_filters']
