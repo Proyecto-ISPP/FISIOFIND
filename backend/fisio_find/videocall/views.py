@@ -3,11 +3,14 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+
+from users.permissions import IsPhysiotherapist
 from .models import Room
 from .serializers import RoomSerializer
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from users.models import Physiotherapist, Patient
-
+from django.utils.timezone import now
+from datetime import timedelta
 # views.py
 
 class RoomCreateView(APIView):
@@ -32,18 +35,38 @@ class RoomCreateView(APIView):
 
 
 class RoomJoinView(APIView):
-    
     permission_classes = [IsAuthenticated]
-    
+
     def get(self, request, code):
-        # Verifica si la sala existe
         try:
             room = Room.objects.get(code=code)
-            print(room)
-            serializer = RoomSerializer(room)
-            return Response(serializer.data, status=status.HTTP_200_OK)
         except Room.DoesNotExist:
             return Response({'detail': 'Room not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        user = request.user
+
+        # Validación de acceso por usuario
+        if hasattr(user, 'physio') and room.physiotherapist != user.physio:
+            return Response({'detail': 'No autorizado para unirse a esta sala'}, status=status.HTTP_403_FORBIDDEN)
+        if hasattr(user, 'patient'):
+            if room.is_test_room:
+                return Response({'detail': 'Esta sala de prueba es solo para el fisioterapeuta'}, status=status.HTTP_403_FORBIDDEN)
+            elif room.patient != user.patient:
+                return Response({'detail': 'No autorizado para unirse a esta sala'}, status=status.HTTP_403_FORBIDDEN)
+        if not room.is_test_room and room.appointment:
+            start = room.appointment.start_time
+            end = room.appointment.end_time
+            current = now()
+            #Quiza demasiado tiempo pero así evitamos problemas en la demo
+            start_window = start - timedelta(minutes=120)
+            end_window = end + timedelta(minutes=120)
+
+            if not (start_window <= current <= end_window):
+                return Response({
+                    'detail': 'Esta sala solo está disponible desde 30 minutos antes hasta 60 minutos después de la cita.'
+                }, status=status.HTTP_403_FORBIDDEN) 
+        serializer = RoomSerializer(room)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class RoomDeleteView(APIView):
     
@@ -67,6 +90,11 @@ class RoomListView(APIView):
     def get(self, request):
         user = request.user
 
+        Room.objects.filter(
+            appointment__end_time__lt=now() - timedelta(minutes=30),
+            is_test_room=False
+        ).delete()
+
         if hasattr(user, 'physio'):
             rooms = Room.objects.filter(physiotherapist=user.physio)
         elif hasattr(user, 'patient'):
@@ -76,3 +104,29 @@ class RoomListView(APIView):
 
         serializer = RoomSerializer(rooms, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class TestRoomCreateView(APIView):
+    permission_classes = [IsAuthenticated, IsPhysiotherapist]
+
+    def post(self, request):
+        physiotherapist = request.user.physio
+
+        existing = Room.objects.filter(
+            physiotherapist=physiotherapist,
+            is_test_room=True
+        ).first()
+
+        if existing:
+            return Response({
+                "detail": "Ya tienes una sala de prueba activa.",
+                "code": existing.code
+            }, status=status.HTTP_200_OK)  
+
+        room = Room.objects.create(
+            physiotherapist=physiotherapist,
+            patient=None,
+            is_test_room=True
+        )
+        return Response(RoomSerializer(room).data, status=status.HTTP_201_CREATED)
+
