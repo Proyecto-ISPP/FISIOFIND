@@ -9,11 +9,18 @@ from PIL import Image
 from users.serializers import (PatientRegisterSerializer,PatientSerializer, 
                                PhysioRegisterSerializer, AppUserSerializer, 
                                Specialization, PhysiotherapistSpecialization,
-                               PhysioUpdateSerializer)
+                               PhysioUpdateSerializer, VideoSerializer)
 from users.models import AppUser, Patient, Physiotherapist, Pricing
 from datetime import date, timedelta
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 import json
+from django.core.exceptions import ValidationError
+from users.models import AppUser, Physiotherapist, Patient, Pricing, Video
+from datetime import datetime
+from rest_framework import serializers
+import boto3
+import uuid
+
 
 def get_fake_image(name="photo.jpg"):
     image = Image.new("RGB", (100, 100), color="red")
@@ -2094,3 +2101,311 @@ class ValidatorTests(APITestCase):
         num_colegiado = "4"
         self.assertFalse(validar_colegiacion(nombre_completo,num_colegiado, comunidad_autonoma))
 """
+
+class VideoModelTests(TestCase):
+    def setUp(self):
+        # Crear un usuario base para el fisioterapeuta
+        self.user = AppUser.objects.create_user(
+            username="physio1",
+            email="physio@example.com",
+            password="testpass",
+            dni="12345678Z",
+            phone_number="600000000",
+            postal_code="28001"
+        )
+        # Crear un plan para el fisioterapeuta
+        self.plan = Pricing.objects.create(name="blue", price=10, video_limit=5)
+        # Crear el fisioterapeuta
+        self.physio = Physiotherapist.objects.create(
+            user=self.user,
+            gender="M",
+            birth_date="1990-01-01",
+            collegiate_number="12345",
+            autonomic_community="MADRID",
+            plan=self.plan
+        )
+        # Crear un paciente
+        self.patient = Patient.objects.create(
+            user=AppUser.objects.create_user(
+                username="patient1",
+                email="patient@example.com",
+                password="testpass",
+                dni="87654321X",
+                phone_number="600111111",
+                postal_code="28001"
+            ),
+            gender="F",
+            birth_date="1995-01-01"
+        )
+        # Crear un video base
+        self.video = Video.objects.create(
+            physiotherapist=self.physio,
+            title="Video de prueba",
+            description="Descripción del video",
+            file_key="videos/test_video.mp4"
+        )
+
+    # --- Pruebas de campos y relaciones ---
+    def test_video_creation(self):
+        """Verifica que un video se crea correctamente con los campos básicos."""
+        self.assertEqual(self.video.title, "Video de prueba")
+        self.assertEqual(self.video.description, "Descripción del video")
+        self.assertEqual(self.video.file_key, "videos/test_video.mp4")
+        self.assertEqual(self.video.physiotherapist, self.physio)
+        self.assertIsInstance(self.video.uploaded_at, datetime)
+
+    def test_file_key_unique_constraint(self):
+        """Verifica que no se puedan crear dos videos con el mismo file_key."""
+        with self.assertRaises(Exception):  # Puede ser IntegrityError o ValidationError según la DB
+            Video.objects.create(
+                physiotherapist=self.physio,
+                title="Otro video",
+                file_key="videos/test_video.mp4"  # Duplicado
+            )
+
+    def test_many_to_many_patients(self):
+        """Verifica que se puedan asociar pacientes a un video."""
+        self.video.patients.add(self.patient)
+        self.assertIn(self.patient, self.video.patients.all())
+        self.assertIn(self.video, self.patient.videos.all())
+
+    def test_blank_patients(self):
+        """Verifica que el campo patients puede estar vacío."""
+        self.assertEqual(self.video.patients.count(), 0)  # Por defecto está vacío
+
+    def test_blank_description(self):
+        """Verifica que description puede ser blank o null."""
+        video = Video.objects.create(
+            physiotherapist=self.physio,
+            title="Sin descripción",
+            file_key="videos/no_desc.mp4"
+        )
+        self.assertIsNone(video.description)
+
+    def test_on_delete_cascade(self):
+        """Verifica que eliminar un fisioterapeuta elimina sus videos."""
+        video_id = self.video.id
+        self.physio.delete()
+        self.assertFalse(Video.objects.filter(id=video_id).exists())
+
+    # --- Pruebas de métodos ---
+    def test_str_method(self):
+        """Verifica que __str__ devuelve el título del video."""
+        self.assertEqual(str(self.video), "Video de prueba")
+
+    @patch('boto3.client')
+    def test_delete_from_storage_success(self, mock_boto_client):
+        """Verifica que delete_from_storage elimina el archivo de S3."""
+        mock_s3 = MagicMock()
+        mock_boto_client.return_value = mock_s3
+        self.video.delete_from_storage()
+        mock_s3.delete_object.assert_called_once_with(
+            Bucket="fisiofind-repo",
+            Key="videos/test_video.mp4"
+        )
+
+    @patch('boto3.client')
+    def test_delete_from_storage_failure(self, mock_boto_client):
+        """Verifica que delete_from_storage maneja excepciones correctamente."""
+        mock_s3 = MagicMock()
+        mock_s3.delete_object.side_effect = Exception("Error de S3")
+        mock_boto_client.return_value = mock_s3
+        with patch('builtins.print') as mock_print:
+            self.video.delete_from_storage()
+            mock_print.assert_called_once_with("Error al eliminar el archivo de Spaces: Error de S3")
+
+    def test_file_url_property(self):
+        """Verifica que file_url genera la URL correcta."""
+        expected_url = "https://fisiofind-repo.fra1.digitaloceanspaces.com/videos/test_video.mp4"
+        self.assertEqual(self.video.file_url, expected_url)
+
+    # --- Pruebas adicionales ---
+    def test_max_length_title(self):
+        """Verifica que el título no exceda los 255 caracteres."""
+        long_title = "a" * 256
+        with self.assertRaises(ValidationError):
+            video = Video(
+                physiotherapist=self.physio,
+                title=long_title,
+                file_key="videos/long_title.mp4"
+            )
+            video.full_clean()  # Lanza ValidationError si excede max_length
+
+    def test_max_length_file_key(self):
+        """Verifica que file_key no exceda los 500 caracteres."""
+        long_key = "a" * 501
+        with self.assertRaises(ValidationError):
+            video = Video(
+                physiotherapist=self.physio,
+                title="Video largo",
+                file_key=long_key
+            )
+            video.full_clean()
+
+class VideoSerializerTests(APITestCase):
+    def setUp(self):
+        # Crear usuario y fisioterapeuta
+        self.user = AppUser.objects.create_user(
+            username="physio1", email="physio@example.com", password="testpass",
+            dni="12345678Z", phone_number="600000000", postal_code="28001"
+        )
+        self.plan = Pricing.objects.create(name="blue", price=10, video_limit=5)
+        self.physio = Physiotherapist.objects.create(
+            user=self.user, gender="M", birth_date="1990-01-01",
+            collegiate_number="12345", autonomic_community="MADRID", plan=self.plan
+        )
+        # Crear paciente
+        self.patient = Patient.objects.create(
+            user=AppUser.objects.create_user(
+                username="patient1", email="patient@example.com", password="testpass",
+                dni="87654321X", phone_number="600111111", postal_code="28001"
+            ),
+            gender="F", birth_date="1995-01-01"
+        )
+        # Simular request con usuario autenticado
+        self.factory = APIRequestFactory()
+        self.request = self.factory.post('/fake-url/')
+        self.request.user = self.user
+        # Video existente para pruebas de actualización
+        self.video = Video.objects.create(
+            physiotherapist=self.physio,
+            title="Video inicial",
+            file_key="videos/1/initial.mp4"
+        )
+
+    def get_valid_data(self):
+        """Datos válidos base para las pruebas."""
+        video_file = SimpleUploadedFile("test.mp4", b"file_content", content_type="video/mp4")
+        return {
+            "title": "Test Video",
+            "description": "Descripción de prueba",
+            "file": video_file,
+            "patients": [self.patient.id]
+        }
+
+    # --- Pruebas de campos y serialización ---
+    def test_read_only_file_key(self):
+        """Verifica que file_key no se pueda modificar."""
+        data = self.get_valid_data()
+        data["file_key"] = "videos/hack.mp4"  # Intento de sobrescribir
+        serializer = VideoSerializer(data=data, context={"request": self.request})
+        self.assertTrue(serializer.is_valid(), serializer.errors)
+        video = serializer.save()
+        self.assertNotEqual(video.file_key, "videos/hack.mp4")  # Debe ignorar el valor enviado
+
+    def test_file_url_serialization(self):
+        """Verifica que file_url se serializa correctamente."""
+        serializer = VideoSerializer(instance=self.video)
+        expected_url = f"https://fra1.digitaloceanspaces.com/videos/1/initial.mp4"  # Ajusta según settings
+        self.assertEqual(serializer.data["file_url"], expected_url)
+
+    # --- Pruebas de validación ---
+    def test_validate_file_valid(self):
+        """Verifica que un archivo .mp4 pasa la validación."""
+        data = self.get_valid_data()
+        serializer = VideoSerializer(data=data, context={"request": self.request})
+        self.assertTrue(serializer.is_valid(), serializer.errors)
+
+    def test_validate_file_invalid_extension(self):
+        """Verifica que un archivo no .mp4 falla la validación."""
+        invalid_file = SimpleUploadedFile("test.jpg", b"file_content", content_type="image/jpeg")
+        data = self.get_valid_data()
+        data["file"] = invalid_file
+        serializer = VideoSerializer(data=data, context={"request": self.request})
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("file", serializer.errors)
+        self.assertIn("Solo se permiten archivos .mp4", str(serializer.errors["file"]))
+
+    # --- Pruebas de creación ---
+    @patch('boto3.client')
+    def test_create_success(self, mock_boto_client):
+        """Verifica que se crea un video correctamente."""
+        mock_s3 = MagicMock()
+        mock_boto_client.return_value = mock_s3
+        data = self.get_valid_data()
+        serializer = VideoSerializer(data=data, context={"request": self.request})
+        self.assertTrue(serializer.is_valid(), serializer.errors)
+        video = serializer.save()
+        self.assertEqual(video.title, "Test Video")
+        self.assertEqual(video.patients.count(), 1)
+        self.assertTrue(video.file_key.startswith(f"videos/{self.physio.id}/"))
+        mock_s3.upload_fileobj.assert_called_once()
+
+    @patch('boto3.client')
+    def test_create_upload_failure(self, mock_boto_client):
+        """Verifica que falla si la subida a S3 falla."""
+        mock_s3 = MagicMock()
+        mock_s3.upload_fileobj.side_effect = Exception("Error de red")
+        mock_boto_client.return_value = mock_s3
+        data = self.get_valid_data()
+        serializer = VideoSerializer(data=data, context={"request": self.request})
+        self.assertTrue(serializer.is_valid(), serializer.errors)
+        with self.assertRaises(serializers.ValidationError) as cm:
+            serializer.save()
+        self.assertIn("Error al subir archivo", str(cm.exception))
+
+    # --- Pruebas de actualización ---
+    @patch('boto3.client')
+    def test_update_metadata_only(self, mock_boto_client):
+        """Verifica que se pueden actualizar título y descripción sin cambiar el archivo."""
+        data = {"title": "Nuevo título", "description": "Nueva descripción"}
+        serializer = VideoSerializer(instance=self.video, data=data, context={"request": self.request})
+        self.assertTrue(serializer.is_valid(), serializer.errors)
+        updated_video = serializer.save()
+        self.assertEqual(updated_video.title, "Nuevo título")
+        self.assertEqual(updated_video.description, "Nueva descripción")
+        self.assertEqual(updated_video.file_key, "videos/1/initial.mp4")  # No cambia
+        mock_boto_client.assert_not_called()  # No se interactúa con S3
+
+    @patch('boto3.client')
+    def test_update_with_new_file(self, mock_boto_client):
+        """Verifica que se actualiza el archivo correctamente."""
+        mock_s3 = MagicMock()
+        mock_boto_client.return_value = mock_s3
+        new_file = SimpleUploadedFile("new.mp4", b"new_content", content_type="video/mp4")
+        data = self.get_valid_data()
+        data["file"] = new_file
+        serializer = VideoSerializer(instance=self.video, data=data, context={"request": self.request})
+        self.assertTrue(serializer.is_valid(), serializer.errors)
+        updated_video = serializer.save()
+        self.assertNotEqual(updated_video.file_key, "videos/1/initial.mp4")  # Nuevo file_key
+        mock_s3.delete_object.assert_called_once_with(
+            Bucket="fisiofind-repo",  # Ajusta según settings
+            Key="videos/1/initial.mp4"
+        )
+        mock_s3.upload_fileobj.assert_called_once()
+
+    @patch('boto3.client')
+    def test_update_delete_failure(self, mock_boto_client):
+        """Verifica que falla si no se puede eliminar el archivo anterior."""
+        mock_s3 = MagicMock()
+        mock_s3.delete_object.side_effect = Exception("Error al borrar")
+        mock_boto_client.return_value = mock_s3
+        new_file = SimpleUploadedFile("new.mp4", b"new_content", content_type="video/mp4")
+        data = {"file": new_file}
+        serializer = VideoSerializer(instance=self.video, data=data, context={"request": self.request})
+        self.assertTrue(serializer.is_valid(), serializer.errors)
+        with self.assertRaises(serializers.ValidationError) as cm:
+            serializer.save()
+        self.assertIn("Error al eliminar archivo anterior", str(cm.exception))
+
+    # --- Pruebas de casos límite ---
+    def test_create_without_patients(self):
+        """Verifica que se puede crear un video sin pacientes."""
+        data = self.get_valid_data()
+        del data["patients"]
+        with patch('boto3.client') as mock_boto_client:
+            mock_s3 = MagicMock()
+            mock_boto_client.return_value = mock_s3
+            serializer = VideoSerializer(data=data, context={"request": self.request})
+            self.assertTrue(serializer.is_valid(), serializer.errors)
+            video = serializer.save()
+            self.assertEqual(video.patients.count(), 0)
+
+    def test_invalid_patient_id(self):
+        """Verifica que falla si se pasa un ID de paciente inexistente."""
+        data = self.get_valid_data()
+        data["patients"] = [999]  # ID inexistente
+        serializer = VideoSerializer(data=data, context={"request": self.request})
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("patients", serializer.errors)
