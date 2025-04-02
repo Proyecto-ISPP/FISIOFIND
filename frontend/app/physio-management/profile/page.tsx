@@ -753,9 +753,9 @@ const FisioProfile = () => {
 
         // Handle custom title based on type
         useEffect(() => {
-            if (tipo === "PRIMERA_CONSULTA" && !editingService) {
+            if (tipo === "PRIMERA_CONSULTA") {
                 setTitulo("Primera consulta");
-            } else if (tipo === "CONTINUAR_TRATAMIENTO" && !editingService) {
+            } else if (tipo === "CONTINUAR_TRATAMIENTO") {
                 setTitulo("Continuación de tratamiento");
             }
         }, [tipo]);
@@ -905,9 +905,16 @@ const FisioProfile = () => {
                                         <input
                                             type="text"
                                             value={newQuestion}
-                                            onChange={(e) => setNewQuestion(e.target.value)}
+                                            onChange={(e) => {
+                                                if (e.target.value.length <= 100) {
+                                                    setNewQuestion(e.target.value);
+                                                }
+                                            }}
                                             placeholder="Ej. ¿Tiene alguna lesión previa?"
                                         />
+                                        {newQuestion.length > 100 && (
+                                            <p className="text-red-500 text-sm">Máximo 100 caracteres permitidos.</p>
+                                        )}
                                         <GradientButton
                                             variant="create"
                                             onClick={addQuestion}
