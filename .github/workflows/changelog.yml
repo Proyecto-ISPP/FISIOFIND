@@ -25,35 +25,6 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Ensure Git Tags Exist
-        run: |
-          # Si no hay tags, crea el primero (v1.0.0 para Sprint 1)
-          if [ -z "$(git tag)" ]; then
-            git tag -a v1.0.0 -m "Sprint 1"
-            git push origin v1.0.0
-          fi
-
-      - name: Generate Next Sprint Version Tag
-        run: |
-          # Obtener el último tag (esto obtiene el último tag en formato 'v2.0.0', por ejemplo)
-          latest_tag=$(git describe --tags --abbrev=0 || echo "v1.0.0")
-          
-          # Extraer la versión mayor (ej: v2.0.0 -> 2)
-          major_version=$(echo $latest_tag | awk -F. '{print $1}' | tr -d 'v')
-          
-          # Incrementar la versión mayor
-          new_major_version=$((major_version + 1))
-          new_tag="v${new_major_version}.0.0"
-          
-          # Verificar si el nuevo tag ya existe
-          if git rev-parse "refs/tags/$new_tag" >/dev/null 2>&1; then
-            echo "El tag $new_tag ya existe. No se crea uno nuevo."
-          else
-            # Crear el nuevo tag con un mensaje 'Sprint X'
-            git tag -a $new_tag -m "Sprint ${new_major_version}"
-            git push origin $new_tag
-          fi
-
       - name: Generate Changelog
         run: auto-changelog --commit-limit false --reverse --output CHANGELOG.md
 
