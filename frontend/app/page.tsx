@@ -11,9 +11,9 @@ import { getApiBaseUrl } from "@/utils/api";
 import { useAppointment } from "@/context/appointmentContext";
 import DraftModal from "@/components/ui/draftAppointmentModal";
 import { DemoWindow } from "@/components/demo-window";
-import { WavyBackground } from "@/components/ui/wavy-background";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { CookieConsent } from "@/components/CookieConsent";
+import TopRatings from "@/components/ratings"; // Add this import
 
 interface Physiotherapist {
   id: string;
@@ -520,6 +520,11 @@ const Home = () => {
             </CardContainer>
           ))}
         </div> */}
+      </section>
+
+      {/* Top Ratings Section */}
+      <section className="max-w-7xl mx-auto px-4 mb-12">
+        <TopRatings />
       </section>
 
       {/* Footer */}
