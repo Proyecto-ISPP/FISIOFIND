@@ -933,3 +933,20 @@ def get_file_by_patient_id(request, patient_id):
     serializer = PatientFileSerializer(files, many=True)
 
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def get_file_by_treatment_id(request, treatment_id):
+    user = request.user
+    if not hasattr(user, 'patient'):
+        return Response({"error": "No tienes permisos para ver estos archivos"}, status=status.HTTP_403_FORBIDDEN)
+    # Verificar si el tratamiento existe
+    treatment = get_object_or_404(Treatment, id=treatment_id)
+    # Verificar si el fisio tiene un tratamiento con este paciente
+    has_treatment = Treatment.objects.filter(physiotherapist=treatment.physiotherapist, patient=user.patient).exists()
+    if not has_treatment:
+        return Response({"error": "No tienes permiso para ver los archivos de este paciente"}, status=status.HTTP_403_FORBIDDEN)
+    # Obtener los archivos del paciente
+    files = PatientFile.objects.filter(patient=treatment.patient)
+    serializer = PatientFileSerializer(files, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)

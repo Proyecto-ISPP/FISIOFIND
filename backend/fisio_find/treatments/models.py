@@ -3,6 +3,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from users.models import Patient, Physiotherapist
 
+
 class Treatment(models.Model):
     physiotherapist = models.ForeignKey(Physiotherapist, on_delete=models.CASCADE, related_name='treatments')
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='treatments')

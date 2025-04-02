@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from treatments.models import Treatment
 import boto3
 from django.conf import settings
 
@@ -35,30 +36,35 @@ AUTONOMIC_COMMUNITY_CHOICES = [
     ('COMUNIDAD VALENCIANA', 'Comunidad Valenciana')
 ]
 
+
 class AppUser(AbstractUser):
     photo = models.ImageField(null=True, blank=True, upload_to='profile_photos/')
     dni = models.CharField(max_length=9, unique=True)
     phone_number = models.CharField(max_length=9)
     postal_code = models.CharField(max_length=5)
     account_status = models.CharField(max_length=10, choices=ACCOUNT_STATUS_CHOICES, default='ACTIVE')
-    
+
     def __str__(self):
         return f"{self.username} - {self.email}"
+
 
 class Patient(models.Model):
     user = models.OneToOneField(AppUser, on_delete=models.CASCADE, related_name='patient')
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     stripe_customer_id = models.CharField(max_length=255, blank=True, null=True)
     birth_date = models.DateField()
-    
+
     def __str__(self):
         return f"{self.user.username} - {self.user.email}"
-    
+
+
 class Specialization(models.Model):
     name = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
         return self.name
+
+
 class PhysiotherapistSpecialization(models.Model):
     physiotherapist = models.ForeignKey(
         'Physiotherapist', on_delete=models.CASCADE, related_name="physio_specializations"
@@ -66,7 +72,8 @@ class PhysiotherapistSpecialization(models.Model):
     specialization = models.ForeignKey(
         'Specialization', on_delete=models.SET_NULL, null=True, blank=True
     )
-    
+
+
 class Pricing(models.Model):
     name = models.CharField(max_length=50, unique=True)
     price = models.DecimalField(max_digits=5, decimal_places=2)
@@ -74,6 +81,7 @@ class Pricing(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class Physiotherapist(models.Model):
     user = models.OneToOneField(AppUser, on_delete=models.CASCADE, related_name='physio')
@@ -100,12 +108,13 @@ class Physiotherapist(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.user.email}"
 
+
 class Admin(models.Model):
     user = models.OneToOneField(AppUser, on_delete=models.CASCADE, related_name='admin')
-    
+
     def __str__(self):
         return f"{self.user.username} - {self.user.email}"
-    
+
 
 class Video(models.Model):
     physiotherapist = models.ForeignKey(Physiotherapist, on_delete=models.CASCADE, related_name='videos')
@@ -115,11 +124,11 @@ class Video(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True)
     file_key = models.CharField(
         max_length=500, unique=True
-    )     
+    )
 
     def __str__(self): 
         return self.title
-    
+
     def delete_from_storage(self):
         """Elimina el archivo de DigitalOcean Spaces"""
         s3_client = boto3.client(
@@ -142,16 +151,16 @@ class Video(models.Model):
 
 class PatientFile(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='files')
-    #physiotherapist = models.ForeignKey(Physiotherapist, on_delete=models.CASCADE, related_name='patient_files')
+    #  physiotherapist = models.ForeignKey(Physiotherapist, on_delete=models.CASCADE, related_name='patient_files')
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
-    file_key = models.CharField(max_length=500, unique=True)  
-    file_type = models.CharField(max_length=50, blank=True, null=True)  
+    file_key = models.CharField(max_length=500, unique=True)
+    file_type = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
         return self.title
-    
+
     def delete_from_storage(self):
         """Elimina el archivo de DigitalOcean Spaces"""
         s3_client = boto3.client(
@@ -169,7 +178,7 @@ class PatientFile(models.Model):
         except Exception as e:
             print(f"Error al eliminar el archivo de DigitalOcean: {e}")
             raise  # Lanzamos la excepción para que se capture si hay un error
-    
+
     @property
     def file_url(self):
         """Devuelve la URL del archivo en DigitalOcean Spaces"""

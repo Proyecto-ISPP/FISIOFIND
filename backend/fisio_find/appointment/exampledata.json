@@ -53,7 +53,8 @@
             "postal_code": "41960",
             "account_status": "ACTIVE",
             "first_name": "Jorge",
-            "last_name": "García Chaparro"
+            "last_name": "García Chaparro",
+            "plan": "blue"
         }
     },
     {
@@ -162,7 +163,7 @@
             "dni": "12345672A",
             "phone_number": "600000002",
             "postal_code": "28001",
-            "account_status": "ACTIVE"
+            "account_status": "ACTIVE",
         }
     },
     {
