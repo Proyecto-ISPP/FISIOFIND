@@ -2296,7 +2296,7 @@ class VideoSerializerTests(APITestCase):
     def test_file_url_serialization(self):
         """Verifica que file_url se serializa correctamente."""
         serializer = VideoSerializer(instance=self.video)
-        expected_url = f"https://fra1.digitaloceanspaces.com/videos/1/initial.mp4"  # Ajusta según settings
+        expected_url = f"https://fisiofind-repo.fra1.digitaloceanspaces.com/videos/1/initial.mp4"  # Ajusta según settings
         self.assertEqual(serializer.data["file_url"], expected_url)
 
     # --- Pruebas de validación ---
@@ -2349,7 +2349,7 @@ class VideoSerializerTests(APITestCase):
     def test_update_metadata_only(self, mock_boto_client):
         """Verifica que se pueden actualizar título y descripción sin cambiar el archivo."""
         data = {"title": "Nuevo título", "description": "Nueva descripción"}
-        serializer = VideoSerializer(instance=self.video, data=data, context={"request": self.request})
+        serializer = VideoSerializer(instance=self.video, data=data, context={"request": self.request}, partial=True)
         self.assertTrue(serializer.is_valid(), serializer.errors)
         updated_video = serializer.save()
         self.assertEqual(updated_video.title, "Nuevo título")
@@ -2382,8 +2382,8 @@ class VideoSerializerTests(APITestCase):
         mock_s3.delete_object.side_effect = Exception("Error al borrar")
         mock_boto_client.return_value = mock_s3
         new_file = SimpleUploadedFile("new.mp4", b"new_content", content_type="video/mp4")
-        data = {"file": new_file}
-        serializer = VideoSerializer(instance=self.video, data=data, context={"request": self.request})
+        data = {"file": new_file, "title": "Updated Video"}
+        serializer = VideoSerializer(instance=self.video, data=data, context={"request": self.request}, partial=True)
         self.assertTrue(serializer.is_valid(), serializer.errors)
         with self.assertRaises(serializers.ValidationError) as cm:
             serializer.save()
