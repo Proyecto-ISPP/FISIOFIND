@@ -5,7 +5,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from appointment.models import Appointment, Physiotherapist
 from appointment.serializers import AppointmentSerializer
 from rest_framework.permissions import IsAuthenticated
-from payment.views import cancel_payment_patient, cancel_payment_pyshio
+from payment.views import cancel_payment_patient, cancel_payment_pyshio, create_payment_setup
 from users.permissions import IsPhysiotherapist, IsPatient, IsPhysioOrPatient
 from users.permissions import IsAdmin
 from rest_framework.decorators import api_view, permission_classes
@@ -74,9 +74,13 @@ def create_appointment_patient(request):
     serializer = AppointmentSerializer(data=data)
     if serializer.is_valid():
         serializer.save()
-        send_appointment_email(serializer.data['id'], 'booked')
+        print(f"Datos de la cita: {serializer.data['service']['price']}")
+        payment_data = create_payment_setup(serializer.data['id'], serializer.data['service']['price'] * 100, request.user)
         update_schedule(data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        if isinstance(payment_data, Response):
+            return payment_data
+        send_appointment_email(serializer.data['id'], 'booked')
+        return Response({'appointment_data': serializer.data, 'payment_data': payment_data}, status=status.HTTP_201_CREATED)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

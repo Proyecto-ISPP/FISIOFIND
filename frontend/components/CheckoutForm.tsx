@@ -140,78 +140,39 @@ const CheckoutForm = ({ request, token }: CheckoutFormProps) => {
       const data = await res.json();
       console.log("Respuesta del backend (cita creada):", data);
 
-      if (data.id) {
-        alert("La cita se realizó correctamente.");
+      if (data.appointment_data.id) {
         // Eliminamos el borrador unificado
         localStorage.removeItem("appointmentDraft");
         localStorage.removeItem("physioName");
         dispatch({ type: "DESELECT_SERVICE" });
-        setAppointmentId(data.id); // Guardamos el appointment_id
-        const result = await createPayment(tokenValue, data.id); // ⚡ Llamamos a createPayment después de obtener la cita
-        if (result) {
+        setAppointmentId(data.appointment_data.id); // Guardamos el appointment_id
+        // const result = await createPayment(tokenValue, data.id); // ⚡ Llamamos a createPayment después de obtener la cita
+        if (data.payment_data) {
+          console.log("Payment data:", data.payment_data);
           console.log({
-            clientSecret: result.clientSecret,
-            paymentId: result.paymentId,
+            clientSecret: data.payment_data.client_secret,
+            paymentId: data.payment_data.payment.id,
           });
+          setClientSecret(data.payment_data.client_secret);
+          setPaymentId(data.payment_data.payment.id); // Guardamos el payment_id
 
           return {
-            clientSecret: result.clientSecret,
-            paymentId: result.paymentId,
+            clientSecret: data.payment_data.client_secret,
+            paymentId: data.payment_data.payment.id,
           };
         }
       } else {
         setMessage("Error al crear la cita.");
+        setLoading(false);
       }
     } catch (error) {
       console.error("Error al crear la cita:", error);
       setMessage("Error al crear la cita.");
-    }
-  }
-
-  async function createPayment(
-    tokenValue: string | null,
-    appointmentId: number
-  ) {
-    console.log(tokenValue);
-
-    try {
-      const res = await fetch(`${getApiBaseUrl()}/api/payments/create-setup/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + tokenValue,
-        },
-        body: JSON.stringify({
-          appointment_id: appointmentId, // ⚡ Ahora tenemos el ID correcto
-          amount: price * 100, // Convertimos a centavos
-        }),
-      });
-
-      const data = await res.json();
-      console.log("Status", res.status);
-      console.log("Appointment ID", appointmentId);
-
-      console.log("Respuesta del backend (pago creado):", data);
-      console.log("client secret", data.client_secret);
-      console.log("payment", data.payment);
-      if (data.client_secret && data.payment) {
-        console.log("he entrado en el if");
-        setClientSecret(data.client_secret);
-        setPaymentId(data.payment.id);
-        return { clientSecret: data.client_secret, paymentId: data.payment.id };
-      } else {
-        setMessage(
-          "Error: La respuesta del servidor no tiene el client_secret."
-        );
-      }
-    } catch (error) {
-      console.error("Error al crear el pago:", error);
-      setMessage("Error al crear el pago.");
+      setLoading(false);
     }
   }
 
   const handleSubmit = async (e) => {
-    console.log("Entro en la funcion handleSubmit");
     e.preventDefault();
     setLoading(true);
     let dataClientSecret = "";
