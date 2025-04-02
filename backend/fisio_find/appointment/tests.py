@@ -10,6 +10,326 @@ from django.utils import timezone
 from datetime import timedelta
 import json
 
+
+from rest_framework.test import APITestCase
+from django.urls import reverse
+from django.utils.timezone import now, timedelta
+
+
+from django.test import TestCase
+from users.util import validate_service_with_questionary
+
+
+class ValidateServiceWithQuestionaryTests(TestCase):
+
+    def setUp(self):
+        self.service_template = {
+            "id": 1,
+            "title": "Primera consulta",
+            "tipo": "PRIMERA_CONSULTA",
+            "price": 50,
+            "description": "Evaluación inicial",
+            "duration": 60,
+            "custom_questionnaire": {
+                "UI Schema": {
+                    "type": "Group",
+                    "label": "Cuestionario",
+                    "elements": [
+                        {"type": "Number", "label": "Edad", "scope": "#/properties/edad"},
+                        {"type": "Control", "label": "Motivo", "scope": "#/properties/motivo"}
+                    ]
+                }
+            }
+        }
+
+        self.valid_service_input = {
+            "id": 1,
+            "title": "Primera consulta",
+            "tipo": "PRIMERA_CONSULTA",
+            "price": 50,
+            "description": "Evaluación inicial",
+            "duration": 60,
+            "questionaryResponses": {
+                "edad": "30",
+                "motivo": "Dolor de espalda"
+            }
+        }
+
+        self.physio_services = {
+            "1": self.service_template
+        }
+
+    def test_valid_service_passes(self):
+        result = validate_service_with_questionary(self.valid_service_input.copy(), self.physio_services)
+        self.assertEqual(result["id"], 1)
+
+    def test_service_with_questionnaire_none_allows_empty_responses(self):
+        physio_service = self.service_template.copy()
+        physio_service["custom_questionnaire"] = None
+        self.physio_services["1"] = physio_service
+
+        modified_service = self.valid_service_input.copy()
+        modified_service["custom_questionnaire"] = None
+        modified_service["questionaryResponses"] = {}
+
+        result = validate_service_with_questionary(modified_service, self.physio_services)
+        self.assertEqual(result["questionaryResponses"], {})
+
+    def test_service_with_questionnaire_none_ignores_extra_responses(self):
+        physio_service = self.service_template.copy()
+        physio_service["custom_questionnaire"] = None
+        self.physio_services["1"] = physio_service
+
+        modified_service = self.valid_service_input.copy()
+        modified_service["custom_questionnaire"] = None
+        modified_service["questionaryResponses"] = {"cualquiera": "valor"}
+
+        result = validate_service_with_questionary(modified_service, self.physio_services)
+        self.assertEqual(result["questionaryResponses"], {})
+
+    def test_service_id_not_found(self):
+        with self.assertRaises(ValueError):
+            validate_service_with_questionary(self.valid_service_input, {})  # no servicios
+
+    def test_service_field_mismatch(self):
+        modified = self.valid_service_input.copy()
+        modified["price"] = 999
+        with self.assertRaises(ValueError):
+            validate_service_with_questionary(modified, self.physio_services)
+
+    def test_missing_response_key(self):
+        modified = self.valid_service_input.copy()
+        del modified["questionaryResponses"]["motivo"]
+        with self.assertRaises(ValueError) as cm:
+            validate_service_with_questionary(modified, self.physio_services)
+        self.assertIn("Falta la respuesta", str(cm.exception))
+
+    def test_empty_string_response(self):
+        modified = self.valid_service_input.copy()
+        modified["questionaryResponses"]["motivo"] = ""
+        with self.assertRaises(ValueError):
+            validate_service_with_questionary(modified, self.physio_services)
+
+    def test_response_wrong_type_control(self):
+        modified = self.valid_service_input.copy()
+        modified["questionaryResponses"]["motivo"] = 123  # debe ser str
+        with self.assertRaises(ValueError):
+            validate_service_with_questionary(modified, self.physio_services)
+
+    def test_response_too_long_string(self):
+        modified = self.valid_service_input.copy()
+        modified["questionaryResponses"]["motivo"] = "x" * 151
+        with self.assertRaises(ValueError):
+            validate_service_with_questionary(modified, self.physio_services)
+
+    def test_response_not_integer_number(self):
+        modified = self.valid_service_input.copy()
+        modified["questionaryResponses"]["edad"] = "treinta"
+        with self.assertRaises(ValueError):
+            validate_service_with_questionary(modified, self.physio_services)
+
+    def test_response_contains_extra_keys(self):
+        modified = self.valid_service_input.copy()
+        modified["questionaryResponses"]["extra"] = "valor"
+        with self.assertRaises(ValueError):
+            validate_service_with_questionary(modified, self.physio_services)
+
+    def test_scope_without_prefix(self):
+        physio_services = {
+            "1": {
+                **self.service_template,
+                "custom_questionnaire": {
+                    "UI Schema": {
+                        "type": "Group",
+                        "label": "Form",
+                        "elements": [
+                            {"type": "Control", "label": "Test", "scope": "edad"}  # inválido
+                        ]
+                    }
+                }
+            }
+        }
+        with self.assertRaises(ValueError):
+            validate_service_with_questionary(self.valid_service_input, physio_services)
+
+
+class CreateAppointmentIntegrationTests(APITestCase):
+
+    def setUp(self):
+        self.user = AppUser.objects.create_user(
+            username="paciente",
+            email="paciente@example.com",
+            password="testpass",
+            dni="80736062J"
+        )
+        self.patient = Patient.objects.create(
+            user=self.user,
+            birth_date="1995-01-01",   # Añadido
+            gender="F"                 # Añadido (ajusta según tu modelo)
+        )
+        self.client.force_authenticate(user=self.user)
+
+        self.physio_user = AppUser.objects.create_user(
+            username="fisio",
+            email="fisio@example.com",
+            password="testpass",
+            dni="21419210T"
+        )
+        working_day = (now() + timedelta(days=1)).strftime('%A').lower()
+
+
+        working_day= (now() + timedelta(days=1)).strftime('%A').lower()
+
+        self.physio = Physiotherapist.objects.create(
+            user=self.physio_user,
+            gender="M",
+            birth_date="1990-01-01",
+            collegiate_number="C123",
+            autonomic_community="MADRID",
+            services={
+                "1": {
+                    "id": 1,
+                    "title": "Primera consulta",
+                    "tipo": "PRIMERA_CONSULTA",
+                    "price": 50,
+                    "description": "Descripción",
+                    "duration": 60,
+                    "custom_questionnaire": {
+                        "UI Schema": {
+                            "type": "Group",
+                            "label": "Cuestionario",
+                            "elements": [
+                                {"type": "Number", "label": "Edad", "scope": "#/properties/edad"},
+                                {"type": "Control", "label": "Motivo de la consulta", "scope": "#/properties/motivo_consulta"}
+                            ]
+                        }
+                    }
+                }
+            },
+            schedule={
+                "weekly_schedule": {
+                    working_day: [{"start": "09:00", "end": "17:00"}]
+                },
+                "exceptions": {}
+            }
+        )
+
+        self.url = reverse("create_appointment_patient")
+
+        self.valid_service = {
+            "id": 1,
+            "title": "Primera consulta",
+            "tipo": "PRIMERA_CONSULTA",
+            "price": 50,
+            "description": "Descripción",
+            "duration": 60,
+            "questionaryResponses": {
+                "edad": "30",
+                "motivo_consulta": "Dolor en la espalda"
+            }
+        }
+
+
+    def base_data(self, service_override=None):
+        start = now() + timedelta(days=1, hours=2)
+        end = start + timedelta(minutes=60)
+        return {
+            "physiotherapist": self.physio.id,
+            "start_time": start.isoformat(),
+            "end_time": end.isoformat(),
+            "service": service_override or self.valid_service,
+            "is_online": True,
+            "alternatives": {}
+        }
+    def test_successful_appointment_creation(self):
+        response = self.client.post(self.url, self.base_data(), format="json")
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(Appointment.objects.count(), 1)
+
+    def test_missing_service_field(self):
+        data = self.base_data()
+        data.pop("service")
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
+
+    def test_empty_service_dict(self):
+        data = self.base_data()
+        data["service"] = {}
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+
+    def test_invalid_service_id_not_in_physio_services(self):
+        invalid_service = self.valid_service.copy()
+        invalid_service["id"] = 99  # no existe
+        data = self.base_data(service_override=invalid_service)
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+
+    def test_service_fields_do_not_match_physio_service(self):
+        invalid_service = self.valid_service.copy()
+        invalid_service["price"] = 999  # no coincide
+        data = self.base_data(service_override=invalid_service)
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+
+    def test_questionary_missing_required_response(self):
+        invalid_service = self.valid_service.copy()
+        invalid_service["questionaryResponses"].pop("edad")
+        data = self.base_data(service_override=invalid_service)
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+
+    def test_questionary_response_wrong_type(self):
+        invalid_service = self.valid_service.copy()
+        invalid_service["questionaryResponses"]["edad"] = "treinta y dos"  # no se puede convertir a int
+        data = self.base_data(service_override=invalid_service)
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+
+    def test_questionary_response_control_too_long(self):
+        invalid_service = self.valid_service.copy()
+        invalid_service["questionaryResponses"]["motivo_consulta"] = "x" * 151
+        data = self.base_data(service_override=invalid_service)
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+
+    def test_questionary_response_extra_keys(self):
+        invalid_service = self.valid_service.copy()
+        invalid_service["questionaryResponses"]["extra"] = "no debería estar"
+        data = self.base_data(service_override=invalid_service)
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, 400)
+
+    def test_custom_questionnaire_is_null_should_ignore_responses(self):
+        physio_services = self.physio.services
+        physio_services["1"]["custom_questionnaire"] = None
+        self.physio.services = physio_services
+        self.physio.save()
+
+        service = self.valid_service.copy()
+        service["custom_questionnaire"] = None
+        service["questionaryResponses"] = {"respuesta_aleatoria": "cualquiera"}  # será ignorado
+
+        data = self.base_data(service_override=service)
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, 201)
+
+    def test_custom_questionnaire_is_null_and_no_responses(self):
+        physio_services = self.physio.services
+        physio_services["1"]["custom_questionnaire"] = None
+        self.physio.services = physio_services
+        self.physio.save()
+
+        service = self.valid_service.copy()
+        service["custom_questionnaire"] = None
+        service["questionaryResponses"] = {}
+
+        data = self.base_data(service_override=service)
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, 201)
+
+
 class CreateAppointmentTests(APITestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
