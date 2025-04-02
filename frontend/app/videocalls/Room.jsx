@@ -152,7 +152,6 @@ useEffect(() => {
             break;
           case 'call-ended':
           case 'user-disconnected':
-            roomManagement.handleCallEnded();
             break;
           case 'pain-map':
             if (data.message.mapId) {
@@ -251,7 +250,7 @@ useEffect(() => {
         setShowChat={chat.setShowChat}
         showSettings={showSettings}
         setShowSettings={setShowSettings}
-        endCall={roomManagement.endCall}
+        leaveCall={roomManagement.leaveCall}
       />
 
       <ChatPanel
