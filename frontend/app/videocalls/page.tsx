@@ -213,7 +213,7 @@ const VideoCallPage = () => {
 
         
 
-        {userRole === "physio" && hasTestRoom && (
+        {userRole === "physio" && !hasTestRoom && (
   <div className="mb-8 text-center bg-blue-50 border border-blue-200 p-6 rounded-2xl shadow-sm">
     <p className="text-gray-700 mb-4 text-sm md:text-base">
       Puedes crear una <strong>sala de prueba</strong> para familiarizarte con las herramientas antes de una consulta real.
@@ -247,7 +247,6 @@ const VideoCallPage = () => {
     : null;
 
   const isActive = room.is_test_room? true: diffInMinutes !== null && diffInMinutes <= 120 && diffInMinutes >= -120 ; // activa desde 30 min antes hasta 60 min después
-
 
   
   return (
