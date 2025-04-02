@@ -102,3 +102,78 @@ def check_service_json(service_json):
             raise json.JSONDecodeError()
     
     return new_service
+
+def validate_service_with_questionary(selected_service, physio_services):
+    try:
+        selected_id = selected_service["id"]
+
+        # Buscar el servicio por id dentro de los valores
+        physio_service = None
+        for service in physio_services.values():
+            if service.get("id") == selected_id:
+                physio_service = service
+                break
+
+        if physio_service is None:
+            raise ValueError("El servicio no existe en los servicios del fisioterapeuta.")
+
+        # El servicio del paciente no debe contener 'custom_questionnaire'
+        if "custom_questionnaire" in selected_service:
+            del selected_service["custom_questionnaire"]
+
+        # Comparar campos clave (excepto el cuestionario)
+        for key in ["title", "tipo", "price", "duration"]:
+            if selected_service.get(key) != physio_service.get(key):
+                raise ValueError(f"El campo '{key}' no coincide con el servicio del fisioterapeuta.")
+
+        # Validar respuestas al cuestionario
+        responses = selected_service.get("questionaryResponses", {})
+        if not isinstance(responses, dict):
+            raise ValueError("Las respuestas del cuestionario deben ser un diccionario.")
+
+        questionnaire = physio_service.get("custom_questionnaire", {})
+        if questionnaire == None or questionnaire == {}:
+            if responses not in [None, {}]:
+                selected_service["questionaryResponses"] = {}
+            return selected_service
+        ui_schema = questionnaire.get("UI Schema", {})
+        elements = ui_schema.get("elements", [])
+
+        expected_keys = set()
+        for element in elements:
+            q_type = element.get("type")
+            q_scope = element.get("scope")
+            if not q_scope or not isinstance(q_scope, str) or not q_scope.startswith("#/properties/"):
+                raise ValueError("Scope inválido en una pregunta del cuestionario.")
+
+            key = q_scope.split("/")[-1]
+            expected_keys.add(key)
+
+            if key not in responses:
+                raise ValueError(f"Falta la respuesta a la pregunta '{key}'.")
+
+            value = responses[key]
+            if value in [None, ""]:
+                raise ValueError(f"La respuesta a '{key}' no puede estar vacía.")
+
+            if q_type == "Control":
+                if not isinstance(value, str):
+                    raise ValueError(f"La respuesta a '{key}' debe ser texto.")
+                if len(value) > 150:
+                    raise ValueError(f"La respuesta a '{key}' supera los 150 caracteres.")
+            elif q_type == "Number":
+                try:
+                    int(value)
+                except (ValueError, TypeError):
+                    raise ValueError(f"La respuesta a '{key}' debe ser un número entero.")
+            else:
+                raise ValueError(f"Tipo de pregunta '{q_type}' no válido.")
+
+        # Verificar que no haya respuestas inesperadas
+        extra_keys = set(responses.keys()) - expected_keys
+        if extra_keys:
+            raise ValueError(f"Las respuestas contienen claves no esperadas: {', '.join(extra_keys)}")
+
+        return selected_service
+    except KeyError as e:
+        raise ValueError(f"Campo requerido faltante: {e}")

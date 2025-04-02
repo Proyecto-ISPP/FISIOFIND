@@ -260,8 +260,18 @@ def physio_update_view(request):
             else:
                 raise json.JSONDecodeError()
             
+            lista_ids = set()
+            
             for key, service in request_data["services"].items():
-                check_service_json(service)
+                service = check_service_json(service)
+                if "id" not in service or service["id"] == None or not isinstance(service["id"],int):
+                    raise json.JSONDecodeError()
+                lista_ids.add(service["id"])
+                
+            if len(lista_ids) != len(request_data["services"]):
+                # Hay ids repetidos y el id tiene que ser unico
+                raise json.JSONDecodeError()
+
                 
         except json.JSONDecodeError:
             return Response({"error": "Formato de servicios inválido."}, status=status.HTTP_400_BAD_REQUEST)

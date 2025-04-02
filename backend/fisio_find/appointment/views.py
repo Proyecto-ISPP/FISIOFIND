@@ -23,7 +23,7 @@ from django.core.signing import BadSignature, SignatureExpired
 from rest_framework.permissions import AllowAny
 from urllib.parse import unquote
 import datetime as dt
-
+from users.util import validate_service_with_questionary
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 10
@@ -60,7 +60,7 @@ def update_schedule(data):
     # Guardar el schedule actualizado
     physiotherapist.schedule = current_schedule
     physiotherapist.save()
-    
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, IsPatient])
@@ -91,6 +91,17 @@ def create_appointment_patient(request):
     schedule = physiotherapist.schedule
     weekly_schedule = schedule.get('weekly_schedule', {})
     exceptions = schedule.get('exceptions', {})
+    
+    selected_service = data.get('service',{})
+    if selected_service == None or selected_service == {}:
+        return Response({"error": "Debes de seleccionar un servicio"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    physio_services = physiotherapist.services
+    try:
+        selected_service = validate_service_with_questionary(selected_service, physio_services)
+    except Exception:
+        return Response({"error": "Debes de enviar un cuestionario válido"}, status=status.HTTP_400_BAD_REQUEST)
+    
     appointments = schedule.get('appointments', [])
 
     # Parsear fechas de la solicitud

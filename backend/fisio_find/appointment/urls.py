@@ -10,7 +10,7 @@ urlpatterns = [
     path('confirm-alternative/<str:token>/', views.confirm_alternative_appointment, name='confirm_appointment_alternatives'),
 
     #Patients
-    path('patient/', views.create_appointment_patient),
+    path('patient/', views.create_appointment_patient, name="create_appointment_patient"),
     path('patient/list/', views.list_appointments_patient),
     #Physiotherapists
     path('physio/', views.create_appointment_physio),
