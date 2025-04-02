@@ -19,7 +19,8 @@ jobs:
 
       - name: Instalar git-cliff
         run: |
-          curl -sSL https://github.com/orhun/git-cliff/releases/download/v1.2.0/git-cliff-1.2.0-linux-x86_64.tar.gz | tar xz
+          curl -sSL https://github.com/orhun/git-cliff/releases/latest/download/git-cliff-linux-x86_64.tar.gz -o git-cliff.tar.gz
+          tar -xzf git-cliff.tar.gz
           sudo mv git-cliff /usr/local/bin/
 
       - name: Generar Changelog
