@@ -15,6 +15,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from .serializers import PatientRegisterSerializer, PhysioUpdateSerializer, PhysioRegisterSerializer
 from .serializers import PhysioSerializer, PatientSerializer, AppUserSerializer
 from .models import AppUser, Physiotherapist, Patient, Specialization, PatientFile
+from treatments.models import Treatment
 from rest_framework import generics
 from .permissions import IsPhysiotherapist
 from .permissions import IsPatient
@@ -39,6 +40,7 @@ from .permissions import (
     IsPhysiotherapist,
     IsPhysioOrPatient,
     IsAdmin,
+    IsPhysioOfPatientFile
 )
 
 
@@ -886,3 +888,48 @@ def update_patient_file(request, file_id):
 
     # Si el serializador no es válido, devolver los errores
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes([IsPatient])
+def list_my_files(request):
+    user = request.user
+
+    try:
+        if hasattr(user, 'patient'):
+            print("Patient:", user.patient.id)
+            files = PatientFile.objects.filter(patient=user.patient.id)
+
+        else:
+            return Response({"error": "No tienes permisos para ver estos archivos"}, status=status.HTTP_403_FORBIDDEN)
+
+        serializer = PatientFileSerializer(files, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        print(f"Error al obtener los archivos: {e}")
+        return Response({"error": "Hubo un problema al obtener los archivos"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+
+@api_view(['GET'])
+@permission_classes([IsPhysioOfPatientFile])
+def get_file_by_patient_id(request, patient_id):
+    user = request.user
+
+    if not hasattr(user, 'physio'):
+        return Response({"error": "No tienes permisos para ver estos archivos"}, status=status.HTTP_403_FORBIDDEN)
+
+    # Verificar si el paciente existe
+    patient = get_object_or_404(Patient, id=patient_id)
+
+    # Verificar si el fisio tiene un tratamiento con este paciente
+    has_treatment = Treatment.objects.filter(patient=patient, physiotherapist=user.physio).exists()
+
+    if not has_treatment:
+        return Response({"error": "No tienes permiso para ver los archivos de este paciente"}, status=status.HTTP_403_FORBIDDEN)
+
+    # Obtener los archivos del paciente
+    files = PatientFile.objects.filter(patient=patient)
+    serializer = PatientFileSerializer(files, many=True)
+
+    return Response(serializer.data, status=status.HTTP_200_OK)
