@@ -849,3 +849,40 @@ def delete_patient_file(request, file_id):
 
     except PatientFile.DoesNotExist:
         return Response({"error": "Archivo no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+    
+
+@api_view(['PUT'])
+@permission_classes([IsPatient])
+def update_patient_file(request, file_id):
+    try:
+        file_instance = PatientFile.objects.get(id=file_id)
+    except PatientFile.DoesNotExist:
+        return Response({"error": "Archivo no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+
+    # Verificar que el usuario autenticado es el dueño del archivo
+    if file_instance.patient != request.user.patient:
+        return Response({"error": "No tienes permiso para actualizar este archivo"}, status=status.HTTP_403_FORBIDDEN)
+
+    # Convertir request.data en un diccionario mutable
+    mutable_data = request.data.copy()
+
+    # Si el archivo es nuevo, lo agregamos al diccionario mutable
+    new_file = request.FILES.get("files")
+    if new_file:
+        mutable_data["files"] = new_file
+
+    # Serializar con los datos nuevos
+    serializer = PatientFileSerializer(file_instance, data=mutable_data, partial=True, context={"request": request})
+
+    if serializer.is_valid():
+        # Guardar los cambios
+        serializer.save()
+
+        # Responder con el archivo actualizado
+        return Response({
+            "message": "Archivo actualizado correctamente",
+            "file": serializer.data
+        }, status=status.HTTP_200_OK)
+
+    # Si el serializador no es válido, devolver los errores
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

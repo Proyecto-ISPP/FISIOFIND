@@ -702,6 +702,16 @@ class PatientFileSerializer(serializers.ModelSerializer):
         patient_file.save()
 
         return patient_file
+    
+    def update(self, instance, validated_data):
+        """Actualiza un archivo en DigitalOcean Spaces y la BD."""
+    
+        # Actualizar otros campos si están en los datos
+        instance.title = validated_data.get("title", instance.title)
+        instance.description = validated_data.get("description", instance.description)
+
+        instance.save()
+        return instance
 
     def get_file_urls(self, obj):
         """Devuelve la URL completa del archivo."""

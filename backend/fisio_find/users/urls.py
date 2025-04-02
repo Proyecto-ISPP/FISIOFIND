@@ -28,6 +28,7 @@ urlpatterns = [
 
     path('files/upload-files/', upload_patient_files, name='upload_patient_files'),
     path('files/delete-file/<int:file_id>/', delete_patient_file, name='delete_patient_file'),
+    path('files/update-file/<int:file_id>/', update_patient_file, name='update_patient_file'),
 
     path('services/<int:physio_id>/', physio_get_services_view, name='physio_get_xservices'),
     
