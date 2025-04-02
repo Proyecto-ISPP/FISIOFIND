@@ -39,23 +39,23 @@ const GENDER_OPTIONS = [
 
 // Opciones de comunidad autónoma
 const AUTONOMIC_COMMUNITY_OPTIONS = [
-  { value: "ANDALUCIA", label: "Andalucía" },
-  { value: "ARAGON", label: "Aragón" },
-  { value: "ASTURIAS", label: "Asturias" },
-  { value: "BALEARES", label: "Baleares" },
-  { value: "CANARIAS", label: "Canarias" },
-  { value: "CANTABRIA", label: "Cantabria" },
-  { value: "CASTILLA Y LEON", label: "Castilla y León" },
-  { value: "CASTILLA-LA MANCHA", label: "Castilla-La Mancha" },
-  { value: "CATALUÑA", label: "Cataluña" },
-  { value: "EXTREMADURA", label: "Extremadura" },
-  { value: "GALICIA", label: "Galicia" },
-  { value: "MADRID", label: "Madrid" },
-  { value: "MURCIA", label: "Murcia" },
-  { value: "NAVARRA", label: "Navarra" },
-  { value: "PAIS VASCO", label: "País Vasco" },
-  { value: "LA RIOJA", label: "La Rioja" },
-  { value: "COMUNIDAD VALENCIANA", label: "Comunidad Valenciana" },
+  { value: "ANDALUCIA", label: "Andalucía", url: "https://colfisio.org/registro-censo-fisioterapeutas" },
+  { value: "ARAGON", label: "Aragón", url: "https://ventanilla.colfisioaragon.org/buscador-colegiados" },
+  { value: "ASTURIAS", label: "Asturias", url: "https://www.cofispa.org/censo-colegiados" },
+  { value: "BALEARES", label: "Baleares", url: "http://www.colfisiobalear.org/es/area-social-y-ciudadana/profesionales-colegiados/" },
+  { value: "CANARIAS", label: "Canarias", url: "https://www.consejo-fisioterapia.org/vu_colegiados.html" },
+  { value: "CANTABRIA", label: "Cantabria", url: "https://colfisiocant.org/busqueda-profesionales/" },
+  { value: "CASTILLA Y LEON", label: "Castilla y León", url: "https://www.consejo-fisioterapia.org/vu_colegiados.html" },
+  { value: "CASTILLA-LA MANCHA", label: "Castilla-La Mancha", url: "https://www.coficam.org/ventanilla-unica/censo-colegial" },
+  { value: "CATALUÑA", label: "Cataluña", url: "https://www.fisioterapeutes.cat/es/ciudadanos/profesionales" },
+  { value: "EXTREMADURA", label: "Extremadura", url: "https://cofext.org/cms/colegiados.php" },
+  { value: "GALICIA", label: "Galicia", url: "https://www.cofiga.org/ciudadanos/colegiados" },
+  { value: "MADRID", label: "Madrid", url: "https://cfisiomad.com/#/ext/buscarcolegiado" },
+  { value: "MURCIA", label: "Murcia", url: "https://cfisiomurcia.com/buscador-de-colegiados/" },
+  { value: "NAVARRA", label: "Navarra", url: "https://www.consejo-fisioterapia.org/vu_colegiados.html" },
+  { value: "PAIS VASCO", label: "País Vasco", url: "https://cofpv.org/es/colegiados.asp" },
+  { value: "LA RIOJA", label: "La Rioja", url: "https://www.coflarioja.org/ciudadanos/listado-de-fisioterapeutas/buscar-colegiados" },
+  { value: "COMUNIDAD VALENCIANA", label: "Comunidad Valenciana", url: "https://app.colfisiocv.com/college/collegiatelist/" },
 ];
 
 // Carga de Stripe
@@ -570,70 +570,70 @@ const PhysioSignUpForm = () => {
             </div>
           </div>
 
-            {/* Formulario pasos 1 a 4 */}
-            {currentStep < 5 && (
-              <form onSubmit={handleSubmit} className="p-6">
-                {/* Paso 1: Cuenta */}
-                {currentStep === 1 && (
-                  <div className="space-y-4">
-                    <h2 className="text-xl font-semibold mb-4">Información de Cuenta</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="md:col-span-2">
+          {/* Formulario pasos 1 a 4 */}
+          {currentStep < 5 && (
+            <form onSubmit={handleSubmit} className="p-6">
+              {/* Paso 1: Cuenta */}
+              {currentStep === 1 && (
+                <div className="space-y-4">
+                  <h2 className="text-xl font-semibold mb-4">Información de Cuenta</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="md:col-span-2">
+                      <FormField
+                        name="username"
+                        label="Nombre de usuario"
+                        value={formData.username}
+                        onChange={handleChange}
+                        error={errors.username}
+                      />
+                    </div>
+                    <FormField
+                      name="email"
+                      label="Email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      error={errors.email}
+                    />
+                    <FormField
+                      name="password"
+                      label="Contraseña"
+                      type="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      error={errors.password}
+                    />
+                    {/* Confirmar contraseña y requisitos en la misma fila */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:col-span-2">
+                      <div>
                         <FormField
-                          name="username"
-                          label="Nombre de usuario"
-                          value={formData.username}
+                          name="confirm_password"
+                          label="Confirmar contraseña"
+                          type="password"
+                          value={formData.confirm_password}
                           onChange={handleChange}
-                          error={errors.username}
+                          error={errors.confirm_password}
                         />
                       </div>
-                      <FormField
-                        name="email"
-                        label="Email"
-                        type="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        error={errors.email}
-                      />
-                      <FormField
-                        name="password"
-                        label="Contraseña"
-                        type="password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        error={errors.password}
-                      />
-                      {/* Confirmar contraseña y requisitos en la misma fila */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:col-span-2">
-                        <div>
-                          <FormField
-                            name="confirm_password"
-                            label="Confirmar contraseña"
-                            type="password"
-                            value={formData.confirm_password}
-                            onChange={handleChange}
-                            error={errors.confirm_password}
-                          />
-                        </div>
-                        {/* Componente de requisitos de contraseña a la derecha */}
-                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex flex-col justify-center h-full">
-                          <h3 className="text-sm font-medium text-blue-800 mb-2 flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            Requisitos de contraseña
-                          </h3>
-                          <ul className="text-xs text-blue-700 space-y-1 ml-7 list-disc">
-                            <li>Mínimo 8 caracteres</li>
-                            <li>No debe ser similar a tu información personal</li>
-                            <li>No debe ser una contraseña común</li>
-                            <li>No puede ser únicamente numérica</li>
-                          </ul>
-                        </div>
+                      {/* Componente de requisitos de contraseña a la derecha */}
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex flex-col justify-center h-full">
+                        <h3 className="text-sm font-medium text-blue-800 mb-2 flex items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          Requisitos de contraseña
+                        </h3>
+                        <ul className="text-xs text-blue-700 space-y-1 ml-7 list-disc">
+                          <li>Mínimo 8 caracteres</li>
+                          <li>No debe ser similar a tu información personal</li>
+                          <li>No debe ser una contraseña común</li>
+                          <li>No puede ser únicamente numérica</li>
+                        </ul>
                       </div>
                     </div>
                   </div>
-    )}
+                </div>
+              )}
 
               {/* Paso 2: Personal */}
               {currentStep === 2 && (
@@ -712,6 +712,27 @@ const PhysioSignUpForm = () => {
                       onChange={handleChange}
                       error={errors.autonomic_community}
                     />
+                    {formData.autonomic_community && (
+                      <div className="md:col-span-2 text-center -mt-10">
+                        <a
+                          href={
+                            AUTONOMIC_COMMUNITY_OPTIONS.find(
+                              (c) => c.value === formData.autonomic_community
+                            )?.url || "#"
+                          }
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:text-blue-800 text-sm inline-flex items-center gap-1"
+                        >
+                          <Info size={14} />
+                          Verificar datos en el colegio oficial de {
+                            AUTONOMIC_COMMUNITY_OPTIONS.find(
+                              (c) => c.value === formData.autonomic_community
+                            )?.label
+                          }
+                        </a>
+                      </div>
+                    )}
                     <FormField
                       name="postal_code"
                       label="Código Postal"
@@ -733,8 +754,8 @@ const PhysioSignUpForm = () => {
                     {/* Fisio Blue */}
                     <label
                       className={`relative cursor-pointer p-6 rounded-xl border-2 transition-all ${formData.plan === "blue"
-                          ? "border-[#1E5ACD] bg-blue-50 dark:bg-blue-900/30"
-                          : "border-gray-200 hover:border-blue-200 dark:border-neutral-700 dark:hover:border-blue-600"
+                        ? "border-[#1E5ACD] bg-blue-50 dark:bg-blue-900/30"
+                        : "border-gray-200 hover:border-blue-200 dark:border-neutral-700 dark:hover:border-blue-600"
                         }`}
                     >
                       <div className="flex items-start gap-4">
@@ -786,8 +807,8 @@ const PhysioSignUpForm = () => {
                     {/* Fisio Gold */}
                     <label
                       className={`relative cursor-pointer p-6 rounded-xl border-2 transition-all ${formData.plan === "gold"
-                          ? "border-amber-400 bg-amber-50 dark:bg-amber-900/30"
-                          : "border-gray-200 hover:border-amber-200 dark:border-neutral-700 dark:hover:border-amber-600"
+                        ? "border-amber-400 bg-amber-50 dark:bg-amber-900/30"
+                        : "border-gray-200 hover:border-amber-200 dark:border-neutral-700 dark:hover:border-amber-600"
                         }`}
                     >
                       <div className="flex items-start gap-4">
@@ -888,9 +909,9 @@ const PhysioSignUpForm = () => {
               {validationMessage && !isValidating && (
                 <p
                   className={`text-center mt-4 ${validationMessage.toLowerCase().includes("corrige") ||
-                      validationMessage.toLowerCase().includes("errores")
-                      ? "text-red-600"
-                      : "text-green-600"
+                    validationMessage.toLowerCase().includes("errores")
+                    ? "text-red-600"
+                    : "text-green-600"
                     }`}
                 >
                   {validationMessage}
