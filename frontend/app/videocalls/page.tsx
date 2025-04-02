@@ -5,10 +5,14 @@ import axios from "axios";
 import { getApiBaseUrl } from "@/utils/api";
 import { IconHeart, IconHeadphones, IconVideo } from "@tabler/icons-react";
 
+
 interface RoomDetails {
   code: string;
   created_at: string;
   appointment_start_time: string | null;
+  is_test_room?: boolean;
+  patient_name?: string;
+  physiotherapist_name?: string; 
 }
 
 const VideoCallPage = () => {
@@ -75,6 +79,30 @@ const VideoCallPage = () => {
     }
   }, [token]);
 
+  const createTestRoom = async () => {
+    try {
+      const response = await axios.post(
+        `${getApiBaseUrl()}/api/videocall/create-test-room/`,
+        {},
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      );
+      const { code, detail } = response.data;
+
+    if (response.status === 200 && detail) {
+      alert("🔧 Ya tienes una sala de prueba activa. Redirigiéndote...");
+    }
+      window.location.href = `/videocalls/${code}`;
+    } catch (error) {
+      console.error("Error creando sala de prueba:", error);
+      alert("Hubo un problema al crear la sala de prueba.");
+    }
+  };
+  
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
@@ -116,7 +144,7 @@ const VideoCallPage = () => {
       </div>
     );
   }
-
+  const hasTestRoom = rooms.some((room) => room.is_test_room);
   return (
     <div
       className="min-h-screen flex flex-col items-center justify-start p-5 bg-gradient-to-br from-gray-50 to-gray-100"
@@ -183,9 +211,32 @@ const VideoCallPage = () => {
           </div>
         </div>
 
+        
+
+        {userRole === "physio" && hasTestRoom && (
+  <div className="mb-8 text-center bg-blue-50 border border-blue-200 p-6 rounded-2xl shadow-sm">
+    <p className="text-gray-700 mb-4 text-sm md:text-base">
+      Puedes crear una <strong>sala de prueba</strong> para familiarizarte con las herramientas antes de una consulta real.
+    </p>
+    <button
+      onClick={createTestRoom}
+      className="inline-flex items-center gap-2 bg-gradient-to-r from-teal-500 to-blue-600 hover:from-teal-600 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-xl shadow transition-all duration-200"
+    >
+      Crear Sala de Prueba
+    </button>
+  </div>
+)}
+
         {rooms.length > 0 ? (
           <div className="space-y-4">
-            {rooms.map((room) => {
+            {[...rooms]
+  .sort((a, b) => {
+    // La test room va primero
+    if (a.is_test_room && !b.is_test_room) return -1;
+    if (!a.is_test_room && b.is_test_room) return 1;
+    return 0;
+  })
+  .map((room) => {
   const appointmentTime = room.appointment_start_time
     ? new Date(room.appointment_start_time)
     : null;
@@ -195,8 +246,10 @@ const VideoCallPage = () => {
     ? (appointmentTime.getTime() - now.getTime()) / (1000 * 60)
     : null;
 
-  const isActive = diffInMinutes !== null && diffInMinutes <= 30 && diffInMinutes >= -60; // activa desde 30 min antes hasta 60 min después
+  const isActive = room.is_test_room? true: diffInMinutes !== null && diffInMinutes <= 120 && diffInMinutes >= -120 ; // activa desde 30 min antes hasta 60 min después
 
+
+  
   return (
     <div
       key={room.code}
@@ -208,7 +261,24 @@ const VideoCallPage = () => {
             <IconVideo className="text-blue-600" size={24} />
           </div>
           <div>
-            <p className="text-gray-800 font-semibold">Sala: {room.code}</p>
+            <p className="text-gray-800 font-semibold">
+            {room.is_test_room && (
+  <span className="text-xs bg-purple-100 text-purple-700 font-semibold px-2 py-1 rounded-md mr-2">
+     TEST
+  </span>
+)}
+              Sala: {room.code}</p>
+              {room.patient_name && userRole === "physio" && !room.is_test_room && (
+  <p className="text-sm text-gray-600">
+    Paciente: <span className="font-medium">{room.patient_name}</span>
+  </p>
+)}
+
+{room.physiotherapist_name && userRole === "patient" && !room.is_test_room && (
+  <p className="text-sm text-gray-600">
+    Fisioterapeuta: <span className="font-medium">{room.physiotherapist_name}</span>
+  </p>
+)}
             {appointmentTime && (
               <p className="text-sm text-blue-600 font-medium">
                 Cita programada: {appointmentTime.toLocaleString()}
@@ -216,7 +286,7 @@ const VideoCallPage = () => {
             )}
             {!isActive && appointmentTime && (
               <p className="text-xs text-gray-400 mt-1">
-                La sala se activará 30 minutos antes de la cita
+                La sala se activará momentos antes de la cita
               </p>
             )}
           </div>
