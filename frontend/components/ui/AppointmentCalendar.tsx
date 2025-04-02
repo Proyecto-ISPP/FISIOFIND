@@ -8,6 +8,7 @@ import esLocale from "@fullcalendar/core/locales/es";
 import { useParams } from "next/navigation";
 import axios from "axios";
 import { getApiBaseUrl } from "@/utils/api";
+import Alert from "@/components/ui/Alert";
 
 // ----- Funciones auxiliares para trabajar con tiempos -----
 
@@ -147,6 +148,14 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
   const { dispatch } = useAppointment();
   const { id } = useParams();
   const [schedule, setSchedule] = useState<any>(null); // Datos del schedule desde la API
+  const [alertConfig, setAlertConfig] = useState<{
+    show: boolean;
+    type: "success" | "error" | "info" | "warning";
+    message: string;
+  } | null>(null);
+  const showAlert = (type: "success" | "error" | "info" | "warning", message: string) => {
+    setAlertConfig({ show: true, type, message });
+  };
 
   // Traer el schedule desde la API usando la id del fisioterapeuta
   useEffect(() => {
@@ -220,7 +229,7 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
     // Check if selected date is before day after tomorrow
     if (selectedDate < dayAfterTomorrow) {
       setSlots([]);
-      alert("Solo se pueden reservar citas con al menos 3 días de antelación.");
+      showAlert("warning", "Solo se pueden reservar citas con al menos 3 días de antelación.");
       return;
     }
 
@@ -324,6 +333,13 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
           )}
         </div>
       )}
+      {alertConfig && (
+      <Alert
+        type={alertConfig.type}
+        message={alertConfig.message}
+        onClose={() => setAlertConfig(null)}
+      />
+    )}
     </div>
   );
 };
