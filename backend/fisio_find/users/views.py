@@ -1,27 +1,18 @@
-import logging
-import stripe
-import os
-from django.conf import settings
-import json
-import boto3
-from django.shortcuts import get_object_or_404
-from django.conf import settings
-from django.http import HttpResponse, StreamingHttpResponse
-from django.db.models import Q
+from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status, generics
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from .serializers import PatientRegisterSerializer, PhysioUpdateSerializer, PhysioRegisterSerializer
-from .serializers import PhysioSerializer, PatientSerializer, AppUserSerializer
-from .models import AppUser, Physiotherapist, Patient, Specialization
 from rest_framework import generics
-from .permissions import IsPhysiotherapist
-from .permissions import IsPatient
+from django.http import HttpResponse, StreamingHttpResponse
+from django.conf import settings
+from django.shortcuts import get_object_or_404
+from django.conf import settings
+
+import boto3
+import logging
+import stripe
 import json
-from .permissions import IsAdmin
-from django.db.models import Q
-from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .serializers import (
     PatientRegisterSerializer,
@@ -32,14 +23,21 @@ from .serializers import (
     VideoSerializer,
     PhysioUpdateSerializer,
 )
-from .models import Physiotherapist, Patient, AppUser, Video
+
+from .models import (
+    Physiotherapist, 
+    Patient, 
+    AppUser, 
+    Video , 
+    Specialization)
+
 from .permissions import (
     IsPatient,
     IsPhysiotherapist,
     IsPhysioOrPatient,
     IsAdmin,
 )
-
+from users.util import check_service_json
 
 class PatientProfileView(generics.RetrieveAPIView):
     permission_classes = [IsPatient]
@@ -254,8 +252,7 @@ def physio_update_view(request):
     # Ensure services are parsed as JSON if provided
     if "services" in request_data and isinstance(request_data["services"], str):
         try:
-            # Comprueba si la entrada es str o dict, si es str intenta parsearlo
-            # si es dict directamente lo coge, sino simplemente lanza error
+            # Comprueba estructura y parametros obligatorios de 
             if isinstance(request_data["services"], str):
                 request_data["services"] = json.loads(request_data["services"])
             elif isinstance(request_data["services"], dict):
@@ -264,19 +261,7 @@ def physio_update_view(request):
                 raise json.JSONDecodeError()
             
             for key, service in request_data["services"].items():
-                required_fields = {"id", "title", "price", "description", "duration", "custom_questionnaire"}
-
-                if not isinstance(service, dict):
-                    raise json.JSONDecodeError()
-
-                if not required_fields.issubset(service.keys()):
-                    raise json.JSONDecodeError()
-
-                if not isinstance(service["price"], int):
-                    raise json.JSONDecodeError()
-
-                if not isinstance(service["duration"], int):
-                    raise json.JSONDecodeError()
+                check_service_json(service)
                 
         except json.JSONDecodeError:
             return Response({"error": "Formato de servicios inválido."}, status=status.HTTP_400_BAD_REQUEST)
@@ -339,73 +324,9 @@ def physio_create_service_view(request):
     # Obtener servicios existentes
     existing_services = physio.services or {}
 
-    
     try:
-        # Comprueba si la entrada es str o dict, si es str intenta parsearlo
-        # si es dict directamente lo coge, sino simplemente lanza error
-        if isinstance(request.data, str):
-            new_service = json.loads(request.data)
-        elif isinstance(request.data, dict):
-            new_service = request.data
-        else:
-            raise json.JSONDecodeError()
-            
-        required_fields = {"title", "price", "description", "duration", "tipo", "custom_questionnaire"}
-
-        if not isinstance(new_service, dict):
-            raise json.JSONDecodeError()
-
-        if not required_fields.issubset(new_service.keys()):
-            raise json.JSONDecodeError()
-
-        if not isinstance(new_service["title"], str):
-            raise json.JSONDecodeError()
-
-        if not isinstance(new_service["tipo"], str) and new_service["tipo"] not in ["PRIMERA_CONSULTA", "CONTINUAR_TRATAMIENTO", "OTRO"]:
-            raise json.JSONDecodeError()
-
-        if new_service["tipo"] == "PRIMERA_CONSULTA" and new_service["title"] != "Primera consulta":
-            raise json.JSONDecodeError()
-
-        if new_service["tipo"] == "CONTINUAR_TRATAMIENTO" and new_service["title"] != "Continuación de tratamiento":
-            raise json.JSONDecodeError()
-
-        if not isinstance(new_service["price"], int):
-            raise json.JSONDecodeError()
-
-        if not isinstance(new_service["duration"], int):
-            raise json.JSONDecodeError()
-        
-        if new_service["custom_questionnaire"] is not None:
-            if not isinstance(new_service["custom_questionnaire"],dict):
-                raise json.JSONDecodeError()
-            elif not "UI Schema" in new_service["custom_questionnaire"]:
-                raise json.JSONDecodeError()
-            elif not isinstance(new_service["custom_questionnaire"]["UI Schema"],dict):
-                raise json.JSONDecodeError()
-            
-            questionaries = new_service["custom_questionnaire"]["UI Schema"]
-            if not "type" in questionaries or questionaries["type"] != "Group":
-                raise json.JSONDecodeError()
-            elif not "label" in questionaries or not isinstance(questionaries["label"],str):
-                raise json.JSONDecodeError()
-            elif not "elements" in questionaries or not isinstance(questionaries["elements"],list):
-                raise json.JSONDecodeError()
-            
-            questionaries = questionaries["elements"]
-            necesary = [{'type': 'Number', 'label': 'Peso (kg)', 'scope': '#/properties/peso'}, {'type': 'Number', 'label': 'Altura (cm)', 'scope': '#/properties/altura'}, {'type': 'Number', 'label': 'Edad', 'scope': '#/properties/edad'}, {'type': 'Control', 'label': 'Nivel de actividad física', 'scope': '#/properties/actividad_fisica'}, {'type': 'Control', 'label': 'Motivo de la consulta', 'scope': '#/properties/motivo_consulta'}]
-            for quest in questionaries:
-                if quest in necesary:
-                    necesary.remove(quest)
-                else:
-                    if not "type" in quest or quest["type"] not in ["Number","Control"]:
-                        raise json.JSONDecodeError()
-                    elif not "label" in quest or not isinstance(quest["label"],str):
-                        raise json.JSONDecodeError()
-                    elif not "scope" in quest or not isinstance(quest["scope"],str) or not quest["scope"].startswith("#/properties/"):
-                        raise json.JSONDecodeError()
-            if len(necesary) != 0:
-                raise json.JSONDecodeError()
+        # Comprueba la estructura general y parametros obligatorios del json
+        new_service = check_service_json(request.data)
     except json.JSONDecodeError:
         return Response({"error": "Formato de servicios inválido."}, status=status.HTTP_400_BAD_REQUEST)
     except Exception:
@@ -437,6 +358,8 @@ def physio_create_service_view(request):
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+
 @api_view(['PUT'])
 @permission_classes([IsPhysiotherapist])
 def physio_update_service_view(request, service_id):
@@ -451,76 +374,9 @@ def physio_update_service_view(request, service_id):
     
     # Obtener nuevos servicios del request
     try:
-        # Comprueba si la entrada es str o dict, si es str intenta parsearlo
-        # si es dict directamente lo coge, sino simplemente lanza error
-        if isinstance(request.data, str):
-            new_service = json.loads(request.data)
-        elif isinstance(request.data, dict):
-            new_service = request.data
-        else:
-            raise json.JSONDecodeError()
+        # Comprueba la estructura y parametros necesarios del json de service
+        new_service = check_service_json(request.data)
 
-        required_fields = {"title", "price", "description", "duration", "tipo", "custom_questionnaire"}
-
-        if not isinstance(new_service, dict):
-            raise json.JSONDecodeError()
-
-        if not required_fields.issubset(new_service.keys()):
-            raise json.JSONDecodeError()
-
-        if not isinstance(new_service["title"], str):
-            raise json.JSONDecodeError()
-
-        if not isinstance(new_service["tipo"], str) and new_service["tipo"] not in ["PRIMERA_CONSULTA", "CONTINUAR_TRATAMIENTO", "OTRO"]:
-            raise json.JSONDecodeError()
-
-        if new_service["tipo"] == "PRIMERA_CONSULTA" and new_service["title"] != "Primera consulta":
-            raise json.JSONDecodeError()
-
-        if new_service["tipo"] == "CONTINUAR_TRATAMIENTO" and new_service["title"] != "Continuación de tratamiento":
-            raise json.JSONDecodeError()
-
-        if not isinstance(new_service["price"], int):
-            raise json.JSONDecodeError()
-
-        if not isinstance(new_service["duration"], int):
-            raise json.JSONDecodeError()
-
-        if new_service["custom_questionnaire"] is not None:
-            if not isinstance(new_service["custom_questionnaire"],dict):
-                raise json.JSONDecodeError()
-            elif not "UI Schema" in new_service["custom_questionnaire"]:
-                raise json.JSONDecodeError()
-            elif not isinstance(new_service["custom_questionnaire"]["UI Schema"],dict):
-                raise json.JSONDecodeError()
-            
-            questionaries = new_service["custom_questionnaire"]["UI Schema"]
-            if not "type" in questionaries or questionaries["type"] != "Group":
-                raise json.JSONDecodeError()
-            elif not "label" in questionaries or not isinstance(questionaries["label"],str):
-                raise json.JSONDecodeError()
-            elif not "elements" in questionaries or not isinstance(questionaries["elements"],list):
-                raise json.JSONDecodeError()
-            
-            questionaries = questionaries["elements"]
-            necesary = [{'type': 'Number', 'label': 'Peso (kg)', 'scope': '#/properties/peso'}, {'type': 'Number', 'label': 'Altura (cm)', 'scope': '#/properties/altura'}, {'type': 'Number', 'label': 'Edad', 'scope': '#/properties/edad'}, {'type': 'Control', 'label': 'Nivel de actividad física', 'scope': '#/properties/actividad_fisica'}, {'type': 'Control', 'label': 'Motivo de la consulta', 'scope': '#/properties/motivo_consulta'}]
-            for quest in questionaries:
-                if quest in necesary:
-                    necesary.remove(quest)
-                else:
-                    if not "type" in quest or quest["type"] not in ["Number","Control"]:
-                        print("7")
-                        raise json.JSONDecodeError()
-                    elif not "label" in quest or not isinstance(quest["label"],str):
-                        print("8")
-                        raise json.JSONDecodeError()
-                    elif not "scope" in quest or not isinstance(quest["scope"],str) or not quest["scope"].startswith("#/properties/"):
-                        print("9")
-                        raise json.JSONDecodeError()
-            if len(necesary) != 0:
-                raise json.JSONDecodeError()
-
-      
     except json.JSONDecodeError:
         return Response({"error": "Formato de servicios inválido."}, status=status.HTTP_400_BAD_REQUEST)
     except Exception:
