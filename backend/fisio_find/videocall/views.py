@@ -91,7 +91,7 @@ class RoomListView(APIView):
         user = request.user
 
         Room.objects.filter(
-            appointment__end_time__lt=now() - timedelta(minutes=30),
+            appointment__end_time__lt=now() - timedelta(minutes=120),
             is_test_room=False
         ).delete()
 
