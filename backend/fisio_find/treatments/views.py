@@ -2,9 +2,10 @@ import logging
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.utils import timezone
 
 from users.permissions import IsPatient, IsPhysioOrPatient, IsPhysiotherapist
-from .models import Exercise, ExerciseLog, ExerciseSession, Series, Session, SessionTest, Treatment
+from .models import Exercise, ExerciseLog, ExerciseSession, Series, Session, SessionTest, Treatment, SessionTestResponse
 from appointment.models import Appointment
 from .serializers import ExerciseLogSerializer, ExerciseSerializer, ExerciseSessionSerializer, SeriesSerializer, SessionSerializer, SessionTestResponseSerializer, SessionTestSerializer, TreatmentSerializer, TreatmentDetailSerializer
 
@@ -459,29 +460,66 @@ class SessionTestResponseView(APIView):
     
     def post(self, request, session_id):
         patient = request.user.patient
+        
         try:
             session = Session.objects.get(id=session_id)
+            test = session.test
+            
+            # Verificar que el paciente pertenece al tratamiento
             if session.treatment.patient != patient:
                 return Response(
                     {'detail': 'No tiene permiso para responder a este test'},
                     status=status.HTTP_403_FORBIDDEN
                 )
-            test = session.test
-        except (SessionTest.DoesNotExist, Session.DoesNotExist):
+                
+            # Verificar si ya ha respondido hoy
+            today = timezone.now().date()
+            already_responded_today = SessionTestResponse.objects.filter(
+                test=test,
+                patient=patient,
+                submitted_at__date=today
+            ).exists()
+            
+            if already_responded_today:
+                return Response(
+                    {'detail': 'Ya has respondido a este test hoy'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+                
+            # Verificar si ha alcanzado el límite de respuestas (días de la sesión)
+            total_responses = SessionTestResponse.objects.filter(
+                test=test,
+                patient=patient
+            ).count()
+            
+            if total_responses >= len(session.day_of_week):
+                return Response(
+                    {'detail': f'Ya has completado el máximo de {len(session.day_of_week)} respuestas para este test'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+                
+            # Crear la respuesta
+            data = request.data.copy()
+            data['test'] = test.id
+            data['patient'] = patient.id
+            
+            serializer = SessionTestResponseSerializer(data=data)
+            if serializer.is_valid():
+                # Pass patient explicitly to save method to ensure it's set
+                response = serializer.save(patient=patient, test=test)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
+        except Session.DoesNotExist:
             return Response(
-                {'detail': 'No se ha encontrado el test'},
+                {'detail': 'No se ha encontrado la sesión'},
                 status=status.HTTP_404_NOT_FOUND
             )
-        
-        data = request.data.copy()
-        data['test'] = test.id
-        data['patient'] = patient.id
-        
-        serializer = SessionTestResponseSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save(patient=patient)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except SessionTest.DoesNotExist:
+            return Response(
+                {'detail': 'No se ha encontrado el test para esta sesión'},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
 
 class SessionTestResponseListView(APIView):

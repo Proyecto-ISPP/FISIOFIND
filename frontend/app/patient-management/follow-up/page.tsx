@@ -57,38 +57,41 @@ const PatientFollowUpPage = () => {
     setIsClient(true);
   }, []);
 
-  useEffect(() => {
-    if (isClient) {
-      const storedToken = localStorage.getItem("token");
+useEffect(() => {
+  // Only run this effect when isClient changes from false to true
+  if (!isClient) return;
 
-      if (storedToken) {
-        // Check user role
-        fetch(`${getApiBaseUrl()}/api/app_user/check-role/`, {
-          headers: {
-            Authorization: `Bearer ${storedToken}`,
-            "Content-Type": "application/json",
-          },
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            setUserRole(data.user_role);
-            if (data.user_role !== "patient") {
-              setError("Solo los pacientes pueden acceder a esta página");
-            } else {
-              loadTreatments(storedToken);
-            }
-          })
-          .catch((err) => {
-            console.error("Error al verificar el rol:", err);
-            setError("Error al verificar el rol del usuario");
-            setLoading(false);
-          });
+  const storedToken = localStorage.getItem("token");
+
+  if (!storedToken) {
+    setError("Debe iniciar sesión para acceder a esta página");
+    setLoading(false);
+    return;
+  }
+
+  // Check user role
+  fetch(`${getApiBaseUrl()}/api/app_user/check-role/`, {
+    headers: {
+      Authorization: `Bearer ${storedToken}`,
+      "Content-Type": "application/json",
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      setUserRole(data.user_role);
+      if (data.user_role !== "patient") {
+        setError("Solo los pacientes pueden acceder a esta página");
       } else {
-        setError("Debe iniciar sesión para acceder a esta página");
-        setLoading(false);
+        loadTreatments(storedToken);
       }
-    }
-  }, [isClient]);
+    })
+    .catch((err) => {
+      console.error("Error al verificar el rol:", err);
+      setError("Error al verificar el rol del usuario");
+      setLoading(false);
+    });
+
+}, [isClient]); // Keep only isClient as dependency to prevent infinite loops
 
   const loadTreatments = async (authToken: string) => {
     try {
