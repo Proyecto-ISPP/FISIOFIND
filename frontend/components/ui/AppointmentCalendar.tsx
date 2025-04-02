@@ -171,9 +171,24 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [clickedDate, setClickedDate] = useState<string>("");
 
-  // Función para definir el color de fondo en el calendario según disponibilidad
-  const getDayColor = (count: number, isSelected: boolean) => {
-    if (isSelected) return "#05AC9C"; // Verde agua para el día seleccionado
+  // Add new state for hover
+  const [hoveredDate, setHoveredDate] = useState<string | null>(null);
+
+  // Add mouse event handlers
+  const handleDateHover = (info: any) => {
+    const dateStr = info.dateStr;
+    setHoveredDate(dateStr);
+  };
+
+  const handleDateLeave = () => {
+    setHoveredDate(null);
+  };
+
+  // Modify getDayColor to include hover state
+  const getDayColor = (count: number, isSelected: boolean, isHovered: boolean) => {
+    if (isSelected || isHovered) {
+      return "#05AC9C33"; // Semi-transparent version of your theme color for both hover and selected
+    }
     if (count === 0) return "#333333"; // Gris oscuro si no hay disponibilidad
     if (count === 1) return "#b6d9b0";
     if (count === 2) return "#8fcf8c";
@@ -185,20 +200,30 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
 
   // Al hacer click en una fecha del calendario
   const handleDateClick = (arg: any) => {
-    console.log("schedule", schedule);
     const dateStr = arg.dateStr;
     const today = new Date();
-    today.setDate(today.getDate() + 2);
-    const twoDaysLater = today.toLocaleDateString("en-CA"); // Formato YYYY-MM-DD
+    
+    // Set time to start of day for accurate comparison
+    today.setHours(0, 0, 0, 0);
+    
+    // Calculate the day after tomorrow
+    const dayAfterTomorrow = new Date(today);
+    dayAfterTomorrow.setDate(today.getDate() + 3);
+    dayAfterTomorrow.setHours(0, 0, 0, 0);
+    
+    const selectedDate = new Date(dateStr);
+    selectedDate.setHours(0, 0, 0, 0);
 
     setSelectedDate(dateStr);
     setClickedDate(dateStr);
-
-    // No mostramos horarios para fechas muy cercanas
-    if (dateStr < twoDaysLater) {
+    
+    // Check if selected date is before day after tomorrow
+    if (selectedDate < dayAfterTomorrow) {
       setSlots([]);
+      alert("Solo se pueden reservar citas con al menos 3 días de antelación.");
       return;
     }
+
     if (schedule) {
       const available = getAvailableSlots(
         dateStr,
@@ -243,7 +268,8 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
         const count = available.length;
         const isPast = currentDate < today;
         const isSelectedDay = dateStr === clickedDate;
-        const bgColor = isPast ? "#666666" : getDayColor(count, isSelectedDay);
+        const isHoveredDay = dateStr === hoveredDate;
+        const bgColor = isPast ? "#666666" : getDayColor(count, isSelectedDay, isHoveredDay);
         events.push({
           id: dateStr,
           start: dateStr,
@@ -266,6 +292,12 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
         events={backgroundEvents}
         locale={esLocale}
         datesSet={handleDatesSet}
+        eventMouseEnter={(info) => handleDateHover(info.event)}
+        eventMouseLeave={handleDateLeave}
+        dayCellDidMount={(info) => {
+          info.el.addEventListener('mouseenter', () => handleDateHover(info));
+          info.el.addEventListener('mouseleave', handleDateLeave);
+        }}
       />
       {selectedDate && (
         <div className="mt-4">
