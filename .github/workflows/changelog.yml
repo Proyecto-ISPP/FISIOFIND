@@ -1,0 +1,32 @@
+name: Generate Changelog
+
+on:
+  push:
+    branches:
+      - feat/changelog.yml
+
+jobs:
+  update-changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install auto-changelog
+        run: npm install -g auto-changelog
+
+      - name: Generate Changelog
+        run: auto-changelog -p --commit-limit false
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add CHANGELOG.md
+          git commit -m "📜 Update CHANGELOG [skip ci]" || echo "No changes to commit"
+          git push
