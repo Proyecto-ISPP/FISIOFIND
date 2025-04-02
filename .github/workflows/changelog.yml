@@ -18,7 +18,10 @@ jobs:
           chmod +x /usr/local/bin/git-cliff
 
       - name: Generate Changelog
-        run: git-cliff -c cliff.toml -o CHANGELOG.md
+        run: |
+          npm install -g auto-changelog
+          auto-changelog --output CHANGELOG.md --commit-limit false --tag-pattern ""
+
 
       - name: Commit and Push Changelog
         run: |
