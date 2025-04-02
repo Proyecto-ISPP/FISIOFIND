@@ -30,7 +30,7 @@ jobs:
           # Si no hay tags, crea el primero (v1.0.0 para Sprint 1)
           if [ -z "$(git tag)" ]; then
             git tag -a v1.0.0 -m "Sprint 1"
-            git push origin --tags
+            git push origin v1.0.0
           fi
 
       - name: Generate Next Sprint Version Tag
@@ -49,7 +49,7 @@ jobs:
           if git rev-parse "refs/tags/$new_tag" >/dev/null 2>&1; then
             echo "El tag $new_tag ya existe. No se crea uno nuevo."
           else
-            # Crear el nuevo tag si no existe
+            # Crear el nuevo tag con un mensaje 'Sprint X'
             git tag -a $new_tag -m "Sprint ${new_major_version}"
             git push origin $new_tag
           fi
