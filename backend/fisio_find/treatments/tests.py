@@ -10,6 +10,10 @@ from rest_framework import serializers
 from .serializers import (TreatmentSerializer, TreatmentDetailSerializer, ExerciseSerializer, 
                          ExerciseSessionSerializer, SeriesSerializer, SessionSerializer, 
                          ExerciseLogSerializer, SessionTestSerializer, SessionTestResponseSerializer)
+from rest_framework.test import APITestCase, APIClient
+from rest_framework import status
+from appointment.models import Appointment, StatusChoices
+
 
 class TreatmentModelTest(TestCase):
     def setUp(self):
@@ -956,3 +960,2120 @@ class SessionTestResponseSerializerTests(TestCase):
         serializer = SessionTestResponseSerializer(data=data)
         with self.assertRaisesMessage(serializers.ValidationError, "No debe incluir texto en un test de escala"):
             serializer.is_valid(raise_exception=True)
+
+
+class TreatmentCreateViewTests(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = AppUser.objects.create_user(
+            username="physio1",
+            email="physio@example.com",
+            password="testpass",
+            dni="12345678Z",
+            phone_number="600000000",
+            postal_code="28001",
+            first_name="Ana",
+            last_name="Pérez"
+        )
+        self.plan, _ = Pricing.objects.get_or_create(
+            name='blue',
+            defaults={'price': 10, 'video_limit': 5}
+        )
+        self.physiotherapist = Physiotherapist.objects.create(
+            user=self.user,
+            gender="F",
+            birth_date="1990-01-01",
+            collegiate_number="ABC123",
+            autonomic_community="Madrid",
+            bio="Test bio",
+            plan=self.plan
+        )
+        self.patient_user = AppUser.objects.create_user(
+            username="patient1",
+            email="patient@example.com",
+            password="testpass",
+            dni="87654321X",
+            phone_number="600000001",
+            postal_code="28002",
+            first_name="Juan",
+            last_name="Gómez"
+        )
+        self.patient = Patient.objects.create(
+            user=self.patient_user,
+            birth_date="1995-01-01"
+        )
+        # Use timezone-aware datetimes
+        now = timezone.now()
+        self.appointment = Appointment.objects.create(
+            patient=self.patient,
+            physiotherapist=self.physiotherapist,
+            start_time=now - timedelta(hours=2),  # Past start time for a finished appointment
+            end_time=now - timedelta(hours=1),    # Past end time
+            is_online=False,
+            service={"type": "Consulta inicial", "duration": 60},
+            status=StatusChoices.FINISHED,  # Matches 'finished' in view
+            alternatives=None
+        )
+        self.url = '/api/treatments/create/'
+
+    def test_create_treatment_success(self):
+        self.client.force_authenticate(user=self.user)
+        now = timezone.now()
+        data = {
+            'appointment_id': self.appointment.id,
+            'homework': 'Tratamiento de rodilla',  # Changed from 'name' to 'homework'
+            'is_active': True,
+            'start_time': now + timedelta(days=1),  # Future start time
+            'end_time': now + timedelta(days=2),    # Future end time
+        }
+        response = self.client.post(self.url, data, format='json')
+        print("Response data:", response.data)  # Keep for debugging
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Treatment.objects.count(), 1)
+        treatment = Treatment.objects.first()
+        self.assertEqual(treatment.physiotherapist, self.physiotherapist)
+        self.assertEqual(treatment.patient, self.patient)
+
+    def test_create_treatment_no_permission(self):
+        self.client.force_authenticate(user=self.patient_user)
+        now = timezone.now()
+        data = {
+            'appointment_id': self.appointment.id,
+            'homework': 'Tratamiento de rodilla',
+            'is_active': True,
+            'start_time': now + timedelta(days=1),
+            'end_time': now + timedelta(days=2),
+        }
+        response = self.client.post(self.url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_create_treatment_missing_appointment(self):
+        self.client.force_authenticate(user=self.user)
+        now = timezone.now()
+        data = {
+            'homework': 'Tratamiento de rodilla',
+            'is_active': True,
+            'start_time': now + timedelta(days=1),
+            'end_time': now + timedelta(days=2),
+        }
+        response = self.client.post(self.url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_create_treatment_not_finished(self):
+        # Create a non-finished appointment
+        now = timezone.now()
+        not_finished_appointment = Appointment.objects.create(
+            patient=self.patient,
+            physiotherapist=self.physiotherapist,
+            start_time=now + timedelta(hours=1),  # Future start time
+            end_time=now + timedelta(hours=2),    # Future end time
+            is_online=True,
+            service={"type": "Seguimiento", "duration": 30},
+            status=StatusChoices.BOOKED  
+        )
+        self.client.force_authenticate(user=self.user)
+        data = {
+            'appointment_id': not_finished_appointment.id,
+            'homework': 'Tratamiento de rodilla',
+            'is_active': True,
+            'start_time': now + timedelta(days=1),
+            'end_time': now + timedelta(days=2),
+        }
+        response = self.client.post(self.url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+class PhysiotherapistTreatmentListViewTests(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = AppUser.objects.create_user(
+            username="physio1",
+            email="physio@example.com",
+            password="testpass",
+            dni="12345678Z",
+            phone_number="600000000",
+            postal_code="28001",
+            first_name="Ana",
+            last_name="Pérez"
+        )
+        self.plan, _ = Pricing.objects.get_or_create(
+            name='blue',
+            defaults={'price': 10, 'video_limit': 5}
+        )
+        self.physiotherapist = Physiotherapist.objects.create(
+            user=self.user,
+            gender="F",
+            birth_date="1990-01-01",
+            collegiate_number="ABC123",
+            autonomic_community="Madrid",
+            bio="Test bio",
+            plan=self.plan
+        )
+        self.patient_user = AppUser.objects.create_user(
+            username="patient1",
+            email="patient@example.com",
+            password="testpass",
+            dni="87654321X",
+            phone_number="600000001",
+            postal_code="28002",
+            first_name="Juan",
+            last_name="Gómez"
+        )
+        self.patient = Patient.objects.create(
+            user=self.patient_user,
+            birth_date="1995-01-01"
+        )
+        now = timezone.now()
+        self.treatment = Treatment.objects.create(
+            physiotherapist=self.physiotherapist,
+            patient=self.patient,
+            homework='Tratamiento 1',  # Changed from 'name' to 'homework'
+            is_active=True,
+            start_time=now + timedelta(days=1),
+            end_time=now + timedelta(days=2),
+        )
+        self.url = '/api/treatments/physio/'  # Updated URL with /api/ prefix
+
+    def test_list_treatments_success(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['homework'], 'Tratamiento 1')  # Changed 'name' to 'homework'
+
+    def test_list_treatments_filter_active(self):
+        self.client.force_authenticate(user=self.user)
+        now = timezone.now()
+        Treatment.objects.create(
+            physiotherapist=self.physiotherapist,
+            patient=self.patient,
+            homework='Tratamiento 2',  # Changed from 'name' to 'homework'
+            is_active=False,
+            start_time=now + timedelta(days=1),
+            end_time=now + timedelta(days=2),
+        )
+        response = self.client.get(self.url + '?is_active=true')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['is_active'], True)
+
+    def test_list_treatments_no_permission(self):
+        self.client.force_authenticate(user=self.patient_user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+class PatientTreatmentListViewTests(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = AppUser.objects.create_user(
+            username="physio1",
+            email="physio@example.com",
+            password="testpass",
+            dni="12345678Z",
+            phone_number="600000000",
+            postal_code="28001",
+            first_name="Ana",
+            last_name="Pérez"
+        )
+        self.plan, _ = Pricing.objects.get_or_create(
+            name='blue',
+            defaults={'price': 10, 'video_limit': 5}
+        )
+        self.physiotherapist = Physiotherapist.objects.create(
+            user=self.user,
+            gender="F",
+            birth_date="1990-01-01",
+            collegiate_number="ABC123",
+            autonomic_community="Madrid",
+            bio="Test bio",
+            plan=self.plan
+        )
+        self.patient_user = AppUser.objects.create_user(
+            username="patient1",
+            email="patient@example.com",
+            password="testpass",
+            dni="87654321X",
+            phone_number="600000001",
+            postal_code="28002",
+            first_name="Juan",
+            last_name="Gómez"
+        )
+        self.patient = Patient.objects.create(
+            user=self.patient_user,
+            birth_date="1995-01-01"
+        )
+        now = timezone.now()
+        self.treatment = Treatment.objects.create(
+            physiotherapist=self.physiotherapist,
+            patient=self.patient,
+            homework='Tratamiento 1',  # Changed from 'name' to 'homework'
+            is_active=True,
+            start_time=now + timedelta(days=1),
+            end_time=now + timedelta(days=2),
+        )
+        self.url = '/api/treatments/patient/'  # Updated URL with /api/ prefix
+
+    def test_list_treatments_success(self):
+        self.client.force_authenticate(user=self.patient_user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['homework'], 'Tratamiento 1')  # Changed 'name' to 'homework'
+
+    def test_list_treatments_filter_active(self):
+        self.client.force_authenticate(user=self.patient_user)
+        now = timezone.now()
+        Treatment.objects.create(
+            physiotherapist=self.physiotherapist,
+            patient=self.patient,
+            homework='Tratamiento 2',  # Changed from 'name' to 'homework'
+            is_active=False,
+            start_time=now + timedelta(days=1),
+            end_time=now + timedelta(days=2),
+        )
+        response = self.client.get(self.url + '?is_active=false')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['is_active'], False)
+
+    def test_list_treatments_no_permission(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+class TreatmentDetailViewTests(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = AppUser.objects.create_user(
+            username="physio1",
+            email="physio@example.com",
+            password="testpass",
+            dni="12345678Z",
+            phone_number="600000000",
+            postal_code="28001",
+            first_name="Ana",
+            last_name="Pérez"
+        )
+        self.plan, _ = Pricing.objects.get_or_create(
+            name='blue',
+            defaults={'price': 10, 'video_limit': 5}
+        )
+        self.physiotherapist = Physiotherapist.objects.create(
+            user=self.user,
+            gender="F",
+            birth_date="1990-01-01",
+            collegiate_number="ABC123",
+            autonomic_community="Madrid",
+            bio="Test bio",
+            plan=self.plan
+        )
+        self.patient_user = AppUser.objects.create_user(
+            username="patient1",
+            email="patient@example.com",
+            password="testpass",
+            dni="87654321X",
+            phone_number="600000001",
+            postal_code="28002",
+            first_name="Juan",
+            last_name="Gómez"
+        )
+        self.patient = Patient.objects.create(
+            user=self.patient_user,
+            birth_date="1995-01-01"
+        )
+        now = timezone.now()
+        self.treatment = Treatment.objects.create(
+            physiotherapist=self.physiotherapist,
+            patient=self.patient,
+            homework='Tratamiento 1',  # Changed from 'name' to 'homework'
+            is_active=True,
+            start_time=now + timedelta(days=1),
+            end_time=now + timedelta(days=2),
+        )
+        self.url = f'/api/treatments/{self.treatment.id}/'  # Updated URL with /api/ prefix
+
+    def test_get_treatment_success_physio(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['homework'], 'Tratamiento 1')  # Changed 'name' to 'homework'
+
+    def test_get_treatment_success_patient(self):
+        self.client.force_authenticate(user=self.patient_user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['homework'], 'Tratamiento 1')  # Changed 'name' to 'homework'
+
+    def test_update_treatment_success(self):
+        self.client.force_authenticate(user=self.user)
+        now = timezone.now()
+        data = {
+            'homework': 'Tratamiento Actualizado',  # Changed 'name' to 'homework'
+            'is_active': False,
+            'start_time': now + timedelta(days=1),
+            'end_time': now + timedelta(days=2),
+        }
+        response = self.client.put(self.url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.treatment.refresh_from_db()
+        self.assertEqual(self.treatment.homework, 'Tratamiento Actualizado')  # Changed 'name' to 'homework'
+        self.assertFalse(self.treatment.is_active)
+
+    def test_update_treatment_no_permission(self):
+        self.client.force_authenticate(user=self.patient_user)
+        now = timezone.now()
+        data = {
+            'homework': 'Tratamiento Actualizado',  # Changed 'name' to 'homework'
+            'start_time': now + timedelta(days=1),
+            'end_time': now + timedelta(days=2),
+        }
+        response = self.client.put(self.url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_delete_treatment_success(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(Treatment.objects.count(), 0)
+
+class SessionTestResponseViewTests(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = AppUser.objects.create_user(
+            username="physio1",
+            email="physio@example.com",
+            password="testpass",
+            dni="12345678Z",
+            phone_number="600000000",
+            postal_code="28001",
+            first_name="Ana",
+            last_name="Pérez"
+        )
+        self.plan, _ = Pricing.objects.get_or_create(
+            name='blue',
+            defaults={'price': 10, 'video_limit': 5}
+        )
+        self.physiotherapist = Physiotherapist.objects.create(
+            user=self.user,
+            gender="F",
+            birth_date="1990-01-01",
+            collegiate_number="ABC123",
+            autonomic_community="Madrid",
+            bio="Test bio",
+            plan=self.plan
+        )
+        self.patient_user = AppUser.objects.create_user(
+            username="patient1",
+            email="patient@example.com",
+            password="testpass",
+            dni="87654321X",
+            phone_number="600000001",
+            postal_code="28002",
+            first_name="Juan",
+            last_name="Gómez"
+        )
+        self.patient = Patient.objects.create(
+            user=self.patient_user,
+            birth_date="1995-01-01"
+        )
+        now = timezone.now()
+        self.treatment = Treatment.objects.create(
+            physiotherapist=self.physiotherapist,
+            patient=self.patient,
+            homework='Tratamiento 1',  # Changed from 'name' to 'homework'
+            is_active=True,
+            start_time=now + timedelta(days=1),
+            end_time=now + timedelta(days=2),
+        )
+        self.session = Session.objects.create(
+            treatment=self.treatment,
+            name='Sesión 1',
+            day_of_week=['Monday']
+        )
+        self.test = SessionTest.objects.create(
+            session=self.session,
+            question='Rate your pain',
+            test_type=SessionTest.SCALE,
+            scale_labels={'1': 'Low', '5': 'High'}
+        )
+        self.url = f'/api/treatments/sessions/{self.session.id}/test/respond/'  # Updated URL with /api/ prefix
+
+    def test_respond_test_success(self):
+        self.client.force_authenticate(user=self.patient_user)
+        data = {
+            'response_scale': 3,
+            'response_text': None
+        }
+        response = self.client.post(self.url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(SessionTestResponse.objects.count(), 1)
+        response_obj = SessionTestResponse.objects.first()
+        self.assertEqual(response_obj.response_scale, 3)
+        self.assertEqual(response_obj.patient, self.patient)
+        self.assertEqual(response_obj.test, self.test)
+
+    def test_respond_test_no_permission(self):
+        self.client.force_authenticate(user=self.user)
+        data = {'response_scale': 3}
+        response = self.client.post(self.url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_respond_test_invalid_scale(self):
+        self.client.force_authenticate(user=self.patient_user)
+        data = {'response_scale': 6}
+        response = self.client.post(self.url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('response_scale', response.data)
+
+class SessionCreateViewTests(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = AppUser.objects.create_user(
+            username="physio1",
+            email="physio@example.com",
+            password="testpass",
+            dni="12345678Z",
+            phone_number="600000000",
+            postal_code="28001",
+            first_name="Ana",
+            last_name="Pérez"
+        )
+        self.plan, _ = Pricing.objects.get_or_create(
+            name='blue',
+            defaults={'price': 10, 'video_limit': 5}
+        )
+        self.physiotherapist = Physiotherapist.objects.create(
+            user=self.user,
+            gender="F",
+            birth_date="1990-01-01",
+            collegiate_number="ABC123",
+            autonomic_community="Madrid",
+            bio="Test bio",
+            plan=self.plan
+        )
+        self.patient_user = AppUser.objects.create_user(
+            username="patient1",
+            email="patient@example.com",
+            password="testpass",
+            dni="87654321X",
+            phone_number="600000001",
+            postal_code="28002",
+            first_name="Juan",
+            last_name="Gómez"
+        )
+        self.patient = Patient.objects.create(
+            user=self.patient_user,
+            birth_date="1995-01-01"
+        )
+        now = timezone.now()
+        self.treatment = Treatment.objects.create(
+            physiotherapist=self.physiotherapist,
+            patient=self.patient,
+            homework='Tratamiento 1',  # Changed from 'name' to 'homework'
+            is_active=True,
+            start_time=now + timedelta(days=1),
+            end_time=now + timedelta(days=2),
+        )
+        self.session = Session.objects.create(
+            treatment=self.treatment,
+            name='Sesión 1',
+            day_of_week=['Monday']
+        )
+        self.test = SessionTest.objects.create(
+            session=self.session,
+            question='Rate your pain',
+            test_type=SessionTest.SCALE,
+            scale_labels={'1': 'Low', '5': 'High'}
+        )
+        self.url = f'/api/treatments/{self.treatment.id}/sessions/create/'
+
+    def test_create_session_success(self):
+        self.client.force_authenticate(user=self.user)
+        data = {'name': 'Session 1', 'day_of_week': ['Monday']}
+        response = self.client.post(self.url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Session.objects.count(), 2)
+        self.assertEqual(Session.objects.first().name, 'Sesión 1')
+
+    def test_create_session_no_permission(self):
+        self.client.force_authenticate(user=self.patient_user)
+        data = {'name': 'Session 1', 'day_of_week': ['Monday']}
+        response = self.client.post(self.url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_create_session_inactive_treatment(self):
+        self.treatment.is_active = False
+        self.treatment.save()
+        self.client.force_authenticate(user=self.user)
+        data = {'name': 'Session 1', 'day_of_week': ['Monday']}
+        response = self.client.post(self.url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_create_session_invalid_data(self):
+        self.client.force_authenticate(user=self.user)
+        data = {'name': ''}  # Missing day_of_week
+        response = self.client.post(self.url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+class SessionListViewTests(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = AppUser.objects.create_user(
+            username="physio1",
+            email="physio@example.com",
+            password="testpass",
+            dni="12345678Z",
+            phone_number="600000000",
+            postal_code="28001",
+            first_name="Ana",
+            last_name="Pérez"
+        )
+        self.plan, _ = Pricing.objects.get_or_create(
+            name='blue',
+            defaults={'price': 10, 'video_limit': 5}
+        )
+        self.physiotherapist = Physiotherapist.objects.create(
+            user=self.user,
+            gender="F",
+            birth_date="1990-01-01",
+            collegiate_number="ABC123",
+            autonomic_community="Madrid",
+            bio="Test bio",
+            plan=self.plan
+        )
+        self.patient_user = AppUser.objects.create_user(
+            username="patient1",
+            email="patient@example.com",
+            password="testpass",
+            dni="87654321X",
+            phone_number="600000001",
+            postal_code="28002",
+            first_name="Juan",
+            last_name="Gómez"
+        )
+        self.patient = Patient.objects.create(
+            user=self.patient_user,
+            birth_date="1995-01-01"
+        )
+        now = timezone.now()
+        self.treatment = Treatment.objects.create(
+            physiotherapist=self.physiotherapist,
+            patient=self.patient,
+            homework='Tratamiento 1',  # Changed from 'name' to 'homework'
+            is_active=True,
+            start_time=now + timedelta(days=1),
+            end_time=now + timedelta(days=2),
+        )
+        self.session = Session.objects.create(treatment=self.treatment, name="Session 1", day_of_week=['Monday'])
+        self.url = f'/api/treatments/{self.treatment.id}/sessions/'
+
+    def test_list_sessions_physio_success(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['name'], 'Session 1')
+
+    def test_list_sessions_patient_success(self):
+        self.client.force_authenticate(user=self.patient_user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['name'], 'Session 1')
+
+    def test_list_sessions_no_permission(self):
+        other_user = AppUser.objects.create_user(username="other", email="other@example.com", password="testpass")
+        self.client.force_authenticate(user=other_user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+class SessionDetailViewTests(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = AppUser.objects.create_user(
+            username="physio1",
+            email="physio@example.com",
+            password="testpass",
+            dni="12345678Z",
+            phone_number="600000000",
+            postal_code="28001",
+            first_name="Ana",
+            last_name="Pérez"
+        )
+        self.plan, _ = Pricing.objects.get_or_create(
+            name='blue',
+            defaults={'price': 10, 'video_limit': 5}
+        )
+        self.physiotherapist = Physiotherapist.objects.create(
+            user=self.user,
+            gender="F",
+            birth_date="1990-01-01",
+            collegiate_number="ABC123",
+            autonomic_community="Madrid",
+            bio="Test bio",
+            plan=self.plan
+        )
+        self.patient_user = AppUser.objects.create_user(
+            username="patient1",
+            email="patient@example.com",
+            password="testpass",
+            dni="87654321X",
+            phone_number="600000001",
+            postal_code="28002",
+            first_name="Juan",
+            last_name="Gómez"
+        )
+        self.patient = Patient.objects.create(
+            user=self.patient_user,
+            birth_date="1995-01-01"
+        )
+        now = timezone.now()
+        self.treatment = Treatment.objects.create(
+            physiotherapist=self.physiotherapist,
+            patient=self.patient,
+            homework='Tratamiento 1',  # Changed from 'name' to 'homework'
+            is_active=True,
+            start_time=now + timedelta(days=1),
+            end_time=now + timedelta(days=2),
+        )
+        self.session = Session.objects.create(treatment=self.treatment, name="Session 1", day_of_week=['Monday'])
+        self.url = f'/api/treatments/sessions/{self.session.id}/'
+
+    def test_get_session_physio_success(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['name'], 'Session 1')
+
+    def test_get_session_patient_success(self):
+        self.client.force_authenticate(user=self.patient_user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['name'], 'Session 1')
+
+    def test_update_session_success(self):
+        self.client.force_authenticate(user=self.user)
+        data = {'name': 'Updated Session', 'day_of_week': ['Tuesday']}
+        response = self.client.put(self.url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.session.refresh_from_db()
+        self.assertEqual(self.session.name, 'Updated Session')
+
+    def test_update_session_no_permission(self):
+        self.client.force_authenticate(user=self.patient_user)
+        data = {'name': 'Updated Session'}
+        response = self.client.put(self.url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_delete_session_success(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(Session.objects.count(), 0)
+
+class SessionTestCreateOrUpdateViewTests(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = AppUser.objects.create_user(
+            username="physio1",
+            email="physio@example.com",
+            password="testpass",
+            dni="12345678Z",
+            phone_number="600000000",
+            postal_code="28001",
+            first_name="Ana",
+            last_name="Pérez"
+        )
+        self.plan, _ = Pricing.objects.get_or_create(
+            name='blue',
+            defaults={'price': 10, 'video_limit': 5}
+        )
+        self.physiotherapist = Physiotherapist.objects.create(
+            user=self.user,
+            gender="F",
+            birth_date="1990-01-01",
+            collegiate_number="ABC123",
+            autonomic_community="Madrid",
+            bio="Test bio",
+            plan=self.plan
+        )
+        self.patient_user = AppUser.objects.create_user(
+            username="patient1",
+            email="patient@example.com",
+            password="testpass",
+            dni="87654321X",
+            phone_number="600000001",
+            postal_code="28002",
+            first_name="Juan",
+            last_name="Gómez"
+        )
+        self.patient = Patient.objects.create(
+            user=self.patient_user,
+            birth_date="1995-01-01"
+        )
+        now = timezone.now()
+        self.treatment = Treatment.objects.create(
+            physiotherapist=self.physiotherapist,
+            patient=self.patient,
+            homework='Tratamiento 1',  # Changed from 'name' to 'homework'
+            is_active=True,
+            start_time=now + timedelta(days=1),
+            end_time=now + timedelta(days=2),
+        )
+        self.session = Session.objects.create(treatment=self.treatment, name="Session 1", day_of_week=['Monday'])
+        self.url = f'/api/treatments/sessions/{self.session.id}/test/'
+
+    def test_create_test_success(self):
+        self.client.force_authenticate(user=self.user)
+        data = {'question': 'Rate your pain', 'test_type': 'SCALE', 'scale_labels': {'1': 'Low', '5': 'High'}}
+        response = self.client.post(self.url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(SessionTest.objects.count(), 1)
+
+    def test_update_test_success(self):
+        SessionTest.objects.create(session=self.session, question="Initial", test_type="TEXT")
+        self.client.force_authenticate(user=self.user)
+        data = {'question': 'Updated question', 'test_type': 'SCALE', 'scale_labels': {'1': 'Low', '5': 'High'}}
+        response = self.client.post(self.url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.session.test.refresh_from_db()
+        self.assertEqual(self.session.test.question, 'Updated question')
+
+    def test_create_test_no_permission(self):
+        self.client.force_authenticate(user=self.patient_user)
+        data = {'question': 'Rate your pain', 'test_type': 'SCALE'}
+        response = self.client.post(self.url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+class SessionTestRetrieveViewTests(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = AppUser.objects.create_user(
+            username="physio1",
+            email="physio@example.com",
+            password="testpass",
+            dni="12345678Z",
+            phone_number="600000000",
+            postal_code="28001",
+            first_name="Ana",
+            last_name="Pérez"
+        )
+        self.plan, _ = Pricing.objects.get_or_create(
+            name='blue',
+            defaults={'price': 10, 'video_limit': 5}
+        )
+        self.physiotherapist = Physiotherapist.objects.create(
+            user=self.user,
+            gender="F",
+            birth_date="1990-01-01",
+            collegiate_number="ABC123",
+            autonomic_community="Madrid",
+            bio="Test bio",
+            plan=self.plan
+        )
+        self.patient_user = AppUser.objects.create_user(
+            username="patient1",
+            email="patient@example.com",
+            password="testpass",
+            dni="87654321X",
+            phone_number="600000001",
+            postal_code="28002",
+            first_name="Juan",
+            last_name="Gómez"
+        )
+        self.patient = Patient.objects.create(
+            user=self.patient_user,
+            birth_date="1995-01-01"
+        )
+        now = timezone.now()
+        self.treatment = Treatment.objects.create(
+            physiotherapist=self.physiotherapist,
+            patient=self.patient,
+            homework='Tratamiento 1',  # Changed from 'name' to 'homework'
+            is_active=True,
+            start_time=now + timedelta(days=1),
+            end_time=now + timedelta(days=2),
+        )
+        self.session = Session.objects.create(treatment=self.treatment, name="Session 1", day_of_week=['Monday'])
+        self.test = SessionTest.objects.create(session=self.session, question="Rate your pain", test_type="SCALE", scale_labels={'1': 'Low', '5': 'High'})
+        self.url = f'/api/treatments/sessions/{self.session.id}/test/view/'
+
+    def test_retrieve_test_physio_success(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['question'], 'Rate your pain')
+
+    def test_retrieve_test_patient_success(self):
+        self.client.force_authenticate(user=self.patient_user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['question'], 'Rate your pain')
+
+    def test_retrieve_test_no_permission(self):
+        other_user = AppUser.objects.create_user(username="other", email="other@example.com", password="testpass")
+        self.client.force_authenticate(user=other_user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+class SessionTestDeleteViewTests(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = AppUser.objects.create_user(
+            username="physio1",
+            email="physio@example.com",
+            password="testpass",
+            dni="12345678Z",
+            phone_number="600000000",
+            postal_code="28001",
+            first_name="Ana",
+            last_name="Pérez"
+        )
+        self.plan, _ = Pricing.objects.get_or_create(
+            name='blue',
+            defaults={'price': 10, 'video_limit': 5}
+        )
+        self.physiotherapist = Physiotherapist.objects.create(
+            user=self.user,
+            gender="F",
+            birth_date="1990-01-01",
+            collegiate_number="ABC123",
+            autonomic_community="Madrid",
+            bio="Test bio",
+            plan=self.plan
+        )
+        self.patient_user = AppUser.objects.create_user(
+            username="patient1",
+            email="patient@example.com",
+            password="testpass",
+            dni="87654321X",
+            phone_number="600000001",
+            postal_code="28002",
+            first_name="Juan",
+            last_name="Gómez"
+        )
+        self.patient = Patient.objects.create(
+            user=self.patient_user,
+            birth_date="1995-01-01"
+        )
+        now = timezone.now()
+        self.treatment = Treatment.objects.create(
+            physiotherapist=self.physiotherapist,
+            patient=self.patient,
+            homework='Tratamiento 1',  # Changed from 'name' to 'homework'
+            is_active=True,
+            start_time=now + timedelta(days=1),
+            end_time=now + timedelta(days=2),
+        )
+        self.session = Session.objects.create(treatment=self.treatment, name="Session 1", day_of_week=['Monday'])
+        self.test = SessionTest.objects.create(session=self.session, question="Rate your pain", test_type="SCALE", scale_labels={'1': 'Low', '5': 'High'})
+        self.url = f'/api/treatments/sessions/{self.session.id}/test/delete/'
+
+    def test_delete_test_success(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(SessionTest.objects.count(), 0)
+
+    def test_delete_test_no_permission(self):
+        self.client.force_authenticate(user=self.patient_user)
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+class SessionTestResponseViewTests(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = AppUser.objects.create_user(
+            username="physio1",
+            email="physio@example.com",
+            password="testpass",
+            dni="12345678Z",
+            phone_number="600000000",
+            postal_code="28001",
+            first_name="Ana",
+            last_name="Pérez"
+        )
+        self.plan, _ = Pricing.objects.get_or_create(
+            name='blue',
+            defaults={'price': 10, 'video_limit': 5}
+        )
+        self.physiotherapist = Physiotherapist.objects.create(
+            user=self.user,
+            gender="F",
+            birth_date="1990-01-01",
+            collegiate_number="ABC123",
+            autonomic_community="Madrid",
+            bio="Test bio",
+            plan=self.plan
+        )
+        self.patient_user = AppUser.objects.create_user(
+            username="patient1",
+            email="patient@example.com",
+            password="testpass",
+            dni="87654321X",
+            phone_number="600000001",
+            postal_code="28002",
+            first_name="Juan",
+            last_name="Gómez"
+        )
+        self.patient = Patient.objects.create(
+            user=self.patient_user,
+            birth_date="1995-01-01"
+        )
+        now = timezone.now()
+        self.treatment = Treatment.objects.create(
+            physiotherapist=self.physiotherapist,
+            patient=self.patient,
+            homework='Tratamiento 1',  # Changed from 'name' to 'homework'
+            is_active=True,
+            start_time=now + timedelta(days=1),
+            end_time=now + timedelta(days=2),
+        )
+        self.session = Session.objects.create(treatment=self.treatment, name="Session 1", day_of_week=['Monday'])
+        self.test = SessionTest.objects.create(session=self.session, question="Rate your pain", test_type="SCALE", scale_labels={'1': 'Low', '5': 'High'})
+        self.url = f'/api/treatments/sessions/{self.session.id}/test/respond/'
+
+    def test_respond_test_success(self):
+        self.client.force_authenticate(user=self.patient_user)
+        data = {'response_scale': 3, 'response_text': None}
+        response = self.client.post(self.url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(SessionTestResponse.objects.count(), 1)
+        response_obj = SessionTestResponse.objects.first()
+        self.assertEqual(response_obj.response_scale, 3)
+
+    def test_respond_test_no_permission(self):
+        self.client.force_authenticate(user=self.user)
+        data = {'response_scale': 3}
+        response = self.client.post(self.url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_respond_test_invalid_scale(self):
+        self.client.force_authenticate(user=self.patient_user)
+        data = {'response_scale': 6}
+        response = self.client.post(self.url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+class SessionTestResponseListViewTests(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = AppUser.objects.create_user(
+            username="physio1",
+            email="physio@example.com",
+            password="testpass",
+            dni="12345678Z",
+            phone_number="600000000",
+            postal_code="28001",
+            first_name="Ana",
+            last_name="Pérez"
+        )
+        self.plan, _ = Pricing.objects.get_or_create(
+            name='blue',
+            defaults={'price': 10, 'video_limit': 5}
+        )
+        self.physiotherapist = Physiotherapist.objects.create(
+            user=self.user,
+            gender="F",
+            birth_date="1990-01-01",
+            collegiate_number="ABC123",
+            autonomic_community="Madrid",
+            bio="Test bio",
+            plan=self.plan
+        )
+        self.patient_user = AppUser.objects.create_user(
+            username="patient1",
+            email="patient@example.com",
+            password="testpass",
+            dni="87654321X",
+            phone_number="600000001",
+            postal_code="28002",
+            first_name="Juan",
+            last_name="Gómez"
+        )
+        self.patient = Patient.objects.create(
+            user=self.patient_user,
+            birth_date="1995-01-01"
+        )
+        now = timezone.now()
+        self.treatment = Treatment.objects.create(
+            physiotherapist=self.physiotherapist,
+            patient=self.patient,
+            homework='Tratamiento 1',  # Changed from 'name' to 'homework'
+            is_active=True,
+            start_time=now + timedelta(days=1),
+            end_time=now + timedelta(days=2),
+        )
+        self.session = Session.objects.create(treatment=self.treatment, name="Session 1", day_of_week=['Monday'])
+        self.test = SessionTest.objects.create(session=self.session, question="Rate your pain", test_type="SCALE", scale_labels={'1': 'Low', '5': 'High'})
+        SessionTestResponse.objects.create(test=self.test, patient=self.patient, response_scale=3)
+        self.url = f'/api/treatments/sessions/{self.session.id}/test/responses/'
+
+    def test_list_responses_physio_success(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['response_scale'], 3)
+
+    def test_list_responses_patient_success(self):
+        self.client.force_authenticate(user=self.patient_user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+
+    def test_list_responses_no_permission(self):
+        other_user = AppUser.objects.create_user(username="other", email="other@example.com", password="testpass")
+        self.client.force_authenticate(user=other_user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+class ExerciseCreateViewTests(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = AppUser.objects.create_user(
+            username="physio1",
+            email="physio@example.com",
+            password="testpass",
+            dni="12345678Z",
+            phone_number="600000000",
+            postal_code="28001",
+            first_name="Ana",
+            last_name="Pérez"
+        )
+        self.plan, _ = Pricing.objects.get_or_create(
+            name='blue',
+            defaults={'price': 10, 'video_limit': 5}
+        )
+        self.physiotherapist = Physiotherapist.objects.create(
+            user=self.user,
+            gender="F",
+            birth_date="1990-01-01",
+            collegiate_number="ABC123",
+            autonomic_community="Madrid",
+            bio="Test bio",
+            plan=self.plan
+        )
+        self.patient_user = AppUser.objects.create_user(
+            username="patient1",
+            email="patient@example.com",
+            password="testpass",
+            dni="87654321X",
+            phone_number="600000001",
+            postal_code="28002",
+            first_name="Juan",
+            last_name="Gómez"
+        )
+        self.patient = Patient.objects.create(
+            user=self.patient_user,
+            birth_date="1995-01-01"
+        )
+        now = timezone.now()
+        self.treatment = Treatment.objects.create(
+            physiotherapist=self.physiotherapist,
+            patient=self.patient,
+            homework='Tratamiento 1',  # Changed from 'name' to 'homework'
+            is_active=True,
+            start_time=now + timedelta(days=1),
+            end_time=now + timedelta(days=2),
+        )
+        self.url = '/api/treatments/exercises/create/'
+
+    def test_create_exercise_success(self):
+        self.client.force_authenticate(user=self.user)
+        data = {'title': 'Exercise 1', 'description': 'Test exercise', 'area': 'Legs'}
+        response = self.client.post(self.url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Exercise.objects.count(), 1)
+        self.assertEqual(Exercise.objects.first().title, 'Exercise 1')
+
+    def test_create_exercise_no_permission(self):
+        self.client.force_authenticate(user=self.patient_user)
+        data = {'title': 'Exercise 1', 'description': 'Test exercise', 'area': 'Legs'}
+        response = self.client.post(self.url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+class ExerciseListViewTests(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = AppUser.objects.create_user(
+            username="physio1",
+            email="physio@example.com",
+            password="testpass",
+            dni="12345678Z",
+            phone_number="600000000",
+            postal_code="28001",
+            first_name="Ana",
+            last_name="Pérez"
+        )
+        self.plan, _ = Pricing.objects.get_or_create(
+            name='blue',
+            defaults={'price': 10, 'video_limit': 5}
+        )
+        self.physiotherapist = Physiotherapist.objects.create(
+            user=self.user,
+            gender="F",
+            birth_date="1990-01-01",
+            collegiate_number="ABC123",
+            autonomic_community="Madrid",
+            bio="Test bio",
+            plan=self.plan
+        )
+        self.patient_user = AppUser.objects.create_user(
+            username="patient1",
+            email="patient@example.com",
+            password="testpass",
+            dni="87654321X",
+            phone_number="600000001",
+            postal_code="28002",
+            first_name="Juan",
+            last_name="Gómez"
+        )
+        self.patient = Patient.objects.create(
+            user=self.patient_user,
+            birth_date="1995-01-01"
+        )
+        now = timezone.now()
+        self.treatment = Treatment.objects.create(
+            physiotherapist=self.physiotherapist,
+            patient=self.patient,
+            homework='Tratamiento 1',  # Changed from 'name' to 'homework'
+            is_active=True,
+            start_time=now + timedelta(days=1),
+            end_time=now + timedelta(days=2),
+        )
+        Exercise.objects.create(physiotherapist=self.physiotherapist, title="Exercise 1", description="Test", area="Legs")
+        self.url = '/api/treatments/exercises/'
+
+    def test_list_exercises_success(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['title'], 'Exercise 1')
+
+    def test_list_exercises_no_permission(self):
+        self.client.force_authenticate(user=self.patient_user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+class ExerciseDetailViewTests(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = AppUser.objects.create_user(
+            username="physio1",
+            email="physio@example.com",
+            password="testpass",
+            dni="12345678Z",
+            phone_number="600000000",
+            postal_code="28001",
+            first_name="Ana",
+            last_name="Pérez"
+        )
+        self.plan, _ = Pricing.objects.get_or_create(
+            name='blue',
+            defaults={'price': 10, 'video_limit': 5}
+        )
+        self.physiotherapist = Physiotherapist.objects.create(
+            user=self.user,
+            gender="F",
+            birth_date="1990-01-01",
+            collegiate_number="ABC123",
+            autonomic_community="Madrid",
+            bio="Test bio",
+            plan=self.plan
+        )
+        self.patient_user = AppUser.objects.create_user(
+            username="patient1",
+            email="patient@example.com",
+            password="testpass",
+            dni="87654321X",
+            phone_number="600000001",
+            postal_code="28002",
+            first_name="Juan",
+            last_name="Gómez"
+        )
+        self.patient = Patient.objects.create(
+            user=self.patient_user,
+            birth_date="1995-01-01"
+        )
+        now = timezone.now()
+        self.treatment = Treatment.objects.create(
+            physiotherapist=self.physiotherapist,
+            patient=self.patient,
+            homework='Tratamiento 1',  # Changed from 'name' to 'homework'
+            is_active=True,
+            start_time=now + timedelta(days=1),
+            end_time=now + timedelta(days=2),
+        )
+        self.exercise = Exercise.objects.create(physiotherapist=self.physiotherapist, title="Exercise 1", description="Test", area="Legs")
+        self.url = f'/api/treatments/exercises/{self.exercise.id}/'
+
+    def test_get_exercise_success(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['title'], 'Exercise 1')
+
+    def test_update_exercise_success(self):
+        self.client.force_authenticate(user=self.user)
+        data = {'title': 'Updated Exercise', 'description': 'Updated'}
+        response = self.client.put(self.url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.exercise.refresh_from_db()
+        self.assertEqual(self.exercise.title, 'Updated Exercise')
+
+    def test_delete_exercise_success(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(Exercise.objects.count(), 0)
+
+    def test_exercise_no_permission(self):
+        self.client.force_authenticate(user=self.patient_user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+class ExerciseSearchViewTests(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = AppUser.objects.create_user(
+            username="physio1",
+            email="physio@example.com",
+            password="testpass",
+            dni="12345678Z",
+            phone_number="600000000",
+            postal_code="28001",
+            first_name="Ana",
+            last_name="Pérez"
+        )
+        self.plan, _ = Pricing.objects.get_or_create(
+            name='blue',
+            defaults={'price': 10, 'video_limit': 5}
+        )
+        self.physiotherapist = Physiotherapist.objects.create(
+            user=self.user,
+            gender="F",
+            birth_date="1990-01-01",
+            collegiate_number="ABC123",
+            autonomic_community="Madrid",
+            bio="Test bio",
+            plan=self.plan
+        )
+        self.patient_user = AppUser.objects.create_user(
+            username="patient1",
+            email="patient@example.com",
+            password="testpass",
+            dni="87654321X",
+            phone_number="600000001",
+            postal_code="28002",
+            first_name="Juan",
+            last_name="Gómez"
+        )
+        self.patient = Patient.objects.create(
+            user=self.patient_user,
+            birth_date="1995-01-01"
+        )
+        now = timezone.now()
+        self.treatment = Treatment.objects.create(
+            physiotherapist=self.physiotherapist,
+            patient=self.patient,
+            homework='Tratamiento 1',  # Changed from 'name' to 'homework'
+            is_active=True,
+            start_time=now + timedelta(days=1),
+            end_time=now + timedelta(days=2),
+        )
+        Exercise.objects.create(physiotherapist=self.physiotherapist, title="Leg Stretch", description="Test", area="Legs")
+        self.url = '/api/treatments/exercises/search/'
+
+    def test_search_exercise_success(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.url + '?query=Leg')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['title'], 'Leg Stretch')
+
+    def test_search_exercise_no_query(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+class ExerciseByAreaViewTests(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = AppUser.objects.create_user(
+            username="physio1",
+            email="physio@example.com",
+            password="testpass",
+            dni="12345678Z",
+            phone_number="600000000",
+            postal_code="28001",
+            first_name="Ana",
+            last_name="Pérez"
+        )
+        self.plan, _ = Pricing.objects.get_or_create(
+            name='blue',
+            defaults={'price': 10, 'video_limit': 5}
+        )
+        self.physiotherapist = Physiotherapist.objects.create(
+            user=self.user,
+            gender="F",
+            birth_date="1990-01-01",
+            collegiate_number="ABC123",
+            autonomic_community="Madrid",
+            bio="Test bio",
+            plan=self.plan
+        )
+        self.patient_user = AppUser.objects.create_user(
+            username="patient1",
+            email="patient@example.com",
+            password="testpass",
+            dni="87654321X",
+            phone_number="600000001",
+            postal_code="28002",
+            first_name="Juan",
+            last_name="Gómez"
+        )
+        self.patient = Patient.objects.create(
+            user=self.patient_user,
+            birth_date="1995-01-01"
+        )
+        now = timezone.now()
+        self.treatment = Treatment.objects.create(
+            physiotherapist=self.physiotherapist,
+            patient=self.patient,
+            homework='Tratamiento 1',  # Changed from 'name' to 'homework'
+            is_active=True,
+            start_time=now + timedelta(days=1),
+            end_time=now + timedelta(days=2),
+        )
+        Exercise.objects.create(physiotherapist=self.physiotherapist, title="Leg Stretch", description="Test", area="Legs")
+        self.url = '/api/treatments/exercises/by-area/'
+
+    def test_exercise_by_area_success(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['area'], 'Legs')
+        self.assertEqual(response.data[0]['exercises'][0]['title'], 'Leg Stretch')
+
+    def test_exercise_by_area_no_permission(self):
+        self.client.force_authenticate(user=AppUser.objects.create_user(username="other", email="other@example.com", password="testpass"))
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+class AssignExerciseToSessionViewTests(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = AppUser.objects.create_user(
+            username="physio1",
+            email="physio@example.com",
+            password="testpass",
+            dni="12345678Z",
+            phone_number="600000000",
+            postal_code="28001",
+            first_name="Ana",
+            last_name="Pérez"
+        )
+        self.plan, _ = Pricing.objects.get_or_create(
+            name='blue',
+            defaults={'price': 10, 'video_limit': 5}
+        )
+        self.physiotherapist = Physiotherapist.objects.create(
+            user=self.user,
+            gender="F",
+            birth_date="1990-01-01",
+            collegiate_number="ABC123",
+            autonomic_community="Madrid",
+            bio="Test bio",
+            plan=self.plan
+        )
+        self.patient_user = AppUser.objects.create_user(
+            username="patient1",
+            email="patient@example.com",
+            password="testpass",
+            dni="87654321X",
+            phone_number="600000001",
+            postal_code="28002",
+            first_name="Juan",
+            last_name="Gómez"
+        )
+        self.patient = Patient.objects.create(
+            user=self.patient_user,
+            birth_date="1995-01-01"
+        )
+        now = timezone.now()
+        self.treatment = Treatment.objects.create(
+            physiotherapist=self.physiotherapist,
+            patient=self.patient,
+            homework='Tratamiento 1',  # Changed from 'name' to 'homework'
+            is_active=True,
+            start_time=now + timedelta(days=1),
+            end_time=now + timedelta(days=2),
+        )
+        self.session = Session.objects.create(treatment=self.treatment, name="Session 1", day_of_week=['Monday'])
+        self.exercise = Exercise.objects.create(physiotherapist=self.physiotherapist, title="Exercise 1", description="Test", area="Legs")
+        self.url = f'/api/treatments/sessions/{self.session.id}/assign-exercise/'
+
+    def test_assign_exercise_success(self):
+        self.client.force_authenticate(user=self.user)
+        data = {'exercise': self.exercise.id}
+        response = self.client.post(self.url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(ExerciseSession.objects.count(), 1)
+
+    def test_assign_exercise_no_permission(self):
+        self.client.force_authenticate(user=self.patient.user)
+        data = {'exercise': self.exercise.id}
+        response = self.client.post(self.url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+class UnassignExerciseFromSessionViewTests(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = AppUser.objects.create_user(
+            username="physio1",
+            email="physio@example.com",
+            password="testpass",
+            dni="12345678Z",
+            phone_number="600000000",
+            postal_code="28001",
+            first_name="Ana",
+            last_name="Pérez"
+        )
+        self.plan, _ = Pricing.objects.get_or_create(
+            name='blue',
+            defaults={'price': 10, 'video_limit': 5}
+        )
+        self.physiotherapist = Physiotherapist.objects.create(
+            user=self.user,
+            gender="F",
+            birth_date="1990-01-01",
+            collegiate_number="ABC123",
+            autonomic_community="Madrid",
+            bio="Test bio",
+            plan=self.plan
+        )
+        self.patient_user = AppUser.objects.create_user(
+            username="patient1",
+            email="patient@example.com",
+            password="testpass",
+            dni="87654321X",
+            phone_number="600000001",
+            postal_code="28002",
+            first_name="Juan",
+            last_name="Gómez"
+        )
+        self.patient = Patient.objects.create(
+            user=self.patient_user,
+            birth_date="1995-01-01"
+        )
+        now = timezone.now()
+        self.treatment = Treatment.objects.create(
+            physiotherapist=self.physiotherapist,
+            patient=self.patient,
+            homework='Tratamiento 1',  # Changed from 'name' to 'homework'
+            is_active=True,
+            start_time=now + timedelta(days=1),
+            end_time=now + timedelta(days=2),
+        )
+        self.session = Session.objects.create(treatment=self.treatment, name="Session 1", day_of_week=['Monday'])
+        self.exercise = Exercise.objects.create(physiotherapist=self.physiotherapist, title="Exercise 1", description="Test", area="Legs")
+        self.exercise_session = ExerciseSession.objects.create(exercise=self.exercise, session=self.session)
+        self.url = f'/api/treatments/exercise-sessions/{self.exercise_session.id}/unassign-exercise/'
+
+    def test_unassign_exercise_success(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(ExerciseSession.objects.count(), 0)
+
+    def test_unassign_exercise_no_permission(self):
+        self.client.force_authenticate(user=self.patient.user)
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+class SeriesCreateViewTests(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = AppUser.objects.create_user(
+            username="physio1",
+            email="physio@example.com",
+            password="testpass",
+            dni="12345678Z",
+            phone_number="600000000",
+            postal_code="28001",
+            first_name="Ana",
+            last_name="Pérez"
+        )
+        self.plan, _ = Pricing.objects.get_or_create(
+            name='blue',
+            defaults={'price': 10, 'video_limit': 5}
+        )
+        self.physiotherapist = Physiotherapist.objects.create(
+            user=self.user,
+            gender="F",
+            birth_date="1990-01-01",
+            collegiate_number="ABC123",
+            autonomic_community="Madrid",
+            bio="Test bio",
+            plan=self.plan
+        )
+        self.patient_user = AppUser.objects.create_user(
+            username="patient1",
+            email="patient@example.com",
+            password="testpass",
+            dni="87654321X",
+            phone_number="600000001",
+            postal_code="28002",
+            first_name="Juan",
+            last_name="Gómez"
+        )
+        self.patient = Patient.objects.create(
+            user=self.patient_user,
+            birth_date="1995-01-01"
+        )
+        now = timezone.now()
+        self.treatment = Treatment.objects.create(
+            physiotherapist=self.physiotherapist,
+            patient=self.patient,
+            homework='Tratamiento 1',  # Changed from 'name' to 'homework'
+            is_active=True,
+            start_time=now + timedelta(days=1),
+            end_time=now + timedelta(days=2),
+        )
+        self.session = Session.objects.create(treatment=self.treatment, name="Session 1", day_of_week=['Monday'])
+        self.exercise = Exercise.objects.create(physiotherapist=self.physiotherapist, title="Exercise 1", description="Test", area="Legs")
+        self.exercise_session = ExerciseSession.objects.create(exercise=self.exercise, session=self.session)
+        self.url = f'/api/treatments/exercise-sessions/{self.exercise_session.id}/series/create/'
+
+    def test_create_series_success(self):
+        self.client.force_authenticate(user=self.user)
+        data = {'series_number': 1, 'repetitions': 10, 'weight': 5.0}
+        response = self.client.post(self.url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Series.objects.count(), 1)
+
+    def test_create_series_no_permission(self):
+        self.client.force_authenticate(user=self.patient.user)
+        data = {'series_number': 1, 'repetitions': 10, 'weight': 5.0}
+        response = self.client.post(self.url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_create_series_max_limit(self):
+        self.client.force_authenticate(user=self.user)
+        for i in range(10):
+            Series.objects.create(exercise_session=self.exercise_session, series_number=i+1, repetitions=10, weight=5.0)
+        data = {'series_number': 11, 'repetitions': 10, 'weight': 5.0}
+        response = self.client.post(self.url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+class SeriesDetailViewTests(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = AppUser.objects.create_user(
+            username="physio1",
+            email="physio@example.com",
+            password="testpass",
+            dni="12345678Z",
+            phone_number="600000000",
+            postal_code="28001",
+            first_name="Ana",
+            last_name="Pérez"
+        )
+        self.plan, _ = Pricing.objects.get_or_create(
+            name='blue',
+            defaults={'price': 10, 'video_limit': 5}
+        )
+        self.physiotherapist = Physiotherapist.objects.create(
+            user=self.user,
+            gender="F",
+            birth_date="1990-01-01",
+            collegiate_number="ABC123",
+            autonomic_community="Madrid",
+            bio="Test bio",
+            plan=self.plan
+        )
+        self.patient_user = AppUser.objects.create_user(
+            username="patient1",
+            email="patient@example.com",
+            password="testpass",
+            dni="87654321X",
+            phone_number="600000001",
+            postal_code="28002",
+            first_name="Juan",
+            last_name="Gómez"
+        )
+        self.patient = Patient.objects.create(
+            user=self.patient_user,
+            birth_date="1995-01-01"
+        )
+        now = timezone.now()
+        self.treatment = Treatment.objects.create(
+            physiotherapist=self.physiotherapist,
+            patient=self.patient,
+            homework='Tratamiento 1',  # Changed from 'name' to 'homework'
+            is_active=True,
+            start_time=now + timedelta(days=1),
+            end_time=now + timedelta(days=2),
+        )
+        self.session = Session.objects.create(treatment=self.treatment, name="Session 1", day_of_week=['Monday'])
+        self.exercise = Exercise.objects.create(physiotherapist=self.physiotherapist, title="Exercise 1", description="Test", area="Legs")
+        self.exercise_session = ExerciseSession.objects.create(exercise=self.exercise, session=self.session)
+        self.series = Series.objects.create(exercise_session=self.exercise_session, series_number=1, repetitions=10, weight=5.0)
+        self.url = f'/api/treatments/series/{self.series.id}/'
+
+    def test_get_series_success(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['repetitions'], 10)
+
+    def test_update_series_success(self):
+        self.client.force_authenticate(user=self.user)
+        data = {'repetitions': 15}
+        response = self.client.put(self.url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.series.refresh_from_db()
+        self.assertEqual(self.series.repetitions, 15)
+
+    def test_delete_series_success(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(Series.objects.count(), 0)
+
+    def test_series_no_permission(self):
+        self.client.force_authenticate(user=self.patient.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+class SeriesDeleteViewTests(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = AppUser.objects.create_user(
+            username="physio1",
+            email="physio@example.com",
+            password="testpass",
+            dni="12345678Z",
+            phone_number="600000000",
+            postal_code="28001",
+            first_name="Ana",
+            last_name="Pérez"
+        )
+        self.plan, _ = Pricing.objects.get_or_create(
+            name='blue',
+            defaults={'price': 10, 'video_limit': 5}
+        )
+        self.physiotherapist = Physiotherapist.objects.create(
+            user=self.user,
+            gender="F",
+            birth_date="1990-01-01",
+            collegiate_number="ABC123",
+            autonomic_community="Madrid",
+            bio="Test bio",
+            plan=self.plan
+        )
+        self.patient_user = AppUser.objects.create_user(
+            username="patient1",
+            email="patient@example.com",
+            password="testpass",
+            dni="87654321X",
+            phone_number="600000001",
+            postal_code="28002",
+            first_name="Juan",
+            last_name="Gómez"
+        )
+        self.patient = Patient.objects.create(
+            user=self.patient_user,
+            birth_date="1995-01-01"
+        )
+        now = timezone.now()
+        self.treatment = Treatment.objects.create(
+            physiotherapist=self.physiotherapist,
+            patient=self.patient,
+            homework='Tratamiento 1',  # Changed from 'name' to 'homework'
+            is_active=True,
+            start_time=now + timedelta(days=1),
+            end_time=now + timedelta(days=2),
+        )
+        self.session = Session.objects.create(treatment=self.treatment, name="Session 1", day_of_week=['Monday'])
+        self.exercise = Exercise.objects.create(physiotherapist=self.physiotherapist, title="Exercise 1", description="Test", area="Legs")
+        self.exercise_session = ExerciseSession.objects.create(exercise=self.exercise, session=self.session)
+        self.series = Series.objects.create(exercise_session=self.exercise_session, series_number=1, repetitions=10, weight=5.0)
+        self.url = f'/api/treatments/series/{self.series.id}/delete/'
+
+    def test_delete_series_success(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(Series.objects.count(), 0)
+
+    def test_delete_series_no_permission(self):
+        self.client.force_authenticate(user=self.patient.user)
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+class SeriesListByExerciseSessionViewTests(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = AppUser.objects.create_user(
+            username="physio1",
+            email="physio@example.com",
+            password="testpass",
+            dni="12345678Z",
+            phone_number="600000000",
+            postal_code="28001",
+            first_name="Ana",
+            last_name="Pérez"
+        )
+        self.plan, _ = Pricing.objects.get_or_create(
+            name='blue',
+            defaults={'price': 10, 'video_limit': 5}
+        )
+        self.physiotherapist = Physiotherapist.objects.create(
+            user=self.user,
+            gender="F",
+            birth_date="1990-01-01",
+            collegiate_number="ABC123",
+            autonomic_community="Madrid",
+            bio="Test bio",
+            plan=self.plan
+        )
+        self.patient_user = AppUser.objects.create_user(
+            username="patient1",
+            email="patient@example.com",
+            password="testpass",
+            dni="87654321X",
+            phone_number="600000001",
+            postal_code="28002",
+            first_name="Juan",
+            last_name="Gómez"
+        )
+        self.patient = Patient.objects.create(
+            user=self.patient_user,
+            birth_date="1995-01-01"
+        )
+        now = timezone.now()
+        self.treatment = Treatment.objects.create(
+            physiotherapist=self.physiotherapist,
+            patient=self.patient,
+            homework='Tratamiento 1',  # Changed from 'name' to 'homework'
+            is_active=True,
+            start_time=now + timedelta(days=1),
+            end_time=now + timedelta(days=2),
+        )
+        self.session = Session.objects.create(treatment=self.treatment, name="Session 1", day_of_week=['Monday'])
+        self.exercise = Exercise.objects.create(physiotherapist=self.physiotherapist, title="Exercise 1", description="Test", area="Legs")
+        self.exercise_session = ExerciseSession.objects.create(exercise=self.exercise, session=self.session)
+        self.series = Series.objects.create(exercise_session=self.exercise_session, series_number=1, repetitions=10, weight=5.0)
+        self.url = f'/api/treatments/exercise-sessions/{self.exercise_session.id}/series/'
+
+    def test_list_series_physio_success(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['repetitions'], 10)
+
+    def test_list_series_patient_success(self):
+        self.client.force_authenticate(user=self.patient_user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+
+class ExerciseListBySessionViewTests(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = AppUser.objects.create_user(
+            username="physio1",
+            email="physio@example.com",
+            password="testpass",
+            dni="12345678Z",
+            phone_number="600000000",
+            postal_code="28001",
+            first_name="Ana",
+            last_name="Pérez"
+        )
+        self.plan, _ = Pricing.objects.get_or_create(
+            name='blue',
+            defaults={'price': 10, 'video_limit': 5}
+        )
+        self.physiotherapist = Physiotherapist.objects.create(
+            user=self.user,
+            gender="F",
+            birth_date="1990-01-01",
+            collegiate_number="ABC123",
+            autonomic_community="Madrid",
+            bio="Test bio",
+            plan=self.plan
+        )
+        self.patient_user = AppUser.objects.create_user(
+            username="patient1",
+            email="patient@example.com",
+            password="testpass",
+            dni="87654321X",
+            phone_number="600000001",
+            postal_code="28002",
+            first_name="Juan",
+            last_name="Gómez"
+        )
+        self.patient = Patient.objects.create(
+            user=self.patient_user,
+            birth_date="1995-01-01"
+        )
+        now = timezone.now()
+        self.treatment = Treatment.objects.create(
+            physiotherapist=self.physiotherapist,
+            patient=self.patient,
+            homework='Tratamiento 1',  # Changed from 'name' to 'homework'
+            is_active=True,
+            start_time=now + timedelta(days=1),
+            end_time=now + timedelta(days=2),
+        )
+        self.session = Session.objects.create(treatment=self.treatment, name="Session 1", day_of_week=['Monday'])
+        self.exercise = Exercise.objects.create(physiotherapist=self.physiotherapist, title="Exercise 1", description="Test", area="Legs")
+        self.exercise_session = ExerciseSession.objects.create(exercise=self.exercise, session=self.session)
+        self.url = f'/api/treatments/sessions/{self.session.id}/exercises/'
+
+    def test_list_exercises_physio_success(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['exercise'], self.exercise.id)
+
+    def test_list_exercises_patient_success(self):
+        self.client.force_authenticate(user=self.patient_user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+
+    def test_list_exercises_no_permission(self):
+        other_user = AppUser.objects.create_user(username="other", email="other@example.com", password="testpass")
+        self.client.force_authenticate(user=other_user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+class ExerciseLogCreateViewTests(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = AppUser.objects.create_user(
+            username="physio1",
+            email="physio@example.com",
+            password="testpass",
+            dni="12345678Z",
+            phone_number="600000000",
+            postal_code="28001",
+            first_name="Ana",
+            last_name="Pérez"
+        )
+        self.plan, _ = Pricing.objects.get_or_create(
+            name='blue',
+            defaults={'price': 10, 'video_limit': 5}
+        )
+        self.physiotherapist = Physiotherapist.objects.create(
+            user=self.user,
+            gender="F",
+            birth_date="1990-01-01",
+            collegiate_number="ABC123",
+            autonomic_community="Madrid",
+            bio="Test bio",
+            plan=self.plan
+        )
+        self.patient_user = AppUser.objects.create_user(
+            username="patient1",
+            email="patient@example.com",
+            password="testpass",
+            dni="87654321X",
+            phone_number="600000001",
+            postal_code="28002",
+            first_name="Juan",
+            last_name="Gómez"
+        )
+        self.patient = Patient.objects.create(
+            user=self.patient_user,
+            birth_date="1995-01-01"
+        )
+        now = timezone.now()
+        self.treatment = Treatment.objects.create(
+            physiotherapist=self.physiotherapist,
+            patient=self.patient,
+            homework='Tratamiento 1',  # Changed from 'name' to 'homework'
+            is_active=True,
+            start_time=now + timedelta(days=1),
+            end_time=now + timedelta(days=2),
+        )
+        self.session = Session.objects.create(treatment=self.treatment, name="Session 1", day_of_week=['Monday'])
+        self.exercise = Exercise.objects.create(physiotherapist=self.physiotherapist, title="Exercise 1", description="Test", area="Legs")
+        self.exercise_session = ExerciseSession.objects.create(exercise=self.exercise, session=self.session)
+        self.series = Series.objects.create(exercise_session=self.exercise_session, series_number=1, repetitions=10, weight=5.0)
+        self.url = '/api/treatments/exercise-logs/create/'
+
+    def test_create_exercise_log_success(self):
+        self.client.force_authenticate(user=self.patient_user)
+        data = {'series': self.series.id, 'repetitions_done': 8, 'weight_done': 4.5}
+        response = self.client.post(self.url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(ExerciseLog.objects.count(), 1)
+
+    def test_create_exercise_log_no_permission(self):
+        self.client.force_authenticate(user=self.user)
+        data = {'series': self.series.id, 'repetitions_done': 8}
+        response = self.client.post(self.url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+class ExerciseLogListViewTests(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = AppUser.objects.create_user(
+            username="physio1",
+            email="physio@example.com",
+            password="testpass",
+            dni="12345678Z",
+            phone_number="600000000",
+            postal_code="28001",
+            first_name="Ana",
+            last_name="Pérez"
+        )
+        self.plan, _ = Pricing.objects.get_or_create(
+            name='blue',
+            defaults={'price': 10, 'video_limit': 5}
+        )
+        self.physiotherapist = Physiotherapist.objects.create(
+            user=self.user,
+            gender="F",
+            birth_date="1990-01-01",
+            collegiate_number="ABC123",
+            autonomic_community="Madrid",
+            bio="Test bio",
+            plan=self.plan
+        )
+        self.patient_user = AppUser.objects.create_user(
+            username="patient1",
+            email="patient@example.com",
+            password="testpass",
+            dni="87654321X",
+            phone_number="600000001",
+            postal_code="28002",
+            first_name="Juan",
+            last_name="Gómez"
+        )
+        self.patient = Patient.objects.create(
+            user=self.patient_user,
+            birth_date="1995-01-01"
+        )
+        now = timezone.now()
+        self.treatment = Treatment.objects.create(
+            physiotherapist=self.physiotherapist,
+            patient=self.patient,
+            homework='Tratamiento 1',  # Changed from 'name' to 'homework'
+            is_active=True,
+            start_time=now + timedelta(days=1),
+            end_time=now + timedelta(days=2),
+        )
+        self.session = Session.objects.create(treatment=self.treatment, name="Session 1", day_of_week=['Monday'])
+        self.exercise = Exercise.objects.create(physiotherapist=self.physiotherapist, title="Exercise 1", description="Test", area="Legs")
+        self.exercise_session = ExerciseSession.objects.create(exercise=self.exercise, session=self.session)
+        self.series = Series.objects.create(exercise_session=self.exercise_session, series_number=1, repetitions=10, weight=5.0)
+        self.log = ExerciseLog.objects.create(series=self.series, patient=self.patient, repetitions_done=8, weight_done=4.5)
+        self.url = f'/api/treatments/exercise-sessions/{self.exercise_session.id}/logs/'
+
+    def test_list_exercise_logs_physio_success(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['repetitions_done'], 8)
+
+    def test_list_exercise_logs_patient_success(self):
+        self.client.force_authenticate(user=self.patient_user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+
+    def test_list_exercise_logs_no_permission(self):
+        other_user = AppUser.objects.create_user(username="other", email="other@example.com", password="testpass")
+        self.client.force_authenticate(user=other_user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+class ExerciseLogDetailViewTests(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = AppUser.objects.create_user(
+            username="physio1",
+            email="physio@example.com",
+            password="testpass",
+            dni="12345678Z",
+            phone_number="600000000",
+            postal_code="28001",
+            first_name="Ana",
+            last_name="Pérez"
+        )
+        self.plan, _ = Pricing.objects.get_or_create(
+            name='blue',
+            defaults={'price': 10, 'video_limit': 5}
+        )
+        self.physiotherapist = Physiotherapist.objects.create(
+            user=self.user,
+            gender="F",
+            birth_date="1990-01-01",
+            collegiate_number="ABC123",
+            autonomic_community="Madrid",
+            bio="Test bio",
+            plan=self.plan
+        )
+        self.patient_user = AppUser.objects.create_user(
+            username="patient1",
+            email="patient@example.com",
+            password="testpass",
+            dni="87654321X",
+            phone_number="600000001",
+            postal_code="28002",
+            first_name="Juan",
+            last_name="Gómez"
+        )
+        self.patient = Patient.objects.create(
+            user=self.patient_user,
+            birth_date="1995-01-01"
+        )
+        now = timezone.now()
+        self.treatment = Treatment.objects.create(
+            physiotherapist=self.physiotherapist,
+            patient=self.patient,
+            homework='Tratamiento 1',  # Changed from 'name' to 'homework'
+            is_active=True,
+            start_time=now + timedelta(days=1),
+            end_time=now + timedelta(days=2),
+        )
+        self.session = Session.objects.create(treatment=self.treatment, name="Session 1", day_of_week=['Monday'])
+        self.exercise = Exercise.objects.create(physiotherapist=self.physiotherapist, title="Exercise 1", description="Test", area="Legs")
+        self.exercise_session = ExerciseSession.objects.create(exercise=self.exercise, session=self.session)
+        self.series = Series.objects.create(exercise_session=self.exercise_session, series_number=1, repetitions=10, weight=5.0)
+        self.log = ExerciseLog.objects.create(series=self.series, patient=self.patient, repetitions_done=8, weight_done=4.5)
+        self.url = f'/api/treatments/exercise-logs/{self.log.id}/'
+
+    def test_get_exercise_log_success(self):
+        self.client.force_authenticate(user=self.patient_user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['repetitions_done'], 8)
+
+    def test_update_exercise_log_success(self):
+        self.client.force_authenticate(user=self.patient_user)
+        data = {'repetitions_done': 9}
+        response = self.client.put(self.url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.log.refresh_from_db()
+        self.assertEqual(self.log.repetitions_done, 9)
+
+    def test_delete_exercise_log_success(self):
+        self.client.force_authenticate(user=self.patient_user)
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(ExerciseLog.objects.count(), 0)
+
+    def test_exercise_log_no_permission(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
