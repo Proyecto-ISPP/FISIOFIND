@@ -66,10 +66,27 @@ interface SeriesData {
 }
 
 // Update the ExerciseSessionData interface to include series
-interface ExerciseSessionData {
-  exercise: Exercise;
-  exerciseSessionId: number;
-  series?: SeriesData[];
+interface SeriesData {
+  id: number;
+  series_number: number;
+  repetitions: number;
+  weight?: number;
+  time?: number;
+  distance?: number;
+  exercise_session: number;
+  logs?: ExerciseLog[]; // Add logs to the series
+}
+
+interface ExerciseLog {
+  id: number;
+  series: number;
+  patient: number;
+  date: string;
+  repetitions_done: number;
+  weight_done?: number;
+  time_done?: string;
+  distance_done?: number;
+  notes?: string;
 }
 
 const ExercisesPage = ({
@@ -112,6 +129,10 @@ const ExercisesPage = ({
     useState(false);
   const [exerciseSessionIdToUnassign, setExerciseSessionIdToUnassign] =
     useState<number | null>(null);
+
+  const [showLogsModal, setShowLogsModal] = useState(false);
+  const [selectedSeries, setSelectedSeries] = useState<SeriesData | null>(null);
+  const [expandedSeriesId, setExpandedSeriesId] = useState<number | null>(null);
 
   const formatAreaName = (areaCode: string): string => {
     const areaMap: Record<string, string> = {
@@ -252,7 +273,43 @@ const ExercisesPage = ({
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      return await response.json();
+      const seriesData = await response.json();
+
+      // For each series, fetch its logs
+      const seriesWithLogs = await Promise.all(
+        seriesData.map(async (series: SeriesData) => {
+          try {
+            const logsResponse = await fetch(
+              `${getApiBaseUrl()}/api/treatments/exercise-sessions/${exerciseSessionId}/logs/`,
+              {
+                method: "GET",
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+
+            if (logsResponse.ok) {
+              const logsData = await logsResponse.json();
+              // Filter logs for this specific series
+              const seriesLogs = logsData.filter(
+                (log: ExerciseLog) => log.series === series.id
+              );
+              return { ...series, logs: seriesLogs };
+            }
+            return series;
+          } catch (error) {
+            console.error(
+              `Error fetching logs for series ${series.id}:`,
+              error
+            );
+            return series;
+          }
+        })
+      );
+
+      return seriesWithLogs;
     } catch (err) {
       console.error("Error loading series:", err);
       return [];
@@ -708,6 +765,53 @@ const ExercisesPage = ({
     setCurrentSeries(null);
   };
 
+  const handleViewLogs = (series: SeriesData) => {
+    setSelectedSeries(series);
+    setShowLogsModal(true);
+  };
+
+  const formatDuration = (durationString: string) => {
+    try {
+      // Parse ISO duration format like "PT1H30M" or handle seconds format
+      if (durationString.includes("PT")) {
+        const hours = durationString.match(/(\d+)H/);
+        const minutes = durationString.match(/(\d+)M/);
+        const seconds = durationString.match(/(\d+)S/);
+
+        let result = "";
+        if (hours) result += `${hours[1]}h `;
+        if (minutes) result += `${minutes[1]}m `;
+        if (seconds) result += `${seconds[1]}s`;
+
+        return result.trim() || "0s";
+      } else {
+        // Handle seconds format
+        const totalSeconds = parseInt(durationString);
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+
+        let result = "";
+        if (hours > 0) result += `${hours}h `;
+        if (minutes > 0) result += `${minutes}m `;
+        if (seconds > 0 || result === "") result += `${seconds}s`;
+
+        return result.trim();
+      }
+    } catch (e) {
+      console.error("Error al formatear la duración:", e);
+      return durationString;
+    }
+  };
+
+  const toggleSeriesLogs = (seriesId: number) => {
+    if (expandedSeriesId === seriesId) {
+      setExpandedSeriesId(null); // Collapse if already expanded
+    } else {
+      setExpandedSeriesId(seriesId); // Expand this series
+    }
+  };
+
   if (loading) return <div>Cargando...</div>;
   if (error) return <div>Error: {error}</div>;
 
@@ -1071,8 +1175,37 @@ const ExercisesPage = ({
                           <p className="font-medium">Serie {index + 1}</p>
                           <div className="flex space-x-2">
                             <button
+                              onClick={() => toggleSeriesLogs(serie.id)}
+                              className={`text-green-500 hover:text-green-700 transition-colors duration-200 ${
+                                serie.logs && serie.logs.length > 0
+                                  ? ""
+                                  : "opacity-50 cursor-not-allowed"
+                              }`}
+                              title={
+                                serie.logs && serie.logs.length > 0
+                                  ? "Ver registros"
+                                  : "No hay registros"
+                              }
+                              disabled={!serie.logs || serie.logs.length === 0}
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-5 w-5"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                                />
+                              </svg>
+                            </button>
+                            <button
                               onClick={() => handleEditSeries(serie)}
-                              className="text-blue-500 hover:text-blue-700 transition-colors duration-200"
+                              className="text-blue-400 hover:text-blue-600 transition-colors duration-200"
                               title="Editar serie"
                             >
                               <svg
@@ -1086,7 +1219,7 @@ const ExercisesPage = ({
                             </button>
                             <button
                               onClick={() => handleDeleteSeries(serie.id)}
-                              className="text-red-500 hover:text-red-700 transition-colors duration-200"
+                              className="text-red-400 hover:text-red-600 transition-colors duration-200"
                               title="Eliminar serie"
                             >
                               <svg
@@ -1112,6 +1245,73 @@ const ExercisesPage = ({
                             <p>Distancia: {serie.distance} m</p>
                           )}
                         </div>
+
+                        {/* Expanded logs section */}
+                        {expandedSeriesId === serie.id &&
+                          serie.logs &&
+                          serie.logs.length > 0 && (
+                            <div className="mt-3 border-t border-gray-200 pt-3">
+                              <h5 className="font-medium text-gray-700 mb-2">
+                                Registros del paciente:
+                              </h5>
+                              <div className="space-y-3 max-h-60 overflow-y-auto pr-1">
+                                {serie.logs.map((log) => (
+                                  <div
+                                    key={log.id}
+                                    className="bg-white p-3 rounded-lg shadow-sm border border-gray-100"
+                                  >
+                                    <div className="flex justify-between items-center mb-1">
+                                      <span className="text-xs text-gray-500">
+                                        {new Date(
+                                          log.date
+                                        ).toLocaleDateString()}
+                                      </span>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-2 text-sm">
+                                      <p>
+                                        Repeticiones:{" "}
+                                        <span className="font-medium">
+                                          {log.repetitions_done}
+                                        </span>
+                                      </p>
+                                      {log.weight_done !== null && (
+                                        <p>
+                                          Peso:{" "}
+                                          <span className="font-medium">
+                                            {log.weight_done} kg
+                                          </span>
+                                        </p>
+                                      )}
+                                      {log.time_done && (
+                                        <p>
+                                          Tiempo:{" "}
+                                          <span className="font-medium">
+                                            {formatDuration(log.time_done)}
+                                          </span>
+                                        </p>
+                                      )}
+                                      {log.distance_done !== null && (
+                                        <p>
+                                          Distancia:{" "}
+                                          <span className="font-medium">
+                                            {log.distance_done} m
+                                          </span>
+                                        </p>
+                                      )}
+                                    </div>
+                                    {log.notes && (
+                                      <div className="mt-2 text-sm">
+                                        <p className="text-gray-600">Notas:</p>
+                                        <p className="italic text-gray-700">
+                                          {log.notes}
+                                        </p>
+                                      </div>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
                       </div>
                     ))}
                   </div>
@@ -1127,16 +1327,16 @@ const ExercisesPage = ({
                   onClick={() =>
                     handleAddSeriesToExistingExercise(exerciseSessionId)
                   }
-                  className="px-3 py-3 bg-[#0c7986] text-white font-medium rounded-xl hover:bg-[#0a6875] focus:outline-none focus:ring-2 focus:ring-[#0c7986] focus:ring-offset-2 transition-colors duration-200 flex items-center justify-center space-x-2"
+                  className="px-3 py-2 bg-[#0c7986] text-white font-medium rounded-xl hover:bg-[#0a6875] focus:outline-none focus:ring-2 focus:ring-[#0c7986] focus:ring-offset-2 transition-colors duration-200 flex items-center justify-center space-x-2"
                 >
                   <span>Añadir Series</span>
                 </button>
 
                 <button
                   onClick={() => handleUnassignExercise(exerciseSessionId)}
-                  className="px-3 py-3 bg-red-400 text-white font-medium rounded-xl hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-300 focus:ring-offset-2 transition-colors duration-200 flex items-center justify-center space-x-2"
+                  className="px-2 py-2 bg-red-400 text-white font-medium rounded-xl hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-300 focus:ring-offset-2 transition-colors duration-200 flex items-center justify-center space-x-2"
                 >
-                  <span>Eliminar de la Sesión</span>
+                  <span>Quitar</span>
                 </button>
               </div>
             </div>

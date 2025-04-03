@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { getApiBaseUrl } from "@/utils/api";
-import styles from "@/app/global.css";
 // Se ha eliminado la importación de MultiSelectDropdown
 
 interface Session {
