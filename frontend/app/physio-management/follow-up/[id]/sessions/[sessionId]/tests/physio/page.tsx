@@ -26,13 +26,14 @@ const TestPage = () => {
   });
   const [error, setError] = useState("");
   const [session, setSession] = useState("");
-  const [patientResponse, setPatientResponse] = useState<{
+  // Update the state to store multiple responses
+  const [patientResponses, setPatientResponses] = useState<{
     response_text?: string;
     response_scale?: number;
     submitted_at: string;
-  } | null>(null);
+  }[]>([]);
   const [testAnswered, setTestAnswered] = useState(false);
-
+  
   // Fetch existing test if available
   useEffect(() => {
     const fetchTest = async () => {
@@ -49,7 +50,7 @@ const TestPage = () => {
         );
         const data = await response.json();
         setExistingTest(data);
-
+  
         // Set form values from existing test
         setFormData({
           question: data.question,
@@ -76,7 +77,7 @@ const TestPage = () => {
         if (responseData.ok) {
           const responses = await responseData.json();
           if (responses && responses.length > 0) {
-            setPatientResponse(responses[0]); // Get the first response
+            setPatientResponses(responses); // Store all responses
             setTestAnswered(true);
           }
         }
@@ -251,6 +252,7 @@ const TestPage = () => {
     router.push(`/physio-management/follow-up/${treatmentId}/sessions`);
   };
 
+  // Update the render section to display all responses
   return (
     <div className="container mx-auto p-6 bg-gray-50 min-h-screen">
       <div className="max-w-7xl mx-auto">
@@ -273,25 +275,38 @@ const TestPage = () => {
             <>
               {testAnswered && (
                 <div className="bg-blue-50 border border-blue-200 text-blue-800 p-4 rounded-xl mb-6 max-w-2xl mx-auto">
-                  <h2 className="font-semibold text-lg mb-2">Respuesta del paciente</h2>
-                  {patientResponse && (
-                    <div className="bg-white p-4 rounded-lg shadow-sm">
-                      {formData.test_type === "text" ? (
-                        <p className="text-gray-700">{patientResponse.response_text}</p>
-                      ) : (
-                        <div className="flex items-center">
-                          <span className="font-bold text-lg mr-2">{patientResponse.response_scale}</span>
-                          <span className="text-gray-600">
-                            {formData.scale_labels.find(
-                              (label) => label.scale_value === patientResponse?.response_scale?.toString()
-                            )?.label || ""}
-                          </span>
+                  <h2 className="font-semibold text-lg mb-2">
+                    Respuestas del paciente
+                  </h2>
+                  
+                  {patientResponses.length > 0 ? (
+                    <div className="space-y-4">
+                      {patientResponses.map((response, index) => (
+                        <div key={index} className="bg-white p-4 rounded-lg shadow-sm">
+                          <div className="flex justify-between items-center mb-2">
+                            <span className="font-medium text-gray-700">Respuesta {index + 1}</span>
+                            <span className="text-sm text-gray-500">
+                              {response.submitted_at ? new Date(response.submitted_at).toLocaleString() : 'Fecha no disponible'}
+                            </span>
+                          </div>
+                          
+                          {formData.test_type === "text" ? (
+                            <p className="text-gray-700">{response.response_text}</p>
+                          ) : (
+                            <div className="flex items-center">
+                              <span className="font-bold text-lg mr-2">{response.response_scale}</span>
+                              <span className="text-gray-600">
+                                {formData.scale_labels.find(
+                                  (label) => label.scale_value === response.response_scale?.toString()
+                                )?.label || ""}
+                              </span>
+                            </div>
+                          )}
                         </div>
-                      )}
-                      <p className="text-sm text-gray-500 mt-2">
-                        Respondido el: {patientResponse.submitted_at ? new Date(patientResponse.submitted_at).toLocaleString() : 'Fecha no disponible'}
-                      </p>
+                      ))}
                     </div>
+                  ) : (
+                    <p className="text-gray-600">No hay respuestas disponibles</p>
                   )}
                 </div>
               )}
