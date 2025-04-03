@@ -1,6 +1,6 @@
 ---
-title: "SPRINT PLANNING SPRINT 1"                         # CHANGE IF NEEDED
-subtitle: "FISIO FIND - Grupo 6 - #DP"
+title: "SPRINT PLANNING #SPRINT 1"                         # CHANGE IF NEEDED
+subtitle: "FISIO FIND - Grupo 6 - #SPRINT 1"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]
 date: "20/02/2025"                                        # CHANGE IF NEEDED
 subject: "ISPP"
@@ -22,7 +22,7 @@ classoption: "table"
 
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
 <p align="center">
-  <img src="../../.img/Logo_FisioFind_Verde_sin_fondo.PNG" alt="Logo FisioFind" width="300" />
+  <img src="../../.img/Logo_FisioFind_Verde_sin_fondo.webp" alt="Logo FisioFind" width="300" />
 </p>
 
 <p align="center" style="font-size: 30px; font-weight: bold;">
@@ -62,11 +62,11 @@ classoption: "table"
 
 - **Número de Grupo:** Grupo 6
 
-- **Entregable:** #DP
+- **Entregable:** #SPRINT 1
 
 - **Miembros del grupo:** Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes.
 
-- **Autores:** Antonio Macías Ferrera
+- **Contribuidores:** [Antonio Macías Ferrera](https://github.com/antoniommff) (autor)
 
 - **Fecha de Creación:** 20/02/2025
 
@@ -118,19 +118,19 @@ El propósito de este informe es definir los objetivos a lograr durante el Sprin
 
 Los siguientes **objetivos** del *Sprint* harán referencia a las épicas desglosadas en la plataforma *GitHub Project*.
 
-- ✅ **Objetivo 1:** Formar al equipo
+- ✅ **Objetivo 1:** Formación
 - ✅ **Objetivo 2:** Implementar una gestión de usuarios básica
 - ✅ **Objetivo 3:** Implementar las funcionalidades correspondientes a los casos de uso *'core'*.
 - ✅ **Objetivo 4:** Desplegar una '*landing page*' estética y accesible para posicionar y mostrar al público nuestra aplicación.
 
 
-| Historia Épica   | Historias de Usuario                                                   |
-| ---------------- | ---------------------------------------------------------------------- |
-| Formación        | HA-002                                                                 |
-| Gestión usuarios | HA-001, HF-001, HF-002, HI-001, HI-002, HP-001, HP-002, HP-006         |
-| Videollamada     | HF-010, HF-019                                                         |
-| Landing page     | HA-003                                                                 |
-| Cita/Calendario  | HF-003, HF-004, HP-003, HP-005                                         |
+| Obj | Historia Épica        | Historias de Usuario |
+| --- | --------------------- | -------------------- |
+| 1 | E-001: Formación        | HA-002 |
+| 2 | E-002: Gestión usuarios | HA-001, HF-001, HF-002, HI-001, HI-002, HP-001, HP-002, HP-006 |
+| 3 | E-003: Videollamada     | HF-010, HF-019 |
+| 4 | E-004: Landing page     | HA-003 |
+| 3 | E-005: Cita/Calendario  | HF-003, HF-004, HP-003, HP-005 |
 
 <br>
 

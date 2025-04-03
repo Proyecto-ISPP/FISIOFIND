@@ -1,6 +1,6 @@
 ---
 title: "COMMITMENT AGREEMENT"                             # CHANGE IF NEEDED
-subtitle: "FISIO FIND - Grupo 6 - #DP"
+subtitle: "FISIO FIND - Grupo 6 - #SPRINT 1"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]
 date: "07/02/2025"                                        # CHANGE IF NEEDED
 subject: "ISPP"
@@ -22,7 +22,7 @@ classoption: "table"
 
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
 <p align="center">
-  <img src="../.img/Logo_FisioFind_Verde_sin_fondo.PNG" alt="Logo FisioFind" width="300" />
+  <img src="../.img/Logo_FisioFind_Verde_sin_fondo.webp" alt="Logo FisioFind" width="300" />
 </p>
 
 <h1 align="center" style="font-size: 30px; font-weight: bold;">
@@ -41,8 +41,12 @@ classoption: "table"
   - [2.5 PRÁCTICAS DE EQUIPO](#25-prácticas-de-equipo)
   - [2.6 CRITERIOS DE ÉXITO](#26-criterios-de-éxito)
   - [2.7 CUMPLIMIENTO DEL ACUERDO](#27-cumplimiento-del-acuerdo)
-  - [2.8 CONDICIONES DEL ACUERDO](#28-condiciones-del-acuerdo)
-  - [2.9 CASOS NO CONTEMPLADOS](#29-casos-no-contemplados)
+  - [2.8 PROCESO DE REFUTACIÓN DE LA CALIFICACIÓN EN QA](#28-proceso-de-refutación-de-la-calificación-en-qa)
+  - [2.9 AJUSTE DEL PORCENTAJE DE CALIFICACIÓN EN EVALUACIONES DE QA](#29-ajuste-del-porcentaje-de-calificación-en-evaluaciones-de-qa)
+  - [2.10 CONDICIONES DEL ACUERDO](#210-condiciones-del-acuerdo)
+  - [2.11 CASOS NO CONTEMPLADOS](#211-casos-no-contemplados)
+- [3. RECOMPENSAS](#3-recompensas)
+  - [3.1. RECOMPENSAS Y BONIFICACIONES](#31-recompensas-y-bonificaciones)
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
 
 <br>
@@ -55,15 +59,15 @@ classoption: "table"
 
 - **Número de Grupo:** Grupo 6
 
-- **Entregable:** #DP
+- **Entregable:** #SPRINT 1
 
 - **Miembros del grupo:** Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes.
 
-- **Autores:** Alberto Carmona Sicre, Daniel Ruiz López, Miguel Encina Martínez, Delfín Santana Rubio, Antonio Macías Ferrera
+- **Contribuidores:** [Alberto Carmona Sicre](https://github.com/albcarsic) (autor), [Daniel Ruiz López](https://github.com/Danielruizlopezcc) (autor), [Miguel Encina Martínez](https://github.com/MiguelEncina) (autor), [Delfín Santana Rubio](https://github.com/DelfinSR) (autor), [Antonio Macías Ferrera](https://github.com/antoniommff) (autor)
 
 - **Fecha de Creación:** 03/02/2025  
 
-- **Versión:** v1.5
+- **Versión:** v1.6
 
 <br>
 
@@ -81,6 +85,8 @@ classoption: "table"
 | 05/02/2025 | v1.3    |  Alberto Carmona Sicre, Daniel Ruiz López | Modificación del apartado Cumplimiento del acuerdo. |
 | 07/02/2025 | v1.4    |  Alberto Carmona Sicre, Daniel Ruiz López | Modificación de los apartados: Horario de disponibilidad, Compromiso y realización de las tareas. Añadidas portada e Índice. |
 | 09/02/2025 | v1.5    |  Antonio Macías Ferrera | Pequeñas correcciones de formato. |
+| 08/03/2025 | v1.6    |  Daniel Alors Romero | Modificación y añadidos los apartados. |
+| 20/03/2025 | v1.7    |  Daniel Alors Romero | Recompensas y técnicas de team building. |
 
 <br>
 
@@ -91,51 +97,34 @@ classoption: "table"
 
 # 1. INTRODUCCIÓN
 
-Al unirme a la asignatura de Ingeniería de Software y Práctica Profesional (ISPP) para el curso 2024-25, me comprometo a cumplir con los siguientes requisitos y condiciones como miembro activo del grupo de trabajo denominado FISIO FIND, compuesto por 17 personas.
-
-<br>
-
-<br>
-
-<hr>
-
+Como miembro del equipo de desarrollo del proyecto FISIO FIND durante el curso académico 2024-25, en la asignatura de Ingeniería de Software y Práctica Profesional (ISPP), me comprometo formalmente a cumplir con los requisitos y condiciones establecidos en este documento. Este acuerdo regula el funcionamiento de nuestro equipo, compuesto por 17 integrantes.
 
 # 2. COMPROMISOS Y CONDICIONES
 
 ## 2.1 DEDICACIÓN DE TIEMPO
 
-- Me comprometo a dedicar un esfuerzo de mínimo **10 horas** semanales a las actividades y tareas asignadas, entre las que se incluyen las **4 horas de clase**. [1]
-- Me comprometo a finalizar mis tareas asignadas a tiempo para evitar retrasos en las actividades de otros compañeros.
-- Me comprometo a ofrecer mis servicios a compañeros que lo necesiten si mi trabajo semanal ha sido finalizado.
+- Me comprometo a dedicar un mínimo de **10 horas** semanales al proyecto, incluyendo las **4 horas de clase presencial**. [1]
+- Garantizo la finalización puntual de mis tareas asignadas para no afectar el progreso del equipo.
+- Ofreceré apoyo a mis compañeros una vez completadas mis tareas semanales.
 
-[1] En caso de que las personas adelanten tareas de semanas posteriores y sean aprobadas por el equipo de QA, el tiempo extra dedicado en esa semana podrá ser descontado de futuras semanas. Asimismo, si un miembro del grupo no pudiera llegar al mínimo de horas a lo largo de una semana de trabajo, deberá compensarlo invirtiendo más horas la siguiente semana.
-
-<br>
-
+[1] Las horas extra dedicadas a tareas futuras, previa aprobación del equipo de QA, podrán compensarse en semanas posteriores. Si no se alcanza el mínimo semanal, deberá compensarse en la siguiente semana.
 
 ## 2.2 HORARIO DE DISPONIBILIDAD
 
-- Reconozco y acepto el horario de disponibilidad establecido para nuestras actividades.
-- Se establece el siguiente horario de contacto:
+Se establece el siguiente horario de comunicación y trabajo:
 
-| Día | Horario de mañana | Horario de tarde |
-| --- | ------------- | ---------- |
-| De Lunes a Viernes | 8:00-14:30 [1] | 16:30-23:30 |
-| Sábado y Domingo | 9:30-14:30 | 17:00-22:00 |
+| Día | Horario matutino | Horario vespertino |
+| --- | --------------- | ----------------- |
+| Lunes a Viernes | 8:00-14:30 [1] | 16:30-23:30 |
+| Fines de semana | 9:30-14:30 | 17:00-22:00 |
 
-[1] Se contempla la indisponibilidad de aquellos integrantes que tengan prácticas de empresa.
-
-<br>
-
+[1] Se contemplan excepciones para miembros que realicen prácticas empresariales.
 
 ## 2.3 COMPENSACIÓN DE TIEMPO
 
 - Se establece un sistema de compensación para aquellos miembros que no cumplan con las 10 horas semanales asignadas (sólo en caso de que no hayan realizado algunas de sus tareas asignadas), con el fin de mantener un equilibrio en la carga de trabajo. Las personas que no cumplan con el tiempo asignado deberán compensar el tiempo en la semana siguiente trabajando la cantidad de horas que faltan.
 
 - Del mismo modo, en caso de que algún miembro tenga más carga de trabajo durante una semana e invierta más tiempo que el resto del equipo, el tiempo extra dedicado en esa semana podrá ser descontado de futuras semanas.
-
-<br>
-
 
 ## 2.4 COMPROMISO Y REALIZACIÓN DE LAS TAREAS
 
@@ -149,15 +138,9 @@ Al unirme a la asignatura de Ingeniería de Software y Práctica Profesional (IS
 
 - Las personas encargadas de dividir y asignar las tareas se comprometen a un reparto equitativo de manera que todos los integrantes del equipo puedan llegar a las 6 horas de trabajo estipuladas. En caso de que una persona no llegue a las 6 horas, será responsabilidad de las personas encargadas de dividir y asignar las tareas.
 
-<br>
-
-
 ## 2.5 PRÁCTICAS DE EQUIPO
 
 - El equipo establece una serie de buenas prácticas definidas en el documento *Plan de Gestión de la Configuración*, las cuales serán obligatorias seguir. El no cumplimiento de estas prácticas será revisado por el equipo de QA y se tomarán las medidas necesarias.
-
-<br>
-
 
 ## 2.6 CRITERIOS DE ÉXITO
 
@@ -166,9 +149,6 @@ Al unirme a la asignatura de Ingeniería de Software y Práctica Profesional (IS
 - Personalmente, se deberán presentar **informes de desempeño** semanales con el objetivo de facilitar el seguimiento al equipo de QA.
 
 - Estos informes de desempeño realizados por el equipo de QA, deberán ir en concordancia con los **informes semanales de tiempo**, para así obtener un análisis coherente en relación al tiempo invertido según la carga de trabajo asignada.
-
-<br>
-
 
 ## 2.7 CUMPLIMIENTO DEL ACUERDO
 
@@ -207,10 +187,13 @@ Se establecen los siguientes niveles de cumplimiento del acuerdo de compromiso, 
 
 - Deficiente (D): 0% - 49%
 
-<br>
+## 2.8 Proceso de Refutación de la Calificación en QA
+Antes de que la reducción de calificación entre en vigor, los miembros del equipo de QA publicarán la información correspondiente a través de los canales de comunicación establecidos, especificando a los afectados. Los interesados tendrán la oportunidad de presentar una réplica con el fin de debatir la reducción y, si procede, modificarla según la decisión final de los miembros de QA.
 
+## 2.9 Ajuste del Porcentaje de Calificación en Evaluaciones de QA
+En caso de que los miembros del equipo de QA determinen una reducción en el porcentaje de calificación, dicho ajuste se reflejará en las evaluaciones posteriores. Para recuperar la calificación reducida, será necesario obtener la puntuación máxima en las evaluaciones siguientes. La recuperación de la nota será progresiva y estará condicionada por la magnitud de la reducción inicial, garantizando en todo caso que el restablecimiento de la calificación no se produzca en una única evaluación.
 
-## 2.8 CONDICIONES DEL ACUERDO
+## 2.10 CONDICIONES DEL ACUERDO
 
 - ***El acuerdo de compromiso puede ser utilizado como referencia para exigir el cumplimiento de las responsabilidades.***
 
@@ -218,12 +201,20 @@ Se establecen los siguientes niveles de cumplimiento del acuerdo de compromiso, 
 
 <br>
 
-
-## 2.9 CASOS NO CONTEMPLADOS
+## 2.11 CASOS NO CONTEMPLADOS
 
 - Si el equipo de QA detecta que se está dando una situación no contemplada en este acuerdo, pero que debería haberse contemplado, se hará saber a nivel de proyecto y se intentará resolver mediante reuniones y votaciones. Si no se consigue resolver, se hará saber a los profesores.
 
 <br>
+
+
+# 3. RECOMPENSAS
+
+## 3.1. RECOMPENSAS Y BONIFICACIONES
+
+- Al finalizar cada Sprint se realizará una votación para elegir a los tres ***"Contributors of the week"***, siendo nombrado en las presentaciones como la persona más importante de dicha fase. Cuando el producto termine la fase de producción y para todos aquellos, dentro del equipo de desarrollo, que realicen de manera eficiente y en tiempo todas sus tareas el ***Project Management*** les invitará a una cena de empresa, para celebrar la finalización del desarrollo.
+
+- También aparecerán en la presentación las tres personas mejor puntuadas en ***Make it Meme***, junto al ***meme*** mejor valorado.
 
 ---
 
