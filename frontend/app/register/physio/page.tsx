@@ -39,6 +39,7 @@ const GENDER_OPTIONS = [
 
 // Opciones de comunidad autónoma
 const AUTONOMIC_COMMUNITY_OPTIONS = [
+  { value: "", label: "Seleccione comunidad" },
   { value: "ANDALUCIA", label: "Andalucía", url: "https://colfisio.org/registro-censo-fisioterapeutas" },
   { value: "ARAGON", label: "Aragón", url: "https://ventanilla.colfisioaragon.org/buscador-colegiados" },
   { value: "ASTURIAS", label: "Asturias", url: "https://www.cofispa.org/censo-colegiados" },
@@ -48,14 +49,14 @@ const AUTONOMIC_COMMUNITY_OPTIONS = [
   { value: "CASTILLA Y LEON", label: "Castilla y León", url: "https://www.consejo-fisioterapia.org/vu_colegiados.html" },
   { value: "CASTILLA-LA MANCHA", label: "Castilla-La Mancha", url: "https://www.coficam.org/ventanilla-unica/censo-colegial" },
   { value: "CATALUÑA", label: "Cataluña", url: "https://www.fisioterapeutes.cat/es/ciudadanos/profesionales" },
+  { value: "COMUNIDAD VALENCIANA", label: "Comunidad Valenciana", url: "https://app.colfisiocv.com/college/collegiatelist/" },
   { value: "EXTREMADURA", label: "Extremadura", url: "https://cofext.org/cms/colegiados.php" },
   { value: "GALICIA", label: "Galicia", url: "https://www.cofiga.org/ciudadanos/colegiados" },
+  { value: "LA RIOJA", label: "La Rioja", url: "https://www.coflarioja.org/ciudadanos/listado-de-fisioterapeutas/buscar-colegiados" },
   { value: "MADRID", label: "Madrid", url: "https://cfisiomad.com/#/ext/buscarcolegiado" },
   { value: "MURCIA", label: "Murcia", url: "https://cfisiomurcia.com/buscador-de-colegiados/" },
   { value: "NAVARRA", label: "Navarra", url: "https://www.consejo-fisioterapia.org/vu_colegiados.html" },
   { value: "PAIS VASCO", label: "País Vasco", url: "https://cofpv.org/es/colegiados.asp" },
-  { value: "LA RIOJA", label: "La Rioja", url: "https://www.coflarioja.org/ciudadanos/listado-de-fisioterapeutas/buscar-colegiados" },
-  { value: "COMUNIDAD VALENCIANA", label: "Comunidad Valenciana", url: "https://app.colfisiocv.com/college/collegiatelist/" },
 ];
 
 // Carga de Stripe
@@ -295,7 +296,7 @@ const PhysioSignUpForm = () => {
     gender: "",
     birth_date: "",
     collegiate_number: "",
-    autonomic_community: "MADRID",
+    autonomic_community: "",
     plan: "gold",
   });
 
