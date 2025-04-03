@@ -13,7 +13,7 @@ import DraftModal from "@/components/ui/draftAppointmentModal";
 import { DemoWindow } from "@/components/demo-window";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { CookieConsent } from "@/components/CookieConsent";
-import TopRatings from "@/components/ratings"; // Add this import
+import TopRatings from "@/components/ratings";
 
 interface Physiotherapist {
   id: string;
@@ -38,7 +38,6 @@ const Home = () => {
   const apiBaseurl = getApiBaseUrl();
   const [showDraftModal, setShowDraftModal] = useState(false);
   const [draftData, setDraftData] = useState<any>(null);
-  const [returnUrl, setReturnUrl] = useState<string | null>(null);
   const { dispatch } = useAppointment();
 
   useEffect(() => {
@@ -64,7 +63,6 @@ const Home = () => {
   }, [isClient, token]);
 
   // Efecto para mover imágenes flotantes al hacer scroll
-  // Modify the floating images styles
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;

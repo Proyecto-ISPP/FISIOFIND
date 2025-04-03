@@ -287,7 +287,6 @@ const TopRatings: React.FC = () => {
 
   return (
     <div className={styles.ratingsContainer}>
-      <br></br>
       {/* Confirmation message */}
       {confirmationMessage && (
         <div className={styles.confirmationMessage}>
@@ -298,7 +297,6 @@ const TopRatings: React.FC = () => {
       {isAuthenticated && isPhysio && !hasRated && (
         <div className={styles.rateButtonContainer}>
           <GradientButton 
-            className={styles.rateButton}
             onClick={() => setShowRatingForm(true)}
           >
             ¿Te gusta nuestra app? ¡Valóranos!
@@ -327,18 +325,18 @@ const TopRatings: React.FC = () => {
                 onChange={(e) => setNewRating({...newRating, opinion: e.target.value})}
               />
               <div className={styles.formButtons}>
-                <button 
-                  className={styles.cancelButton}
+                <GradientButton 
+                  variant="grey"
                   onClick={() => setShowRatingForm(false)}
                 >
                   Cancelar
-                </button>
-                <button 
-                  className={styles.submitButton}
+                </GradientButton>
+                <GradientButton 
+                  variant="create"
                   onClick={handleSubmitRating}
                 >
                   Enviar valoración
-                </button>
+                </GradientButton>
               </div>
             </>
           )}
@@ -346,14 +344,38 @@ const TopRatings: React.FC = () => {
       )}
 
       {ratings.length === 0 ? (
-        <p className={styles.noRatings}>No hay valoraciones disponibles.</p>
+        <div className={styles.emptyCardContainer} style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+          <div className={`${styles.card} ${styles.cardHover}`} style={{ width: '400px' }}>
+            <div className={styles.header}>
+              <div>
+                <div className={styles.stars}>
+                  {[...Array(5)].map((_, i) => (
+                    <svg key={i} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                    </svg>
+                  ))}
+                </div>
+                <p className={styles.name}>No hay valoraciones disponibles</p>
+              </div>
+            </div>
+            <p className={styles.message}>
+              <span 
+                onClick={() => router.push('/login')} 
+                className={styles.loginLink}
+                style={{ color: 'blue', textDecoration: 'underline' }}
+              >
+                ¡Inicia sesión
+              </span> como fisioterapeuta y sé el primero en valorarnos!
+            </p>
+          </div>
+        </div>
       ) : (
         <div className={styles.ratingsGrid} style={{ justifyContent: 'center' }}>
           {ratings.map((rating) => (
             <div 
               key={rating.id} 
               className={`${styles.card} ${styles.cardHover}`} 
-              style={{ width: '400px', height: 'auto' }} // Increase card width
+              style={{ width: '500px', height: 'auto' }} // Increase card width
             >
               <div className={styles.header}>
                 <div className={styles.image}>
@@ -361,8 +383,8 @@ const TopRatings: React.FC = () => {
                   <Image 
                     src={rating.physiotherapist_details.photo} 
                     alt={rating.physiotherapist_details?.full_name || 'Fisioterapeuta anónimo'}
-                    width={80} // Increase image size
-                    height={80} // Increase image size
+                    width={100}
+                    height={100}
                     className={styles.profileImage}
                     onError={(e) => {
                       e.currentTarget.src = '/default-avatar.png';

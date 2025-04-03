@@ -111,7 +111,7 @@
 }
 
 .rateButton:hover {
-  background-color: #1848A3;
+  background-color: #1E5ACD;
 }
 
 .ratingForm {
@@ -120,7 +120,7 @@
   padding: 1.5rem;
   background-color: white;
   border-radius: 0.5rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 6px -1px 253240, 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .ratingForm h3 {
@@ -128,7 +128,7 @@
   margin-bottom: 1rem;
   font-size: 1.25rem;
   font-weight: 600;
-  color: #333;
+  color: #253240;
 }
 
 .starsContainer {
@@ -141,7 +141,7 @@
 .interactiveStar {
   height: 2rem;
   width: 2rem;
-  color: rgba(34, 197, 94, 1);
+  color: #05AC9C;
   cursor: pointer;
   transition: transform 0.1s;
 }
@@ -186,7 +186,7 @@
 }
 
 .submitButton:hover {
-  background-color: #1848A3;
+  background-color: #1E5ACD;
 }
 
 .confirmationMessage {

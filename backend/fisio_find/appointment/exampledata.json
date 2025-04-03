@@ -144,6 +144,7 @@
                 }
             },
             "gender": "M",
+            "plan": 1,
             "specializations": [
                 1,
                 2
@@ -178,6 +179,7 @@
             "collegiate_number": "COL2",
             "services": {},
             "gender": "M",
+            "plan": 1,
             "specializations": [
                 1,
                 3
@@ -212,6 +214,7 @@
             "collegiate_number": "COL3",
             "services": {},
             "gender": "M",
+            "plan": 1,
             "specializations": [
                 1,
                 4
@@ -246,6 +249,7 @@
             "collegiate_number": "COL4",
             "services": {},
             "gender": "M",
+            "plan": 2,
             "specializations": [
                 5
             ]
@@ -279,6 +283,7 @@
             "collegiate_number": "COL5",
             "services": {},
             "gender": "M",
+            "plan": 2,
             "specializations": [
                 6,
                 1
