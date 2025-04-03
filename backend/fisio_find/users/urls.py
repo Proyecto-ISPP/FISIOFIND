@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, re_path
 from .views import *
 from django.conf import settings
 from django.conf.urls.static import static
@@ -9,6 +9,7 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),
     path('check-role/', check_role_view, name='check_role'),
     path('physio/register/', physio_register_view, name='physio_register'),
+    re_path(r'^register/verified/(?P<token>.*)/$', verify_registration, name='verify_registration'),
     path('physio/validate/', validate_physio_registration, name='validate_physio_registration'),
     path('physio/payment/', process_payment, name='process_payment'),
     path('physio/update/', physio_update_view, name='physio_update'),

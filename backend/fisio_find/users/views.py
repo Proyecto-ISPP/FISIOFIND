@@ -3,41 +3,28 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status, generics
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework import generics
+from .serializers import PatientRegisterSerializer, PhysioUpdateSerializer, PhysioRegisterSerializer
+from .serializers import PhysioSerializer, PatientSerializer, AppUserSerializer
+from .models import AppUser, Physiotherapist, Patient, Specialization, Video
 from django.http import HttpResponse, StreamingHttpResponse
 from django.conf import settings
 from django.shortcuts import get_object_or_404
-from django.conf import settings
 
 import boto3
 import logging
 import stripe
 import json
 
-from .serializers import (
-    PatientRegisterSerializer,
-    PhysioRegisterSerializer,
-    PhysioSerializer,
-    PatientSerializer,
-    AppUserSerializer,
-    VideoSerializer,
-    PhysioUpdateSerializer,
-)
-
-from .models import (
-    Physiotherapist, 
-    Patient, 
-    AppUser, 
-    Video , 
-    Specialization)
-
 from .permissions import (
     IsPatient,
     IsPhysiotherapist,
     IsPhysioOrPatient,
-    IsAdmin,
 )
+
 from users.util import check_service_json
+from .emailUtils import send_registration_confirmation_email  
+from django.core import signing
+
 
 class PatientProfileView(generics.RetrieveAPIView):
     permission_classes = [IsPatient]
@@ -77,9 +64,79 @@ class PatientProfileView(generics.RetrieveAPIView):
 def patient_register_view(request):
     serializer = PatientRegisterSerializer(data=request.data)
     if serializer.is_valid():
-        serializer.save()
-        return Response({"message": "Paciente registrado correctamente"}, status=status.HTTP_201_CREATED)
+        patient = serializer.save()
+
+        user_id = patient.id 
+        email = patient.user.email 
+        first_name = patient.user.first_name
+
+        email_sent = send_registration_confirmation_email(user_id, email, first_name)
+
+        if email_sent:
+            return Response({
+                "message": "Paciente registrado correctamente. Revisa tu correo para confirmar tu cuenta."
+            }, status=status.HTTP_201_CREATED)
+        else:
+            return Response({
+                "message": "Paciente registrado correctamente, pero hubo un problema al enviar el correo de confirmación. Por favor, contacta soporte.",
+                "warning": "No se pudo enviar el correo de confirmación."
+            }, status=status.HTTP_201_CREATED)
+
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+def verify_user_and_update_status(user_id):
+    """
+    Función para cambiar el estado del usuario a verified y devolver una Response.
+    """
+    try:
+        user = AppUser.objects.get(id=user_id)  
+        user.account_status = 'ACTIVE'
+        user.save()
+        return Response({
+            "message": "Usuario verificado exitosamente.",
+            "status": "success"
+        }, status=status.HTTP_200_OK)
+    except Patient.DoesNotExist:
+        return Response({
+            "error": f"No se encontró el usuario con ID {user_id}.",
+            "status": "error"
+        }, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({
+            "error": "Ocurrió un error al verificar el usuario.",
+            "status": "error"
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def verify_registration(request, token):
+    """
+    Vista para verificar el token de registro y actualizar el estado del usuario.
+    Esta vista recibe una solicitud GET con el token en la URL y devuelve una respuesta JSON.
+    """
+    try:
+        data = signing.loads(token, salt='registration-confirm', max_age=86400)
+        user_id = data['user_id']
+        response = verify_user_and_update_status(user_id)
+        return response
+
+    except signing.SignatureExpired:
+        return Response({
+            "error": "El enlace de confirmación ha expirado. Por favor, solicita un nuevo enlace.",
+            "status": "error"
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+    except signing.BadSignature:
+        return Response({
+            "error": "Enlace de confirmación inválido. Por favor, verifica el enlace o solicita uno nuevo.",
+            "status": "error"
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+    except Exception as e:
+        return Response({
+            "error": "Ocurrió un error al procesar tu solicitud. Inténtalo de nuevo más tarde.",
+            "status": "error"
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['POST'])
@@ -330,7 +387,7 @@ def physio_create_service_view(request):
     
     # Obtener el fisioterapeuta asociado al usuario autenticado
     physio = get_object_or_404(Physiotherapist, user=request.user)
-    
+
     # Obtener servicios existentes
     existing_services = physio.services or {}
 
@@ -341,8 +398,8 @@ def physio_create_service_view(request):
         return Response({"error": "Formato de servicios inválido."}, status=status.HTTP_400_BAD_REQUEST)
     except Exception:
         return Response({"error": "Formato de servicios inválido."}, status=status.HTTP_400_BAD_REQUEST)
-    
-    
+
+
     # Actualizar servicios existentes o añadir nuevos
     service_id = new_service.get('id')
     service_updated = False
@@ -566,7 +623,7 @@ def delete_video(request, video_id):
     try:
         video = Video.objects.get(id=video_id)
         print(f"Video encontrado: {video}")  # Depuración
-    
+
         if not hasattr(user, 'physio') or video.physiotherapist.id != user.physio.id:
             return Response({"error": "No tienes permiso para eliminar este video"}, status=status.HTTP_403_FORBIDDEN)
 
@@ -577,7 +634,7 @@ def delete_video(request, video_id):
 
     except Video.DoesNotExist:
         return Response({"error": "Video no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-    
+
 
 @api_view(['GET'])
 @permission_classes([IsPhysioOrPatient])  
