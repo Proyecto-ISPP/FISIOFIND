@@ -1,13 +1,131 @@
-## Changelog - 5.0.0
+## Changelog - 3.0.0
 
 ### Features
-
+- feat: changelog nuevo
+- Merge pull request #440 from Proyecto-ISPP/feat/doc-ia-report-week-9
+- feat: Reporte de ia para presentación del 04/04
+- feat: cambios
+- feat: nuevas líneas
+- feat: prueba
+- feat: prueba
+- feat: prueba
+- feat: nueva versión
+- feat: prueba de nuevo
+- feat: cambio en el archivo
+- feat: añadido primera version changelog
+- Merge pull request #412 from Proyecto-ISPP/feature/videollamadas-citas
+- feat:Modificaciones en frontend para integrar videollamadas a los nuevos requisitos
+- feat:Modificaciones en el backend para sala test y nuevas condiciones
+- feat: Información en página de pago
+- Merge pull request #422 from Proyecto-ISPP/feat/servidor-turn
+- feat: Cambios para el servidor turn en videollamadas
+- feat: Script despliegue continuo casi definitivo de frontend
+- feat: Cambios en el workflow de CD backend
+- Merge pull request #419 from Proyecto-ISPP/feat/workflows-CD
+- feat: Añadir scripts de despliegue continuo
+- feat: Crear workflow de PRs automáticas main <- develop
+- feat: Añadir ips a allowed origins
+- Merge pull request #413 from Proyecto-ISPP/feat/preparar-despliegue-back
+- feat: preparacion despliegue back
+- feat: Listado de videollamadas con activacion segun hora de la cita
+- feat: Vincular modelo Room a Usuario y Cita
+- feat: Vincular CRUD de citas con Videollamada
+- Merge pull request #404 from Proyecto-ISPP/feat/solucionar-vulnerabilidades-dependencias
 ### Fixes
 - fix: cambios categorias changelog
+- Merge pull request #431 from Proyecto-ISPP/hotfix/bug-servicios-cuestionarios
+- fix: unificados estilos de alertas y ventanas de confirmacion
+- Merge pull request #428 from Proyecto-ISPP/hotfix/corrección-video-serializer
+- fix: prueba
+- fix: changelog sin tags
+- fix: arreglar changelog vacio
+- fix: cambio con auto-changelog
+- fix: corrección error
+- Merge pull request #434 from Proyecto-ISPP/hotfix/bug-citas-seleccion-dia
+- fix: añadido formato de alerta
+- fix: ya no se crea la cita cuando se introducen datos invalidos en la tarjeta
+- fix: arreglado poder crear citas con menos de 48h de antelación
+- fix:Corregido tiempo en eliminar las videollamadas pasadas
+- fix: arreglado problema con las salas de prueba
+- fix: añadir hover al pasar por los días del calendario
+- fix: Bugs sobre cuestionarios y servicios arreglados
+- fix: añadida concordancia entre el serializer y el modelo de video
+- fix: Salir de la llamada sin eliminarla
+- fix: Texto botón de pago
+- fix: corrección de flujo de creación de citas (tramo horario)
+- fix: arreglo de flujo de cancelación de citas
+- fix: benji esta aweonao
+- fix: soy tonto
+- fix: Ajustar comando bash
+- Merge pull request #420 from Proyecto-ISPP/feat/workflows-CD
+- fix: Cambio en la ruta del script de despliegue
+- fix: Cambio nombre workflow
+- Merge pull request #417 from Proyecto-ISPP/fix/settings-despliegue
+- fix: ultimo cambio en settings.py
+- Merge pull request #416 from Proyecto-ISPP/fix/settings.py
+- fix: arreglar settings.py
+- fix: Eliminar migraciones del control de versiones
+- fix: borrado frontend/app/videocalls/tools/body-highlighter/package-lock.json para evitar falsos positivos de vulnerabilidades en dependencias por dependabot
+- fix: actualizada version de django en requirements.txt para solucionar vulnerabilidades en dependencias
 ### Documentation
-
+- docs: update CHANGELOG for 5.0.0
+- docs: update CHANGELOG for 4.0.0
+- docs: update CHANGELOG for 3.0.0
+- Merge pull request #406 from Proyecto-ISPP/docs/doc-feedback-28-03
+- docs: Separación por idiomas
+- Merge pull request #405 from Proyecto-ISPP/docs/sprint-planning-3
+- docs: Documento de feedback finalizado
+- Merge pull request #403 from Proyecto-ISPP/docs/acta-reunion-g3-15-03-2025
+- docs: sprint planning 3 terminado
+- docs: Actualizados los títulos y enlaces de issues asignadas
+- docs: Primera versión del documento
+- docs: añadida acta de reunion g3 15-03-2025
 ### Branch Merges
-
+- Merge branch 'feat/changelog.yml' of https://github.com/Proyecto-ISPP/FISIOFIND into feat/changelog.yml
+- Merge branch 'feat/changelog.yml' of https://github.com/Proyecto-ISPP/FISIOFIND into feat/changelog.yml
+- Merge branch 'main' into develop
+- Merge branch 'feat/changelog.yml' of https://github.com/Proyecto-ISPP/FISIOFIND into feat/changelog.yml
+- Merge branch 'feat/changelog.yml' of https://github.com/Proyecto-ISPP/FISIOFIND into feat/changelog.yml
+- Merge branch 'feature/videollamadas-citas' of https://github.com/Proyecto-ISPP/FISIOFIND into feature/videollamadas-citas
+- Merge branch 'develop' into feature/videollamadas-citas
+- Merge branch 'main' of github.com:Proyecto-ISPP/FISIOFIND into feat/workflows-CD
 ### Pull Request Merges
-
+- Merge pull request #437 from Proyecto-ISPP/develop
+- Merge pull request #440 from Proyecto-ISPP/feat/doc-ia-report-week-9
+- Merge pull request #431 from Proyecto-ISPP/hotfix/bug-servicios-cuestionarios
+- Merge pull request #428 from Proyecto-ISPP/hotfix/corrección-video-serializer
+- Merge pull request #434 from Proyecto-ISPP/hotfix/bug-citas-seleccion-dia
+- Merge pull request #412 from Proyecto-ISPP/feature/videollamadas-citas
+- Merge pull request #424 from Proyecto-ISPP/feat/pago-de-citas
+- Merge pull request #406 from Proyecto-ISPP/docs/doc-feedback-28-03
+- Merge pull request #423 from Proyecto-ISPP/develop
+- Merge pull request #422 from Proyecto-ISPP/feat/servidor-turn
+- Merge pull request #420 from Proyecto-ISPP/feat/workflows-CD
+- Merge pull request #419 from Proyecto-ISPP/feat/workflows-CD
+- Merge pull request #411 from Proyecto-ISPP/docs/politica-seguridad
+- Merge pull request #418 from Proyecto-ISPP/main
+- Merge pull request #417 from Proyecto-ISPP/fix/settings-despliegue
+- Merge pull request #416 from Proyecto-ISPP/fix/settings.py
+- Merge pull request #415 from Proyecto-ISPP/fix/asgi
+- Merge pull request #414 from Proyecto-ISPP/develop
+- Merge pull request #413 from Proyecto-ISPP/feat/preparar-despliegue-back
+- Merge pull request #405 from Proyecto-ISPP/docs/sprint-planning-3
+- Merge pull request #404 from Proyecto-ISPP/feat/solucionar-vulnerabilidades-dependencias
+- Merge pull request #403 from Proyecto-ISPP/docs/acta-reunion-g3-15-03-2025
+- Merge pull request #223 from Proyecto-ISPP/dependabot/pip/backend/django-5.1.7
+- Merge pull request #402 from Proyecto-ISPP/main
 ### Other Changes
+- Merge remote-tracking branch 'origin' into feat/changelog.yml
+- Merge remote-tracking branch 'origin/develop' into feat/changelog.yml
+- Update backend/fisio_find/users/views.py
+- Update backend/fisio_find/users/views.py
+- 🔄 Update Changelog
+- 🔖 Actualización automática del Changelog
+- 🔖 Actualización automática del Changelog
+- 📜 Update CHANGELOG [skip ci]
+- Update asgi.py
+- Create SECURITY.md
+- Update README.md
+- Update README.md
+- Update README.md
+- build(deps): bump django from 5.1.6 to 5.1.7 in /backend
