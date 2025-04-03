@@ -35,10 +35,6 @@ jobs:
           echo "## 🚀 Changelog - $NEW_TAG" > CHANGELOG.md
           echo "" >> CHANGELOG.md
 
-          echo "### 🧠 Summary" >> CHANGELOG.md
-          echo "**Generando resumen con IA...**" >> CHANGELOG.md
-          echo "" >> CHANGELOG.md
-
           echo "### ✨ Features" >> CHANGELOG.md
           git log --pretty=format:"- %s (@%an)" --grep="^[Ff]eat" $(git tag --sort=-v:refname | head -n 1)..HEAD >> CHANGELOG.md
           echo "" >> CHANGELOG.md
@@ -61,27 +57,6 @@ jobs:
 
           echo "### 🌀 Other Changes" >> CHANGELOG.md
           git log --pretty=format:"- %s (@%an)" --invert-grep --grep="^[Ff]eat" --grep="^[Ff]ix" --grep="^[Dd]ocs" --grep="Merge branch" --grep="Merge pull request" $(git tag --sort=-v:refname | head -n 1)..HEAD >> CHANGELOG.md
-
-      - name: Generate Changelog Summary with GitHub API
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          SUMMARY=$(gh api graphql -f query='
-          mutation {
-            copilotChatCompletion(input: { messages: [
-              {role: SYSTEM, content: "Eres un asistente que resume cambios en una frase."}, 
-              {role: USER, content: "Resume estos cambios en una frase: '"$(tail -n 20 CHANGELOG.md)"'"}
-            ] }) {
-              choices {
-                message {
-                  content
-                }
-              }
-            }
-          }' | jq -r '.data.copilotChatCompletion.choices[0].message.content')
-
-          echo "Resumen generado: $SUMMARY"
-          sed -i "s|**Generando resumen con IA...**|$SUMMARY|" CHANGELOG.md
 
       - name: Commit and push CHANGELOG.md
         run: |
