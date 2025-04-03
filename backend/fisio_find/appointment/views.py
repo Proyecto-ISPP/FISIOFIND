@@ -25,6 +25,7 @@ from urllib.parse import unquote
 import datetime as dt
 from users.util import validate_service_with_questionary
 from videocall.models import Room
+import pytz
 
 
 class StandardResultsSetPagination(PageNumberPagination):
@@ -49,11 +50,12 @@ def update_schedule(data):
         return Response({"error": "No se ha definido un horario para este fisioterapeuta"}, status=status.HTTP_404_NOT_FOUND)
 
     # Obtener las citas actualizadas
+    spain_tz = pytz.timezone('Europe/Madrid')
     appointments = Appointment.objects.filter(physiotherapist=physiotherapist)
     current_schedule['appointments'] = [
         {
-            "start_time": appointment.start_time.strftime('%Y-%m-%dT%H:%M:%S'),
-            "end_time": appointment.end_time.strftime('%Y-%m-%dT%H:%M:%S'),
+            "start_time": appointment.start_time.astimezone(spain_tz).strftime('%Y-%m-%dT%H:%M:%S%z'),
+            "end_time": appointment.end_time.astimezone(spain_tz).strftime('%Y-%m-%dT%H:%M:%S%z'),
             "status": appointment.status
         }
         for appointment in appointments
@@ -102,8 +104,6 @@ def create_appointment_patient(request):
     except Exception:
         return Response({"error": "Debes de enviar un cuestionario válido"}, status=status.HTTP_400_BAD_REQUEST)
     
-    appointments = schedule.get('appointments', [])
-
     # Parsear fechas de la solicitud
     start_time = parse_datetime(data['start_time'])
     if not is_aware(start_time):
@@ -134,7 +134,7 @@ def create_appointment_patient(request):
         return Response({"error": "El horario solicitado no está dentro del horario del fisioterapeuta"}, status=status.HTTP_400_BAD_REQUEST)
 
     # 3. Verificar si la fecha está en excepciones
-    exception_slots = exceptions.get(start_time.date().isoformat(), [])
+    exception_slots = exceptions.get(start_time.strftime('%Y-%m-%d'), [])
     for ex in exception_slots:
         ex_start = datetime.strptime(ex['start'], "%H:%M").time()
         ex_end = datetime.strptime(ex['end'], "%H:%M").time()
@@ -148,7 +148,7 @@ def create_appointment_patient(request):
         update_schedule(data)
         if isinstance(payment_data, Response):
             return payment_data
-        send_appointment_email(appointment.id, 'booked')
+        # send_appointment_email(appointment.id, 'booked')
 
         # Crear videollamada
         Room.objects.create(
@@ -568,6 +568,9 @@ def accept_alternative(request, appointment_id):
     data["alternatives"] = ""  # Eliminar todas las alternativas
     data["status"] = "confirmed"
 
+    data["start_time"] = data["start_time"].replace("Z", "")
+    data["end_time"] = data["end_time"].replace("Z", "")
+
     serializer = AppointmentSerializer(appointment, data=data, partial=True)
 
     if serializer.is_valid():
@@ -601,8 +604,8 @@ def confirm_appointment(request, appointment_id):
     # Cambiar el estado a "confirmed"
     appointment.status = "confirmed"
     appointment.save()
-    send_appointment_email(appointment.id, 'confirmed')
-
+    # send_appointment_email(appointment.id, 'confirmed')
+    
     # Serializar la cita actualizada
     serializer = AppointmentSerializer(appointment)
 
