@@ -318,17 +318,14 @@ def physio_create_service_view(request):
     new_service = request.data
     
     # Actualizar servicios existentes o añadir nuevos
-    service_title = new_service.get('title')
+    service_id = new_service.get('id')
     service_updated = False
 
-    # Buscar si el servicio ya existe por título
-    for service_id, service_data in existing_services.items():
-        if service_data.get('title') == service_title:
-            # Actualizar el servicio existente
-            existing_services[service_id].update(new_service)
-            service_updated = True
-            break
-
+    # Buscar si el servicio ya existe por ID
+    if service_id and service_id in existing_services:
+        # Actualizar el servicio existente
+        existing_services[service_id].update(new_service)
+        service_updated = True
     if not service_updated:
         # Si el servicio no existe, asignar una nueva ID única y añadirlo completo
         new_id = 1
