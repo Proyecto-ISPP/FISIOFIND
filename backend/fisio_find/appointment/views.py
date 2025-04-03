@@ -22,6 +22,7 @@ from django.core.signing import BadSignature, SignatureExpired
 from rest_framework.permissions import AllowAny
 from urllib.parse import unquote
 import json
+from videocall.models import Room
 
 
 class StandardResultsSetPagination(PageNumberPagination):
@@ -73,13 +74,22 @@ def create_appointment_patient(request):
 
     serializer = AppointmentSerializer(data=data)
     if serializer.is_valid():
-        serializer.save()
+        appointment = serializer.save()
         print(f"Datos de la cita: {serializer.data['service']['price']}")
         payment_data = create_payment_setup(serializer.data['id'], serializer.data['service']['price'] * 100, request.user)
         update_schedule(data)
         if isinstance(payment_data, Response):
             return payment_data
-        send_appointment_email(serializer.data['id'], 'booked')
+        send_appointment_email(appointment.id, 'booked')
+
+        # Crear videollamada
+        Room.objects.create(
+            physiotherapist=appointment.physiotherapist,
+            patient=appointment.patient,
+            appointment=appointment
+        )
+        
+
         return Response({'appointment_data': serializer.data, 'payment_data': payment_data}, status=status.HTTP_201_CREATED)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -97,11 +107,20 @@ def create_appointment_physio(request):
 
     serializer = AppointmentSerializer(data=data)
     if serializer.is_valid():
-        serializer.save()
+        appointment = serializer.save()
         update_schedule(data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        # Crear videollamada
+        Room.objects.create(
+            physiotherapist=appointment.physiotherapist,
+            patient=appointment.patient,
+            appointment=appointment
+        )
+       
+        return Response(AppointmentSerializer(appointment).data, status=status.HTTP_201_CREATED)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 # Buscar una forma de filtrar mas sencilla *funciona pero muchas lineas*
 
@@ -629,6 +648,9 @@ def delete_appointment(request, appointment_id):
     
     # Enviar el correo con el rol del usuario
     send_appointment_email(appointment.id, 'canceled', role)
+
+    # Eliminar la sala asociada, si existe
+    Room.objects.filter(appointment=appointment).delete()
 
     # Eliminar la cita
     appointment.delete()

@@ -18,7 +18,7 @@ const VideoGrid = ({
         <div className={styles.videoContainer}>
           <video 
             ref={localVideoRef} 
-            className={styles.localVideo} 
+            className={`${styles.localVideo} ${styles.normalVideo}`} 
             autoPlay 
             muted
             playsInline
@@ -41,7 +41,7 @@ const VideoGrid = ({
         <div className={styles.videoContainer}>
           <video 
             ref={localVideoRef} 
-            className={styles.localVideo} 
+            className={`${styles.localVideo} ${styles.normalVideo}`} 
             autoPlay 
             muted
             playsInline
@@ -62,7 +62,7 @@ const VideoGrid = ({
       <div className={styles.videoContainer}>
         <video 
           ref={remoteVideoRef} 
-          className={styles.remoteVideo} 
+          className={styles.remoteVideo}
           autoPlay 
           playsInline
         />
