@@ -67,11 +67,18 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh extension install github/gh-copilot
 
+      - name: Verify GitHub CLI Copilot Extension
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh extension list
+
+
       - name: Generate Changelog Summary with Copilot
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          SUMMARY=$(gh copilot suggest --prompt "Resume estos cambios en una frase: $(tail -n 20 CHANGELOG.md)")
+          SUMMARY=$(echo "Resume estos cambios en una frase: $(tail -n 20 CHANGELOG.md)" | gh copilot suggest)
+          echo "Resumen generado: $SUMMARY"
           sed -i "s|**Generando resumen con IA...**|$SUMMARY|" CHANGELOG.md
 
       - name: Commit and push CHANGELOG.md
