@@ -49,7 +49,9 @@ jobs:
               for category in "feat" "fix" "docs"; do
                   capitalized=$(echo "$category" | sed 's/.*/\u&/')
                   echo "Buscando commits de la categoría: $capitalized"
-                  commits=$(git log --since=$(git tag --sort=-v:refname | head -n 1) --pretty=format:"- %s (by %an)" --grep="^[${category^}${category}]" --date=short | grep "$date")
+                  
+                  # Usamos una expresión regular para permitir coincidencias con mayúsculas/minúsculas
+                  commits=$(git log --since=$(git tag --sort=-v:refname | head -n 1) --pretty=format:"- %s (by %an)" --grep="^${category}" --date=short | grep -i "$date")
 
                   if [[ -n "$commits" ]]; then
                       echo "#### ${capitalized}s" >> CHANGELOG.md
