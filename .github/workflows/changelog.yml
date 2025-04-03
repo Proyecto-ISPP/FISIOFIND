@@ -28,7 +28,11 @@ jobs:
           fi
           echo "NEW_TAG=$new_tag" >> $GITHUB_ENV
           echo "Nueva tag a crear: $new_tag"
-
+          
+      - name: Debug NEW_TAG
+        run: |
+          echo "Verificando el valor de NEW_TAG: $NEW_TAG"
+        
       - name: Generate grouped changelog
         id: generate-changelog
         run: |
@@ -36,11 +40,15 @@ jobs:
           echo "" >> CHANGELOG.md
 
           # Obtener fechas únicas de los commits en orden descendente
+          echo "Obteniendo las fechas de los commits desde la última tag..."
+          git log --since=$(git tag --sort=-v:refname | head -n 1) --pretty=format:"%ad" --date=short | sort -ur
+          
           git log --since=$(git tag --sort=-v:refname | head -n 1) --pretty=format:"%ad" --date=short | sort -ur | while read -r date; do
               echo "### $date" >> CHANGELOG.md
               
               for category in "feat" "fix" "docs"; do
                   capitalized=$(echo "$category" | sed 's/.*/\u&/')
+                  echo "Buscando commits de la categoría: $capitalized"
                   commits=$(git log --since=$(git tag --sort=-v:refname | head -n 1) --pretty=format:"- %s (by %an)" --grep="^[${category^}${category}]" --date=short | grep "$date")
 
                   if [[ -n "$commits" ]]; then
@@ -78,5 +86,6 @@ jobs:
 
       - name: Create new tag
         run: |
+          echo "Creando nueva tag: $NEW_TAG"
           git tag $NEW_TAG
           git push origin $NEW_TAG
