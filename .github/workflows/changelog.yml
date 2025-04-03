@@ -12,7 +12,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Necesario para obtener todas las tags
+          fetch-depth: 0
 
       - name: Get latest tag
         id: get-latest-tag
@@ -29,34 +29,44 @@ jobs:
           echo "NEW_TAG=$new_tag" >> $GITHUB_ENV
           echo "Nueva tag a crear: $new_tag"
 
-      - name: Generate changelog
+      - name: Generate grouped changelog
         id: generate-changelog
         run: |
           echo "## Changelog - $NEW_TAG" > CHANGELOG.md
           echo "" >> CHANGELOG.md
-          
-          echo "### Features" >> CHANGELOG.md
-          git log --pretty=format:"- %s" --grep="^[Ff]eat" $(git tag --sort=-v:refname | head -n 1)..HEAD >> CHANGELOG.md
-          echo "" >> CHANGELOG.md
-          
-          echo "### Fixes" >> CHANGELOG.md
-          git log --pretty=format:"- %s" --grep="^[Ff]ix" $(git tag --sort=-v:refname | head -n 1)..HEAD >> CHANGELOG.md
-          echo "" >> CHANGELOG.md
-          
-          echo "### Documentation" >> CHANGELOG.md
-          git log --pretty=format:"- %s" --grep="^[Dd]ocs" $(git tag --sort=-v:refname | head -n 1)..HEAD >> CHANGELOG.md
-          echo "" >> CHANGELOG.md
-          
-          echo "### Branch Merges" >> CHANGELOG.md
-          git log --pretty=format:"- %s" --grep="Merge branch" $(git tag --sort=-v:refname | head -n 1)..HEAD >> CHANGELOG.md
-          echo "" >> CHANGELOG.md
-          
-          echo "### Pull Request Merges" >> CHANGELOG.md
-          git log --pretty=format:"- %s" --grep="Merge pull request" $(git tag --sort=-v:refname | head -n 1)..HEAD >> CHANGELOG.md
-          echo "" >> CHANGELOG.md
-          
-          echo "### Other Changes" >> CHANGELOG.md
-          git log --pretty=format:"- %s" --invert-grep --grep="^[Ff]eat" --grep="^[Ff]ix" --grep="^[Dd]ocs" --grep="Merge branch" --grep="Merge pull request" $(git tag --sort=-v:refname | head -n 1)..HEAD >> CHANGELOG.md
+
+          # Obtener fechas únicas de los commits en orden descendente
+          git log --since=$(git tag --sort=-v:refname | head -n 1) --pretty=format:"%ad" --date=short | sort -ur | while read -r date; do
+              echo "### $date" >> CHANGELOG.md
+              
+              for category in "feat" "fix" "docs"; do
+                  capitalized=$(echo "$category" | sed 's/.*/\u&/')
+                  commits=$(git log --since=$(git tag --sort=-v:refname | head -n 1) --pretty=format:"- %s (by %an)" --grep="^[${category^}${category}]" --date=short | grep "$date")
+
+                  if [[ -n "$commits" ]]; then
+                      echo "#### ${capitalized}s" >> CHANGELOG.md
+                      echo "$commits" >> CHANGELOG.md
+                      echo "" >> CHANGELOG.md
+                  fi
+              done
+
+              # Branch Merges
+              merges=$(git log --since=$(git tag --sort=-v:refname | head -n 1) --pretty=format:"- %s (by %an)" --grep="Merge branch" --date=short | grep "$date")
+              if [[ -n "$merges" ]]; then
+                  echo "#### Branch Merges" >> CHANGELOG.md
+                  echo "$merges" >> CHANGELOG.md
+                  echo "" >> CHANGELOG.md
+              fi
+
+              # Pull Request Merges
+              pr_merges=$(git log --since=$(git tag --sort=-v:refname | head -n 1) --pretty=format:"- %s (by %an)" --grep="Merge pull request" --date=short | grep "$date")
+              if [[ -n "$pr_merges" ]]; then
+                  echo "#### Pull Request Merges" >> CHANGELOG.md
+                  echo "$pr_merges" >> CHANGELOG.md
+                  echo "" >> CHANGELOG.md
+              fi
+
+          done
 
       - name: Commit and push CHANGELOG.md
         run: |
