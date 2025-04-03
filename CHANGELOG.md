@@ -1,27 +1,947 @@
-## Changelog - 3.0.0
+## Changelog - 4.0.0
 
 ### Features
-- feat: changelog nuevo
-- feat: cambios
-- feat: nuevas líneas
-- feat: prueba
-- feat: prueba
-- feat: prueba
-- feat: nueva versión
-- feat: prueba de nuevo
-- feat: cambio en el archivo
-- feat: añadido primera version changelog
+- Merge pull request #440 from Proyecto-ISPP/feat/doc-ia-report-week-9
+- feat: Reporte de ia para presentación del 04/04
+- feat:Modificaciones en frontend para integrar videollamadas a los nuevos requisitos
+- feat:Modificaciones en el backend para sala test y nuevas condiciones
+- feat: Información en página de pago
+- Merge pull request #422 from Proyecto-ISPP/feat/servidor-turn
+- feat: Cambios para el servidor turn en videollamadas
+- feat: Script despliegue continuo casi definitivo de frontend
+- feat: Cambios en el workflow de CD backend
+- feat: Añadir scripts de despliegue continuo
+- feat: Crear workflow de PRs automáticas main <- develop
+- feat: Añadir ips a allowed origins
+- feat: preparacion despliegue back
+- feat: Listado de videollamadas con activacion segun hora de la cita
+- feat: Vincular modelo Room a Usuario y Cita
+- feat: Vincular CRUD de citas con Videollamada
+- Merge pull request #377 from Proyecto-ISPP/hotfix/admin-buscar-pagos-y-tratamientos
+- feat: añadido boton de videos en los perfiles
+- feat: añadida opcion de busqueda para ejercicios, sesiones, tratamientos y pagos
+- Merge pull request #370 from Proyecto-ISPP/hotfix/eliminar-mockups-vista-videollamada
+- Merge pull request #373 from Proyecto-ISPP/hotfix/añadir-buscar-admin
+- feat: añadidos buscadores a paneles de admin de paciente, fisio y appointment
+- feat:borrados mockups de vista videollamadas
+- feat: borrar gestion pagos
+- feat: Lógica de pagos de planes de precio.
+- Merge pull request #364 from Proyecto-ISPP/hotfix/integracion-tratamientos
+- feat: añadido doc de informe de usuarios piloto sprint 2
+- feat: creación de tratamiento con pacientes con citas finalizadas
+- feat: Incluir el pago en los planes de precio
+- feat: implementación de cancelación de citas y facturas
+- feat: inicio de pagos
+- feat: cambiado pacientes por ids para que sea por email
+- feat: ahora se puede buscar por dni desde admin de django
+- feat: añadir validaciones de usuarios en admin de django
+- feat: se puede seleccionar plan de precios y se almacena en la base de datos
+- feat Seleccion multiples de dias para una sesion
+- feat: Listado y modificación de estado de cuenta de admin
+- feat: frontend decente
+- feat:subida,edicion,visualizacion y eliminacion de video
+- feat: añadida función para confirmar una alternativa
+- feat: añadida seleccion de especializacion para los fisios
+- feat: implementada la gestión de respuesta al test por parte del paciente
+- feat: botones de información legal
+- feat: pantalla de creación de test de sesión completa
+- feat: mejorar estilos de botones
+- feat: primera versión de la página de cuestionarios
+- feat: si no se ha iniciado sesion eliminar mi perfil de la sidebar
+- feat: diferenciación entre pantalla de tratamiento de fisio y paciente y redirección de navbar
+- feat: Cuestionario preintervención finalizado
+- feat: añadida vista admin de pagos y aclaracion de los atributos de los pagos
+- feat: añadido seguimiento del rembolso
+- Merge pull request #350 from Proyecto-ISPP/feat/gestion-cookies
+- feat: añadido cancelar pago por parte de fisio
+- feat: cambio en la vista del calendario
+- feat: añadida creación de test dentro de una sesión
+- feat: modal de cookies
+- feat: migraciones de tratamiento
+- feat: Gestión de servicios Fisioterapeuta v1.0
+- feat: añadido aceptar alternativas de citas desde email
+- feat: añadido listado de facturas del fisio añadido stripe al package.json
+- feat: Listar los vídeos de cada fisioterapeuta
+- Merge pull request #347 from Proyecto-ISPP/feat/admin-citas
+- feat: Funcionalidad de usuario admin
+- feat: añadidos nuevos casos de envíos de correos
+- feat: funcionalidad de admin para que pueda gestionar las citas terminada
+- feat: descarga de pdfs
+- feat: manejo de errores
+- feat: edicion de perfil de paciente completada
+- feat: crear y borrar documentos en pantalla de términos
+- feat: edicion y borrado de sesiones
+- feat: recuperar borrador de citas
+- feat: confirmación al eliminar ejercicios de la sesión
+- feat: avisos para la creación correcta de series
+- feat: edición de series
+- feat: eliminación de series de ejercicios con modal de confirmación
+- feat: añadir series a ejercicios ya asignados a una sesión
+- feat: mostrar información sobre las series de cada ejercicio
+- feat: formulario en dos pasos para añadir series a la creación de un ejercicio
+- feat: añadidas imagenes a mapas de dolor
+- feat: conectado mapa de dolor entre paciente y fisio con websockets. Ahora pueden interactuar
+- feat: grid para licenias añadido
+- feat: completado pagina de terminos
+- feat: CRUD del modelo video y streaming
+- feat:  workflow de automatización de pagos
+- feat: añadir serie a ejercicio cuando se añade a la sesión
+- feat: creación de ejercicios dentro de sesiones de un tratamiento
+- feat: Captura pago 48h antes y se completa cuando acaba la cita
+- feat: Adición de condiciçon de 48h próximas al momento actual
+- feat: Implementación de pago en diferido
+- feat: añadido mapa de dolor para paciente. Falta conectarlo con websockets
+- Merge pull request #326 from Proyecto-ISPP/feat/enviar-notificaciones-relevantes
+- feat: pagina de terminos y condiciones creada (no funcional)
+- feat: creación de ejercicios y almacenamiento en base de datos
+- feat: Pago de citas v1.0
+- feat: creadas todas las nuevas rutas
+- feat: correo electrónico notificando alternativas
+- feat: cambiado idioma de django a español y zona horaria a España
+- feat: añadido mostrar al fisio todo el dinero que falta por cobrar
+- feat: añadido seguridad solo el paciente puede acceder a su factura
+- feat: creacion de la factura y descarga automatica mediante url
+- feat: primeras pruebas en el backend
+- feat: posibilidad de aceptar cita desde email
+- feat: add exercise management components and update sidebar
+- feat: lógica de ejercicios creada
+- feat: añadido el sistema de envío de correos
+- feat: añadido solicitar pago y guardar en base de datos, devolver dinero cuando se cancela, confirmar cita y obtener detalles del pago
+- feat: creación de modelos para pautar sesiones con ejercicios
+- feat: creación del modelo de archivos y del método create
+- feat: listado, actualización y eliminación de pacientes y fisioterapeutas
+- feat: nuevos modelos añadidos a la vista de modelos de videollamadas
+- feat: middlewares para las pantallas del navbar
+- feat:Añadida lógica para traer datos de backend en dashboard
+- feat:Implementación inicial de dashboard para seguimiento fisio
+- feat:CRUD para tratamientos
+- feat:  Cuestionario preintervencion preguntas tipo texto funcional sin guardado
+- feat: Mostrar cuestionario personalizado
+- feat: aceptar citas por parte de fisio y paciente
+- feat: primera versión del panel de seguimiento de un paciente
+- feat: Backend actualización de servicios y cuestionarios preintervención
+- feat: Implementación de SurveyJS para seguimiento
+- feat: Cambios mínimos
+- feat: Adición de claves Stripe
+- feat: añadidos colores segun estado de cita.
+- feat: Añadir modelo anatómico
+- feat: añadido cancelar automatico, urls y cambiado el atributo de referencia para cancelar
+- feat: creacion de la gestion de pagos, añadido depencencias a requirements y env
+- feat: adecuación del documento de acuerdo con el usuario para fisiofind
+- feat: Primeros pasos modelo anatomico
+- feat: version base del acuerdo con el usuario
+- feat: añadir validación de código de sala
+- feat: terminado calendario disponibilidad de fisio
+- Merge pull request #251 from Proyecto-ISPP/fix/landing-link
+- feat: calendario de gestion horario fisio
+- feat: añadir enlace a la landing
+- feat: comando startapp para despliegue de backend
+- feat: new cors settings
+- feat: añadidos mas hosts permitidos
+- feat: Manejo de rutas en diferentes entornos
+- feat: completado proceso agendar cita como paciente
+- feat: perfil de fisio acabado a falta del calendario
+- feat: mejora visual calendario y modal citas y modificación citas
+- feat: routing reservar cita con fisio
+- feat: corregido modificación perfil con estilos globales
+- feat: medida de seguridad para evitar errores sin un parámetro es null
+- feat: página de error 404 añadida
+- feat: subida y visualizacion de fotos de perfil completada
+- feat: creo que esto se va a romper
+- feat: corrigiendo algunos errores y añadiendo verificacion de rol para redirigir al perfil
+- feat: avances en perfil fisio
+- feat: añadida llamada a la API para crear una cita
+- feat: añadido 2 version del calendario para agendar cita
+- feat: frontend funcionando
+- feat: frontend más estético y lógica funcionando, pero se ha desconfigurado el dropdown
+- feat: gran mejora visual modal modificar cita
+- feat: Borrado de citas siendo paciente o fisioterapeuta
+- feat: HI-002 completada
+- feat: Frontend del registro y mejoras de interfaz
+- feat: Arreglado error y añadido el check_role
+- feat: Update appointment being phyisioterapist or patient
+- feat: caso de uso de búsqueda completo
+- feat: documentacion usuarios piloto finalizada. solo falta evaluacion
+- feat: añadida funcionalidad de seleccionar alternativa de fecha de cita de parte del paciente
+- feat: primera version del perfil de fisios
+- feat: primera version del readme
+- feat: Algo mejorado el frontend
+- feat: hay errores en el frontend pero el backend es estable
+- feat: Mejora visual de la interfaz de detalles de citas
+- feat:añadido paso agendar cita
+- feat: las peticiones al backend funcionan
+- feat: Modificar perfil añadido lógica para foto de perfil
+- feat: cambiada forma de ver rol desde el front para evitar bucles
+- feat: terminado frontend de gestion de citas
+- feat: Merge from 'develop'
+- feat: Seeders de Appointment
+- feat: base de trabajo con las vistas
+- feat: Schedule arreglado duplicacion de dias excepcionales
+- feat: Añadida segurirdad por token y validación de formularios a gestion de terminos
+- feat: búsqueda de fisioterapeutas por nombre y por especialidad
+- feat: trabajando en gestion de usuarios de admin
+- feat: schedule cambiar horario semanal, añadir dias excepcionales y visualizar schedule de un fisio, falta pulir validaciones
+- feat: Añadido permisos a las llamadas listar y crear, cambiada la estructura del codigo de listar
+- feat: crear especialidad del fisioterapeuta al registrar un fisio
+- Merge pull request #225 from Proyecto-ISPP/feat/registro-fisio-frontend
+- feat: crear citas fisio y paciente sin necesidad de su id
+- feat: Re-routing y control de la autenticación en home-page y navbar.
+- feat: Comprobación del correcto funcionamiento de URL y seeders de gestión de citas
+- Merge pull request #198 from Proyecto-ISPP/feat/registro-validacion-fisio
+- feat: Añadir validacion del algoritmo del DNI español
+- feat: gestionada la funcionalidad de actualizar citas ofreciendo alternativas por parte del fisioterapeuta
+- feat: Modificación de perfil realizado
+- Merge pull request #191 from Proyecto-ISPP/feat/admin-gestion-citas
+- feat: mejorado el wizard para agendar citas
+- feat: añadido el wizard para agendar citas
+- feat: Avances en modificación del perfil
+- feat: Endpoint registro fisio con validación.
+- feat/plantilla-request-for-change
+- feat: terminado frontend y backend de admin para gestión de citas. Falta el cómo se representa el json de los servicios porque no está todavía definido.
+- feat: realización del apartado 1 de la retrospectiva del Sprint 1
+- feat: añadido fisio y admin a  admin.py
+- feat: home page y navbar
+- feat: Login de usuarios y registro de pacientes
+- feat: añadida necesidad de ser admin para entrar a la página de admin
+- feat: token añadido a login frontend
+- feat: Login y registro del paciente
+- feat: añadido panel de gestion de usuarios al frontend de admin. Faltaria cambiar estilo y añadir urls del backend
+- feat: Mejora en las videollamadas
+- feat: creacion de side-bar (no funcional)
+- feat: Añadir check-role a las urls de los endpoints
+- feat: Añadir nuevas migraciones
+- feat: Implementar autenticacion con JWT y aumentar duracion de los tokens
+- feat: añadido frontend de gestion de terminos y primera pantalla de admin
+- feat: actualizadas urls de términos para que se pueda acceder poniendo y no la barra diagonal
+- feat: editadas vistas de terminos en django para actualizar tiempos cuando se crea y actualiza un término
+- feat: cambiado archivos de permisos y modelo por cambio en usuario admin
+- feat: añadido tipo de usuario admin
+- feat: añadido script para ejecutar el backend para linux y mac
+- feat: creado esqueleto de vista de gestion de terminos de admin
+- feat: Mejorada la UI de las videollamadas
+- feat: añadidos atributos titulo y descripcion a la entidad de citas
+- feat: implementada llamada al backend para obtener mis citas
+- feat: lista/calendario responsive en mis-citas
+- feat: Primera version arreglada para registro como paciente.
+- feat: actualizadas rutas de la aplicacion para incluir las urls de terminos
+- feat: actualizada vistas de terminos para utilizar generics e imponer permisos
+- feat: Mejorar chat y estructura
+- feat: script de validación de fisios acabado (parece)
+- feat: creado nuevo archivo de permisos para determinar cuando un usuario es admin
+- feat: implementación detalles de evento
+- feat: Añadir dependencias de Selenium para arreglar conflictos
+- feat: añadidos datos de prueba de citas
+- feat: mejora visual del calendario
+- feat: Cambiar el patient serializer para mas claridad
+- feat: Refactorización de gestion_usuarios y creación del modelo Patient.
+- Merge pull request #167 from Proyecto-ISPP/feat/CRUD_citas
+- feat: desarrolladas funcionalidades para crear y listar los terminos
+- feat: añadida app y modelos para la gestion de terminos y condiciones
+- feat: script preliminar de validación de fisios casi acabado
+- feat: calendar component visual improvement
+- feat: primera versión básica del calendario
+- feat: añadido filtro busqueda, validacion para no solapamiento y fecha start antes de fecha end
+- feat: Incluir sala de creación y mejorar salas
+- feat: cambiado a ingles
+- feat: mejoras API CRUD de citas
+- feat: añadido a pantalla admin
+- feat: Añadidos primeros pasos en videollamada
+- feat: creado CRUD de citas
 ### Fixes
-- fix: prueba
-- fix: changelog sin tags
-- fix: arreglar changelog vacio
-- fix: cambio con auto-changelog
-- fix: corrección error
+- Merge pull request #431 from Proyecto-ISPP/hotfix/bug-servicios-cuestionarios
+- fix: unificados estilos de alertas y ventanas de confirmacion
+- Merge pull request #434 from Proyecto-ISPP/hotfix/bug-citas-seleccion-dia
+- fix: añadido formato de alerta
+- fix: ya no se crea la cita cuando se introducen datos invalidos en la tarjeta
+- fix: arreglado poder crear citas con menos de 48h de antelación
+- fix:Corregido tiempo en eliminar las videollamadas pasadas
+- fix: arreglado problema con las salas de prueba
+- fix: añadir hover al pasar por los días del calendario
+- fix: Bugs sobre cuestionarios y servicios arreglados
+- fix: añadida concordancia entre el serializer y el modelo de video
+- fix: Salir de la llamada sin eliminarla
+- fix: Texto botón de pago
+- fix: corrección de flujo de creación de citas (tramo horario)
+- fix: arreglo de flujo de cancelación de citas
+- fix: benji esta aweonao
+- fix: soy tonto
+- fix: Ajustar comando bash
+- Merge pull request #420 from Proyecto-ISPP/feat/workflows-CD
+- fix: Cambio en la ruta del script de despliegue
+- fix: Cambio nombre workflow
+- Merge pull request #417 from Proyecto-ISPP/fix/settings-despliegue
+- fix: ultimo cambio en settings.py
+- Merge pull request #416 from Proyecto-ISPP/fix/settings.py
+- fix: arreglar settings.py
+- fix: Eliminar migraciones del control de versiones
+- fix: borrado frontend/app/videocalls/tools/body-highlighter/package-lock.json para evitar falsos positivos de vulnerabilidades en dependencias por dependabot
+- fix: actualizada version de django en requirements.txt para solucionar vulnerabilidades en dependencias
+- Merge pull request #379 from Proyecto-ISPP/hotfix/arreglar-select-y-verificacion
+- fix: correcciones en pantalla fisio, select, estilos, y vista del plan
+- fix: guardar horario desde modal
+- fix: guardar respuestas del cuestionario en la cita y comentado codigo al cancelar cita que falta por pulir
+- fix: solucionado problema con lectura de schedule en proceso de creacion de cita
+- fix: añadido ojo a la contaseña de login
+- fix: añadido ojo a la contaseña de registro y login
+- fix: funcion de validacion fisios
+- Merge pull request #368 from Proyecto-ISPP/hotfix/arreglar_titulo_panel_admin
+- fix: Arreglado funcionamiento botones añadir y eliminar servicios
+- fix: cambiado titulos panel de administracion
+- fix: arreglado descarga terminos pdf
+- fix: correccion boton de crear terminos
+- fix: correccion migraciones y requirements
+- fix: la pagina de perfil era de registro XD
+- fix: Arreglar validacion fisios
+- fix: migraciones limpias
+- fix: Arreglar error de las vistas
+- fix: arreglo en login con boundary
+- fix: minor fix
+- fix: Arreglar settings.py
+- fix: pequeños conflictos con develop
+- Merge pull request #363 from Proyecto-ISPP/feat/seguimiento-citas
+- fix: modificar el estilo del select de días de la semana
+- fix: Correcto funcionamiento botón añadir servicio
+- fix: arreglado gestión de excepciones de pagos
+- fix: mergeo de migraciones
+- fix: video CRUD arreglado y estilo cambiado
+- fix: video upload refactor
+- fix: cambiado nombre de carpeta de pagos a ingles y comprobar que el merge funciona correctamente
+- fix: borrado admin-management
+- fix:actualizados imports para evitar errores
+- fix: comentadas rutas que no van a usarse
+- fix: actualizado requirements.txt
+- fix: eliminado todo lo de admin que no se va a entregar
+- fix: añadidas correcciones sugeridas por el bot de seguridad
+- fix: corregida incongruencio horaria en las vistas de mis citas y setSelectedEvent del las cards en el calendario
+- fix: arreglada estetica perfil fisio manteniendo funcionalidad
+- fix: cambiado endpoint de frontend para redireccionamiento de correos a despliegue del S2
+- fix: arreglado incongruencia al poder seleccionar alternativas en el pasado o que ya estan ocupadas por alguna cita o excepcion
+- fix: Arreglado cifrado de contraseñas en panel admin
+- fix: arreglado z index del selector de alternativas y corregida brecha de seguridad al aceptar una alternativa
+- fix: añadida funcionalidad ver usuario
+- Merge pull request #354 from Proyecto-ISPP/fix/herramientas-paciente
+- fix: Ocultar herramientas a paciente y recuperar cambios de Mapa de Dolor
+- fix: Correción de estilos de servicios y pequeños bugs sobre selección de servicios
+- fix: corrección de estados pago
+- fix: corrección de cancelación fisio
+- fix: arreglado prop de usuarioActual en mis citas
+- fix: delete mistaken folder commited and wrong import
+- fix: actaulizar perfil de fisio
+- fix: arregaldo el serializer para que se muestren los datos del paciente en el tratamiento
+- fix: solucionado error en botones de opciones de citas
+- fix: añadida recomendación del navegador para mejorar la respuesta de la renderización del logo
+- fix: arreglado proceso de creación de cita con pago incluido
+- fix: warning djangorestframework-simplejwt
+- fix: corregida solicitud Copilot Autofix
+- fix: corregidos problemas con las migraciones de usuarios
+- fix: pequeñas correcciones de formato
+- fix: añadido sessionstorage para evitar problemas de seguridad
+- fix: intento de solucion para alerta de seguridad por guardar datos sensibles en localstorage
+- fix: cambiado el nombre de las carpetas para trabajar en inglés
+- fix: corregidas las sugerencias de seguridad
+- fix: arreglar conflictos con las migraciones
+- fix: actualizadas citas de horario de fisio al borrar y modificar una cita
+- fix: resolviendo conflictos del merge
+- fix: corregido titulos de citas con el nombre del paciente o del fisio
+- fix: arreglado incongruencia horaria en modal de mis citas
+- fix: cuando se crea una cita se modifica tambien el schedule del fisio
+- fix: mejorado control de aceptacion de citas mediante email
+- fix: arreglo sala de espera videollamadas
+- fix: corregido error al reconocer horas de las citas en el horario del fisio
+- fix: arreglo de urls y permisos tras refactorización backend
+- fix: arreglo de perfil de fisio. dni and password not working
+- fix: Sustituida validacion de rol por URL haciendo llamada a backend
+- fix: eliminado workflow de despliegue en backend
+- fix: arreglado porblemas con obtención de horario del fisio desde el backend
+- fix: Validacion en frontend para rol
+- fix: corregido pagina perfil paciente
+- fix: formateo de las áreas de los ejercicios
+- fix: solucionado error en frontend donde se recogia la url mal en profile de paciente
+- fix: solucionado error de estilo de la vista perfil de paciente
+- fix: optimización tras borrar una serie
+- fix: Arreglado manejo de la caducidad del token en toda la aplicacion
+- fix: asignación automática de ejercicio a sesión tras su creación
+- fix: recarga automática de listado de ejercicios cuando se crea o añade uno
+- fix: solucionados errores en validacion de update de paciente
+- fix: arreglado actualización al cambiar de imagen
+- fix: perfil paciente imagen y validaciones
+- fix: solucionado problema de que el mapa de dolor siempre salia con los biceps seleccionados
+- fix: solucionado el problema de que cuando el fisio da a dejar de compartir mapa de dolor no deje de compartir
+- fix: pefil paciente arreglado
+- fix: arreglo logo en todos los documentos
+- fix: eliminando toda documentacion en pdf
+- fix: corregido problema que podias poner cualquier fecha de nacimiento en el pasado y corregida la forma en la que se devolvian los errores
+- fix: Rename Logo_FisioFind_Verde_sin_fondo.PNG to Logo_FisioFind_Verde_sin_fondo.webp
+- fix: cambio de variable en workflow
+- Merge pull request #332 from Proyecto-ISPP/hotfix/especializaciones
+- fix: se ha arreglado la forma en la que se traen las especializaciones y el logo de la home page
+- fix: cambiado link de modelos 3d para que no evitar seguimiento de los usuarios
+- fix: librería para las gráficas
+- fix: solucionado error en selección de un modelo
+- fix: Arreglos para el despliegue
+- Merge pull request #328 from Proyecto-ISPP/hotfix/bad-url-and-views
+- fix: solucionados errores de rutas para entornos y de vistas
+- fix: conflictos
+- fix: Arreglar conflictos
+- fix: eliminados datos de prueba erroneos
+- fix: actualizado useWebSocket.js
+- fix: solucionados errores en imports de frontend de videollamadas por cambios de carpetas y nombres
+- fix: modelo borrado porque no va a usarse
+- fix: cambiado nombre de archivo 3dmodel.js para que esté junto a los cambios de develop
+- fix: pequeñas correcciones ortograficas y de formato
+- Merge pull request #322 from Proyecto-ISPP/feat/refactorizacion-frontend
+- fix: modificado el trato de las frecuencias en una sesión
+- fix: añadido máximo de series permitido por ejercicio
+- fix: error de indentación
+- fix: eliminación temporal de las rutas (está en refactorizacion)
+- fix: arreglado el acceso a las videollamadas
+- fix: imágenes dinámicas de la home con responsividad
+- fix: errores en la vista en inglés
+- fix: añadido gestion de admin a middleware y arreglo de redireccionamiento a login al crear cita con sesion de invitado
+- fix: Solucionado error ts-js y añadida logica para https en ws
+- fix: Lógica de colgar arreglada
+- fix: script modificado para funcionar en modo headless
+- fix: primera versión completamente refactorizada (nombres de carpetas y endpoints)
+- fix: calendario
+- fix: refactorización del sidebar
+- fix: renombrar componentes de videollamadas
+- fix: refactorización de las videollamadas
+- fix: renombrar las urls de los fisios
+- fix: carpeta admin-management refactorizada
+- fix: refactorizar el resto de carpetas de la app
+- fix: refactorización nombre de carpetas de gestion de administradores, citas y errores de permisos
+- fix: endpoint de sesion de invitados
+- fix: sidebar arreglada
+- fix: arreglada zonas horarias
+- fix: corregidas respuestas cancelar cita
+- fix: eliminado css comentado
+- fix: arreglos en el script de validacion
+- fix: solucionado que de error mi perfil si la biografía es nula
+- fix: correcciones en el plan de gestion de la configuracion para el #S2
+- fix: corregidas incongruencias entre backend y frontend
+- fix: arreglado perfil de fisio
+- fix: corregidas condiciones de eliminar, modificar y sugerir cambios en frontend y backend
+- Merge pull request #305 from Proyecto-ISPP/feat/desarmar-deploy
+- fix: reañadido funcionalidades de admin borradas para la anterior entrega y algunos cambios menores necesarios para el futuro deploy
+- fix: eliminado trigger de workflow de despliegue
+- fix: cambio de autores por contribuidores
+- fix: cambio de autores por contribuidores
+- fix: correccion de autores del readme
+- fix: correccion de autores en documentos
+- fix: arreglado problema con conversiones de zona horaria
+- fix: correccion de endpoints de backend y fronted
+- fix: burnup chart semana 6
+- fix: Update revision.md
+- fix: cambiar rama de despliegue
+- fix: correción de envío de solicitud de login
+- fix: exportación de función en modal de citas
+- fix: arreglado endpoints y obtencion de tokens de las nuevas vistas
+- fix: constante handleFileChange duplicada
+- fix: comentado pywin en requirements.txt
+- fix: error de typescript
+- fix: error de csrf
+- fix: manejo de base de datos
+- fix: arreglados errores de eliminacion de funcionalidad tras un merge
+- fix: arregladas las migraciones y actualizados los datos de prueba
+- fix: ruta del startup
+- fix: rutas en el archivo startup
+- fix: startup gunicorn
+- fix: name of startup script
+- fix: manejo de bases de datos cuando cambiamos de entorno
+- Merge pull request #248 from Proyecto-ISPP/feat/solucionar-algunos-errores-de-develop
+- fix: solucionados algunos errores menores de citas
+- fix: solucionados problemas de seguridad
+- fix: solucionados algunos errores fruto del merge con develop
+- fix: falta de configuraciones en settings
+- fix: hosts permitidos
+- fix: cors permitidos
+- fix: workflow to deploy
+- fix: Ruta de sesión de invitado
+- fix: rutas de peticiones a la base de datos
+- fix: descomentadas vistas admin de cita
+- Merge pull request #242 from Proyecto-ISPP/hotfix/sprint-1
+- fix: guardado de imagenes
+- fix: correciones de frontend para demo
+- fix: re-escribiendo docs para evitar conflictos en main
+- fix: corrección de los métodos actualizar y borrar cita
+- fix: borrado o comentado todo lo de admin que no se va entregar en este sprint
+- fix: solucionado error al comprobar longitud de version
+- fix: cambios para el despliegue del front
+- fix: solucionado error en estilos de admin que hacia que la navbar no pudiese espandirse
+- fix: comentado linea de AnimatedIcons para poder renderizar la pagina principal
+- fix: Corrección de errores
+- fix: Cambio 2 en el web.config
+- fix: Errores pullRequest e inicio de videollamada
+- fix: Cambio en el web.config
+- fix: modificado exampledata.json con nuevas especializaciones para los fisios
+- fix: peticiones schedules cambiadas a llamadas api_view
+- fix: corregir errores en las migraciones del merge
+- fix: vuelta al select tradicional para preservar la funcionalidad
+- fix: Requisitos actualizados en requirements.txt
+- fix: actualizado plan del cambio con sugerencias reunion 08/03
+- fix: arreglada creación de nuevas especialidades
+- fix: indicando que documentos son del SPRINT 1
+- fix: arreglado ultimos errores de logica del calendario
+- fix: no se puede poner fondo en la sección principal porque no queda incluido por el navbar
+- fix: adicion de tutorial a plan de gestion de la configuracion
+- fix: correcciones de formato en nuevo documento de costes. nombre actualizado
+- fix: permisos del update citas
+- fix: actualizar exampledata.json con nuevos datos de prueba
+- fix: arreglado error con agregar alternativas en el mismo dia
+- fix: correciones de formato en docs usuarios piloto
+- fix: pequeña errata en build-pdf-examples.sh
+- fix: versionado de docs usuarios piloto
+- fix: resueltos problemas del merge
+- fix: problema con las rutas arreglado
+- fix: solucionado error en gestion de errores de terminos
+- fix: solucionado error de frontend de gestion de terminos por mal manejo de error
+- fix: arreglado tailwind.config para colores corporativos
+- fix: Arreglado problema de solapamiento de citas paciente
+- fix: eliminados archivos repetidos
+- fix: corregir funcionalidades tras el merge
+- fix: Descompuesta la logica de websocket en hooks
+- fix: solucionar errores del merge
+- fix: solucionado error en estimacion de riesgo
+- fix: correccines menores en CA y mid-term retrospective
+- fix: cambio de pdf a onedrive
+- fix: migración docs .pdf a onedrive
+- fix: permiso en vista de gestion de cita de admin arreglado porque debería de poder acceder solo admin
+- fix: correcciones y sugerencias de ramon añadidas en el documento de costes
+- fix: correcciones en plan de formacion de backend
+- fix: correcion de archivos de configuracion de documentos
+- fix: actualizada la gráfica del reloj del avance del proyecto
+- fix: arreglos menores autores retrospectiva
+- fix: Corregido el funcionamiento de videollamada en el frontend
+- fix: modificaciones en consumers tras migrar a NextJS
+- fix: correcciones de subtítulo y formatos
+- fix: Arreglar errata en permissions.py
+- fix: Camara activada segun rol
+- fix: corregido algunas incongruencias del merge
+- fix: cambiar url de citas para que siga la estructura api/*
+- fix: correccion de permisos
+- fix: peticion GET cita_detail
+- fix: peticion GET cita_deatil
+- fix: añadido índice a feedback_21-02-2025.md
 ### Other Changes
 - Merge branch 'feat/changelog.yml' of https://github.com/Proyecto-ISPP/FISIOFIND into feat/changelog.yml
-- 🔄 Update Changelog
-- 🔖 Actualización automática del Changelog
-- Merge branch 'feat/changelog.yml' of https://github.com/Proyecto-ISPP/FISIOFIND into feat/changelog.yml
-- 🔖 Actualización automática del Changelog
-- Merge branch 'feat/changelog.yml' of https://github.com/Proyecto-ISPP/FISIOFIND into feat/changelog.yml
-- 📜 Update CHANGELOG [skip ci]
+- Merge remote-tracking branch 'origin/develop' into feat/changelog.yml
+- Update backend/fisio_find/users/views.py
+- Update backend/fisio_find/users/views.py
+- Merge branch 'main' into develop
+- Merge pull request #428 from Proyecto-ISPP/hotfix/corrección-video-serializer
+- Merge pull request #412 from Proyecto-ISPP/feature/videollamadas-citas
+- Merge pull request #424 from Proyecto-ISPP/feat/pago-de-citas
+- Merge branch 'feature/videollamadas-citas' of https://github.com/Proyecto-ISPP/FISIOFIND into feature/videollamadas-citas
+- Merge pull request #406 from Proyecto-ISPP/docs/doc-feedback-28-03
+- Merge branch 'develop' into feature/videollamadas-citas
+- Merge pull request #423 from Proyecto-ISPP/develop
+- Merge pull request #419 from Proyecto-ISPP/feat/workflows-CD
+- Merge branch 'main' of github.com:Proyecto-ISPP/FISIOFIND into feat/workflows-CD
+- Merge pull request #411 from Proyecto-ISPP/docs/politica-seguridad
+- docs: Separación por idiomas
+- Merge pull request #418 from Proyecto-ISPP/main
+- Merge pull request #415 from Proyecto-ISPP/fix/asgi
+- Update asgi.py
+- Merge pull request #414 from Proyecto-ISPP/develop
+- Merge pull request #413 from Proyecto-ISPP/feat/preparar-despliegue-back
+- Create SECURITY.md
+- Merge pull request #405 from Proyecto-ISPP/docs/sprint-planning-3
+- docs: Documento de feedback finalizado
+- Merge pull request #404 from Proyecto-ISPP/feat/solucionar-vulnerabilidades-dependencias
+- Merge pull request #403 from Proyecto-ISPP/docs/acta-reunion-g3-15-03-2025
+- docs: sprint planning 3 terminado
+- Merge pull request #223 from Proyecto-ISPP/dependabot/pip/backend/django-5.1.7
+- Update README.md
+- Update README.md
+- Update README.md
+- docs: Actualizados los títulos y enlaces de issues asignadas
+- Merge pull request #402 from Proyecto-ISPP/main
+- docs: Primera versión del documento
+- docs: actualizada url video revision.md
+- docs: demo s2 lista
+- docs: fix error en credenciales revision.md
+- docs: retoques finales revision.md
+- docs: cambios menores revision.md
+- docs: fix s3 por s2 revision.md
+- docs: subidos cambios no mergeados en la ultima pull request de revision.md
+- Merge pull request #381 from Proyecto-ISPP/doc/documento-revision
+- Merge branch 'main' into doc/documento-revision
+- Merge pull request #382 from Proyecto-ISPP/hotfix/boton-apartado-videos
+- Merge branch 'main' into hotfix/boton-apartado-videos
+- docs: finalizado documento revisión
+- docs: presentacion s2 corregida de nuevo
+- Delete docs/SPRINT 2/presentation.pdf
+- hotfix: corrección del botón vídeos de fisioterapeuta y placeholders
+- docs: corregidos algunos aspectos del security_report
+- docs: presentacion s2 corregida
+- Delete docs/SPRINT 2/presentation.pdf
+- Merge pull request #376 from Proyecto-ISPP/feat/doc-time-report-week-7
+- docs: individual performance, reporte tiempo y KB report preparados para el s2
+- Merge remote-tracking branch 'origin/main' into feat/doc-time-report-week-7
+- Merge pull request #380 from Proyecto-ISPP/docs/knowledge-base-report-s2
+- docs: equeñas correcciones ortográficas para el s2
+- docs: Reactualización de horas
+- docs: Modificación de distintos apartados
+- Merge pull request #378 from Proyecto-ISPP/docs/entrega-docs-s2
+- docs: presentacion s2
+- docs: retrospectiva sprint 2 QA
+- Merge remote-tracking branch 'origin/main' into docs/entrega-docs-s2
+- docs: primera version de la revision guide del s2
+- docs: Horas faltantes
+- docs: sprint retrospectives
+- docs: Primera versión KB report S2
+- Merge pull request #375 from Proyecto-ISPP/hotfix/perfiles-usuario-paciente
+- docs: documentacion up s2
+- Merge pull request #371 from Proyecto-ISPP/doc/feedback-up-sprint2
+- docs: equeñas correcciones ortográficas en documento up s2
+- Merge pull request #374 from Proyecto-ISPP/hotfix/citas
+- style: correciones menores de estilo en perfil fisio
+- Merge pull request #372 from Proyecto-ISPP/hotfix/boton-editar-eliminar-servicio
+- Merge branch 'main' of https://github.com/Proyecto-ISPP/ISPP into hotfix/boton-editar-eliminar-servicio
+- Merge branch 'main' of https://github.com/Proyecto-ISPP/FISIOFIND
+- doc: añadido el enlace de clockify que faltaba
+- Merge branch 'main' of https://github.com/Proyecto-ISPP/ISPP into hotfix/boton-editar-eliminar-servicio
+- Merge pull request #366 from Proyecto-ISPP/hotfix/terminos
+- Merge pull request #367 from Proyecto-ISPP/feat/doc-ia-report-Sprint-2
+- Merge pull request #369 from Proyecto-ISPP/docs/analisis_seguridad
+- Update security_report.md
+- Doc: terminado documento de feedback de ususarios piloto
+- docs: reporte analisis de seguridad
+- docs: Reporte de ia del Sprint 2
+- docs: añadidios de nuevo docuentos licencias (tb en pdf)
+- Merge branch 'main' of https://github.com/Proyecto-ISPP/ISPP
+- Merge branch 'main' of github.com:Proyecto-ISPP/FISIOFIND
+- Doc: primera versión del feedback recibido
+- Merge pull request #359 from Proyecto-ISPP/develop
+- Merge branch 'main' into develop
+- Merge pull request #365 from Proyecto-ISPP/feat/pricing-plans
+- Merge branch 'develop' into feat/pricing-plans
+- Merge branch 'develop' of github.com:Proyecto-ISPP/FISIOFIND into feat/pricing-plans
+- Merge pull request #360 from Proyecto-ISPP/feat/pago-de-citas
+- Merge branch 'develop' into feat/pago-de-citas
+- Merge branch 'develop' into feat/pago-de-citas
+- Merge branch 'develop' into hotfix/integracion-tratamientos
+- Merge pull request #362 from Proyecto-ISPP/doc/sprint-retrospective-g2-s2
+- Merge pull request #358 from Proyecto-ISPP/hotfix/edicion-perfil-fisio
+- Merge branch 'develop' into hotfix/edicion-perfil-fisio
+- Merge branch 'develop' of https://github.com/Proyecto-ISPP/FISIOFIND into feat/pago-de-citas
+- doc: sprint retrospective grupo 2 finalizado
+- doc: sprint retrospective hecho
+- Merge remote-tracking branch 'origin/feat/pago-de-citas' into feat/pricing-plans
+- Merge branch 'develop' into hotfix/edicion-perfil-fisio
+- Merge pull request #355 from Proyecto-ISPP/feat/subida-archivos
+- Merge pull request #361 from Proyecto-ISPP/docs/corregir-sla
+- docs: corregir algunos aspectos de service_level_agreement.md
+- Merge branch 'develop' into feat/subida-archivos
+- Merge pull request #356 from Proyecto-ISPP/feat/seguimiento-citas
+- Merge pull request #357 from Proyecto-ISPP/feat/admin-sistema
+- Merge branch 'develop' into feat/admin-sistema
+- Merge remote-tracking branch 'origin/develop' into feat/subida-archivos
+- Merge branch 'develop' into feat/pago-de-citas
+- Merge pull request #348 from Proyecto-ISPP/rfc/modificaciones-citas
+- Merge branch 'develop' into rfc/modificaciones-citas
+- Merge branch 'feat/admin-citas' into feat/admin-sistema
+- Merge remote-tracking branch 'origin/develop' into hotfix/edicion-perfil-fisio
+- Merge pull request #352 from Proyecto-ISPP/feat/retoques-frontend
+- Merge branch 'develop' of https://github.com/Proyecto-ISPP/ISPP into hotfix/edicion-perfil-fisio
+- Merge branch 'rfc/modificaciones-citas' of https://github.com/Proyecto-ISPP/FISIOFIND into rfc/modificaciones-citas
+- docs: Primera versión documento
+- Merge branch 'develop' of https://github.com/Proyecto-ISPP/FISIOFIND into feat/admin-sistema
+- Fix: actualización del componente tratamiento
+- Merge branch 'feat/seguimiento-citas' of github.com:Proyecto-ISPP/FISIOFIND into feat/seguimiento-citas
+- Feat: se ha añadido el componente alerta y se ha arreglado la ruta que desactiva el tratamiento
+- Merge branch 'feat/seguimiento-citas' of https://github.com/Proyecto-ISPP/FISIOFIND into feat/seguimiento-citas
+- Delete Users/antoniommff/Library/CloudStorage/OneDrive-UNIVERSIDADDESEVILLA/INGENIERÍA DEL SOFTWARE/〽️ 4 INGENIERÍA DEL SOFTWARE/4 SEGUNDO CUATRIMESTRE/ispp/Trabajo semanal/S08 directory
+- Merge branch 'develop' into rfc/modificaciones-citas
+- Merge branch 'develop' into rfc/modificaciones-citas
+- Merge pull request #343 from Proyecto-ISPP/feat/tratamiento-tests
+- Merge branch 'develop' into feat/tratamiento-tests
+- Merge branch 'hotfix/edicion-perfil-fisio' of https://github.com/Proyecto-ISPP/ISPP into hotfix/edicion-perfil-fisio
+- Merge pull request #349 from Proyecto-ISPP/style/refactorizacion-frontend
+- Merge branch 'develop' into style/refactorizacion-frontend
+- Merge branch 'feat/pago-de-citas' of https://github.com/Proyecto-ISPP/FISIOFIND into feat/pago-de-citas
+- refactor: cambiado nombre de la entidad gestion_cita a appointment
+- Merge branch 'develop' into style/refactorizacion-frontend
+- style: services edit and calendar views modified
+- Merge branch 'develop' into rfc/modificaciones-citas
+- Merge branch 'rfc/modificaciones-citas' of https://github.com/Proyecto-ISPP/FISIOFIND into rfc/modificaciones-citas
+- Merge branch 'rfc/modificaciones-citas' of https://github.com/Proyecto-ISPP/ISPP into feat/pago-de-citas
+- Merge branch 'develop' into feat/admin-citas
+- Merge branch 'rfc/modificaciones-citas' of https://github.com/Proyecto-ISPP/FISIOFIND into rfc/modificaciones-citas
+- Merge branch 'rfc/modificaciones-citas' of https://github.com/Proyecto-ISPP/FISIOFIND into rfc/modificaciones-citas
+- Merge pull request #341 from Proyecto-ISPP/feat/doc-feedback-21-03
+- Merge remote-tracking branch 'origin/develop' into style/refactorizacion-frontend
+- Merge pull request #344 from Proyecto-ISPP/feat/informacion-legal
+- Merge branch 'develop' into feat/tratamiento-tests
+- Merge pull request #346 from Proyecto-ISPP/rfc/integrar-usuarios-videollamadas
+- Merge branch 'develop' into feat/informacion-legal
+- Merge pull request #345 from Proyecto-ISPP/docs/retrospectiva-mitad-sprint
+- docs: retrospectiva de mitad de sprint
+- Merge pull request #342 from Proyecto-ISPP/feat/refactorizacion-backend
+- refactor: ajuste de rutas
+- Merge branch 'develop' into feat/tratamiento-tests
+- refactor: modificar rutas para que estén en inglés
+- style: botones generales creados y pagina videollamadas actualizada
+- refactor: cambiada entidad y urls de sesion_invitado a guest_session
+- refactor: cambiado nombre de entidad de gestion_usuarios a users
+- Merge branch 'develop' into feat/refactorizacion-backend
+- Merge pull request #338 from Proyecto-ISPP/hotfix/arreglar_perfil_paciente
+- docs: Documento de feedback 21/03
+- style: sidebar con proporciones mejoradas
+- Merge branch 'hotfix/arreglar_perfil_paciente' of https://github.com/Proyecto-ISPP/FISIOFIND into hotfix/arreglar_perfil_paciente
+- style: nuevo estilo homepage
+- Merge de main
+- Merge pull request #331 from Proyecto-ISPP/feat/mapa-dolor
+- Merge branch 'develop' into feat/mapa-dolor
+- Merge pull request #339 from Proyecto-ISPP/feat/gestion-terminos
+- docs: documento de licencias terminado
+- docs: README.md actualizado para añadir licencia
+- Fix: problema con el favicon
+- docs: actualizar logo README.md
+- refactor: sacadas algunas funcionalidades fuera del serializer de user para mejorar legibilidad
+- Merge branch 'develop' into feat/refactorizacion-backend
+- Merge pull request #334 from Proyecto-ISPP/docs/corregir-sla
+- refactor: mejora de los estilos de las páginas
+- docs: corrección y ampliación de algunos apartados de service_level_agreement
+- Merge branch 'feat/tratamiento-tests' of github.com:Proyecto-ISPP/FISIOFIND into feat/tratamiento-tests
+- Merge remote-tracking branch 'origin/develop' into feat/gestion-terminos
+- Merge pull request #329 from Proyecto-ISPP/develop
+- Merge pull request #327 from Proyecto-ISPP/develop
+- Merge pull request #318 from Proyecto-ISPP/feat/cuestionario-preintervencion
+- Merge branch 'develop' into feat/cuestionario-preintervencion
+- Merge pull request #323 from Proyecto-ISPP/feat/herramienta-modelo-anatomico
+- Merge pull request #321 from Proyecto-ISPP/feat/doc-sla
+- Merge pull request #325 from Proyecto-ISPP/hotfix/despliegue-videollamadas
+- Merge branch 'develop' into hotfix/despliegue-videollamadas
+- Merge branch 'develop' into hotfix/despliegue-videollamadas
+- Merge pull request #315 from Proyecto-ISPP/hotfix/fix_videollamadas
+- Merge branch 'develop' into hotfix/fix_videollamadas
+- Fix: arreglado filtro de tratamientos históricos en el frontend
+- Merge branch 'develop' into feat/herramienta-modelo-anatomico
+- Feat: añadidos los modelos al panel de admin de django
+- Merge pull request #313 from Proyecto-ISPP/feat/doc-feedback-14-03
+- Merge pull request #309 from Proyecto-ISPP/hotfix/corregir_perfil_fisio
+- Merge branch 'develop' into hotfix/corregir_perfil_fisio
+- Merge branch 'feat/tratamiento-tests' of github.com:Proyecto-ISPP/FISIOFIND into feat/tratamiento-tests
+- Feat: se ha comprobado que funciona toda la funcionalidad grosso modo
+- Merge branch 'feat/tratamiento-tests' of https://github.com/Proyecto-ISPP/FISIOFIND into feat/tratamiento-tests
+- refactor: Actualización de la gestión de ejercicios para usar la API y mejorar la interfaz de usuario.
+- docs: primera version completa del SLA
+- Fix: gestión permisos
+- Fix: arregladas urls
+- Merge pull request #320 from Proyecto-ISPP/feat/cambios-CommitmentAgreement
+- docs: cambios menores de commitment_agreement
+- Feat: primera version completa de creación de ejercicios para tratamientos
+- Merge pull request #319 from Proyecto-ISPP/feat/doc-report-ia-week-7
+- Merge pull request #316 from Proyecto-ISPP/doc/matriz-raci-grupo2
+- Merge pull request #317 from Proyecto-ISPP/feat/refactorizacion-frontend
+- docs: commitment agreement recompensas y team building
+- docs: Reporte de ia semana 7 (Primera iteración Sprint 2)
+- Merge branch 'develop' into feat/refactorización-frontend
+- Merge branch 'feat/tratamiento-tests' of https://github.com/Proyecto-ISPP/FISIOFIND into feat/tratamiento-tests
+- doc: finalización del documento
+- docs: Corregir fecha y sprint
+- docs: Feedback 14-03-2025
+- doc: avances en matriz RACI
+- docs: añadida acta de reunion g3 15-03-2025
+- Merge pull request #310 from Proyecto-ISPP/feat/citas-calendario
+- Feat: cambios en la sección de seguimiento
+- Merge remote-tracking branch 'origin/feat/seguimiento-citas' into feat/tratamiento-tests
+- Merge branch 'feat/seguimiento-citas' of https://github.com/Proyecto-ISPP/FISIOFIND into feat/seguimiento-citas Merge remote changes
+- Merge remote-tracking branch 'origin/develop' into feat/pago-de-citas
+- refactor: refactorizacion de codigo repetido con la funcion handleAlternativesSubmit
+- Merge pull request #307 from Proyecto-ISPP/hotfix/corregir_errores_citas
+- Merge pull request #306 from Proyecto-ISPP/hotfix/admin
+- Merge pull request #304 from Proyecto-ISPP/feat/doc-sprint-planning-2
+- docs: arreglos menores en sprint planning 2 y añadido como revisor
+- Merge pull request #303 from Proyecto-ISPP/feat/doc-plantilla-infome-individual
+- docs: fix deshacer cambios en los autores de docs de entregables
+- docs: arreglos de algunos autores de documentos
+- doc: añadido plantilla weekly_work
+- docs: elaboración de sprint planning #S2
+- Merge pull request #256 from Proyecto-ISPP/docs/Analisi_QA
+- build(deps): bump django from 5.1.6 to 5.1.7 in /backend
+- Merge pull request #259 from Proyecto-ISPP/develop
+- docs: demo s1
+- Merge pull request #253 from Proyecto-ISPP/feat/fisio-calendario
+- Merge branch 'develop' into feat/fisio-calendario
+- Merge pull request #254 from Proyecto-ISPP/feat/deploy
+- Merge pull request #258 from Proyecto-ISPP/develop
+- docs: subida diapositiva corregida
+- docs: movido archivo
+- Merge pull request #257 from Proyecto-ISPP/feat/docs-guia-de-uso
+- Merge branch 'main' into feat/docs-guia-de-uso
+- docs: creado revision.md
+- docs: terminado revision guide
+- Merge branch 'feat/deploy' of https://github.com/Proyecto-ISPP/FISIOFIND into feat/deploy
+- Merge branch 'main' into docs/Analisi_QA
+- Merge branch 'docs/Analisi_QA' of https://github.com/Proyecto-ISPP/FISIOFIND into docs/Analisi_QA
+- docs: quality_report
+- docs: docuemtos #S1 subidos. falta revision.md de @DelfinSR
+- Merge branch 'develop' into feat/deploy
+- Merge branch 'develop' into feat/fisio-calendario
+- Merge pull request #252 from Proyecto-ISPP/feat/corregir_errores_citas
+- docs: añadidas algunos casos de uso en revisio guide. Sin terminar
+- Merge pull request #246 from Proyecto-ISPP/feat/doc-knowledge-base-report-sprint-1
+- docs: copiado knowledge base report a la otra carpeta para que sean igual
+- docs: pequeño error solucionado en kbreport
+- docs: añadido algo más de acciones que se han tenido frente al feedback
+- Merge branch 'docs/Analisi_QA' of https://github.com/Proyecto-ISPP/ISPP into docs/Analisi_QA
+- docs: restrospectiva grupal sprint 1
+- docs: performanceEvaluation
+- docs: Añadidas aclaraciones de profesores que faltaban
+- Merge pull request #250 from Proyecto-ISPP/main
+- Merge pull request #249 from Proyecto-ISPP/feat/doc-sprint-retrospective-g1
+- doc: añadido KBReport a carpeta de entrega de #S1
+- Merge remote-tracking branch 'origin/main' into feat/doc-knowledge-base-report-sprint-1
+- doc: correciones en el KBReport reorganizado con anexo
+- Merge pull request #240 from Proyecto-ISPP/feat/perfil-fisio
+- Merge pull request #241 from Proyecto-ISPP/feat/CRUD_citas
+- Merge pull request #247 from Proyecto-ISPP/feat/doc-time-report-week-6
+- docs: Actualizar informe de tiempo semana 5 y realizar informe semana 6
+- docs: Añadir volcado de feedback
+- Merge branch 'feat/deploy' of https://github.com/Proyecto-ISPP/FISIOFIND into feat/deploy
+- docs: Finalizar informe de la BC
+- Add or update the Azure App Service build and deployment workflow config
+- Merge pull request #245 from Proyecto-ISPP/feat/doc-actualizacion-informe-up-s1
+- doc: comletado informe UP #S1
+- doc: documentos añadidos a carpeta para entrega #S1
+- Merge branch 'develop' into feat/CRUD_citas
+- Merge remote-tracking branch 'origin/main' into feat/doc-actualizacion-informe-up-s1
+- doc: actualizado informe UP #S1 con feedback y tabla de evaluacion
+- Merge pull request #244 from Proyecto-ISPP/feat/doc-reporte-ia-Sprint-1
+- Merge branch 'develop' into feat/CRUD_citas
+- Merge branch 'develop' into feat/perfil-fisio
+- docs: Reporte de ia Sprint 1
+- Merge pull request #243 from Proyecto-ISPP/hotfix/sprint-1
+- Merge branch 'feat/CRUD_citas' of https://github.com/Proyecto-ISPP/FISIOFIND into feat/CRUD_citas
+- Merge pull request #239 from Proyecto-ISPP/develop
+- docs: Estructuración puntos 3 y 4
+- Merge branch 'feat/CRUD_citas' of https://github.com/Proyecto-ISPP/FISIOFIND into feat/CRUD_citas
+- Merge pull request #237 from Proyecto-ISPP/feat/paciente-perfil
+- Merge branch 'develop' into feat/paciente-perfil
+- Merge pull request #238 from Proyecto-ISPP/feat/crear-pagina-404-y-errores-varios
+- Merge branch 'develop' into feat/paciente-perfil
+- Merge pull request #226 from Proyecto-ISPP/feat/videollamada
+- Merge remote-tracking branch 'origin/main' into feat/docs-guia-de-uso
+- docs: Retrospectiva Sprint 1-G1
+- doc: realizada sprint retrospective grupo 3 Co-authored-by: Francisco Mateos Villarejo <pacomateos10@users.noreply.github.com> Co-authored-by: Miguel Encina <MiguelEncina@users.noreply.github.com> Co-authored-by: Daniel Vela Camacho <danvelcam@users.noreply.github.com> Co-authored-by: Daniel Tortorici Bartús <DanTorBar@users.noreply.github.com>
+- Merge branch 'develop' into feat/videollamada
+- Merge branch 'feat/CRUD_citas' of https://github.com/Proyecto-ISPP/ISPP into feat/CRUD_citas
+- refactor: eliminado los prints de las funciones de listar, creacion y schedule
+- Merge branch 'feat/CRUD_citas' of https://github.com/Proyecto-ISPP/FISIOFIND into feat/CRUD_citas
+- Merge branch 'feat/CRUD_citas' of https://github.com/Proyecto-ISPP/ISPP into feat/CRUD_citas
+- Despliegue inicial del backend
+- Merge branch 'develop' into feat/CRUD_citas
+- Revert "Merge branch 'feat/perfil-fisio' of https://github.com/Proyecto-ISPP/ISPP into feat/perfil-fisio"
+- Merge pull request #234 from Proyecto-ISPP/doc/sprint-retrospective-happy-meal
+- Merge pull request #229 from Proyecto-ISPP/feat/busqueda-avanzada
+- Merge branch 'develop' into feat/busqueda-avanzada
+- Merge branch 'develop' into feat/mis-citas
+- Merge pull request #231 from Proyecto-ISPP/feat/registro-fisio-frontend
+- Merge pull request #236 from Proyecto-ISPP/fix/doc-actualizacion-plan-gestion-cambio
+- Merge pull request #227 from Proyecto-ISPP/feat/admin-mejora-estilo-y-seguridad
+- Merge branch 'feat/perfil-fisio' of https://github.com/Proyecto-ISPP/ISPP into feat/perfil-fisio
+- Merge pull request #235 from Proyecto-ISPP/feat/perfil-paciente
+- Merge branch 'feat/mis-citas' into feat/CRUD_citas
+- Merge branch 'feat/mis-citas' of https://github.com/Proyecto-ISPP/FISIOFIND into feat/mis-citas
+- docs: Creación informe BC #S1
+- doc: sprint retrospective grupo 2 realizado
+- Merge pull request #232 from Proyecto-ISPP/feat/doc-actualizacion-costes
+- Merge pull request #233 from Proyecto-ISPP/feat/doc-feedback-07-03
+- docs: Corregir detalles
+- Merge branch 'develop' into feat/perfil-paciente
+- docs: Feedbacl del 07/03/2025
+- docs: Actualizacion documento de costes.
+- Merge branch 'feat/CRUD_citas' of https://github.com/Proyecto-ISPP/FISIOFIND into feat/CRUD_citas
+- Merge branch 'feat/mis-citas' of https://github.com/Proyecto-ISPP/FISIOFIND into feat/CRUD_citas
+- doc: primera version guia de uso y revision
+- Merge branch 'feat/CRUD_citas' of https://github.com/Proyecto-ISPP/FISIOFIND into feat/CRUD_citas
+- Merge pull request #228 from Proyecto-ISPP/feat/doc-gestion-usuarios-piloto
+- Docs: indicación de comentar índice
+- Docs: pequeñas modificaciones en la redacción del plan de gestión de usuarios piloto
+- Merge branch 'feat/CRUD_citas' into feat/mis-citas
+- Merge branch 'feat/CRUD_citas' of https://github.com/Proyecto-ISPP/FISIOFIND into feat/CRUD_citas
+- Merge branch 'feat/CRUD_citas' of https://github.com/Proyecto-ISPP/FISIOFIND into feat/mis-citas
+- Merge branch 'feat/CRUD_citas' of https://github.com/Proyecto-ISPP/FISIOFIND into feat/CRUD_citas
+- Merge branch 'feat/CRUD_citas' of https://github.com/Proyecto-ISPP/FISIOFIND into feat/CRUD_citas
+- refactor: cambiadas las urls de gestios de citas
+- docs: añadidos usuarios piloto tecnicos y plantilla evaluacion
+- docs: reorganizacion de los docs de usuarios piloto. NO TERMINADO
+- Merge pull request #224 from Proyecto-ISPP/feat/doc-riesgos-cambio-nuevos
+- Merge remote-tracking branch 'origin/main' into feat/doc-gestion-usuarios-piloto
+- Merge branch 'develop' into feat/admin-gestionar-usuarios
+- Merge remote-tracking branch 'origin/develop' into feat/mis-citas
+- Merge remote-tracking branch 'origin' into feat/mis-citas
+- Merge branch 'feat/CRUD_citas' into feat/mis-citas
+- Feat: integración cambios con develop
+- Merge branch 'develop' of https://github.com/Proyecto-ISPP/ISPP into feat/CRUD_citas
+- Feat: mockeado el botón de búsqueda por especialidad
+- docs: añadidos riesgos a matriz de riesgos en risk_management_plan
+- docs: añadidos nuevos riesgos a risk_registry.md
+- Merge branch 'feat/mis-citas' of https://github.com/Proyecto-ISPP/FISIOFIND into feat/mis-citas
+- Merge pull request #197 from Proyecto-ISPP/feat/front-login-paciente
+- Merge branch 'develop' into feat/front-login-paciente
+- Merge branch 'feat/admin-gestionar-usuarios' of https://github.com/Proyecto-ISPP/ISPP into feat/admin-gestionar-usuarios
+- style: estilos vistas de admin cambiados
+- Merge branch 'develop' into feat/admin-gestionar-usuarios
+- Merge pull request #219 from Proyecto-ISPP/feat/doc-meeting-8-m
+- Merge pull request #185 from Proyecto-ISPP/feat/doc-quality_report_06-03-2025
+- Merge pull request #196 from Proyecto-ISPP/fix/commitment-agreement
+- Merge remote-tracking branch 'origin/main' into fix/commitment-agreement
+- Merge pull request #175 from Proyecto-ISPP/feat/doc-time-report-week-5
+- Merge pull request #184 from Proyecto-ISPP/docs/mid-term-retrospective-s1
+- Merge pull request #173 from Proyecto-ISPP/feat/doc-report-ia-week-4-5
+- Merge pull request #166 from Proyecto-ISPP/feat/doc-clockify-report-week-4
+- docs: acta de reuniones 08/03
+- Merge branch 'develop' into feat/front-login-paciente
+- docs: actualización de commitment_agreement.md
+- docs: primera version acta de reunion del la reunion del 08/03
+- docs: documento del análisis cuantitativo de la calidad por parte del equipo de QA
+- docs: Plantilla de Informe de Calidad del Sprint 1
+- docs: retrospectiva de mitad del Sprint 1
+- docs: creacion documento mid term retrospective
+- Merge pull request #172 from Proyecto-ISPP/feat/acceso-invitado
+- docs: Plantilla del documento de Análisis cuantitativo de la calidad
+- docs: Informe de tiempo semana 5
+- docs: Añadir diagramas de sectores
+- style: cambios de estilo en home y sidebar
+- docs: Añadido reporte de ia semanas 4 y 5
+- Merge pull request #171 from Proyecto-ISPP/feat/registro-fisio
+- refactor: Mover la lógica de permissions a una app común
+- Merge pull request #170 from Proyecto-ISPP/feat/admin-modificar-terminos
+- Merge branch 'feat/registro-fisio' into feat/admin-modificar-terminos
+- Merge branch 'develop' into feat/registro-fisio
+- Merge branch 'develop' into feat/admin-modificar-terminos
+- docs: Plantilla de Informe de Calidad del Sprint 1
+- Merge remote-tracking branch 'origin/feat/registro-fisio' into feat/admin-modificar-terminos
+- Merge branch 'feat/videollamada' of https://github.com/Proyecto-ISPP/ISPP into feat/videollamada
+- Merge branch 'feat/mis-citas' of https://github.com/Proyecto-ISPP/ISPP into feat/videollamada
+- Merge branch 'feat/CRUD_citas' into feat/mis-citas
+- Merge branch 'feat/mis-citas' of https://github.com/Proyecto-ISPP/FISIOFIND into feat/mis-citas
+- Merge pull request #168 from Proyecto-ISPP/feat/registro-user
+- Merge branch 'feat/CRUD_citas' into feat/mis-citas
+- Merge branch 'feat/registro-fisio' into feat/registro-user
+- Merge branch 'feat/mis-citas' of https://github.com/Proyecto-ISPP/FISIOFIND into feat/mis-citas
+- Merge pull request #164 from Proyecto-ISPP/feat/doc-añadir-riesgo-usuarios-piloto
+- docs: Informe de tiempo semana 4
+- Merge pull request #156 from Proyecto-ISPP/feat/doc-feedback-21-de-febrero
+- Merge pull request #165 from Proyecto-ISPP/feat/doc-actualizacion-registro-requisitos
+- Merge branch 'main' into feat/doc-actualizacion-registro-requisitos
+- Docs: correcciones de la revisión de la PR y pdf de registro de requisitos
+- Docs: Se ha terminado la primera versión del documento de registro de requisitos completa
+- Docs: Informe de usuarios piloto
+- docs: añadido nuevo riesgo a la matriz de riesgos
+- docs: añadido nuevo riesgo asociado a los usuarios piloto al registro de riesgos
+- Docs: listado definitivo de usuarios piloto y pdf
+- Merge branch 'main' into feat/doc-feedback-21-de-febrero
+- Docs: lista completa usuarios piloto
+- Docs: Plantilla base de informe de usuarios piloto S1
+- docs: Correct feedback 21-02-2025
+- Merge branch 'feat/CRUD_citas' of https://github.com/Proyecto-ISPP/ISPP into feat/CRUD_citas
+- Docs: Revisión final de requisitos
+- Merge branch 'feat/doc-actualizacion-registro-requisitos' of https://github.com/Proyecto-ISPP/FISIOFIND into feat/doc-actualizacion-registro-requisitos
+- Docs: Ampliación de requisitos
+- Docs: Se ha corregido HF-008
+- Docs: Se han añadido los nuevos requisitos para fisioterapeutas y administradores
+- docs: creado el documento de  feedback_21-02-2025.md de la última clase
