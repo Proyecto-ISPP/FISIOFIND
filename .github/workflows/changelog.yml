@@ -63,6 +63,8 @@ jobs:
           git log --pretty=format:"- %s (@%an)" --invert-grep --grep="^[Ff]eat" --grep="^[Ff]ix" --grep="^[Dd]ocs" --grep="Merge branch" --grep="Merge pull request" $(git tag --sort=-v:refname | head -n 1)..HEAD >> CHANGELOG.md
       
       - name: Install GitHub CLI Copilot extension
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh extension install github/gh-copilot
 
       - name: Generate Changelog Summary with Copilot
