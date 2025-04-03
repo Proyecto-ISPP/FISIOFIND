@@ -5,11 +5,20 @@ import { useRouter } from "next/navigation";
 import { getApiBaseUrl } from "@/utils/api";
 // Se ha eliminado la importación de MultiSelectDropdown
 
+// First, let's update the Session interface to include progress tracking fields
 interface Session {
   id: number;
   name: string;
   treatment: number;
   day_of_week: string[];
+  // Add new fields for progress tracking
+  exercises_count?: number;
+  completed_exercises_count?: number;
+  tests_count?: number;
+  completed_tests_count?: number;
+  total_series?: number;
+  total_logs?: number;
+  total_expected_logs?: number;
 }
 
 interface Option {
@@ -114,6 +123,7 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
     loadSessions();
   }, []);
 
+  // Update the loadSessions function to fetch additional progress data
   const loadSessions = async () => {
     try {
       setLoading(true);
@@ -122,7 +132,7 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
         setError("No se ha encontrado el token de autenticación");
         return;
       }
-
+  
       const response = await fetch(
         `${getApiBaseUrl()}/api/treatments/${treatmentId}/sessions/`,
         {
@@ -132,13 +142,152 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
           },
         }
       );
-
+  
       if (!response.ok) {
         throw new Error("Error al cargar las sesiones");
       }
-
+  
       const data = await response.json();
-      setSessions(data);
+      
+      // Fetch test and exercise information for each session
+      const sessionsWithInfo = await Promise.all(
+        data.map(async (session: Session) => {
+          try {
+            // Check if the session has a test
+            const testResponse = await fetch(
+              `${getApiBaseUrl()}/api/treatments/sessions/${session.id}/test/view/`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+            
+            if (testResponse.ok) {
+              // Session has a test
+              session.tests_count = 1;
+              
+              // Check if the patient has responded to the test
+              const testResponsesResponse = await fetch(
+                `${getApiBaseUrl()}/api/treatments/sessions/${session.id}/test/responses/`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                  },
+                }
+              );
+              
+              if (testResponsesResponse.ok) {
+                const testResponsesData = await testResponsesResponse.json();
+                session.completed_tests_count = testResponsesData.length;
+              } else {
+                session.completed_tests_count = 0;
+              }
+            } else {
+              // Session doesn't have a test
+              session.tests_count = 0;
+              session.completed_tests_count = 0;
+            }
+  
+            // Fetch exercises for the session
+            const exercisesResponse = await fetch(
+              `${getApiBaseUrl()}/api/treatments/sessions/${session.id}/exercises/`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+  
+            if (exercisesResponse.ok) {
+              const exerciseSessions = await exercisesResponse.json();
+              session.exercises_count = exerciseSessions.length;
+              
+              // Calculate total series for all exercises in this session
+              let totalSeries = 0;
+              let totalLogs = 0;
+              
+              // For each exercise session, get its series
+              for (const exerciseSession of exerciseSessions) {
+                const seriesResponse = await fetch(
+                  `${getApiBaseUrl()}/api/treatments/exercise-sessions/${exerciseSession.id}/series/`,
+                  {
+                    headers: {
+                      Authorization: `Bearer ${token}`,
+                      "Content-Type": "application/json",
+                    },
+                  }
+                );
+                
+                if (seriesResponse.ok) {
+                  const seriesData = await seriesResponse.json();
+                  totalSeries += seriesData.length;
+                  
+                  // For each series, get its logs
+                  for (const series of seriesData) {
+                    try {
+                      const logsResponse = await fetch(
+                        `${getApiBaseUrl()}/api/treatments/exercise-sessions/${exerciseSession.id}/logs/`,
+                        {
+                          headers: {
+                            Authorization: `Bearer ${token}`,
+                            "Content-Type": "application/json",
+                          },
+                        }
+                      );
+                      
+                      if (logsResponse.ok) {
+                        const logsData = await logsResponse.json();
+                        // Filter logs for this specific series
+                        const seriesLogs = logsData.filter((log: { series: number }) => log.series === series.id);
+                        totalLogs += seriesLogs.length;
+                      }
+                    } catch (error) {
+                      console.error(`Error fetching logs for series ${series.id}:`, error);
+                    }
+                  }
+                }
+              }
+              
+              // Calculate the total expected logs (series * days of the week)
+              const totalExpectedLogs = totalSeries * session.day_of_week.length;
+              
+              // Store these values for progress calculation
+              session.total_series = totalSeries;
+              session.total_logs = totalLogs;
+              session.total_expected_logs = totalExpectedLogs;
+              
+              // Calculate completed exercises percentage
+              session.completed_exercises_count = totalExpectedLogs > 0 
+                ? Math.round((totalLogs / totalExpectedLogs) * 100) 
+                : 0;
+            } else {
+              session.exercises_count = 0;
+              session.completed_exercises_count = 0;
+              session.total_series = 0;
+              session.total_logs = 0;
+              session.total_expected_logs = 0;
+            }
+          } catch (error) {
+            console.error(`Error fetching info for session ${session.id}:`, error);
+            // If there's an error, set default values
+            session.tests_count = session.tests_count || 0;
+            session.completed_tests_count = session.completed_tests_count || 0;
+            session.exercises_count = session.exercises_count || 0;
+            session.completed_exercises_count = session.completed_exercises_count || 0;
+            session.total_series = session.total_series || 0;
+            session.total_logs = session.total_logs || 0;
+            session.total_expected_logs = session.total_expected_logs || 0;
+          }
+          
+          return session;
+        })
+      );
+      
+      setSessions(sessionsWithInfo);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al cargar las sesiones");
     } finally {
@@ -273,6 +422,41 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
     setSessionIdToDelete(null);
   };
 
+  const getSessionProgress = (session: Session) => {
+    // Calculate progress for exercises based on logs completed vs expected
+    let exerciseProgress = 0;
+    if (session.total_expected_logs && session.total_expected_logs > 0) {
+      exerciseProgress =
+        ((session.total_logs ?? 0) / session.total_expected_logs) * 100;
+    }
+
+    // Calculate progress for tests based on responses completed vs expected
+    let testProgress = 0;
+    if (session.tests_count && session.tests_count > 0) {
+      testProgress =
+        ((session.completed_tests_count ?? 0) / session.day_of_week.length) *
+        100;
+    }
+
+    // Calculate overall progress (weighted average)
+    let totalWeight = 0;
+    let weightedProgress = 0;
+
+    if (session.total_expected_logs && session.total_expected_logs > 0) {
+      weightedProgress += exerciseProgress;
+      totalWeight += 1;
+    }
+
+    if (session.tests_count && session.tests_count > 0) {
+      weightedProgress += testProgress;
+      totalWeight += 1;
+    }
+
+    const overallProgress =
+      totalWeight > 0 ? weightedProgress / totalWeight : 0;
+    return Math.round(overallProgress);
+  };
+
   if (loading) return <div>Cargando...</div>;
   if (error) return <div>Error: {error}</div>;
 
@@ -336,70 +520,140 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
         </form>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {sessions.map((session) => (
-            <div
-              key={session.id}
-              className="bg-white p-6 rounded-xl shadow-lg transition-all duration-200 hover:shadow-xl hover:transform hover:scale-[1.02] relative"
-            >
-              <div className="absolute top-4 right-4 flex space-x-2">
-                <button
-                  onClick={() => handleEditClick(session)}
-                  className="p-2 text-gray-600 hover:text-[#0c7986] transition-colors duration-200"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                  </svg>
-                </button>
-                <button
-                  onClick={() => handleDeleteClick(session.id)}
-                  className="p-2 text-gray-600 hover:text-red-500 transition-colors duration-200"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                  </svg>
-                </button>
-              </div>
+          {sessions.map((session) => {
+            const progress = getSessionProgress(session);
 
-              <h3 className="text-xl font-semibold text-gray-800 mb-3">
-                {session.name || `Sesión ${session.id}`}
-              </h3>
-              <p className="text-gray-600 mb-4">
-                Días:{" "}
-                {Array.isArray(session.day_of_week)
-                  ? session.day_of_week
-                      .map(
-                        (day) => daysOfWeek.find((d) => d.value === day)?.label
-                      )
-                      .join(", ")
-                  : ""}
-              </p>
-
-              <div className="flex flex-col space-y-2">
-                <div className="flex space-x-2">
+            return (
+              <div
+                key={session.id}
+                className="bg-white p-6 rounded-xl shadow-lg transition-all duration-200 hover:shadow-xl hover:transform hover:scale-[1.02] relative"
+              >
+                <div className="absolute top-4 right-4 flex space-x-2">
                   <button
-                    onClick={() =>
-                      router.push(
-                        `/physio-management/follow-up/${treatmentId}/sessions/${session.id}/exercises/`
-                      )
-                    }
-                    className="flex-1 px-6 py-3 bg-gradient-to-r from-[#05668d] to-[#05668d] hover:from-[#045a7d] hover:to-[#034b68] text-white font-medium rounded-xl focus:outline-none focus:ring-2 focus:ring-[#05668d] focus:ring-offset-2 transition-all duration-200 flex items-center justify-center space-x-2"
+                    onClick={() => handleEditClick(session)}
+                    className="p-2 text-gray-600 hover:text-[#0c7986] transition-colors duration-200"
                   >
-                    <span>Ejercicios</span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                    </svg>
                   </button>
                   <button
-                    onClick={() =>
-                      router.push(
-                        `/physio-management/follow-up/${treatmentId}/sessions/${session.id}/tests/physio/`
-                      )
-                    }
-                    className="flex-1 px-6 py-3 bg-gradient-to-r from-[#05668d] to-[#05668d] hover:from-[#034b68] hover:to-[#045a7d] text-white font-medium rounded-xl focus:outline-none focus:ring-2 focus:ring-[#05668d] focus:ring-offset-2 transition-all duration-200 flex items-center justify-center space-x-2"
+                    onClick={() => handleDeleteClick(session.id)}
+                    className="p-2 text-gray-600 hover:text-red-500 transition-colors duration-200"
                   >
-                    <span>Cuestionario</span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
                   </button>
                 </div>
+
+                <h3 className="text-xl font-semibold text-gray-800 mb-3">
+                  {session.name || `Sesión ${session.id}`}
+                </h3>
+
+                {/* Progress section */}
+                <div className="mb-4">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-sm font-medium text-gray-700">
+                      Progreso del paciente
+                    </span>
+                    <span className="text-sm font-medium text-gray-700">
+                      {progress}%
+                    </span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2.5">
+                    <div
+                      className="bg-[#6bc9be] h-2.5 rounded-full"
+                      style={{ width: `${progress}%` }}
+                    ></div>
+                  </div>
+                </div>
+
+                {/* Details section */}
+                <div className="grid grid-cols-2 gap-2 mb-4 text-sm">
+                  <div className="bg-gray-50 p-2 rounded">
+                    <p className="text-gray-500 border-b-2 mb-1">Ejercicios</p>
+                    <p className="font-medium">
+                      {session.exercises_count || 0} ejercicios
+                    </p>
+                    {session.total_logs !== undefined &&
+                      session.total_expected_logs !== undefined && (
+                        <p className="text-xs text-gray-500">
+                          {session.total_logs} de {session.total_expected_logs}{" "}
+                          registros
+                        </p>
+                      )}
+                  </div>
+                  <div className="bg-gray-50 p-2 rounded">
+                    <p className="text-gray-500 border-b-2 mb-1">Cuestionarios</p>
+                    <p className="font-medium">
+                      {session.tests_count
+                        ? "1 cuestionario"
+                        : "Sin cuestionario"}
+                    </p>
+                    {session.tests_count &&
+                      session.completed_tests_count !== undefined && (
+                        <p className="text-xs text-gray-500">
+                          {session.completed_tests_count} de{" "}
+                          {session.day_of_week.length} respuestas
+                        </p>
+                      )}
+                  </div>
+                </div>
+
+                <p className="text-gray-600 mb-4">
+                  Días:{" "}
+                  {Array.isArray(session.day_of_week)
+                    ? session.day_of_week
+                        .map(
+                          (day) =>
+                            daysOfWeek.find((d) => d.value === day)?.label
+                        )
+                        .join(", ")
+                    : ""}
+                </p>
+
+                <div className="flex flex-col space-y-2">
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() =>
+                        router.push(
+                          `/physio-management/follow-up/${treatmentId}/sessions/${session.id}/exercises/`
+                        )
+                      }
+                      className="flex-1 px-6 py-3 bg-gradient-to-r from-[#05668d] to-[#05668d] hover:from-[#045a7d] hover:to-[#034b68] text-white font-medium rounded-xl focus:outline-none focus:ring-2 focus:ring-[#05668d] focus:ring-offset-2 transition-all duration-200 flex items-center justify-center space-x-2"
+                    >
+                      <span>Ejercicios</span>
+                    </button>
+                    <button
+                      onClick={() =>
+                        router.push(
+                          `/physio-management/follow-up/${treatmentId}/sessions/${session.id}/tests/physio/`
+                        )
+                      }
+                      className="flex-1 px-6 py-3 bg-gradient-to-r from-[#05668d] to-[#05668d] hover:from-[#034b68] hover:to-[#045a7d] text-white font-medium rounded-xl focus:outline-none focus:ring-2 focus:ring-[#05668d] focus:ring-offset-2 transition-all duration-200 flex items-center justify-center space-x-2"
+                    >
+                      <span>Cuestionario</span>
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Edit Session Modal */}
