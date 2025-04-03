@@ -220,8 +220,9 @@ def validate_physio_registration(request):
 def physio_register_view(request):
     serializer = PhysioRegisterSerializer(data=request.data)
     if serializer.is_valid():
-        
-        serializer.save()
+        pyshio = serializer.save()
+        user_id = pyshio.id
+        verify_user_and_update_status(user_id)
         return Response({"message": "Fisioteraputa registrado correctamente"}, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
