@@ -1984,3 +1984,13 @@ form select:disabled {
 .form-input:hover:not(:focus):not(.form-input-error) {
   border-color: #cbd5e0;
 }
+
+/* Calendar day hover styles */
+.fc-day:hover {
+  background-color: rgba(5, 172, 156, 0.1) !important; /* Light version of your theme color */
+  cursor: pointer;
+}
+
+.fc-day-today:hover {
+  background-color: rgba(5, 172, 156, 0.2) !important;
+}
