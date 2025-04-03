@@ -62,24 +62,23 @@ jobs:
           echo "### 🌀 Other Changes" >> CHANGELOG.md
           git log --pretty=format:"- %s (@%an)" --invert-grep --grep="^[Ff]eat" --grep="^[Ff]ix" --grep="^[Dd]ocs" --grep="Merge branch" --grep="Merge pull request" $(git tag --sort=-v:refname | head -n 1)..HEAD >> CHANGELOG.md
 
-      - name: Authenticate GitHub CLI
+      - name: Authenticate GitHub CLI with PAT
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh auth status || gh auth login --with-token <<< "$GH_TOKEN"
+          GH_TOKEN: ${{ secrets.COPILOT_PAT }}
+        run: echo "$GH_TOKEN" | gh auth login --with-token
 
       - name: Install GitHub CLI Copilot extension
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.COPILOT_PAT }}
         run: gh extension install github/gh-copilot
 
       - name: Generate Changelog Summary with Copilot
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.COPILOT_PAT }}
         run: |
           SUMMARY=$(echo "Resume estos cambios en una frase: $(tail -n 20 CHANGELOG.md)" | gh copilot suggest)
           echo "Resumen generado: $SUMMARY"
           sed -i "s|**Generando resumen con IA...**|$SUMMARY|" CHANGELOG.md
-
 
       - name: Commit and push CHANGELOG.md
         run: |
