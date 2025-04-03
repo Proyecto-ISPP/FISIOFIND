@@ -8,16 +8,18 @@ from users.permissions import IsPhysiotherapist
 
 
 class RatingListView(generics.ListAPIView):
-    """List all ratings - accessible to all users (authenticated or not)"""
-    queryset = Rating.objects.all()
+    queryset = Rating.objects.all().order_by('-punctuation')
     serializer_class = RatingSerializer
     permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset
 
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, IsPhysiotherapist])
 def create_rating(request):
-    """Create a new rating - only accessible to physiotherapists and admins"""
     serializer = RatingSerializer(data=request.data)
 
     if serializer.is_valid():
@@ -31,11 +33,9 @@ def create_rating(request):
 @api_view(['PUT', 'PATCH'])
 @permission_classes([IsAuthenticated, IsPhysiotherapist])
 def update_rating(request, rating_id):
-    """Update an existing rating - only accessible to the physiotherapist who created it or admins"""
     try:
         rating = Rating.objects.get(id=rating_id)
 
-        # Check if the user is the physiotherapist who created this rating
         if request.user.physio != rating.physiotherapist and not request.user.is_staff:
             return Response(
                 {'error': 'You can only edit your own ratings'}, 
@@ -57,11 +57,9 @@ def update_rating(request, rating_id):
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated, IsPhysiotherapist])
 def delete_rating(request, rating_id):
-    """Delete a rating - only accessible to the physiotherapist who created it or admins"""
     try:
         rating = Rating.objects.get(id=rating_id)
 
-        # Check if the user is the physiotherapist who created this rating
         if request.user.physio != rating.physiotherapist and not request.user.is_staff:
             return Response(
                 {'error': 'You can only delete your own ratings'}, 
@@ -78,7 +76,6 @@ def delete_rating(request, rating_id):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def get_rating_details(request, rating_id):
-    """Retrieve details for a specific rating - accessible to all users"""
     try:
         rating = Rating.objects.get(id=rating_id)
         serializer = RatingSerializer(rating)
@@ -91,7 +88,6 @@ def get_rating_details(request, rating_id):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def get_physiotherapist_ratings(request, physiotherapist_id):
-    """Retrieve all ratings for a specific physiotherapist - accessible to all users"""
     ratings = Rating.objects.filter(physiotherapist_id=physiotherapist_id)
     serializer = RatingSerializer(ratings, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
