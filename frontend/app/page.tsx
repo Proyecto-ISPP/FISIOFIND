@@ -472,10 +472,10 @@ const Home = () => {
 
       {/* Top Physiotherapists Section */}
       <section className="max-w-7xl mx-auto px-4 mb-12">
-        <h2 className="text-3xl text-[#253240] font-bold mb-8 text-center">
+        {/* <h2 className="text-3xl text-[#253240] font-bold mb-8 text-center">
           Top Fisioterapeutas
         </h2>
-        {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {topPhysiotherapists.map((physio, index) => (
             <CardContainer key={index}>
               <CardBody className="bg-gradient-to-bl from-white to-[#65C2C9]/50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-blue-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-full h-auto rounded-xl p-6 border">
@@ -524,6 +524,9 @@ const Home = () => {
 
       {/* Top Ratings Section */}
       <section className="max-w-7xl mx-auto px-4 mb-12">
+        <h2 className="text-3xl text-[#253240] font-bold mb-8 text-center">
+          La opinión de fisioterapeutas profesionales
+        </h2>
         <TopRatings />
       </section>
 

@@ -6,6 +6,7 @@ import Image from 'next/image';
 import styles from './ratings.module.css';
 import { getApiBaseUrl } from "@/utils/api";
 import { useRouter } from "next/navigation";
+import { GradientButton } from './ui/gradient-button';
 
 interface PhysiotherapistDetails {
   id: number;  // ID is included in your serializer
@@ -43,6 +44,7 @@ const TopRatings: React.FC = () => {
     punctuation: 5,
     opinion: ''
   });
+  const [confirmationMessage, setConfirmationMessage] = useState<string | null>(null);
   
   const apiBaseUrl = getApiBaseUrl();
 
@@ -87,9 +89,41 @@ const TopRatings: React.FC = () => {
     checkAuth();
   }, [apiBaseUrl]);
 
+  // Function to check if the current physiotherapist has already rated
+  const checkIfPhysioHasRated = async () => {
+    const token = getAuthToken();
+    if (!token) {
+      setHasRated(false);
+      return;
+    }
+
+    try {
+      const response = await axios.get(`${apiBaseUrl}/api/ratings/has-rated/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.data && response.data.has_rated) {
+        setHasRated(true);
+      } else {
+        setHasRated(false);
+      }
+    } catch (err) {
+      console.error("Error checking if physio has rated:", err);
+      setHasRated(false);
+    }
+  };
+
+  // Call the function to check if the physio has rated when the component mounts
+  useEffect(() => {
+    if (isAuthenticated && isPhysio) {
+      checkIfPhysioHasRated();
+    }
+  }, [isAuthenticated, isPhysio, apiBaseUrl]);
+
   // Fetch ratings
   useEffect(() => {
-    // Inside your fetchTopRatings function, add error logging to see what's happening:
     const fetchTopRatings = async () => {
       try {
         setLoading(true);
@@ -105,12 +139,11 @@ const TopRatings: React.FC = () => {
         // Process the response and set the ratings
         const sortedRatings = response.data
           .sort((a: Rating, b: Rating) => b.punctuation - a.punctuation)
-          .slice(0, 5);
+          .slice(0, 3); // Show only the first 3 ratings
         setRatings(sortedRatings);
         
       } catch (err) {
         console.error('Error fetching ratings:', err);
-        // Add more detailed error logging
         if (err.response) {
           console.error('Response error:', err.response.status, err.response.data);
         }
@@ -182,23 +215,38 @@ const TopRatings: React.FC = () => {
         return;
       }
 
+      // Include the physiotherapist ID in the payload
+      const payload = {
+        ...newRating,
+        physiotherapist: isPhysio ? 1 : null, // Replace `1` with the actual physiotherapist ID if available
+      };
+
+      // Log the payload for debugging
+      console.log("Submitting rating:", payload);
+
       await axios.post(
         `${apiBaseUrl}/api/ratings/create/`, 
-        newRating,
+        payload,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       setHasRated(true);
       setShowRatingForm(false);
       setError(null);
-      
+
+      // Show confirmation message for ratings with 3 stars or more
+      if (newRating.punctuation >= 3) {
+        setConfirmationMessage('¡Gracias por valorar nuestra app!');
+        setTimeout(() => setConfirmationMessage(null), 3000); // Hide after 3 seconds
+      }
+
       // Refresh ratings (use a slight delay to ensure the new rating is included)
       setTimeout(async () => {
         try {
           const response = await axios.get(`${apiBaseUrl}/api/ratings/list/`);
           const sortedRatings = response.data
             .sort((a: Rating, b: Rating) => b.punctuation - a.punctuation)
-            .slice(0, 5);
+            .slice(0, 3); // Show only the first 3 ratings
           setRatings(sortedRatings);
         } catch (err) {
           console.error('Error refreshing ratings:', err);
@@ -207,15 +255,21 @@ const TopRatings: React.FC = () => {
       
     } catch (err) {
       console.error('Error submitting rating:', err);
-      if (err.response?.data) {
-        // Extract validation errors from the response
-        if (typeof err.response.data === 'object') {
-          const errorMessages = Object.values(err.response.data)
-            .flat()
-            .join(', ');
-          setError(`Failed to submit rating: ${errorMessages}`);
+
+      if (axios.isAxiosError(err) && err.response) {
+        // Handle 400 Bad Request specifically
+        if (err.response.status === 400) {
+          const errorData = err.response.data;
+          if (typeof errorData === 'object') {
+            const errorMessages = Object.values(errorData)
+              .flat()
+              .join(', ');
+            setError(`Failed to submit rating: ${errorMessages}`);
+          } else {
+            setError('Failed to submit rating. Please check your input.');
+          }
         } else {
-          setError('Failed to submit rating. Please try again later.');
+          setError(`Error: ${err.response.status} - ${err.response.statusText}`);
         }
       } else {
         setError('Failed to submit rating. Please try again later.');
@@ -234,15 +288,21 @@ const TopRatings: React.FC = () => {
   return (
     <div className={styles.ratingsContainer}>
       <br></br>
+      {/* Confirmation message */}
+      {confirmationMessage && (
+        <div className={styles.confirmationMessage}>
+          {confirmationMessage}
+        </div>
+      )}
       {/* Show rating button for authenticated physiotherapists who haven't rated yet */}
-      {isAuthenticated && isPhysio && !hasRated && !showRatingForm && (
+      {isAuthenticated && isPhysio && !hasRated && (
         <div className={styles.rateButtonContainer}>
-          <button 
+          <GradientButton 
             className={styles.rateButton}
             onClick={() => setShowRatingForm(true)}
           >
             ¿Te gusta nuestra app? ¡Valóranos!
-          </button>
+          </GradientButton>
         </div>
       )}
 
@@ -250,50 +310,64 @@ const TopRatings: React.FC = () => {
       {showRatingForm && (
         <div className={styles.ratingForm}>
           <h3>Valora nuestra aplicación</h3>
-          <div className={styles.starsContainer}>
-            {renderInteractiveStars()}
-          </div>
-          <textarea
-            className={styles.opinionInput}
-            placeholder="Cuéntanos tu experiencia con la app..."
-            value={newRating.opinion}
-            onChange={(e) => setNewRating({...newRating, opinion: e.target.value})}
-          />
-          <div className={styles.formButtons}>
-            <button 
-              className={styles.cancelButton}
-              onClick={() => setShowRatingForm(false)}
-            >
-              Cancelar
-            </button>
-            <button 
-              className={styles.submitButton}
-              onClick={handleSubmitRating}
-            >
-              Enviar valoración
-            </button>
-          </div>
+          {hasRated && (
+            <p className={styles.errorMessage}>
+              Ya has enviado una valoración. No puedes enviar otra.
+            </p>
+          )}
+          {!hasRated && (
+            <>
+              <div className={styles.starsContainer}>
+                {renderInteractiveStars()}
+              </div>
+              <textarea
+                className={styles.opinionInput}
+                placeholder="Cuéntanos tu experiencia con la app..."
+                value={newRating.opinion}
+                onChange={(e) => setNewRating({...newRating, opinion: e.target.value})}
+              />
+              <div className={styles.formButtons}>
+                <button 
+                  className={styles.cancelButton}
+                  onClick={() => setShowRatingForm(false)}
+                >
+                  Cancelar
+                </button>
+                <button 
+                  className={styles.submitButton}
+                  onClick={handleSubmitRating}
+                >
+                  Enviar valoración
+                </button>
+              </div>
+            </>
+          )}
         </div>
       )}
 
       {ratings.length === 0 ? (
         <p className={styles.noRatings}>No hay valoraciones disponibles.</p>
       ) : (
-        <div className={styles.ratingsGrid}>
+        <div className={styles.ratingsGrid} style={{ justifyContent: 'center' }}>
           {ratings.map((rating) => (
-            <div key={rating.id} className={styles.card}>
+            <div 
+              key={rating.id} 
+              className={`${styles.card} ${styles.cardHover}`} 
+              style={{ width: '400px', height: 'auto' }} // Increase card width
+            >
               <div className={styles.header}>
                 <div className={styles.image}>
                 {rating.physiotherapist_details?.photo && (
                   <Image 
                     src={rating.physiotherapist_details.photo} 
-                    alt={rating.physiotherapist_details?.full_name || 'User'}
-                    width={64}
-                    height={64}
+                    alt={rating.physiotherapist_details?.full_name || 'Fisioterapeuta anónimo'}
+                    width={80} // Increase image size
+                    height={80} // Increase image size
                     className={styles.profileImage}
                     onError={(e) => {
                       e.currentTarget.src = '/default-avatar.png';
                     }}
+                    unoptimized
                   />
                 )}
                 </div>
@@ -301,10 +375,10 @@ const TopRatings: React.FC = () => {
                   <div className={styles.stars}>
                     {renderStars(rating.punctuation)}
                   </div>
-                  <p className={styles.name}>{rating.physiotherapist_details?.full_name || 'Anonymous'}</p>
+                  <p className={styles.name}>{rating.physiotherapist_details?.full_name || 'Fisioterapeuta anónimo'}</p>
                 </div>
               </div>
-              <p className={styles.message}>{rating.opinion || 'No opinion provided'}</p>
+              <p className={styles.message}>{rating.opinion || ''}</p>
               <p className={styles.ratingDate}>
                 {new Date(rating.date).toLocaleDateString()}
               </p>

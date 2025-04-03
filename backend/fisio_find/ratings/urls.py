@@ -5,7 +5,8 @@ from .views import (
     update_rating,
     delete_rating,
     get_rating_details,
-    get_physiotherapist_ratings
+    get_my_rating,
+    check_if_physio_has_rated
 )
 
 urlpatterns = [
@@ -14,5 +15,6 @@ urlpatterns = [
     path('update/<int:rating_id>/', update_rating, name='update_rating'),
     path('delete/<int:rating_id>/', delete_rating, name='delete_rating'),
     path('<int:rating_id>/', get_rating_details, name='get_rating_details'),
-    path('physiotherapist/<int:physiotherapist_id>/', get_physiotherapist_ratings, name='get_physiotherapist_ratings'),
+    path('has-rated/', check_if_physio_has_rated, name='has_rated'),
+    path('my-rating/', get_my_rating, name='my_rating')
 ]

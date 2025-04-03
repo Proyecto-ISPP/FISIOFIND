@@ -27,6 +27,10 @@ class RatingSerializer(serializers.ModelSerializer):
         fields = ['id', 'physiotherapist', 'punctuation', 'opinion', 'date',
                   'physiotherapist_details']
         read_only_fields = ['id', 'date', 'physiotherapist_details']
+        extra_kwargs = {
+            'punctuation': {'required': True, 'error_messages': {'required': 'Punctuation is required.'}},
+            'opinion': {'required': True, 'error_messages': {'required': 'Opinion is required.'}},
+        }
 
     def validate_punctuation(self, value):
         if value < 1 or value > 5:
@@ -37,3 +41,8 @@ class RatingSerializer(serializers.ModelSerializer):
         if not value.strip():
             raise serializers.ValidationError("Opinion cannot be empty.")
         return value
+
+    def validate(self, data):
+        if not data.get('physiotherapist'):
+            raise serializers.ValidationError({"physiotherapist": "Physiotherapist is required."})
+        return data

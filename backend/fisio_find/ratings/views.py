@@ -20,13 +20,21 @@ class RatingListView(generics.ListAPIView):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, IsPhysiotherapist])
 def create_rating(request):
-    serializer = RatingSerializer(data=request.data)
+    # Log the incoming data for debugging
+    print("Incoming rating data:", request.data)
+
+    # Ensure the physiotherapist field is set to the logged-in user
+    data = request.data.copy()
+    data['physiotherapist'] = request.user.physio.id
+
+    serializer = RatingSerializer(data=data)
 
     if serializer.is_valid():
-        # Automatically associate the physiotherapist with the logged-in user
-        serializer.save(physiotherapist=request.user.physio)
+        serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    # Log validation errors
+    print("Validation errors:", serializer.errors)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -42,16 +50,27 @@ def update_rating(request, rating_id):
                 status=status.HTTP_403_FORBIDDEN
             )
 
-        serializer = RatingSerializer(rating, data=request.data, partial=True)
+        # Automatically associate the physiotherapist with the logged-in user
+        data = request.data.copy()
+        data['physiotherapist'] = request.user.physio.id
+
+        # Log incoming data for debugging
+        print("Incoming data for update:", data)
+
+        serializer = RatingSerializer(rating, data=data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
 
+        # Log validation errors
+        print("Validation errors:", serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    except Exception as e:
+    except Rating.DoesNotExist:
         return Response({'error': 'Rating not found'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['DELETE'])
@@ -87,7 +106,23 @@ def get_rating_details(request, rating_id):
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
-def get_physiotherapist_ratings(request, physiotherapist_id):
-    ratings = Rating.objects.filter(physiotherapist_id=physiotherapist_id)
-    serializer = RatingSerializer(ratings, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+def check_if_physio_has_rated(request):
+    try:
+        has_rated = Rating.objects.filter(physiotherapist=request.user.physio).exists()
+        return Response({'has_rated': has_rated}, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'error': 'An error occurred while checking ratings'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsPhysiotherapist])
+def get_my_rating(request):
+    try:
+        rating = Rating.objects.filter(physiotherapist=request.user.physio).first()
+        if rating:
+            serializer = RatingSerializer(rating)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(None, status=status.HTTP_204_NO_CONTENT)
+    except Exception as e:
+        return Response({'error': 'An error occurred while fetching the rating'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

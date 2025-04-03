@@ -25,6 +25,12 @@
   width: 100%;
   border-radius: 10px;
   box-shadow: 0 20px 30px -20px rgba(5, 5, 5, 0.24);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.cardHover:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
 }
 
 .header {
@@ -181,6 +187,16 @@
 
 .submitButton:hover {
   background-color: #1848A3;
+}
+
+.confirmationMessage {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  text-align: center;
+  font-weight: bold;
 }
 
 @media (max-width: 768px) {
