@@ -61,10 +61,13 @@ jobs:
 
           echo "### 🌀 Other Changes" >> CHANGELOG.md
           git log --pretty=format:"- %s (@%an)" --invert-grep --grep="^[Ff]eat" --grep="^[Ff]ix" --grep="^[Dd]ocs" --grep="Merge branch" --grep="Merge pull request" $(git tag --sort=-v:refname | head -n 1)..HEAD >> CHANGELOG.md
+      
+      - name: Install GitHub CLI Copilot extension
+        run: gh extension install github/gh-copilot
 
       - name: Generate Changelog Summary with Copilot
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Permite a Copilot acceder al repo
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           SUMMARY=$(gh copilot suggest --prompt "Resume estos cambios en una frase: $(tail -n 20 CHANGELOG.md)")
           sed -i "s|**Generando resumen con IA...**|$SUMMARY|" CHANGELOG.md
