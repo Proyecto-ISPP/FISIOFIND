@@ -374,9 +374,8 @@ def physio_update_service_view(request, service_id):
     service_found = False
     
     # Depuración
-    print(f"Buscando servicio con ID: {service_id_str}")
-    print(f"Servicios disponibles: {list(existing_services.keys())}")
-    
+    logging.debug(f"Buscando servicio con ID: {service_id_str}")
+    logging.debug(f"Servicios disponibles: {list(existing_services.keys())}")
     # Verificar si el ID del servicio existe directamente en las claves
     if service_id_str in existing_services:
         print(f"Servicio encontrado con ID {service_id_str}")
