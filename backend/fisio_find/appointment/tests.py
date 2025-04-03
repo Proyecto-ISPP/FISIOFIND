@@ -5,6 +5,7 @@ from appointment.serializers import AppointmentSerializer
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from users.models import AppUser, Patient, Physiotherapist, Specialization, PhysiotherapistSpecialization
+from videocall.models import Room
 from users.serializers import PhysioSerializer, PatientSerializer, AppUserSerializer
 from django.utils import timezone
 from datetime import timedelta
@@ -497,6 +498,7 @@ class CreateAppointmentTests(APITestCase):
                 break
         self.assertEqual(response.status_code, 201)
         self.assertEqual(Appointment.objects.count(), 2)
+        self.assertEqual(Room.objects.count(), 1)
         self.assertEqual(Appointment.objects.get(id=2).start_time.isoformat().replace('+00:00', 'Z'), '2026-02-03T10:00:00Z')
         self.assertEqual(Appointment.objects.get(id=2).end_time.isoformat().replace('+00:00', 'Z'), '2026-02-03T11:00:00Z')
         self.assertEqual(Appointment.objects.get(id=2).patient.id, self.patient.id)
@@ -504,6 +506,10 @@ class CreateAppointmentTests(APITestCase):
         self.assertEqual(Appointment.objects.get(id=2).status, 'booked')
         self.assertEqual(Appointment.objects.get(id=2).alternatives, "")
         self.assertEqual(appointment_added, True)
+        self.assertIsInstance(response.data['payment_data']['payment'], dict)
+        self.assertEqual(response.data['payment_data']['payment']['amount'], '50.00')
+        self.assertEqual(response.data['payment_data']['payment']['appointment'], 2)
+        self.assertIsInstance(response.data['payment_data']['client_secret'], str)
 
     def test_create_appointment_without_authentication(self):
         url = '/api/appointment/patient/'
