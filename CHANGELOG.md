@@ -1,6 +1,7 @@
 ## Changelog - 3.0.0
 
 ### Features
+- feat: añadido fechas y autores
 - feat: changelog nuevo
 - Merge pull request #440 from Proyecto-ISPP/feat/doc-ia-report-week-9
 - feat: Reporte de ia para presentación del 04/04
@@ -32,6 +33,12 @@
 - feat: Vincular CRUD de citas con Videollamada
 - Merge pull request #404 from Proyecto-ISPP/feat/solucionar-vulnerabilidades-dependencias
 ### Fixes
+- fix: volvemos version anterior del archivo
+- fix: arreglo del archivo
+- fix: intento identificar el error
+- fix: arreglo tags
+- fix: eliminado cliff.toml
+- fix: arreglo de tags y cambio mensaje commit
 - fix: cambios categorias changelog
 - Merge pull request #431 from Proyecto-ISPP/hotfix/bug-servicios-cuestionarios
 - fix: unificados estilos de alertas y ventanas de confirmacion
@@ -68,6 +75,7 @@
 - fix: borrado frontend/app/videocalls/tools/body-highlighter/package-lock.json para evitar falsos positivos de vulnerabilidades en dependencias por dependabot
 - fix: actualizada version de django en requirements.txt para solucionar vulnerabilidades en dependencias
 ### Documentation
+- docs: update CHANGELOG for 3.0.0
 - docs: update CHANGELOG for 5.0.0
 - docs: update CHANGELOG for 4.0.0
 - docs: update CHANGELOG for 3.0.0
