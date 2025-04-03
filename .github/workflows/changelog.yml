@@ -65,17 +65,12 @@ jobs:
       - name: Authenticate GitHub CLI
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh auth setup-git
+        run: gh auth status || gh auth login --with-token <<< "$GH_TOKEN"
 
       - name: Install GitHub CLI Copilot extension
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh extension install github/gh-copilot
-
-      - name: Authenticate Copilot in GitHub CLI
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh auth login --with-token <<< "$GH_TOKEN"
 
       - name: Generate Changelog Summary with Copilot
         env:
