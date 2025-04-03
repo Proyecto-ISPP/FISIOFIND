@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 interface PhysiotherapistDetails {
   id: number;  // ID is included in your serializer
   full_name: string;
-  profile_picture: string;
+  photo: string;
 }
 
 interface Rating {
@@ -284,9 +284,9 @@ const TopRatings: React.FC = () => {
             <div key={rating.id} className={styles.card}>
               <div className={styles.header}>
                 <div className={styles.image}>
-                {rating.physiotherapist_details?.profile_picture && (
+                {rating.physiotherapist_details?.photo && (
                   <Image 
-                    src={rating.physiotherapist_details.profile_picture} 
+                    src={rating.physiotherapist_details.photo} 
                     alt={rating.physiotherapist_details?.full_name || 'User'}
                     width={64}
                     height={64}

@@ -5,13 +5,17 @@ from users.models import Physiotherapist, Patient
 
 class PhysiotherapistDetailSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
+    photo = serializers.SerializerMethodField()
 
     class Meta:
         model = Physiotherapist
-        fields = ['id', 'full_name', 'profile_picture']
+        fields = ['id', 'full_name', 'photo']
 
     def get_full_name(self, obj):
         return f"{obj.user.first_name} {obj.user.last_name}"
+
+    def get_photo(self, obj):
+        return obj.user.photo.url if obj.user.photo else None
 
 
 
