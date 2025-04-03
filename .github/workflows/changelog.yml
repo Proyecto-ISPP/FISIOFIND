@@ -1,4 +1,4 @@
-name: Generate Changelog
+name: Generate Changelog and Tag
 
 on:
   push:
@@ -6,27 +6,52 @@ on:
       - feat/changelog.yml
 
 jobs:
-  changelog:
+  generate-changelog:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Necesario para obtener todas las tags
 
-      - name: Install git-cliff
+      - name: Get latest tag
+        id: get-latest-tag
         run: |
-          curl -sSL https://github.com/orhun/git-cliff/releases/latest/download/git-cliff-$(uname -s)-$(uname -m) -o /usr/local/bin/git-cliff
-          chmod +x /usr/local/bin/git-cliff
+          latest_tag=$(git tag --sort=-v:refname | head -n 1)
+          echo "Última tag encontrada: $latest_tag"
+          if [[ -z "$latest_tag" ]]; then
+            new_tag="1.0.0"
+          else
+            major=$(echo "$latest_tag" | cut -d. -f1)
+            new_major=$((major + 1))
+            new_tag="${new_major}.0.0"
+          fi
+          echo "NEW_TAG=$new_tag" >> $GITHUB_ENV
+          echo "Nueva tag a crear: $new_tag"
 
-      - name: Generate Changelog
+      - name: Generate changelog
+        id: generate-changelog
         run: |
-          npm install -g auto-changelog
-          auto-changelog --output CHANGELOG.md --commit-limit false --tag-pattern ""
+          echo "## Changelog - $NEW_TAG" > CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          echo "### Features" >> CHANGELOG.md
+          git log --pretty=format:"- %s" --grep="^feat" $(git tag --sort=-v:refname | head -n 1)..HEAD >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          echo "### Fixes" >> CHANGELOG.md
+          git log --pretty=format:"- %s" --grep="^fix" $(git tag --sort=-v:refname | head -n 1)..HEAD >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          echo "### Other Changes" >> CHANGELOG.md
+          git log --pretty=format:"- %s" --invert-grep --grep="^feat" --grep="^fix" $(git tag --sort=-v:refname | head -n 1)..HEAD >> CHANGELOG.md
 
-
-      - name: Commit and Push Changelog
+      - name: Commit and push CHANGELOG.md
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add CHANGELOG.md
-          git commit -m "🔄 Update Changelog"
+          git commit -m "docs: update CHANGELOG for $NEW_TAG"
           git push
+
+      - name: Create new tag
+        run: |
+          git tag $NEW_TAG
+          git push origin $NEW_TAG
