@@ -373,46 +373,41 @@ class CreateAppointmentTests(APITestCase):
                     "friday": [],
                     "monday": [
                         {
+                            "id": "ws-1743669362707-139",
                             "end": "14:00",
                             "start": "10:00"
                         }
                     ],
-                    "saturday": [],
                     "sunday": [],
-                    "thursday": [],
                     "tuesday": [
                         {
+                            "id": "ws-1743669365620-823",
                             "end": "15:00",
                             "start": "10:00"
                         }
                     ],
+                    "saturday": [],
+                    "thursday": [],
                     "wednesday": []
                 }
             },
             birth_date = "1980-01-01",
             collegiate_number = "COL1",
-            services = {
-                "Servicio 1": {
+            services={
+                "1": {
                     "id": 1,
                     "title": "Primera consulta",
-                    "price": 30,
-                    "description": "Evaluaremos tu estado físico, hablaremos sobre tus molestias y realizaremos pruebas para diseñar un plan de tratamiento personalizado que se adapte a tus necesidades y estilo de vida.",
-                    "duration": 45,
+                    "tipo": "PRIMERA_CONSULTA",
+                    "price": 50,
+                    "description": "Descripción",
+                    "duration": 60,
                     "custom_questionnaire": {
                         "UI Schema": {
                             "type": "Group",
-                            "label": "Cuestionario Personalizado",
+                            "label": "Cuestionario",
                             "elements": [
-                                {
-                                    "type": "Control",
-                                    "label": "¿Qué te duele?",
-                                    "scope": "#/properties/q1"
-                                },
-                                {
-                                    "type": "Control",
-                                    "label": "¿Cómo describirías el dolor?",
-                                    "scope": "#/properties/q2"
-                                }
+                                {"type": "Number", "label": "Edad", "scope": "#/properties/edad"},
+                                {"type": "Control", "label": "Motivo de la consulta", "scope": "#/properties/motivo_consulta"}
                             ]
                         }
                     }
@@ -423,6 +418,18 @@ class CreateAppointmentTests(APITestCase):
         self.physio_serializer = PhysioSerializer(data=self.physio)
         if self.physio_serializer.is_valid():
             self.physio_serializer.save()
+        self.valid_service = {
+            "id": 1,
+            "title": "Primera consulta",
+            "tipo": "PRIMERA_CONSULTA",
+            "price": 50,
+            "description": "Descripción",
+            "duration": 60,
+            "questionaryResponses": {
+                "edad": "30",
+                "motivo_consulta": "Dolor en la espalda"
+            }
+        }
         self.patient_user = AppUser.objects.create_user(
             username = "patient1",
             email = "patient1@sample.com",
@@ -449,7 +456,7 @@ class CreateAppointmentTests(APITestCase):
             start_time='2026-02-02T10:00:00Z',
             end_time='2026-02-02T11:00:00Z',
             is_online=True,
-            service='{"service = "service"}',
+            service=self.valid_service,
             patient_id=self.patient.id,
             physiotherapist_id=self.physio.id,
             status='booked',
@@ -472,13 +479,14 @@ class CreateAppointmentTests(APITestCase):
             'start_time': '2026-02-03T10:00:00Z',
             'end_time': '2026-02-03T11:00:00Z',
             'is_online': True,
-            'service': '{"service = "service"}',
+            'service': self.valid_service,
             'patient': self.patient.id,
             'physiotherapist': self.physio.id,
             'alternatives': ""
         }
         response = self.client.post(url, data, format='json')
-        physiotherapist = Physiotherapist.objects.get(id=response.data['physiotherapist'])
+        print(response.data)
+        physiotherapist = Physiotherapist.objects.get(id=response.data['appointment_data']['physiotherapist'])
         physio_scheule_appointments = physiotherapist.schedule['appointments'] 
         appointment_added = False
         for appointment in physio_scheule_appointments:
@@ -503,7 +511,7 @@ class CreateAppointmentTests(APITestCase):
             'start_time': '2026-02-03T10:00:00Z',
             'end_time': '2026-02-03T11:00:00Z',
             'is_online': True,
-            'service': '{"service = "service"}',
+            'service': self.valid_service,
             'patient': self.patient.id,
             'physiotherapist': self.physio.id,
             'status': 'booked',
@@ -526,7 +534,7 @@ class CreateAppointmentTests(APITestCase):
             'start_time': '2026-02-03T10:00:00Z',
             'end_time': '2026-02-03T09:00:00Z',
             'is_online': True,
-            'service': '{"service = "service"}',
+            'service': self.valid_service,
             'patient': self.patient.id,
             'physiotherapist': self.physio.id,
             'status': 'booked',
@@ -550,7 +558,7 @@ class CreateAppointmentTests(APITestCase):
             'start_time': '2026-02-03T10:00:00Z',
             'end_time': '2026-02-04T11:00:00Z',
             'is_online': True,
-            'service': '{"service = "service"}',
+            'service': self.valid_service,
             'patient': self.patient.id,
             'physiotherapist': self.physio.id,
             'status': 'booked',
@@ -574,7 +582,7 @@ class CreateAppointmentTests(APITestCase):
             'start_time': '2026-02-04T10:00:00Z',
             'end_time': '2026-02-04T11:00:00Z',
             'is_online': True,
-            'service': '{"service = "service"}',
+            'service': self.valid_service,
             'patient': self.patient.id,
             'physiotherapist': self.physio.id,
             'status': 'booked',
@@ -598,7 +606,7 @@ class CreateAppointmentTests(APITestCase):
             'start_time': '2026-02-03T16:00:00Z',
             'end_time': '2026-02-03T17:00:00Z',
             'is_online': True,
-            'service': '{"service = "service"}',
+            'service': self.valid_service,
             'patient': self.patient.id,
             'physiotherapist': self.physio.id,
             'status': 'booked',
@@ -622,7 +630,7 @@ class CreateAppointmentTests(APITestCase):
             'start_time': '2026-02-02T10:00:00Z',
             'end_time': '2026-02-02T11:00:00Z',
             'is_online': True,
-            'service': '{"service = "service"}',
+            'service': self.valid_service,
             'patient': self.patient.id,
             'physiotherapist': self.physio.id,
             'status': 'booked',
@@ -646,7 +654,7 @@ class CreateAppointmentTests(APITestCase):
             'start_time': '2026-02-09T10:00:00Z',
             'end_time': '2026-02-09T11:00:00Z',
             'is_online': True,
-            'service': '{"service = "service"}',
+            'service': self.valid_service,
             'patient': self.patient.id,
             'physiotherapist': self.physio.id,
             'status': 'booked',
@@ -670,7 +678,7 @@ class CreateAppointmentTests(APITestCase):
             'start_time': '2024-02-05T10:00:00Z',
             'end_time': '2024-02-05T11:00:00Z',
             'is_online': True,
-            'service': '{"service = "service"}',
+            'service': self.valid_service,
             'patient': self.patient.id,
             'physiotherapist': self.physio.id,
             'status': 'booked',
@@ -694,7 +702,7 @@ class CreateAppointmentTests(APITestCase):
             'start_time': '2026-02-03T10:00:00Z',
             'end_time': '2026-02-03T11:00:00Z',
             'is_online': True,
-            'service': '{"service = "service"}',
+            'service': self.valid_service,
             'patient': self.patient.id,
             'physiotherapist': self.physio.id,
             'status': 'booked',
@@ -717,7 +725,7 @@ class CreateAppointmentTests(APITestCase):
             'start_time': '2024-02-05T10:00:00Z',
             'end_time': '2024-02-05T11:00:00Z',
             'is_online': True,
-            'service': '{"service = "service"}',
+            'service': self.valid_service,
             'patient': self.patient.id,
             'physiotherapist': 8,
             'status': 'booked',
@@ -741,7 +749,7 @@ class CreateAppointmentTests(APITestCase):
             'start_time': '2026-02-03T10:00:00Z',
             'end_time': '2026-02-03T11:00:00Z',
             'is_online': True,
-            'service': '{"service = "service"}',
+            'service': self.valid_service,
             'patient': self.patient.id,
             'status': 'booked',
             'alternatives': ""
@@ -773,7 +781,7 @@ class CreateAppointmentTests(APITestCase):
             'start_time': '2026-02-03T10:00:00Z',
             'end_time': '2026-02-03T11:00:00Z',
             'is_online': True,
-            'service': '{"service = "service"}',
+            'service': self.valid_service,
             'patient': self.patient.id,
             'status': 'booked',
             'alternatives': ""
@@ -795,7 +803,7 @@ class CreateAppointmentTests(APITestCase):
             'start_time': '2026-02-03T10:00:00Z',
             'end_time': '2026-02-03T11:00:00Z',
             'is_online': True,
-            'service': '{"service = "service"}',
+            'service': self.valid_service,
             'patient': self.patient.id,
             'status': 'booked',
             'alternatives': ""
@@ -817,7 +825,7 @@ class CreateAppointmentTests(APITestCase):
             'start_time': '2026-02-03T11:00:00Z',
             'end_time': '2026-02-03T10:00:00Z',
             'is_online': True,
-            'service': '{"service = "service"}',
+            'service': self.valid_service,
             'patient': self.patient.id,
             'status': 'booked',
             'alternatives': ""
@@ -840,7 +848,7 @@ class CreateAppointmentTests(APITestCase):
             'start_time': '2026-02-03T10:00:00Z',
             'end_time': '2026-02-04T10:00:00Z',
             'is_online': True,
-            'service': '{"service = "service"}',
+            'service': self.valid_service,
             'patient': self.patient.id,
             'status': 'booked',
             'alternatives': ""
@@ -873,7 +881,7 @@ class CreateAppointmentTests(APITestCase):
             rating_avg = 4.5,
             schedule = {
                 "exceptions": {
-                    "2026-02-09": [
+                    "2025-04-14": [
                         {
                             "end": "12:00",
                             "start": "10:00"
@@ -891,49 +899,76 @@ class CreateAppointmentTests(APITestCase):
                     "friday": [],
                     "monday": [
                         {
+                            "id": "ws-1743669362707-139",
                             "end": "14:00",
                             "start": "10:00"
                         }
                     ],
-                    "saturday": [],
                     "sunday": [],
-                    "thursday": [],
                     "tuesday": [
                         {
+                            "id": "ws-1743669365620-823",
                             "end": "15:00",
                             "start": "10:00"
                         }
                     ],
+                    "saturday": [],
+                    "thursday": [],
                     "wednesday": []
                 }
             },
             birth_date = "1980-01-01",
             collegiate_number = "COL2",
             services = {
-                "Servicio 1": {
+                "1": {
                     "id": 1,
-                    "title": "Primera consulta",
+                    "tipo": "PRIMERA_CONSULTA",
                     "price": 30,
-                    "description": "Evaluaremos tu estado físico, hablaremos sobre tus molestias y realizaremos pruebas para diseñar un plan de tratamiento personalizado que se adapte a tus necesidades y estilo de vida.",
-                    "duration": 45,
+                    "title": "Primera consulta",
+                    "duration": 60,
+                    "description": "",
                     "custom_questionnaire": {
                         "UI Schema": {
                             "type": "Group",
                             "label": "Cuestionario Personalizado",
                             "elements": [
                                 {
-                                    "type": "Control",
-                                    "label": "¿Qué te duele?",
-                                    "scope": "#/properties/q1"
+                                    "type": "Number",
+                                    "label": "Peso (kg)",
+                                    "scope": "#/properties/peso"
+                                },
+                                {
+                                    "type": "Number",
+                                    "label": "Altura (cm)",
+                                    "scope": "#/properties/altura"
+                                },
+                                {
+                                    "type": "Number",
+                                    "label": "Edad",
+                                    "scope": "#/properties/edad"
                                 },
                                 {
                                     "type": "Control",
-                                    "label": "¿Cómo describirías el dolor?",
-                                    "scope": "#/properties/q2"
+                                    "label": "Nivel de actividad física",
+                                    "scope": "#/properties/actividad_fisica"
+                                },
+                                {
+                                    "type": "Control",
+                                    "label": "Motivo de la consulta",
+                                    "scope": "#/properties/motivo_consulta"
                                 }
                             ]
                         }
                     }
+                },
+                "2": {
+                    "id": 2,
+                    "tipo": "CONTINUAR_TRATAMIENTO",
+                    "price": 30,
+                    "title": "Continuación de tratamiento",
+                    "duration": 45,
+                    "description": "",
+                    "custom_questionnaire": None
                 }
             },
             gender = "M"
@@ -946,7 +981,7 @@ class CreateAppointmentTests(APITestCase):
             start_time='2026-02-03T10:00:00Z',
             end_time='2026-02-03T11:00:00Z',
             is_online=True,
-            service='{"service = "service"}',
+            service=self.valid_service,
             patient_id=self.patient.id,
             physiotherapist_id=other_physio.id,
             status='booked',
@@ -965,7 +1000,7 @@ class CreateAppointmentTests(APITestCase):
             'start_time': '2026-02-03T10:00:00Z',
             'end_time': '2026-02-03T11:00:00Z',
             'is_online': True,
-            'service': '{"service = "service"}',
+            'service': self.valid_service,
             'patient': self.patient.id,
             'status': 'booked',
             'alternatives': ""
@@ -988,7 +1023,7 @@ class CreateAppointmentTests(APITestCase):
             'start_time': '2026-02-03T10:00:00Z',
             'end_time': '2026-02-03T11:00:00Z',
             'is_online': True,
-            'service': '{"service = "service"}',
+            'service': self.valid_service,
             'patient': 999,  # ID inválido
             'status': 'booked',
             'alternatives': ""
@@ -1012,7 +1047,7 @@ class CreateAppointmentTests(APITestCase):
             # Falta start_time
             'end_time': '2026-02-03T11:00:00Z',
             'is_online': True,
-            'service': '{"service = "service"}',
+            'service': self.valid_service,
             'patient': self.patient.id,
             'status': 'booked',
             'alternatives': ""
@@ -1035,7 +1070,7 @@ class CreateAppointmentTests(APITestCase):
             'start_time': '2026-02-02T10:00:00Z',  # Coincide con la cita existente
             'end_time': '2026-02-02T11:00:00Z',
             'is_online': True,
-            'service': '{"service = "service"}',
+            'service': self.valid_service,
             'patient': self.patient.id,
             'status': 'booked',
             'alternatives': ""

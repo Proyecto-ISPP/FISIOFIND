@@ -68,8 +68,6 @@ def update_schedule(data):
 @permission_classes([IsAuthenticated, IsPatient])
 def create_appointment_patient(request):
     patient = request.user.patient
-    if hasattr(request.user, 'physio'):
-        return Response({"error": "Los fisioterapeutas no pueden crear citas como pacientes"}, status=status.HTTP_403_FORBIDDEN)
     
     weekly_days = {
         "monday": "lunes",
@@ -146,7 +144,6 @@ def create_appointment_patient(request):
     serializer = AppointmentSerializer(data=data)
     if serializer.is_valid():
         appointment = serializer.save()
-        print(f"Datos de la cita: {serializer.data['service']['price']}")
         payment_data = create_payment_setup(serializer.data['id'], serializer.data['service']['price'] * 100, request.user)
         update_schedule(data)
         if isinstance(payment_data, Response):
