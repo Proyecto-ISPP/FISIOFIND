@@ -62,21 +62,28 @@ class Command(BaseCommand):
         logo_url = "https://fisiofind-landing-page.netlify.app/_astro/logo.1fTJ_rhB.png"
 
         email_body = f"""
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; background-color: #ffffff;">
-            <div style="text-align: center; border-bottom: 2px solid #00a896; padding-bottom: 10px; margin-bottom: 20px;">
-                <img src="{logo_url}" alt="FisioFind Logo" width="100">
-                <h2 style="color: #0a2239;">Fisio <span style="color: #00a896;">Find</span></h2>
+        <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 650px; margin: auto; padding: 24px; background-color: #ffffff; border-radius: 12px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);">
+            <div style="text-align: center; padding-bottom: 24px; border-bottom: 2px solid #00a896;">
+                <img src="{logo_url}" alt="FisioFind Logo" width="90" style="margin-bottom: 10px;">
+                <h1 style="margin: 0; font-size: 26px; color: #0a2239;">Fisio <span style="color: #00a896;">Find</span></h1>
             </div>
-            <div style="background-color: #f9f9f9; padding: 15px; border-radius: 8px; font-size: 16px; color: #555;">
+
+            <div style="background-color: #f4fdfd; padding: 25px; border-radius: 10px; margin-top: 24px; font-size: 16px; color: #333;">
                 {message}
             </div>
-            <div style="margin-top: 20px; text-align: center; border-top: 1px solid #e0e0e0; padding-top: 10px;">
-                <p style="margin: 5px 0; font-weight: bold; color: #0a2239;">Gestión de ejercicios</p>
-                <p style="margin: 5px 0;">
-                    ✉️ <a style="color: #0073e6;" href="mailto:info@fisiofind.com">info@fisiofind.com</a><br>
-                    🌐 <a style="color: #0073e6;" href="https://s3.fisiofind.app.com/">fisiofind.app.com</a><br>
-                    📷 <a style="color: #0073e6;" href="https://www.instagram.com/fisiofindapp/">@fisiofindapp</a>
-                </p>
+
+            <div style="text-align: center; margin-top: 32px;">
+                <a href="https://s3.fisiofind.com/"
+                style="display: inline-block; background-color: #00a896; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 16px; transition: background-color 0.3s;">
+                    Ir a Fisio Find
+                </a>
+            </div>
+
+            <div style="margin-top: 40px; text-align: center; border-top: 1px solid #e0e0e0; padding-top: 16px; font-size: 14px; color: #777;">
+                <p style="margin: 4px 0;">📧 <a href="mailto:info@fisiofind.com" style="color: #0073e6; text-decoration: none;">info@fisiofind.com</a></p>
+                <p style="margin: 4px 0;">🌐 <a href="https://s3.fisiofind.app.com/" style="color: #0073e6; text-decoration: none;">fisiofind.app.com</a></p>
+                <p style="margin: 4px 0;">📸 <a href="https://www.instagram.com/fisiofindapp/" style="color: #0073e6; text-decoration: none;">@fisiofindapp</a></p>
+                <p style="margin-top: 16px; font-size: 12px; color: #aaa;">Este es un correo automático. Por favor, no respondas a este mensaje.<br>© 2025 Fisio Find</p>
             </div>
         </div>
         """

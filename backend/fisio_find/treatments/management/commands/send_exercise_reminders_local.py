@@ -27,14 +27,15 @@ class Command(BaseCommand):
 
             subject = "🏋️ ¡Hora de tus ejercicios de hoy!"
             message = f"""
-                Hola <strong>{patient_user.first_name}</strong>,<br><br>
-                Hoy tienes ejercicios asignados en las siguientes sesiones:
-                <ul>{session_list_html}</ul>
-                <br>¡No olvides registrar tu progreso en la plataforma! 💪
-                <br><br>
-                <div style="text-align: center;">
+                <p style="font-size: 18px; color: #333;">Hola <strong>{patient_user.first_name}</strong>,</p>
+                <p style="margin-bottom: 10px;">
+                    Hoy tienes ejercicios asignados en las siguientes sesiones:
+                </p>
+                <ul style="margin-left: 20px; color: #444; line-height: 1.6;">{session_list_html}</ul>
+                <p>¡No olvides registrar tu progreso en la plataforma! 💪</p>
+                <div style="text-align: center; margin-top: 30px;">
                     <a href="https://s3.fisiofind.com/"
-                       style="display: inline-block; background-color: #00a896; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold;">
+                       style="display: inline-block; background-color: #00a896; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 16px; transition: background-color 0.3s;">
                         Ir a Fisio Find
                     </a>
                 </div>
@@ -48,17 +49,20 @@ class Command(BaseCommand):
         password = settings.EMAIL_HOST_PASSWORD
         alias_name = "noreply"
 
-        # Logo directo (usamos Netlify o una CDN para evitar bloqueos de GitHub)
         logo_url = "https://fisiofind-landing-page.netlify.app/_astro/logo.1fTJ_rhB.png"
 
         full_html = f"""
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; background-color: #ffffff;">
-            <div style="text-align: center; border-bottom: 2px solid #00a896; padding-bottom: 10px; margin-bottom: 20px;">
-                <img src="{logo_url}" alt="FisioFind Logo" width="100">
-                <h2 style="color: #0a2239;">Fisio <span style="color: #00a896;">Find</span></h2>
+        <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 650px; margin: auto; padding: 20px; background-color: #ffffff; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+            <div style="text-align: center; padding-bottom: 20px; border-bottom: 2px solid #00a896;">
+                <img src="{logo_url}" alt="FisioFind Logo" width="90" style="margin-bottom: 10px;">
+                <h1 style="margin: 0; font-size: 26px; color: #0a2239;">Fisio <span style="color: #00a896;">Find</span></h1>
             </div>
-            <div style="background-color: #f9f9f9; padding: 15px; border-radius: 8px; font-size: 16px; color: #555;">
+            <div style="background-color: #f4fdfd; padding: 25px; border-radius: 10px; margin-top: 20px; font-size: 16px; color: #333;">
                 {html_message}
+            </div>
+            <div style="text-align: center; margin-top: 40px; font-size: 13px; color: #999;">
+                <p style="margin: 0;">Este es un correo automático. Por favor, no respondas a este mensaje.</p>
+                <p style="margin: 5px 0 0;">© 2025 Fisio Find</p>
             </div>
         </div>
         """
