@@ -6,6 +6,9 @@ import { formatDateFromIso } from "@/lib/utils";
 //import { formatDateTime } from "@/utils/date"; // Import formatDateTime from the appropriate utility file
 import { useState, useEffect, useRef } from "react"; // Agregar useRef y useEffect
 import StarRatingDisplay from "./StarRatingDisplay";
+import { BsStarFill } from "react-icons/bs";
+import "./LoadingStar.css";
+import EditableStarRatingDisplay from "./EditableStarRatingDisplay";
 
 // Función para formatear fechas
 const formatDateTime = (dateString: string) => {
@@ -18,6 +21,15 @@ const formatDateTime = (dateString: string) => {
     minute: "2-digit",
   };
   return new Date(dateString).toLocaleDateString("es-ES", options);
+};
+
+const isEditable = (endDate: string | undefined): boolean => {
+  if (!endDate) return false;
+  const end = new Date(endDate);
+  const now = new Date();
+  const diffInMs = now.getTime() - end.getTime();
+  const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+  return diffInDays <= 7;
 };
 
 interface AppointmentModalProps {
@@ -40,9 +52,14 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
   const [isClosing, setIsClosing] = useState(false);
   const [modalMaxHeight, setModalMaxHeight] = useState("85vh"); // Estado para la altura máxima
   const modalContentRef = useRef<HTMLDivElement>(null); // Referencia para medir el contenido
-  const [selectedEventRating, setSelectedEventRating] = useState(null); // Estado para almacenar la valoración seleccionada
+  const [selectedEventRating, setSelectedEventRating] = useState({
+    id: undefined,
+    comment: "",
+    score: undefined,
+  }); // Estado para almacenar la valoración seleccionada
   const [selectedEventRatingScore, setSelectedEventRatingScore] = useState(0); // Estado para almacenar la puntuación de la valoración seleccionada
   const [loadingRating, setLoadingRating] = useState(true);
+  const [input, setInput] = useState({ comment: "", rating: 0 });
 
   // Efecto para ajustar la altura máxima del modal
   useEffect(() => {
@@ -58,6 +75,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
   }, []);
 
   const closeModal = () => {
+    setRating();
     setIsClosing(true);
     setTimeout(() => {
       setSelectedEvent(null); // Close modal after animation
@@ -85,7 +103,60 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
         setSelectedEventRatingScore(data.score);
       }
       setLoadingRating(false);
-    }    
+    }
+  };
+
+  const handleChangeRating = (val) => {
+    setSelectedEventRating((prev) => ({
+      ...prev,
+      score: val,
+    }));
+  };
+
+  const setRating = async () => {
+    if (!selectedEvent) return;
+
+    // Determinar si estamos editando o creando
+    const isEditing = selectedEventRating?.id != null; // Si ya existe un ID, estamos editando, si no, es creación.
+
+    // La URL ahora solo contiene el appointment_id
+    const url = `${getApiBaseUrl()}/api/appointment_ratings/appointment/${
+      selectedEvent.id
+    }/edit/`;
+
+    try {
+      // Si estamos editando, usamos PUT, si no, POST
+      const method = isEditing ? "PUT" : "POST"; // Usamos PUT para editar y POST para crear
+
+      const response = await fetch(url, {
+        method: method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          score: selectedEventRating.score,
+          comment: selectedEventRating.comment,
+        }),
+      });
+
+      // Manejo de la respuesta
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData?.error || "Error al guardar la valoración");
+      }
+
+      const data = await response.json();
+
+      // Actualizamos el estado con los datos de la valoración
+      setSelectedEventRating(data);
+
+      if (data.score) {
+        setSelectedEventRatingScore(data.score);
+      }
+    } catch (error) {
+      console.error("Error al guardar la valoración:", error);
+    }
   };
 
   const handleDownloadInvoice = async (
@@ -330,7 +401,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
               {getStatusBadge()}
             </div>
 
-            <div>
+            <div className="flex items-center justify-between">
               <div>
                 <div className="flex items-center mt-4 text-teal-50">
                   <svg
@@ -389,22 +460,15 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
                   </div>
                 )}
               </div>
-            </div>
-            <div>
-              {loadingRating ? (
-                // Puedes personalizar este div para que tenga la animación que prefieras.
-                <div
-                  className="loading-star"
-                  style={{
-                    width: "24px",
-                    height: "24px",
-                    backgroundColor: "#ccc",
-                    borderRadius: "50%",
-                    animation: "pulse 1s infinite",
-                  }}
-                />
-              ) : (
-                <StarRatingDisplay rating={selectedEventRatingScore} />
+              {selectedEvent.status == "finished" && (
+                <div>
+                  <EditableStarRatingDisplay
+                    rating={selectedEventRating.score}
+                    editable={isEditable(selectedEvent.end)}
+                    loading={loadingRating}
+                    onRatingChange={handleChangeRating}
+                  />
+                </div>
               )}
             </div>
           </div>
@@ -739,7 +803,5 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
     </div>
   );
 };
-
-
 
 export { AppointmentModal };

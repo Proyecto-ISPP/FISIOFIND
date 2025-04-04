@@ -4,7 +4,7 @@ from .models import AppointmentRating
 class AppointmentRatingSerializer(serializers.ModelSerializer):
     class Meta:
         model = AppointmentRating
-        fields = ['id', 'patient', 'physiotherapist', 'appointment', 'score', 'comment', 'created_at']
+        fields = ['id', 'patient', 'physiotherapist', 'appointment', 'score', 'comment', 'created_at', 'updated_at']
         read_only_fields = ['patient', 'physiotherapist', 'created_at']
 
     def validate_score(self, value):

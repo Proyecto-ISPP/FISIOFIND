@@ -3,6 +3,7 @@
 import { getApiBaseUrl } from "@/utils/api";
 import { useState } from "react";
 import { BsStar, BsStarHalf, BsStarFill } from "react-icons/bs";
+import StarRating from "./StarRating";
 
 interface ModalRatingProps {
   appointmentId: number; // Replace 'string' with the appropriate type if needed
@@ -14,14 +15,14 @@ const ModalRating = ({ appointmentId }: ModalRatingProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-//   useEffect(() => {
-//     if (submitted) {
-//       const timer = setTimeout(() => {
-//         window.location.href = "/";
-//       }, 2000);
-//       return () => clearTimeout(timer);
-//     }
-//   }, [submitted]);
+  //   useEffect(() => {
+  //     if (submitted) {
+  //       const timer = setTimeout(() => {
+  //         window.location.href = "/";
+  //       }, 2000);
+  //       return () => clearTimeout(timer);
+  //     }
+  //   }, [submitted]);
 
   const submitHandler = async () => {
     setIsLoading(true);
@@ -67,7 +68,8 @@ const ModalRating = ({ appointmentId }: ModalRatingProps) => {
       <button onClick={() => setModalVisible(true)}>Dejar valoración</button>
 
       {modalVisible && (
-        <div onClick={() => closeModal()}
+        <div
+          onClick={() => closeModal()}
           style={{
             position: "fixed",
             top: 0,
@@ -81,7 +83,8 @@ const ModalRating = ({ appointmentId }: ModalRatingProps) => {
             zIndex: 1000,
           }}
         >
-          <div onClick={(e) => e.stopPropagation()} 
+          <div
+            onClick={(e) => e.stopPropagation()}
             style={{
               backgroundColor: "white",
               padding: "20px",
@@ -94,7 +97,15 @@ const ModalRating = ({ appointmentId }: ModalRatingProps) => {
             {submitted ? (
               <>
                 <h3>¡Gracias por tu opinión!</h3>
-                <div style={{ marginTop: "20px", height: "50px", width: "50px", justifySelf: "center", marginBottom: "8px"}}>
+                <div
+                  style={{
+                    marginTop: "20px",
+                    height: "50px",
+                    width: "50px",
+                    justifySelf: "center",
+                    marginBottom: "8px",
+                  }}
+                >
                   <svg
                     fill="#1cb521"
                     version="1.1"
@@ -123,67 +134,10 @@ const ModalRating = ({ appointmentId }: ModalRatingProps) => {
             ) : (
               <>
                 <h3>Deja tu valoración</h3>
-                <div
-                  style={{
-                    display: "flex",
-                    marginBottom: "10px",
-                    justifyContent: "center",
-                  }}
-                >
-                  {Array.from({ length: 5 }, (_, index) => {
-                    const starValue = index + 1;
-                    let icon;
-                    if (input.rating >= starValue) {
-                      icon = <BsStarFill color="gold" size={24} />;
-                    } else if (input.rating >= starValue - 0.5) {
-                      icon = <BsStarHalf color="gold" size={24} />;
-                    } else {
-                      icon = <BsStar color="gold" size={24} />;
-                    }
-                    return (
-                      <div
-                        key={index}
-                        style={{
-                          display: "inline-block",
-                          position: "relative",
-                          width: "24px",
-                          height: "24px",
-                          marginRight: "4px",
-                        }}
-                      >
-                        {icon}
-                        <div
-                          onClick={() =>
-                            setInput({ ...input, rating: index + 0.5 })
-                          }
-                          style={{
-                            position: "absolute",
-                            top: 0,
-                            left: 0,
-                            width: "50%",
-                            height: "100%",
-                            cursor: "pointer",
-                            zIndex: 1,
-                          }}
-                        />
-                        <div
-                          onClick={() =>
-                            setInput({ ...input, rating: index + 1 })
-                          }
-                          style={{
-                            position: "absolute",
-                            top: 0,
-                            right: 0,
-                            width: "50%",
-                            height: "100%",
-                            cursor: "pointer",
-                            zIndex: 1,
-                          }}
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
+                <StarRating
+                  rating={input.rating}
+                  setRating={(val) => setInput({ ...input, rating: val })}
+                />
                 <div style={{ marginBottom: "10px" }}>
                   <textarea
                     rows={4}
