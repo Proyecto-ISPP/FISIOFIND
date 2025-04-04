@@ -38,49 +38,39 @@ jobs:
           echo "## 🚀 Changelog - $NEW_TAG" > CHANGELOG.md
           echo "" >> CHANGELOG.md
 
+          git log --pretty=format:"%s (@%an)" $range > full_log.txt
+
+          # Features
           echo "### ✨ Features" >> CHANGELOG.md
-          git log --pretty=format:"- %s (@%an)" \
-            --grep="^[Ff]eat" \
-            --invert-grep --grep="^Merge " \
-            $range >> CHANGELOG.md
+          grep -iE "^feat" full_log.txt || echo "- (nada)" >> CHANGELOG.md
           echo "" >> CHANGELOG.md
 
+          # Fixes
           echo "### 🐛 Fixes" >> CHANGELOG.md
-          git log --pretty=format:"- %s (@%an)" \
-            --grep="^[Ff]ix" \
-            --invert-grep --grep="^Merge " \
-            $range >> CHANGELOG.md
+          grep -iE "^fix" full_log.txt || echo "- (nada)" >> CHANGELOG.md
           echo "" >> CHANGELOG.md
 
+          # Documentation
           echo "### 📖 Documentation" >> CHANGELOG.md
-          git log --pretty=format:"- %s (@%an)" \
-            --grep="^[Dd]ocs" \
-            --invert-grep --grep="^Merge " \
-            --invert-grep --grep="^docs: update CHANGELOG" \
-            $range >> CHANGELOG.md
+          grep -iE "^docs" full_log.txt \
+            | grep -vE "update CHANGELOG|actualización CHANGELOG|🔖|🔄|📜" || echo "- (nada)" >> CHANGELOG.md
           echo "" >> CHANGELOG.md
 
+          # Branch Merges
           echo "### 🔀 Branch Merges" >> CHANGELOG.md
-          git log --pretty=format:"- %s (@%an)" \
-            --grep="^Merge branch" \
-            $range >> CHANGELOG.md
+          grep "^Merge branch" full_log.txt || echo "- (nada)" >> CHANGELOG.md
           echo "" >> CHANGELOG.md
 
+          # Pull Requests
           echo "### 📌 Pull Request Merges" >> CHANGELOG.md
-          git log --pretty=format:"- %s (@%an)" \
-            --grep="^Merge pull request" \
-            $range >> CHANGELOG.md
+          grep "^Merge pull request" full_log.txt || echo "- (nada)" >> CHANGELOG.md
           echo "" >> CHANGELOG.md
 
+          # Otros
           echo "### 🌀 Other Changes" >> CHANGELOG.md
-          git log --pretty=format:"- %s (@%an)" \
-            --invert-grep --grep="^[Ff]eat" \
-            --invert-grep --grep="^[Ff]ix" \
-            --invert-grep --grep="^[Dd]ocs" \
-            --invert-grep --grep="^Merge branch" \
-            --invert-grep --grep="^Merge pull request" \
-            --invert-grep --grep="^docs: update CHANGELOG" \
-            $range >> CHANGELOG.md
+          grep -vE "^(feat|fix|docs)" full_log.txt \
+            | grep -vE "^Merge (branch|pull request)" \
+            | grep -vE "update CHANGELOG|actualización CHANGELOG|🔖|🔄|📜" || echo "- (nada)" >> CHANGELOG.md
 
       - name: Commit and push CHANGELOG.md
         run: |
