@@ -61,7 +61,7 @@ export function SidebarDemo() {
   const publicLinks = [
     {
       label: "Buscar",
-      href: "/",
+      href: "/advanced-search",
       icon: (
         <IconSearch className="text-[#05668D] h-5 w-5 flex-shrink-0 mx-auto" />
       ),

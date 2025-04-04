@@ -8,7 +8,6 @@ urlpatterns = [
     path('<int:appointment_id>/cancel-physio/', cancel_payment_pyshio, name='cancel_payment_physio'),
     path('<int:payment_id>/', get_payment_details, name='get_payment_details'),
     path('total/', total_money, name='total_money'),
-    path('create-setup/', create_payment_setup, name='create_payment_setup'),
     path('update-payment-method/<int:payment_id>/', update_payment_method, name='update_payment_method'),
     path('<int:payment_id>/charge/', charge_payment, name='charge_payment'),
     path('process-due/', process_due_payments_api, name='process_due_payments'),

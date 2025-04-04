@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import clsx from "clsx";
+// import clsx from "clsx";
 import { Service, QuestionaryResponse, Questionary } from "@/lib/definitions";
 import { useAppointment } from "@/context/appointmentContext";
 import AppointmentCalendar from "./AppointmentCalendar";
@@ -147,7 +147,15 @@ const WizardContent: React.FC<WizardContentProps> = ({
       </div>
     );
   } else if (currentStep === 3) {
+    if (!appointmentData.start_time && !appointmentData.end_time) {
+      return (
+        <p className="text-gray-800">
+        Por favor selecciona un tramo horario primero.
+      </p>
+      );
+    } else {
       return <ServiceQuestionary ref={questionaryRef} />;
+    }
   } else if (currentStep === 4) {
     // Se formatean las fechas de inicio y fin de forma separada
     const inicio = appointmentData.start_time ? formatAppointment(appointmentData.start_time) : { date: "", time: "" };
@@ -197,7 +205,7 @@ const WizardContent: React.FC<WizardContentProps> = ({
         {questionaryResponses && Object.keys(questionaryResponses).length > 0 && (
           <div className="mt-4">
             <h4 className="font-bold mb-2">Respuestas del cuestionario:</h4>
-            <div className="bg-gray-50 p-3 rounded-md">
+            <div className="bg-gray-50 p-3 rounded-md max-h-64 overflow-y-auto">
               {Object.entries(questionaryResponses).map(([key, value]) => {
                 // Encontrar la pregunta correspondiente por su scope
                 const question = questionary?.elements?.find(

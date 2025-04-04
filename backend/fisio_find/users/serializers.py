@@ -333,9 +333,15 @@ class PhysioRegisterSerializer(serializers.ModelSerializer):
         last_name = data.get("last_name", "")
         collegiate_number = data.get("collegiate_number", "")
         autonomic_community = data.get("autonomic_community", "")
+        if Physiotherapist.objects.filter(
+            user__first_name__iexact=first_name,  # Búsqueda insensible a mayúsculas
+            user__last_name__iexact=last_name,
+            collegiate_number=collegiate_number,
+            autonomic_community=autonomic_community
+        ).exists():
+            validation_errors["collegiate_number"] = "Ya existe un fisioterapeuta con este nombre, apellido, número de colegiado y comunidad autónoma."
         
         full_name_uppercase = first_name.upper() + " " + last_name.upper()
-                # Validar número de colegiado
         valid_physio = validar_colegiacion(full_name_uppercase, collegiate_number, autonomic_community)
         if not valid_physio:
             validation_errors["collegiate_number"] = "El número de colegiado o nombre no son válidos."
@@ -523,13 +529,14 @@ class PatientAdminViewSerializer(serializers.ModelSerializer):
 class VideoSerializer(serializers.ModelSerializer):
     file = serializers.FileField(write_only=True)  # Para recibir el archivo en el request
     file_url = serializers.SerializerMethodField()  # Para devolver la URL pública
-    patients = serializers.PrimaryKeyRelatedField(many=True, queryset=Patient.objects.all())  
+    patients = serializers.PrimaryKeyRelatedField(many=True, queryset=Patient.objects.all(), required=False)  
 
     class Meta:
         model = Video
         fields = ["id", "patients", "title", "description", "file", "file_key", "file_url", "uploaded_at"]
         extra_kwargs = {
             "file_key": {"read_only": True},  # El usuario no debe enviar esto
+            "title": {"required": False}, # opcional en update
         }
 
     def validate_file(self, file):
@@ -541,7 +548,9 @@ class VideoSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """Sube el archivo a DigitalOcean Spaces y guarda el Video en la BD."""
-        file = validated_data.pop("file")  # Extraer archivo del request
+        file = validated_data.pop("file", None)  # Extraer archivo del request
+        if not file:
+            raise serializers.ValidationError("El archivo es requerido para crear un video.")
         physiotherapist = self.context["request"].user.physio  # Usuario logueado
         patients = validated_data.pop("patients", [])
 
@@ -633,4 +642,4 @@ class VideoSerializer(serializers.ModelSerializer):
 
     def get_file_url(self, obj):
         """Devuelve la URL completa del archivo."""
-        return f"{settings.DIGITALOCEAN_ENDPOINT_URL}/{obj.file_key}"
+        return f"https://fisiofind-repo.fra1.digitaloceanspaces.com/{obj.file_key}"
