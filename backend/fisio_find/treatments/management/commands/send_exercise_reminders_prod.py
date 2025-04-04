@@ -74,7 +74,7 @@ class Command(BaseCommand):
                 <p style="margin: 5px 0; font-weight: bold; color: #0a2239;">Gestión de ejercicios</p>
                 <p style="margin: 5px 0;">
                     ✉️ <a style="color: #0073e6;" href="mailto:info@fisiofind.com">info@fisiofind.com</a><br>
-                    🌐 <a style="color: #0073e6;" href="https://fisiofind.app.com/">fisiofind.app.com</a><br>
+                    🌐 <a style="color: #0073e6;" href="https://s3.fisiofind.app.com/">fisiofind.app.com</a><br>
                     📷 <a style="color: #0073e6;" href="https://www.instagram.com/fisiofindapp/">@fisiofindapp</a>
                 </p>
             </div>
