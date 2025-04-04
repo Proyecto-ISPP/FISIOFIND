@@ -1,25 +1,33 @@
-name: Generate Changelog and Tag
+name: Generate Changelog
 
 on:
   push:
     branches:
-      - feat/changelog.yml
       - develop
       - main
+      - feat/changelog.yml
 
 jobs:
-  generate-changelog:
+  generate_changelog:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Set up Git
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
 
       - name: Get latest tag
         id: get-latest-tag
         run: |
           latest_tag=$(git tag --sort=-v:refname | head -n 1)
+          echo "Latest tag: $latest_tag"
+
           if [[ -z "$latest_tag" ]]; then
             new_tag="1.0.0"
           else
@@ -27,53 +35,69 @@ jobs:
             new_major=$((major + 1))
             new_tag="${new_major}.0.0"
           fi
+
+          echo "New tag will be: $new_tag"
           echo "NEW_TAG=$new_tag" >> $GITHUB_ENV
+
+      - name: Debug NEW_TAG
+        run: echo "NEW_TAG is $NEW_TAG"
 
       - name: Generate changelog
         id: generate-changelog
+        env:
+          NEW_TAG: ${{ env.NEW_TAG }}
         run: |
           echo "## 🚀 Changelog - $NEW_TAG" > CHANGELOG.md
           echo "" >> CHANGELOG.md
 
-          RANGE="$(git describe --tags --abbrev=0 2>/dev/null || echo '')..HEAD"
+          git log --pretty=format:"%s (@%an)" $(git describe --tags --abbrev=0)..HEAD |
+          grep -vE "Merge (pull request|branch)" |
+          sort -u |
+          awk '
+            BEGIN {
+              features = ""
+              fixes = ""
+              docs = ""
+              others = ""
+            }
 
-          echo "### ✨ Features" >> CHANGELOG.md
-          git log $RANGE --pretty=format:"- %s (@%an)" | grep -E '^feat:' >> CHANGELOG.md
-          echo "" >> CHANGELOG.md
+            /^feat:/ {
+              features = features "- " $0 "\n"
+              next
+            }
 
-          echo "### 🐛 Fixes" >> CHANGELOG.md
-          git log $RANGE --pretty=format:"- %s (@%an)" | grep -E '^fix:' >> CHANGELOG.md
-          echo "" >> CHANGELOG.md
+            /^fix:/ {
+              fixes = fixes "- " $0 "\n"
+              next
+            }
 
-          echo "### 📖 Documentation" >> CHANGELOG.md
-          git log $RANGE --pretty=format:"- %s (@%an)" | grep -E '^docs:' >> CHANGELOG.md
-          echo "" >> CHANGELOG.md
+            /^docs?:/ {
+              docs = docs "- " $0 "\n"
+              next
+            }
 
-          echo "### 🔧 Build / Chores" >> CHANGELOG.md
-          git log $RANGE --pretty=format:"- %s (@%an)" | grep -E '^build:|^chore:' >> CHANGELOG.md
-          echo "" >> CHANGELOG.md
+            {
+              others = others "- " $0 "\n"
+            }
 
-          echo "### 📌 Pull Request Merges" >> CHANGELOG.md
-          git log $RANGE --pretty=format:"- %s (@%an)" | grep -E '^Merge pull request' >> CHANGELOG.md
-          echo "" >> CHANGELOG.md
+            END {
+              if (features != "") {
+                print "### ✨ Features\n" features
+              }
+              if (fixes != "") {
+                print "### 🐛 Fixes\n" fixes
+              }
+              if (docs != "") {
+                print "### 📖 Documentation\n" docs
+              }
+              if (others != "") {
+                print "### 📦 Others\n" others
+              }
+            }
+          ' >> CHANGELOG.md
 
-          echo "### 🔀 Branch Merges" >> CHANGELOG.md
-          git log $RANGE --pretty=format:"- %s (@%an)" | grep -E '^Merge (remote-tracking branch|branch)' >> CHANGELOG.md
-          echo "" >> CHANGELOG.md
-
-          echo "### 🌀 Others" >> CHANGELOG.md
-          git log $RANGE --pretty=format:"- %s (@%an)" \
-            | grep -v -E '^feat:|^fix:|^docs:|^build:|^chore:|^Merge pull request|^Merge (remote-tracking branch|branch)' >> CHANGELOG.md
-
-      - name: Commit and push CHANGELOG.md
+      - name: Commit and push changelog
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add CHANGELOG.md
           git commit -m "docs: update CHANGELOG for $NEW_TAG"
           git push
-
-      - name: Create new tag
-        run: |
-          git tag $NEW_TAG
-          git push origin $NEW_TAG
