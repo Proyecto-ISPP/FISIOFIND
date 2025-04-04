@@ -222,10 +222,10 @@ const PatientRegistrationForm = () => {
         newErrors.dni = "Formato de DNI no válido";
         isValid = false;
       }
-      if (!formData.phone_number.trim()) {
-        newErrors.phone_number = "El teléfono es obligatorio";
-        isValid = false;
-      } else if (!/^\d{9}$/.test(formData.phone_number)) {
+      if (
+        formData.phone_number.trim() !== "" &&
+        !/^\d{9}$/.test(formData.phone_number)
+      ) {
         newErrors.phone_number = "Número de teléfono no válido";
         isValid = false;
       }
@@ -264,11 +264,22 @@ const PatientRegistrationForm = () => {
     e.preventDefault();
     setIsSubmitting(true);
     setErrors({});
-
+  
+    // Create a new object with only the fields the server expects
+    const requestData = { ...formData };
+    
+    // Remove phone_number if it's empty
+    if (!requestData.phone_number.trim()) {
+      delete requestData.phone_number;
+    }
+    
+    // Remove confirm_password since the server doesn't expect it
+    delete requestData.confirm_password;
+  
     try {
       const response = await axios.post(
         `${getApiBaseUrl()}/api/app_user/patient/register/`,
-        formData,
+        requestData, // Use the filtered requestData instead of formData
         { headers: { "Content-Type": "application/json" } }
       );
       if (response.status === 201) {
@@ -298,8 +309,7 @@ const PatientRegistrationForm = () => {
         if (responseData) {
           console.log("Error en el registro", responseData);
           setErrors(responseData);
-
-          // Verificar si hay errores en campos del paso 1 y redirigir a ese paso
+  
           if (currentStep > 1) {
             const step1Fields = ["username", "email", "password"];
             const hasStep1Error = step1Fields.some(
@@ -459,6 +469,7 @@ const PatientRegistrationForm = () => {
                     name="phone_number"
                     label="Número de teléfono"
                     type="tel"
+                    required={false}
                     value={formData.phone_number}
                     onChange={handleChange}
                     error={errors.phone_number}
