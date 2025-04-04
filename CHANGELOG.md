@@ -128,7 +128,7 @@
 - docs: añadida acta de reunion g3 15-03-2025 (@danvelcam)
 ### 🌀 Other Changes (40)
 - Merge branch 'feat/changelog.yml' of https://github.com/Proyecto-ISPP/FISIOFIND into feat/changelog.yml (@Julen Redondo)
-- faet: añadido numero de commits (@Julen Redondo)
+- feat: añadido numero de commits (@Julen Redondo)
 - Merge branch 'feat/changelog.yml' of https://github.com/Proyecto-ISPP/FISIOFIND into feat/changelog.yml (@Julen Redondo)
 - Merge branch 'feat/changelog.yml' of https://github.com/Proyecto-ISPP/FISIOFIND into feat/changelog.yml (@Julen Redondo)
 - Merge remote-tracking branch 'origin' into feat/changelog.yml (@Julen Redondo)
