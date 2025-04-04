@@ -348,18 +348,13 @@ class CreateAppointmentTests(APITestCase):
         exception_date_str = self.exception_date.strftime("%Y-%m-%d")
         weekday_key = self.future_date.strftime("%A").lower()
         exception_weekday = self.exception_date.strftime("%A").lower()
-        
-        # self.start_time = self.future_date.strftime("%Y-%m-%dT%H:%M:%S%z")
-        # self.end_time = (self.future_date + timedelta(hours=1)).strftime("%Y-%m-%dT%H:%M:%S%z")
-        # self.new_appointment_end_time = (self.future_date + timedelta(hours=2)).strftime("%Y-%m-%dT%H:%M:%S%z")
-        # self.end_weekly_schedule_time = (self.future_date + timedelta(hours=3)).strftime("%Y-%m-%dT%H:%M:%S%z")
 
         # Definir horas fijas
         self.start_time = f"{future_date_str}T10:00:00{self.future_date.strftime('%z')}"
         self.end_time = f"{future_date_str}T11:00:00{self.future_date.strftime('%z')}"
         self.new_appointment_end_time = f"{future_date_str}T12:00:00{self.future_date.strftime('%z')}"
         self.end_weekly_schedule_time = f"{future_date_str}T13:00:00{self.future_date.strftime('%z')}"
-        
+
         self.physio_user = AppUser.objects.create_user(
             username="jorgito",
             email="jorgito@sample.com",
@@ -371,7 +366,6 @@ class CreateAppointmentTests(APITestCase):
             first_name="Jorge",
             last_name="García Chaparro"
         )
-        
         self.physio = Physiotherapist.objects.create(
             user=self.physio_user,
             bio="Bio example",
@@ -451,7 +445,6 @@ class CreateAppointmentTests(APITestCase):
                 "motivo_consulta": "Dolor en la espalda"
             }
         }
-        
         self.patient_user = AppUser.objects.create_user(
             username="patient1",
             email="patient1@sample.com",
@@ -463,13 +456,11 @@ class CreateAppointmentTests(APITestCase):
             first_name="Juan",
             last_name="Rodríguez García"
         )
-        
         self.patient = Patient.objects.create(
             user=self.patient_user,
             gender="F",
             birth_date="1990-01-01"
         )
-        
         self.appointment = Appointment.objects.create(
             start_time=self.start_time,
             end_time=self.end_time,
@@ -480,7 +471,7 @@ class CreateAppointmentTests(APITestCase):
             status='booked',
             alternatives='',
         )
-            
+    
     def test_create_appointment_as_patient(self):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'patient1',
@@ -501,9 +492,9 @@ class CreateAppointmentTests(APITestCase):
         }
         response = self.client.post(url, data, format='json')
         physiotherapist = Physiotherapist.objects.get(id=response.data['appointment_data']['physiotherapist'])
-        physio_scheule_appointments = physiotherapist.schedule['appointments'] 
+        physio_schedule_appointments = physiotherapist.schedule['appointments'] 
         appointment_added = False
-        for appointment in physio_scheule_appointments:
+        for appointment in physio_schedule_appointments:
             appointment['start_time'] = appointment['start_time']
             appointment['end_time'] = appointment['end_time']
             if appointment['start_time'] == self.end_time and appointment['end_time'] == self.new_appointment_end_time:
@@ -755,7 +746,6 @@ class CreateAppointmentTests(APITestCase):
         self.assertEqual(response.data['error'], 'Fisioterapeuta no encontrado')
         self.assertEqual(Appointment.objects.count(), 1)
 
-    '''
     def test_create_appointment_as_physio(self):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'jorgito',
@@ -766,8 +756,8 @@ class CreateAppointmentTests(APITestCase):
 
         url = '/api/appointment/physio/'
         data = {
-            'start_time': '2026-02-03T10:00:00Z',
-            'end_time': '2026-02-03T11:00:00Z',
+            'start_time': self.end_time,
+            'end_time': self.new_appointment_end_time,
             'is_online': True,
             'service': self.valid_service,
             'patient': self.patient.id,
@@ -781,25 +771,26 @@ class CreateAppointmentTests(APITestCase):
         for appointment in physio_schedule_appointments:
             appointment['start_time'] = appointment['start_time']
             appointment['end_time'] = appointment['end_time']
-            if appointment['start_time'] == '2026-02-03T10:00:00' and appointment['end_time'] == '2026-02-03T11:00:00':
+            if appointment['start_time'] == self.end_time and appointment['end_time'] == self.new_appointment_end_time:
                 appointment_added = True
                 break
-        
+        appointment_id = response.data["id"]
         self.assertEqual(response.status_code, 201)
         self.assertEqual(Appointment.objects.count(), 2)
-        self.assertEqual(Appointment.objects.get(id=response.data['id']).start_time.isoformat().replace('+00:00', 'Z'), '2026-02-03T10:00:00Z')
-        self.assertEqual(Appointment.objects.get(id=response.data['id']).end_time.isoformat().replace('+00:00', 'Z'), '2026-02-03T11:00:00Z')
-        self.assertEqual(Appointment.objects.get(id=response.data['id']).patient.id, self.patient.id)
-        self.assertEqual(Appointment.objects.get(id=response.data['id']).physiotherapist.id, self.physio.id)
-        self.assertEqual(Appointment.objects.get(id=response.data['id']).status, 'booked')
-        self.assertEqual(Appointment.objects.get(id=response.data['id']).alternatives, "")
+        self.assertEqual(Room.objects.count(), 1)
+        self.assertEqual(Appointment.objects.get(id=appointment_id).start_time.astimezone(self.spain_tz).strftime("%Y-%m-%dT%H:%M:%S%z"), self.end_time)
+        self.assertEqual(Appointment.objects.get(id=appointment_id).end_time.astimezone(self.spain_tz).strftime("%Y-%m-%dT%H:%M:%S%z"), self.new_appointment_end_time)
+        self.assertEqual(Appointment.objects.get(id=appointment_id).patient.id, self.patient.id)
+        self.assertEqual(Appointment.objects.get(id=appointment_id).physiotherapist.id, self.physio.id)
+        self.assertEqual(Appointment.objects.get(id=appointment_id).status, 'booked')
+        self.assertEqual(Appointment.objects.get(id=appointment_id).alternatives, "")
         self.assertEqual(appointment_added, True)
 
     def test_create_appointment_as_physio_without_authentication(self):
         url = '/api/appointment/physio/'
         data = {
-            'start_time': '2026-02-03T10:00:00Z',
-            'end_time': '2026-02-03T11:00:00Z',
+            'start_time': self.end_time,
+            'end_time': self.new_appointment_end_time,
             'is_online': True,
             'service': self.valid_service,
             'patient': self.patient.id,
@@ -820,8 +811,8 @@ class CreateAppointmentTests(APITestCase):
 
         url = '/api/appointment/physio/'
         data = {
-            'start_time': '2026-02-03T10:00:00Z',
-            'end_time': '2026-02-03T11:00:00Z',
+            'start_time': self.end_time,
+            'end_time': self.new_appointment_end_time,
             'is_online': True,
             'service': self.valid_service,
             'patient': self.patient.id,
@@ -842,8 +833,8 @@ class CreateAppointmentTests(APITestCase):
 
         url = '/api/appointment/physio/'
         data = {
-            'start_time': '2026-02-03T11:00:00Z',
-            'end_time': '2026-02-03T10:00:00Z',
+            'start_time': self.new_appointment_end_time,
+            'end_time': self.end_time,
             'is_online': True,
             'service': self.valid_service,
             'patient': self.patient.id,
@@ -865,8 +856,8 @@ class CreateAppointmentTests(APITestCase):
 
         url = '/api/appointment/physio/'
         data = {
-            'start_time': '2026-02-03T10:00:00Z',
-            'end_time': '2026-02-04T10:00:00Z',
+            'start_time': self.end_time,
+            'end_time': self.exception_date.strftime("%Y-%m-%d")+"T11:00:00"+self.exception_date.strftime("%z"),
             'is_online': True,
             'service': self.valid_service,
             'patient': self.patient.id,
@@ -896,104 +887,16 @@ class CreateAppointmentTests(APITestCase):
             bio = "Bio example",
             autonomic_community = "EXTREMADURA",
             rating_avg = 4.5,
-            schedule = {
-                "exceptions": {
-                    "2025-04-14": [
-                        {
-                            "end": "12:00",
-                            "start": "10:00"
-                        }
-                    ]
-                },
-                "appointments": [
-                    {
-                        "status": "booked",
-                        "end_time": "2026-02-02T10:00:00Z",
-                        "start_time": "2026-02-02T11:00:00Z"
-                    },
-                ],
-                "weekly_schedule": {
-                    "friday": [],
-                    "monday": [
-                        {
-                            "id": "ws-1743669362707-139",
-                            "end": "14:00",
-                            "start": "10:00"
-                        }
-                    ],
-                    "sunday": [],
-                    "tuesday": [
-                        {
-                            "id": "ws-1743669365620-823",
-                            "end": "15:00",
-                            "start": "10:00"
-                        }
-                    ],
-                    "saturday": [],
-                    "thursday": [],
-                    "wednesday": []
-                }
-            },
+            schedule = {},
             birth_date = "1980-01-01",
             collegiate_number = "COL2",
-            services = {
-                "1": {
-                    "id": 1,
-                    "tipo": "PRIMERA_CONSULTA",
-                    "price": 30,
-                    "title": "Primera consulta",
-                    "duration": 60,
-                    "description": "",
-                    "custom_questionnaire": {
-                        "UI Schema": {
-                            "type": "Group",
-                            "label": "Cuestionario Personalizado",
-                            "elements": [
-                                {
-                                    "type": "Number",
-                                    "label": "Peso (kg)",
-                                    "scope": "#/properties/peso"
-                                },
-                                {
-                                    "type": "Number",
-                                    "label": "Altura (cm)",
-                                    "scope": "#/properties/altura"
-                                },
-                                {
-                                    "type": "Number",
-                                    "label": "Edad",
-                                    "scope": "#/properties/edad"
-                                },
-                                {
-                                    "type": "Control",
-                                    "label": "Nivel de actividad física",
-                                    "scope": "#/properties/actividad_fisica"
-                                },
-                                {
-                                    "type": "Control",
-                                    "label": "Motivo de la consulta",
-                                    "scope": "#/properties/motivo_consulta"
-                                }
-                            ]
-                        }
-                    }
-                },
-                "2": {
-                    "id": 2,
-                    "tipo": "CONTINUAR_TRATAMIENTO",
-                    "price": 30,
-                    "title": "Continuación de tratamiento",
-                    "duration": 45,
-                    "description": "",
-                    "custom_questionnaire": None
-                }
-            },
+            services = {},
             gender = "M"
         )
         # Primero creamos otra cita para el paciente en el mismo horario
         other_appointment = Appointment.objects.create(
-            start_time='2026-02-03T10:00:00Z',
-            end_time='2026-02-03T11:00:00Z',
+            start_time=self.end_time,
+            end_time=self.new_appointment_end_time,
             is_online=True,
             service=self.valid_service,
             patient_id=self.patient.id,
@@ -1011,8 +914,8 @@ class CreateAppointmentTests(APITestCase):
 
         url = '/api/appointment/physio/'
         data = {
-            'start_time': '2026-02-03T10:00:00Z',
-            'end_time': '2026-02-03T11:00:00Z',
+            'start_time': self.end_time,
+            'end_time': self.new_appointment_end_time,
             'is_online': True,
             'service': self.valid_service,
             'patient': self.patient.id,
@@ -1034,8 +937,8 @@ class CreateAppointmentTests(APITestCase):
 
         url = '/api/appointment/physio/'
         data = {
-            'start_time': '2026-02-03T10:00:00Z',
-            'end_time': '2026-02-03T11:00:00Z',
+            'start_time': self.end_time,
+            'end_time': self.new_appointment_end_time,
             'is_online': True,
             'service': self.valid_service,
             'patient': 999,  # ID inválido
@@ -1059,7 +962,7 @@ class CreateAppointmentTests(APITestCase):
         url = '/api/appointment/physio/'
         data = {
             # Falta start_time
-            'end_time': '2026-02-03T11:00:00Z',
+            'end_time': self.new_appointment_end_time,
             'is_online': True,
             'service': self.valid_service,
             'patient': self.patient.id,
@@ -1081,8 +984,8 @@ class CreateAppointmentTests(APITestCase):
 
         url = '/api/appointment/physio/'
         data = {
-            'start_time': '2026-02-02T10:00:00Z',  # Coincide con la cita existente
-            'end_time': '2026-02-02T11:00:00Z',
+            'start_time': self.start_time,  # Coincide con la cita existente
+            'end_time': self.end_time,
             'is_online': True,
             'service': self.valid_service,
             'patient': self.patient.id,
@@ -1092,8 +995,7 @@ class CreateAppointmentTests(APITestCase):
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['non_field_errors'][0], 'El fisioterapeuta ya tiene una cita en ese horario.')
-        self.assertEqual(Appointment.objects.count(), 1)'
-        '''
+        self.assertEqual(Appointment.objects.count(), 1)
 
 class ListAppointmentTests(APITestCase):
     def setUp(self):
