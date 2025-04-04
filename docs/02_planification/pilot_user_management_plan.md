@@ -1,6 +1,6 @@
 ---
 title: "ACUERDO CON USUARIOS PILOTO"                      # CHANGE IF NEEDED
-subtitle: "FISIO FIND - Grupo 6 - #SPRINT 1"
+subtitle: "FISIO FIND - Grupo 6 - #SPRINT 3"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]
 date: "10/02/2025"                                        # CHANGE IF NEEDED
 subject: "ISPP"
@@ -69,7 +69,7 @@ classoption: "table"
 
 - **Número de Grupo:** Grupo 6
 
-- **Entregable:** #SPRINT 1
+- **Entregable:** #SPRINT 3
 
 - **Miembros del grupo:** Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes.
 
@@ -77,7 +77,7 @@ classoption: "table"
 
 - **Fecha de Creación:** 10/02/2025  
 
-- **Versión:** v1.5
+- **Versión:** v1.6
 
 <br>
 
@@ -93,6 +93,7 @@ classoption: "table"
 | 20/02/2025   | v1.3      | Guadalupe Ridruejo Pineda | Firmas de los primeros usuarios piloto                                |
 | 26/02/2025   | v1.4      | Guadalupe Ridruejo Pineda | Últimas firmas de usuarios piloto                                     |
 | 10/03/2025   | v1.5      | Antonio Macías Ferrera    | Correcciones finales para la entrega del #SPRINT 1                    |
+| 04/04/2025   | v1.6      | Antonio Macías Ferrera    | Adacuación para la entrega del #SPRINT 3. Adición de nuevos UP (fisioterapeutas)              |
 
 
 <br>
@@ -222,11 +223,11 @@ El programa de usuarios piloto se ha estructurado en tres fases de prueba, con f
 Los usuarios piloto podrán acceder a la plataforma y brindar su *feedback* en diferentes iteraciones:  
 
 - **22 de marzo de 2025**  
-- **12 de abril de 2025**  
+- **8 de abril de 2025**  
 - **3 de mayo de 2025**  
 
 >[!NOTE]
-Las fechas son estimadas y flexibles, por lo que no era imprescindible estar disponible exactamente en esos días.
+Se ha actualizado el calendario para que se ajuste a la fecha de entrega del Sprint 3 del proyecto: se ha cambiado la fecha de prueba de 12 de abril de 2025 al 8 de abril de 2025.
 
 ### Estructura de las pruebas
 Cada sesión de prueba inclurá los siguientes pasos:  
@@ -283,6 +284,9 @@ Se presenta un listado de los usuarios piloto que participarán en las pruebas d
 | María Vallejo                   | Autónomo/a               | Traumatológica y ortopédica, Deportiva, Suelo pélvico y/o Obstétrica   | 5-10 años      |
 | Eusebia Cano Gil                | En un hospital           | Traumatológica y ortopédica, Respiratoria, Rehabilitación Cardiaca     | Más de 10 años |
 | Marina Gonzalez Sanchez         | En un hospital           | Deportiva                                                              | Más de 10 años |
+| Alejandro Pedrido Galván        |            | /TODO                 |    |
+
+<br>
 
 ### PACIENTES
 
@@ -338,7 +342,7 @@ Se ha determiando que las comunicaciones con todos los usuarios pilotos se reali
 Se ha definido una periodicidad específica para las interacciones con los usuarios piloto, permitiendo obtener retroalimentación continua sin resultar invasiva:
 
 - **22 de marzo de 2025**  
-- **12 de abril de 2025**  
+- **8 de abril de 2025**  
 - **3 de mayo de 2025**  
 
 En estas fechas, TODOS los usuarios piloto recibirán un correo electrónico en el que recibirán instrucciones y se les proporcionará un formulario que deberán cumplimentar tras haber realizado las pruebas. Se establecerá de forma provisional una **fecha límite de cinco días para completar el formulario**. Si no se completa el formulario en ese plazo, se le enviará un correo electrónico de recordatorio para que lo complete.
@@ -359,7 +363,7 @@ Se proporcionó documentación clara y soporte técnico para facilitar el uso de
 
 # 6. FEEDBACK OBTENIDO
 
-Una vez completados los formularios, el equipo encargado de la gestión del feedback procesará los datos y elaborará un informe detallado sobre el feedback obtenido. El feedback de cada sesión de evaluación de los usuarios piloto será registrado en su informe pertinente ubicado en `/docs/03_reports/pilot_user_reports`. Se realizará un informe por Sprint.
+Una vez completados los formularios, el equipo encargado de la gestión del feedback procesará los datos y elaborará un informe detallado sobre el feedback obtenido. El feedback de cada sesión de evaluación de los usuarios piloto será registrado en su informe pertinente ubicado en [`/docs/03_reports/pilot_user_reports`](https://github.com/Proyecto-ISPP/FISIOFIND/tree/main/docs/03_reports/pilot_user_reports). Se realizará un informe por Sprint.
 
 Se recogerán las sugerencias y problemas detectados más relevantes de los usuarios piloto, destacando aspectos positivos y áreas de mejora y **priorizando su importancia y utilidad**.
 
