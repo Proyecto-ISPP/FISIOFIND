@@ -16,7 +16,7 @@ const Controls = ({
   setShowChat,
   showSettings,
   setShowSettings,
-  endCall
+  leaveCall
 }) => {
   return (
     <div className={styles.controls}>
@@ -32,7 +32,7 @@ const Controls = ({
       <button onClick={() => setShowSettings(!showSettings)} className={styles.controlButton}>
         <FontAwesomeIcon icon={faCog} />
       </button>
-      <button onClick={endCall} className={`${styles.controlButton} ${styles.endCallButton}`}>
+      <button onClick={leaveCall} className={`${styles.controlButton} ${styles.endCallButton}`}>
   <FontAwesomeIcon icon={faPhoneSlash} />
 </button>
 

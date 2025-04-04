@@ -1,0 +1,22 @@
+name: Deploy Backend Sprint 3
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Connect & Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ejecutar script en el servidor por SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.BACKEND_SERVER_IP }}
+          username: ${{ secrets.BACKEND_SSH_USER }}
+          key: ${{ secrets.BACKEND_SSH_PRIVATE_KEY }}
+          script: |
+            cd /root
+            ./deploy_s3.sh
