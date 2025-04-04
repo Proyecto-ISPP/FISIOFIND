@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from .models import Rating
+from .models import AppointmentRating
 
-class RatingSerializer(serializers.ModelSerializer):
+class AppointmentRatingSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Rating
+        model = AppointmentRating
         fields = ['id', 'patient', 'physiotherapist', 'appointment', 'score', 'comment', 'created_at']
         read_only_fields = ['patient', 'physiotherapist', 'created_at']
 

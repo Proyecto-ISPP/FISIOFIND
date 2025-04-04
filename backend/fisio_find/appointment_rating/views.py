@@ -4,16 +4,16 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 
 from appointment.models import Appointment
-from .models import Rating
-from .serializers import RatingSerializer
+from .models import AppointmentRating
+from .serializers import AppointmentRatingSerializer
 from users.permissions import IsPatient, IsPhysioOrPatient
 
 @api_view(['GET'])
 @permission_classes([IsPhysioOrPatient])
 def list_ratings(request, physio_id):
     """ Obtiene todas las valoraciones de un fisioterapeuta específico """
-    ratings = Rating.objects.filter(physiotherapist_id=physio_id)
-    serializer = RatingSerializer(ratings, many=True)
+    ratings = AppointmentRating.objects.filter(physiotherapist_id=physio_id)
+    serializer = AppointmentRatingSerializer(ratings, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -32,11 +32,11 @@ def create_rating(request):
         return Response({"error": "Solo puedes valorar citas finalizadas."}, status=status.HTTP_400_BAD_REQUEST)
 
     # Verificar que no haya una valoración previa para esta cita
-    if Rating.objects.filter(appointment=appointment).exists():
+    if AppointmentRating.objects.filter(appointment=appointment).exists():
         return Response({"error": "Ya has valorado esta cita."}, status=status.HTTP_400_BAD_REQUEST)
 
     # Serializar y guardar la valoración
-    serializer = RatingSerializer(data=request.data)
+    serializer = AppointmentRatingSerializer(data=request.data)
     
     if serializer.is_valid():
         serializer.save(patient=request.user.patient, physiotherapist=appointment.physiotherapist, appointment=appointment)

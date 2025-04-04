@@ -4,8 +4,8 @@ from appointment.models import Appointment
 from users.models import Patient, Physiotherapist
 
 # Modelo para valoraciones y comentarios
-class Rating(models.Model):
-    physiotherapist = models.ForeignKey(Physiotherapist, on_delete=models.CASCADE, related_name='ratings')
+class AppointmentRating(models.Model):
+    physiotherapist = models.ForeignKey(Physiotherapist, on_delete=models.CASCADE, related_name='appointment_rating')
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     appointment = models.ForeignKey(Appointment, on_delete=models.CASCADE, unique=True)
     score = models.DecimalField(max_digits=3, decimal_places=1)  # Permite valores como 4.5, 3.0, etc.
