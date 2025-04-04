@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - feat/changelog.yml
-      - develop
       - main
+      - develop
 
 jobs:
   generate-changelog:
@@ -34,51 +34,38 @@ jobs:
       - name: Generate changelog
         id: generate-changelog
         run: |
-          range="$(git tag --sort=-v:refname | head -n 1)..HEAD"
           echo "## 🚀 Changelog - $NEW_TAG" > CHANGELOG.md
           echo "" >> CHANGELOG.md
 
-          # Verifica que el rango de commits está bien
-          git log --pretty=format:"%s (@%an)" $range > full_log.txt
-
-          # Features
           echo "### ✨ Features" >> CHANGELOG.md
-          grep -iE "^feat" full_log.txt || echo "- (nada)" >> CHANGELOG.md
+          git log --pretty=format:"- %s (@%an)" --grep="^[Ff]eat" $(git tag --sort=-v:refname | head -n 1)..HEAD >> CHANGELOG.md
           echo "" >> CHANGELOG.md
 
-          # Fixes
           echo "### 🐛 Fixes" >> CHANGELOG.md
-          grep -iE "^fix" full_log.txt || echo "- (nada)" >> CHANGELOG.md
+          git log --pretty=format:"- %s (@%an)" --grep="^[Ff]ix" $(git tag --sort=-v:refname | head -n 1)..HEAD >> CHANGELOG.md
           echo "" >> CHANGELOG.md
 
-          # Documentation
           echo "### 📖 Documentation" >> CHANGELOG.md
-          grep -iE "^docs" full_log.txt | grep -vE "update CHANGELOG|actualización CHANGELOG|🔖|🔄|📜" || echo "- (nada)" >> CHANGELOG.md
+          git log --pretty=format:"- %s (@%an)" --grep="^[Dd]ocs" $(git tag --sort=-v:refname | head -n 1)..HEAD >> CHANGELOG.md
           echo "" >> CHANGELOG.md
 
-          # Branch Merges
           echo "### 🔀 Branch Merges" >> CHANGELOG.md
-          grep "^Merge branch" full_log.txt || echo "- (nada)" >> CHANGELOG.md
+          git log --pretty=format:"- %s (@%an)" --grep="Merge branch" $(git tag --sort=-v:refname | head -n 1)..HEAD >> CHANGELOG.md
           echo "" >> CHANGELOG.md
 
-          # Pull Requests
           echo "### 📌 Pull Request Merges" >> CHANGELOG.md
-          grep "^Merge pull request" full_log.txt || echo "- (nada)" >> CHANGELOG.md
+          git log --pretty=format:"- %s (@%an)" --grep="Merge pull request" $(git tag --sort=-v:refname | head -n 1)..HEAD >> CHANGELOG.md
           echo "" >> CHANGELOG.md
 
-          # Otros
           echo "### 🌀 Other Changes" >> CHANGELOG.md
-          grep -vE "^(feat|fix|docs)" full_log.txt \
-            | grep -vE "^Merge (branch|pull request)" \
-            | grep -vE "update CHANGELOG|actualización CHANGELOG|🔖|🔄|📜" || echo "- (nada)" >> CHANGELOG.md
-
+          git log --pretty=format:"- %s (@%an)" --invert-grep --grep="^[Ff]eat" --grep="^[Ff]ix" --grep="^[Dd]ocs" --grep="Merge branch" --grep="Merge pull request" $(git tag --sort=-v:refname | head -n 1)..HEAD >> CHANGELOG.md
 
       - name: Commit and push CHANGELOG.md
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add CHANGELOG.md
-          git commit -m "docs: actualizacion CHANGELOG para la version $NEW_TAG"
+          git commit -m "docs: update CHANGELOG for $NEW_TAG"
           git push
 
       - name: Create new tag
