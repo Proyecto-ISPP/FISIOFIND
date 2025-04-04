@@ -1,7 +1,27 @@
 from django.core.management.base import BaseCommand
 from django.utils.timezone import now
-from django.core.mail import EmailMessage
 from treatments.models import Treatment
+from django.conf import settings
+import os
+import base64
+import logging
+import requests
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.backends import default_backend
+import cryptography.hazmat.primitives.padding as padding
+
+logger = logging.getLogger(__name__)
+
+def encrypt_data(data):
+    key = bytes.fromhex(settings.ENCRYPTION_KEY)
+    iv = os.urandom(16)
+    padder = padding.PKCS7(128).padder()
+    padded_data = padder.update(data.encode()) + padder.finalize()
+    cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
+    encryptor = cipher.encryptor()
+    encrypted_data = encryptor.update(padded_data) + encryptor.finalize()
+    return base64.b64encode(iv + encrypted_data).decode('utf-8')
+
 
 class Command(BaseCommand):
     help = 'Envía recordatorios diarios a pacientes con ejercicios asignados hoy'
@@ -35,14 +55,13 @@ class Command(BaseCommand):
                 </div>
             """
 
-            self.send_email(subject, message, patient_user.email)
-            self.stdout.write(self.style.SUCCESS(f"Correo enviado a {patient_user.email}"))
+            self.send_encrypted_email(subject, message, patient_user.email)
+            self.stdout.write(self.style.SUCCESS(f"Correo (API) enviado a {patient_user.email}"))
 
-    def send_email(self, subject, message, recipient_email):
-        # Usamos logo desde Netlify (acceso público asegurado)
+    def send_encrypted_email(self, subject, message, recipient_email):
         logo_url = "https://fisiofind-landing-page.netlify.app/_astro/logo.1fTJ_rhB.png"
 
-        html_body = f"""
+        email_body = f"""
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; background-color: #ffffff;">
             <div style="text-align: center; border-bottom: 2px solid #00a896; padding-bottom: 10px; margin-bottom: 20px;">
                 <img src="{logo_url}" alt="FisioFind Logo" width="100">
@@ -62,12 +81,21 @@ class Command(BaseCommand):
         </div>
         """
 
-        # Alias "noreply" visible, pero envía desde citas@fisiofind.com
-        email = EmailMessage(
-            subject,
-            html_body,
-            to=[recipient_email],
-            from_email='noreply <citas@fisiofind.com>'
-        )
-        email.content_subtype = "html"
-        email.send()
+        encrypted_subject = encrypt_data(subject)
+        encrypted_recipient = encrypt_data(recipient_email)
+        encrypted_body = encrypt_data(email_body)
+
+        url = settings.API_MAIL_URL
+        headers = {
+            'X-API-Key': settings.API_KEY,
+            'Content-Type': 'application/json'
+        }
+        data = {
+            "encrypted_subject": encrypted_subject,
+            "encrypted_recipient": encrypted_recipient,
+            "encrypted_body": encrypted_body
+        }
+
+        response = requests.post(url, json=data, headers=headers)
+        if response.status_code != 200:
+            logger.error(f"Fallo al enviar correo (API): {response.text}")
