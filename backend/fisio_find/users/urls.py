@@ -26,12 +26,6 @@ urlpatterns = [
     path('videos/stream-video/<int:video_id>/', stream_video, name='stream_video'),
     path('videos/update-video/<int:video_id>/', update_video, name='update_video'),
 
-    path('files/upload-files/', upload_patient_files, name='upload_patient_files'),
-    path('files/delete-file/<int:file_id>/', delete_patient_file, name='delete_patient_file'),
-    path('files/update-file/<int:file_id>/', update_patient_file, name='update_patient_file'),
-    path('files/list-my-files/', list_my_files, name='list_my_files'),
-    path('files/get-patients-files/<int:patient_id>/', get_file_by_patient_id, name='get_file_by_patient_id'),
-
     path('services/<int:physio_id>/', physio_get_services_view, name='physio_get_xservices'),
     
 

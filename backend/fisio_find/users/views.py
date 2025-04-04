@@ -14,8 +14,7 @@ from rest_framework import status, generics
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from .serializers import PatientRegisterSerializer, PhysioUpdateSerializer, PhysioRegisterSerializer
 from .serializers import PhysioSerializer, PatientSerializer, AppUserSerializer
-from .models import AppUser, Physiotherapist, Patient, Specialization, PatientFile
-from treatments.models import Treatment
+from .models import AppUser, Physiotherapist, Patient, Specialization
 from rest_framework import generics
 from .permissions import IsPhysiotherapist
 from .permissions import IsPatient
@@ -31,16 +30,14 @@ from .serializers import (
     PatientSerializer,
     AppUserSerializer,
     VideoSerializer,
-    PhysioUpdateSerializer,
-    PatientFileSerializer
-)
+    PhysioUpdateSerializer
+    )
 from .models import Physiotherapist, Patient, AppUser, Video
 from .permissions import (
     IsPatient,
     IsPhysiotherapist,
     IsPhysioOrPatient,
-    IsAdmin,
-    IsPhysioOfPatientFile
+    IsAdmin
 )
 
 
@@ -802,151 +799,3 @@ def update_video(request, video_id):
         return Response({"message": "Video actualizado correctamente", "video": serializer.data}, status=status.HTTP_200_OK)
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-#Subida de archivos a la nube
-@api_view(['POST'])
-@permission_classes([IsPhysioOrPatient])
-def upload_patient_files(request):
-    print("🔍 Datos recibidos:", request.data)
-
-    # Convertir request.data en un diccionario mutable (para modificar el QueryDict)
-    mutable_data = request.data.copy()
-
-    print("📌 Datos después de procesar:", mutable_data)  # Para depuración
-
-    # Pasamos mutable_data en lugar de request.data al serializer
-    serializer = PatientFileSerializer(data=mutable_data, context={"request": request})
-
-    if serializer.is_valid():
-        file = serializer.save()
-        return Response(
-            {
-                "message": "Archivo creado correctamente",
-                "file": PatientFileSerializer(file).data
-            },
-            status=status.HTTP_201_CREATED
-        )
-
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-@api_view(['DELETE'])
-@permission_classes([IsPatient])
-def delete_patient_file(request, file_id):
-    user = request.user
-    print(user.patient.id)  # Depuración
-    print(f"Usuario autenticado: {user}, Rol: {getattr(user, 'patient', None)}")  # Depuración
-    try:
-        file = PatientFile.objects.get(id=file_id)
-        print(f"Archivo encontrado: {file}")  # Depuración
-    
-        if not hasattr(user, 'patient') or file.patient.id != user.patient.id:
-            return Response({"error": "No tienes permiso para eliminar este archivo"}, status=status.HTTP_403_FORBIDDEN)
-
-        file.delete_from_storage()
-        file.delete()
-
-        return Response({"message": "Archivo eliminado correctamente"}, status=status.HTTP_200_OK)
-
-    except PatientFile.DoesNotExist:
-        return Response({"error": "Archivo no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-    
-
-@api_view(['PUT'])
-@permission_classes([IsPatient])
-def update_patient_file(request, file_id):
-    try:
-        file_instance = PatientFile.objects.get(id=file_id)
-    except PatientFile.DoesNotExist:
-        return Response({"error": "Archivo no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-
-    # Verificar que el usuario autenticado es el dueño del archivo
-    if file_instance.patient != request.user.patient:
-        return Response({"error": "No tienes permiso para actualizar este archivo"}, status=status.HTTP_403_FORBIDDEN)
-
-    # Convertir request.data en un diccionario mutable
-    mutable_data = request.data.copy()
-
-    # Si el archivo es nuevo, lo agregamos al diccionario mutable
-    new_file = request.FILES.get("files")
-    if new_file:
-        mutable_data["files"] = new_file
-
-    # Serializar con los datos nuevos
-    serializer = PatientFileSerializer(file_instance, data=mutable_data, partial=True, context={"request": request})
-
-    if serializer.is_valid():
-        # Guardar los cambios
-        serializer.save()
-
-        # Responder con el archivo actualizado
-        return Response({
-            "message": "Archivo actualizado correctamente",
-            "file": serializer.data
-        }, status=status.HTTP_200_OK)
-
-    # Si el serializador no es válido, devolver los errores
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-@api_view(['GET'])
-@permission_classes([IsPatient])
-def list_my_files(request):
-    user = request.user
-
-    try:
-        if hasattr(user, 'patient'):
-            print("Patient:", user.patient.id)
-            files = PatientFile.objects.filter(patient=user.patient.id)
-
-        else:
-            return Response({"error": "No tienes permisos para ver estos archivos"}, status=status.HTTP_403_FORBIDDEN)
-
-        serializer = PatientFileSerializer(files, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    except Exception as e:
-        print(f"Error al obtener los archivos: {e}")
-        return Response({"error": "Hubo un problema al obtener los archivos"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-
-@api_view(['GET'])
-@permission_classes([IsPhysioOfPatientFile])
-def get_file_by_patient_id(request, patient_id):
-    user = request.user
-
-    if not hasattr(user, 'physio'):
-        return Response({"error": "No tienes permisos para ver estos archivos"}, status=status.HTTP_403_FORBIDDEN)
-
-    # Verificar si el paciente existe
-    patient = get_object_or_404(Patient, id=patient_id)
-
-    # Verificar si el fisio tiene un tratamiento con este paciente
-    has_treatment = Treatment.objects.filter(patient=patient, physiotherapist=user.physio).exists()
-
-    if not has_treatment:
-        return Response({"error": "No tienes permiso para ver los archivos de este paciente"}, status=status.HTTP_403_FORBIDDEN)
-
-    # Obtener los archivos del paciente
-    files = PatientFile.objects.filter(patient=patient)
-    serializer = PatientFileSerializer(files, many=True)
-
-    return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-@api_view(['GET'])
-def get_file_by_treatment_id(request, treatment_id):
-    user = request.user
-    if not hasattr(user, 'patient'):
-        return Response({"error": "No tienes permisos para ver estos archivos"}, status=status.HTTP_403_FORBIDDEN)
-    # Verificar si el tratamiento existe
-    treatment = get_object_or_404(Treatment, id=treatment_id)
-    # Verificar si el fisio tiene un tratamiento con este paciente
-    has_treatment = Treatment.objects.filter(physiotherapist=treatment.physiotherapist, patient=user.patient).exists()
-    if not has_treatment:
-        return Response({"error": "No tienes permiso para ver los archivos de este paciente"}, status=status.HTTP_403_FORBIDDEN)
-    # Obtener los archivos del paciente
-    files = PatientFile.objects.filter(patient=treatment.patient)
-    serializer = PatientFileSerializer(files, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)

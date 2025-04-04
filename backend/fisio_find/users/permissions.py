@@ -29,21 +29,3 @@ class IsAdmin(BasePermission):
     """
     def has_permission(self, request, view):
         return hasattr(request.user, 'admin')
-    
-
-class IsPhysioOfPatientFile(BasePermission):
-    """
-    Permite el acceso solo si el fisioterapeuta está asignado al paciente que subió el archivo.
-    """
-    def has_object_permission(self, request, view, obj):
-        # Si es el paciente dueño del archivo, permitir acceso
-        if hasattr(request.user, 'patient'):
-            return obj.patient == request.user.patient
-
-        # Si es un fisioterapeuta, comprobar si tiene un Treatment con el paciente
-        if hasattr(request.user, 'physio'):
-            return Treatment.objects.filter(
-                patient=obj.patient, physiotherapist=request.user.physio).exists()
-
-        # Si no es paciente ni fisioterapeuta, denegar acceso
-        return False
