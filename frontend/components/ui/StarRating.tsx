@@ -9,9 +9,9 @@ interface StarRatingProps {
   color?: string;
 }
 
-const StarRating = ({ rating, setRating, size = 24, color = "gold" }: StarRatingProps) => {
+const StarRating = ({ rating, setRating, size = 20, color = "gold" }: StarRatingProps) => {
   return (
-    <div style={{ display: "flex", justifyContent: "center" }}>
+    <div style={{ display: "flex", justifyContent: "center"}}>
       {Array.from({ length: 5 }, (_, index) => {
         const starValue = index + 1;
         let icon;

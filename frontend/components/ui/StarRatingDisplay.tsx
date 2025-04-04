@@ -34,7 +34,7 @@ const StarRatingDisplay = ({
               <BsStarFill color="gold" size={size} />
             </div>
           </div>
-          <span className="ml-2 text-teal-50 text-sm pt-[3px]">{`(${rating}/${max})`}</span>
+          <span className="ml-2 text-teal-50 text-sm">{`(${rating}/${max})`}</span>
         </>
       )}
     </div>

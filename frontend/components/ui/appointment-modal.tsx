@@ -9,6 +9,7 @@ import StarRatingDisplay from "./StarRatingDisplay";
 import { BsStarFill } from "react-icons/bs";
 import "./LoadingStar.css";
 import EditableStarRatingDisplay from "./EditableStarRatingDisplay";
+import AppointmentComment from "./AppointmentComment";
 
 // Función para formatear fechas
 const formatDateTime = (dateString: string) => {
@@ -60,6 +61,8 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
   const [selectedEventRatingScore, setSelectedEventRatingScore] = useState(0); // Estado para almacenar la puntuación de la valoración seleccionada
   const [loadingRating, setLoadingRating] = useState(true);
   const [input, setInput] = useState({ comment: "", rating: 0 });
+  const [isEditingComment, setIsEditingComment] = useState(false);
+  const [tempComment, setTempComment] = useState("");
 
   // Efecto para ajustar la altura máxima del modal
   useEffect(() => {
@@ -74,8 +77,14 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
     };
   }, []);
 
+  useEffect(() => {
+    if (selectedEventRating.comment) {
+      setTempComment(selectedEventRating.comment);
+    }
+  }, [selectedEventRating.comment]);
+
   const closeModal = () => {
-    setRating();
+    setRating(tempComment);
     setIsClosing(true);
     setTimeout(() => {
       setSelectedEvent(null); // Close modal after animation
@@ -113,7 +122,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
     }));
   };
 
-  const setRating = async () => {
+  const setRating = async (tempComment) => {
     if (!selectedEvent) return;
 
     // Determinar si estamos editando o creando
@@ -136,7 +145,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
         },
         body: JSON.stringify({
           score: selectedEventRating.score,
-          comment: selectedEventRating.comment,
+          comment: tempComment,
         }),
       });
 
@@ -462,12 +471,32 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
               </div>
               {selectedEvent.status == "finished" && (
                 <div>
-                  <EditableStarRatingDisplay
-                    rating={selectedEventRating.score}
-                    editable={isEditable(selectedEvent.end)}
-                    loading={loadingRating}
-                    onRatingChange={handleChangeRating}
-                  />
+                  <div className="flex items-center mt-4 text-teal-50">
+                    <EditableStarRatingDisplay
+                      rating={selectedEventRating.score}
+                      editable={isEditable(selectedEvent.end)}
+                      loading={loadingRating}
+                      onRatingChange={handleChangeRating}
+                    />
+                  </div>
+                  {selectedEvent.status === "finished" && (
+                    <div className="flex items-center mt-4 text-teal-50 justify-end">
+                      <svg
+                        height={"20px"}
+                        viewBox="0 0 1920 1920"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill={isEditingComment ? "#b0b8c8" : "currentColor"}
+                        stroke="currentColor"
+                        onClick={() => setIsEditingComment(!isEditingComment)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        <path
+                          d="M1662.178 0v1359.964h-648.703l-560.154 560.154v-560.154H0V0h1662.178ZM1511.07 151.107H151.107v1057.75h453.321v346.488l346.489-346.488h560.154V151.107ZM906.794 755.55v117.53H453.32V755.55h453.473Zm302.063-302.365v117.529H453.32V453.185h755.536Z"
+                          fill-rule="evenodd"
+                        ></path>
+                      </svg>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -531,38 +560,54 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
 
         {/* Content - Con scroll */}
         <div ref={modalContentRef} className="p-6 overflow-y-auto flex-grow">
-          {/* Description */}
-          {selectedEvent.description && (
-            <div className="mb-6">
-              <h3 className="text-sm font-medium text-gray-500 mb-2">
-                Detalles
+          {isEditingComment ? (
+            <div>
+              <h3 className="text-sm font-medium text-gray-500 mb-4">
+                Incluye un comentario a tu valoración (Opcional)
               </h3>
-              <p className="text-gray-700">{selectedEvent.description}</p>
+              <textarea
+                rows={4}
+                className="w-full p-2 border border-gray-300 rounded-md"
+                value={tempComment}
+                onChange={(e) => setTempComment(e.target.value)}
+              />
             </div>
-          )}
-
-          {/* Service info if available */}
-          {selectedEvent.service && selectedEvent.service.type && (
-            <div className="mb-6 bg-gray-50 rounded-lg p-3">
-              <div className="flex justify-between">
-                <span className="text-sm font-medium text-gray-500">
-                  Servicio
-                </span>
-                <span className="text-sm text-gray-700">
-                  {selectedEvent.service.type}
-                </span>
-              </div>
-              {selectedEvent.service.duration > 0 && (
-                <div className="flex justify-between mt-1">
-                  <span className="text-sm font-medium text-gray-500">
-                    Duración
-                  </span>
-                  <span className="text-sm text-gray-700">
-                    {selectedEvent.service.duration} minutos
-                  </span>
+          ) : (
+            <>
+              {/* Description */}
+              {selectedEvent.description && (
+                <div className="mb-6">
+                  <h3 className="text-sm font-medium text-gray-500 mb-2">
+                    Detalles
+                  </h3>
+                  <p className="text-gray-700">{selectedEvent.description}</p>
                 </div>
               )}
-            </div>
+
+              {/* Service info if available */}
+              {selectedEvent.service && selectedEvent.service.type && (
+                <div className="mb-6 bg-gray-50 rounded-lg p-3">
+                  <div className="flex justify-between">
+                    <span className="text-sm font-medium text-gray-500">
+                      Servicio
+                    </span>
+                    <span className="text-sm text-gray-700">
+                      {selectedEvent.service.type}
+                    </span>
+                  </div>
+                  {selectedEvent.service.duration > 0 && (
+                    <div className="flex justify-between mt-1">
+                      <span className="text-sm font-medium text-gray-500">
+                        Duración
+                      </span>
+                      <span className="text-sm text-gray-700">
+                        {selectedEvent.service.duration} minutos
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
+            </>
           )}
 
           {/* Questionary responses - Solo visible para fisioterapeutas */}
