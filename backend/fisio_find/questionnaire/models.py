@@ -4,7 +4,7 @@ from users.models import Patient, Physiotherapist
 import json
 
 class ResponseQuestionnaire(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='treatments')
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='response_questionnaire')
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     is_active = models.BooleanField(default=True)
@@ -17,11 +17,11 @@ class ResponseQuestionnaire(models.Model):
         return f"Cuestionario para {self.patient.user.username}"
     
 class Questionnaire(models.Model):
-    physiotherapist = models.ForeignKey(Physiotherapist, on_delete=models.CASCADE, related_name='treatments')
+    physiotherapist = models.ForeignKey(Physiotherapist, on_delete=models.CASCADE, related_name='questionnaires')
     title = models.CharField(max_length=255)
-    json_schema = models.JSONField()  # Usamos JSONField para almacenar el esquema completo del cuestionario
-    ui_schema = models.JSONField()  # Usamos JSONField para almacenar el esquema de UI completo
-    questions = models.JSONField()  # Las preguntas se almacenan en formato JSON
+    json_schema = models.JSONField()
+    ui_schema = models.JSONField()
+    questions = models.JSONField()
 
     def __str__(self):
         return self.title
@@ -50,7 +50,6 @@ class Question(models.Model):
         return self.text
 
 class PatientResponse(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     questionnaire = models.ForeignKey(Questionnaire, on_delete=models.CASCADE)
     responses = models.JSONField()
 
