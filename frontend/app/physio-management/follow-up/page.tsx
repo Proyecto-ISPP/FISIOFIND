@@ -357,14 +357,17 @@ const SeguimientoPage = () => {
   // Cargar tratamientos desde la API
   useEffect(() => {
     const fetchTreatments = async () => {
+      // Add early return if not authenticated or not a physiotherapist
+      if (!token || userRole !== "physiotherapist") {
+        setLoading(false);
+        return;
+      }
+      
       try {
         setLoading(true);
 
         // Intentamos obtener los datos del backend
         try {
-          // Usar token si está disponible en localStorage
-          const token = localStorage.getItem("token") || "";
-
           let url = `${getApiBaseUrl()}/api/treatments/physio/`;
           if (activeFilter !== null) {
             url += `?is_active=${activeFilter}`;
@@ -400,7 +403,7 @@ const SeguimientoPage = () => {
       }
     };
     fetchTreatments();
-  }, [extractActivePatients, activeFilter]);
+  }, [extractActivePatients, activeFilter, token, userRole]);
 
   // Aplicar filtros cuando cambien
   useEffect(() => {
