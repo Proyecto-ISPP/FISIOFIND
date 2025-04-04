@@ -32,7 +32,7 @@ jobs:
           echo "latest_tag=$latest_tag" >> $GITHUB_ENV  # Guardamos la última tag en env
           echo "Nueva tag a crear: $new_tag"
 
-           - name: Generate changelog
+      - name: Generate changelog
         id: generate-changelog
         run: |
           latest_tag=$(git tag --sort=-v:refname | head -n 1)
