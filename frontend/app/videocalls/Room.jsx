@@ -18,6 +18,7 @@ import useMediaControls from './hooks/useMediaControls';
 import useChat from './hooks/useChat';
 import useRoomManagement from './hooks/useRoomManagement';
 import MapaDolor from './tools/MapaDolor';
+import QuestionnaireTool from './tools/QuestionnaireTool';
 
 import { faCancel } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -38,6 +39,9 @@ const Room = ({ roomCode }) => {
   const [selectedTool, setSelectedTool] = useState(null);
   const [activePainMap, setActivePainMap] = useState(null);
   const [partsColored, setPartsColored] = useState([]);
+
+  const [questionnaires, setQuestionnaires] = useState([]);
+  const [activeQuestionnaire, setActiveQuestionnaire] = useState(null);
 
   // Inicializamos los hooks SIEMPRE
   const webSocket = useWebSocket(roomCode, userRole, () => {});
@@ -160,6 +164,16 @@ useEffect(() => {
               setPartsColored(data.message.partsSelected);
             }
             break;
+          case 'send-questionnaire':
+            if (userRole === 'patient') {
+              setActiveQuestionnaire(data.message.questionnaire);
+            }
+            break;
+          case 'submit-questionnaire':
+            if (userRole === 'physio') {
+              addChatMessage('Sistema', `Respuestas recibidas: ${JSON.stringify(data.message.responses)}`);
+            }
+            break;
           default:
             webRTC.handleWebSocketMessage(data);
         }
@@ -168,6 +182,24 @@ useEffect(() => {
 
     webSocket.setMessageHandler(handleWebSocketMessage);
   }, [chat, webRTC, webSocket, roomManagement]);
+
+  // Efecto para cargar cuestionarios
+useEffect(() => {
+  const fetchQuestionnaires = async () => {
+    try {
+      const response = await axios.get(`${getApiBaseUrl()}/api/questionnaires/list/`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setQuestionnaires(response.data);
+    } catch (error) {
+      console.error('Error fetching questionnaires:', error);
+    }
+  };
+
+  if (token && userRole === 'physio') {
+    fetchQuestionnaires();
+  }
+}, [token, userRole]);
 
   const handlePainMapSelect = (mapId) => {
     setActivePainMap(mapId);
@@ -283,12 +315,22 @@ useEffect(() => {
         </>
       )}
 
+      {!showTools && activeQuestionnaire && (
+        <PatientQuestionnaire
+          questionnaire={activeQuestionnaire}
+          sendWebSocketMessage={webSocket.sendWebSocketMessage}
+          addChatMessage={chat.addChatMessage}
+          onClose={() => setActiveQuestionnaire(null)}
+        />
+      )}
+
       {showTools && (
         <>
           <ToolsContainer
             selectedTool={selectedTool}
             setSelectedTool={setSelectedTool}
             toggleScreenShare={mediaControls.toggleScreenShare}
+            hasQuestionnaires={userRole === 'physio'}
           />
           {selectedTool && (
             <ToolPanel
@@ -299,7 +341,17 @@ useEffect(() => {
               userRole={userRole}
               partsColored={partsColored}
               sendWebSocketMessage={webSocket.sendWebSocketMessage}
+              questionnaires={questionnaires}
             />
+          )}
+          {selectedTool === 'cuestionarios' && (
+            <QuestionnaireTool
+            initialQuestionnaires={questionnaires}
+            sendWebSocketMessage={webSocket.sendWebSocketMessage}
+            addChatMessage={chat.addChatMessage}
+            onClose={() => setSelectedTool(null)}
+            token={token}
+          />
           )}
         </>
       )}
