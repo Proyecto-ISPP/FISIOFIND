@@ -38,27 +38,49 @@ jobs:
           echo "" >> CHANGELOG.md
 
           echo "### ✨ Features" >> CHANGELOG.md
-          git log --pretty=format:"- %s (@%an)" --grep="^[Ff]eat" $(git tag --sort=-v:refname | head -n 1)..HEAD >> CHANGELOG.md
+          git log --pretty=format:"- %s (@%an)" \
+            --grep="^[Ff]eat" \
+            --invert-grep --grep="Merge pull request" \
+            --invert-grep --grep="Merge branch" \
+            $(git describe --tags --abbrev=0 2>/dev/null || echo "")..HEAD >> CHANGELOG.md
           echo "" >> CHANGELOG.md
 
           echo "### 🐛 Fixes" >> CHANGELOG.md
-          git log --pretty=format:"- %s (@%an)" --grep="^[Ff]ix" $(git tag --sort=-v:refname | head -n 1)..HEAD >> CHANGELOG.md
+          git log --pretty=format:"- %s (@%an)" \
+            --grep="^[Ff]ix" \
+            --invert-grep --grep="Merge pull request" \
+            --invert-grep --grep="Merge branch" \
+            $(git describe --tags --abbrev=0 2>/dev/null || echo "")..HEAD >> CHANGELOG.md
           echo "" >> CHANGELOG.md
 
           echo "### 📖 Documentation" >> CHANGELOG.md
-          git log --pretty=format:"- %s (@%an)" --grep="^[Dd]ocs" $(git tag --sort=-v:refname | head -n 1)..HEAD >> CHANGELOG.md
+          git log --pretty=format:"- %s (@%an)" \
+            --grep="^[Dd]ocs" \
+            --invert-grep --grep="Merge pull request" \
+            --invert-grep --grep="Merge branch" \
+            $(git describe --tags --abbrev=0 2>/dev/null || echo "")..HEAD >> CHANGELOG.md
           echo "" >> CHANGELOG.md
 
           echo "### 🔀 Branch Merges" >> CHANGELOG.md
-          git log --pretty=format:"- %s (@%an)" --grep="Merge branch" $(git tag --sort=-v:refname | head -n 1)..HEAD >> CHANGELOG.md
+          git log --pretty=format:"- %s (@%an)" \
+            --grep="Merge branch" \
+            $(git describe --tags --abbrev=0 2>/dev/null || echo "")..HEAD >> CHANGELOG.md
           echo "" >> CHANGELOG.md
 
           echo "### 📌 Pull Request Merges" >> CHANGELOG.md
-          git log --pretty=format:"- %s (@%an)" --grep="Merge pull request" $(git tag --sort=-v:refname | head -n 1)..HEAD >> CHANGELOG.md
+          git log --pretty=format:"- %s (@%an)" \
+            --grep="Merge pull request" \
+            $(git describe --tags --abbrev=0 2>/dev/null || echo "")..HEAD >> CHANGELOG.md
           echo "" >> CHANGELOG.md
 
           echo "### 🌀 Other Changes" >> CHANGELOG.md
-          git log --pretty=format:"- %s (@%an)" --invert-grep --grep="^[Ff]eat" --grep="^[Ff]ix" --grep="^[Dd]ocs" --grep="Merge branch" --grep="Merge pull request" $(git tag --sort=-v:refname | head -n 1)..HEAD >> CHANGELOG.md
+          git log --pretty=format:"- %s (@%an)" \
+            --invert-grep --grep="^[Ff]eat" \
+            --invert-grep --grep="^[Ff]ix" \
+            --invert-grep --grep="^[Dd]ocs" \
+            --invert-grep --grep="Merge branch" \
+            --invert-grep --grep="Merge pull request" \
+            $(git describe --tags --abbrev=0 2>/dev/null || echo "")..HEAD >> CHANGELOG.md
 
       - name: Commit and push CHANGELOG.md
         run: |
