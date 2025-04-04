@@ -1,12 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   const handleRoleSelection = (role: "patient" | "physio") => {
     router.push(`/register/${role}`);
@@ -16,11 +17,11 @@ export default function RegisterPage() {
     <div className="min-h-screen w-full flex flex-col items-center justify-center py-12 px-4">
       {/* Header */}
       <div className="text-center mb-12">
-        <Image 
-          src="/static/fisio_find_logo.webp" 
-          alt="Fisio Find Logo" 
-          width={180} 
-          height={180} 
+        <Image
+          src="/static/fisio_find_logo.webp"
+          alt="Fisio Find Logo"
+          width={180}
+          height={180}
           className="mb-6 mx-auto"
         />
         <h1 className="text-4xl font-bold mb-4 font-alfa-slab-one">
@@ -31,6 +32,27 @@ export default function RegisterPage() {
         <p className="text-lg text-gray-600 max-w-xl mx-auto">
           Selecciona tu rol para continuar con el registro en nuestra plataforma
         </p>
+        {/* Checkbox de Términos y Condiciones */}
+        <div className="mt-6 flex items-center justify-center gap-2">
+          <input
+            type="checkbox"
+            id="terms"
+            checked={acceptedTerms}
+            onChange={(e) => setAcceptedTerms(e.target.checked)}
+            className="w-5 h-5 accent-[#1E5ACD] cursor-pointer"
+          />
+          <label htmlFor="terms" className="text-sm text-gray-600">
+            Acepto los{" "}
+            <a
+              href="/terms"
+              className="text-[#1E5ACD] hover:underline font-medium"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              términos y condiciones
+            </a>
+          </label>
+        </div>
       </div>
 
       {/* Role Selection Cards */}
@@ -43,11 +65,11 @@ export default function RegisterPage() {
             </CardItem>
             <CardItem translateZ="60" className="w-full mt-4 flex justify-center">
               <div className="h-48 w-48 rounded-full bg-blue-100 flex items-center justify-center overflow-hidden">
-                <Image 
-                  src="/static/patient_icon.svg" 
-                  alt="Patient Icon" 
-                  width={180} 
-                  height={180} 
+                <Image
+                  src="/static/patient_icon.svg"
+                  alt="Patient Icon"
+                  width={180}
+                  height={180}
                   className="object-cover"
                 />
               </div>
@@ -58,8 +80,13 @@ export default function RegisterPage() {
             <CardItem
               translateZ="30"
               as="button"
-              className="w-full px-4 py-3 rounded-xl bg-[#1E5ACD] text-white font-bold hover:bg-[#1848A3] transition-colors"
+              className={`w-full px-4 py-3 rounded-xl text-white font-bold transition-colors ${
+                !acceptedTerms 
+                  ? "bg-gray-400 cursor-not-allowed" 
+                  : "bg-[#1E5ACD] hover:bg-[#1848A3]"
+              }`}
               onClick={() => handleRoleSelection("patient")}
+              disabled={!acceptedTerms}
             >
               Registrarme como Paciente
             </CardItem>
@@ -74,11 +101,11 @@ export default function RegisterPage() {
             </CardItem>
             <CardItem translateZ="60" className="w-full mt-4 flex justify-center">
               <div className="h-48 w-48 rounded-full bg-blue-100 flex items-center justify-center overflow-hidden">
-                <Image 
-                  src="/static/physiotherapist_icon.svg" 
-                  alt="Physiotherapist Icon" 
-                  width={180} 
-                  height={180} 
+                <Image
+                  src="/static/physiotherapist_icon.svg"
+                  alt="Physiotherapist Icon"
+                  width={180}
+                  height={180}
                   className="object-cover"
                 />
               </div>
@@ -89,8 +116,13 @@ export default function RegisterPage() {
             <CardItem
               translateZ="30"
               as="button"
-              className="w-full px-4 py-3 rounded-xl bg-[#1E5ACD] text-white font-bold hover:bg-[#1848A3] transition-colors"
+              className={`w-full px-4 py-3 rounded-xl text-white font-bold transition-colors ${
+                !acceptedTerms 
+                  ? "bg-gray-400 cursor-not-allowed" 
+                  : "bg-[#1E5ACD] hover:bg-[#1848A3]"
+              }`}
               onClick={() => handleRoleSelection("physio")}
+              disabled={!acceptedTerms}
             >
               Registrarme como Fisioterapeuta
             </CardItem>
@@ -101,7 +133,7 @@ export default function RegisterPage() {
       {/* Back to Login Link */}
       <div className="mt-12 text-center">
         <p className="text-gray-600 mb-2">¿Ya tienes una cuenta?</p>
-        <button 
+        <button
           className="font-semibold text-[#1E5ACD] hover:underline"
           onClick={() => router.push("/login")}
         >
@@ -110,12 +142,12 @@ export default function RegisterPage() {
       </div>
 
       {/* Back to Home Link */}
-      <button 
+      <button
         className="mt-8 text-gray-500 hover:text-gray-700 flex items-center gap-2"
         onClick={() => router.push("/")}
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M19 12H5M12 19l-7-7 7-7"/>
+          <path d="M19 12H5M12 19l-7-7 7-7" />
         </svg>
         Volver a la página principal
       </button>
