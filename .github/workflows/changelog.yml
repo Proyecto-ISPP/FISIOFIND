@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - feat/changelog.yml
+      - develop
+      - main
 
 jobs:
   generate-changelog:
@@ -32,31 +34,53 @@ jobs:
       - name: Generate changelog
         id: generate-changelog
         run: |
+          range="$(git tag --sort=-v:refname | head -n 1)..HEAD"
           echo "## 🚀 Changelog - $NEW_TAG" > CHANGELOG.md
           echo "" >> CHANGELOG.md
 
           echo "### ✨ Features" >> CHANGELOG.md
-          git log --pretty=format:"- %s (@%an)" --grep="^[Ff]eat" $(git tag --sort=-v:refname | head -n 1)..HEAD >> CHANGELOG.md
+          git log --pretty=format:"- %s (@%an)" \
+            --grep="^[Ff]eat" \
+            --invert-grep --grep="^Merge " \
+            $range >> CHANGELOG.md
           echo "" >> CHANGELOG.md
 
           echo "### 🐛 Fixes" >> CHANGELOG.md
-          git log --pretty=format:"- %s (@%an)" --grep="^[Ff]ix" $(git tag --sort=-v:refname | head -n 1)..HEAD >> CHANGELOG.md
+          git log --pretty=format:"- %s (@%an)" \
+            --grep="^[Ff]ix" \
+            --invert-grep --grep="^Merge " \
+            $range >> CHANGELOG.md
           echo "" >> CHANGELOG.md
 
           echo "### 📖 Documentation" >> CHANGELOG.md
-          git log --pretty=format:"- %s (@%an)" --grep="^[Dd]ocs" $(git tag --sort=-v:refname | head -n 1)..HEAD >> CHANGELOG.md
+          git log --pretty=format:"- %s (@%an)" \
+            --grep="^[Dd]ocs" \
+            --invert-grep --grep="^Merge " \
+            --invert-grep --grep="^docs: update CHANGELOG" \
+            $range >> CHANGELOG.md
           echo "" >> CHANGELOG.md
 
           echo "### 🔀 Branch Merges" >> CHANGELOG.md
-          git log --pretty=format:"- %s (@%an)" --grep="Merge branch" $(git tag --sort=-v:refname | head -n 1)..HEAD >> CHANGELOG.md
+          git log --pretty=format:"- %s (@%an)" \
+            --grep="^Merge branch" \
+            $range >> CHANGELOG.md
           echo "" >> CHANGELOG.md
 
           echo "### 📌 Pull Request Merges" >> CHANGELOG.md
-          git log --pretty=format:"- %s (@%an)" --grep="Merge pull request" $(git tag --sort=-v:refname | head -n 1)..HEAD >> CHANGELOG.md
+          git log --pretty=format:"- %s (@%an)" \
+            --grep="^Merge pull request" \
+            $range >> CHANGELOG.md
           echo "" >> CHANGELOG.md
 
           echo "### 🌀 Other Changes" >> CHANGELOG.md
-          git log --pretty=format:"- %s (@%an)" --invert-grep --grep="^[Ff]eat" --grep="^[Ff]ix" --grep="^[Dd]ocs" --grep="Merge branch" --grep="Merge pull request" $(git tag --sort=-v:refname | head -n 1)..HEAD >> CHANGELOG.md
+          git log --pretty=format:"- %s (@%an)" \
+            --invert-grep --grep="^[Ff]eat" \
+            --invert-grep --grep="^[Ff]ix" \
+            --invert-grep --grep="^[Dd]ocs" \
+            --invert-grep --grep="^Merge branch" \
+            --invert-grep --grep="^Merge pull request" \
+            --invert-grep --grep="^docs: update CHANGELOG" \
+            $range >> CHANGELOG.md
 
       - name: Commit and push CHANGELOG.md
         run: |
