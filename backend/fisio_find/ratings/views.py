@@ -44,9 +44,9 @@ def update_rating(request, rating_id):
     try:
         rating = Rating.objects.get(id=rating_id)
 
-        if request.user.physio != rating.physiotherapist and not request.user.is_staff:
+        if request.user.physio != rating.physiotherapist:
             return Response(
-                {'error': 'You can only edit your own ratings'}, 
+                {'error': 'Solo puedes editar tus valoraciones'}, 
                 status=status.HTTP_403_FORBIDDEN
             )
 
@@ -67,10 +67,8 @@ def update_rating(request, rating_id):
         print("Validation errors:", serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    except Rating.DoesNotExist:
-        return Response({'error': 'Rating not found'}, status=status.HTTP_404_NOT_FOUND)
-    except Exception as e:
-        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    except Exception:
+        return Response({'error': 'Valoración no encontrada'}, status=status.HTTP_404_NOT_FOUND)
 
 
 @api_view(['DELETE'])
@@ -79,17 +77,17 @@ def delete_rating(request, rating_id):
     try:
         rating = Rating.objects.get(id=rating_id)
 
-        if request.user.physio != rating.physiotherapist and not request.user.is_staff:
+        if request.user.physio != rating.physiotherapist:
             return Response(
-                {'error': 'You can only delete your own ratings'}, 
+                {'error': 'Solo puedes eliminar tus valoraciones'}, 
                 status=status.HTTP_403_FORBIDDEN
             )
 
         rating.delete()
-        return Response({'message': 'Rating deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
+        return Response({'message': 'Valoración eliminada'}, status=status.HTTP_204_NO_CONTENT)
 
     except Exception as e:
-        return Response({'error': 'Rating not found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'Valoración no encontrada'}, status=status.HTTP_404_NOT_FOUND)
 
 
 @api_view(['GET'])
@@ -101,7 +99,7 @@ def get_rating_details(request, rating_id):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     except Exception as e:
-        return Response({'error': 'Rating not found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'Valoración no encontrada'}, status=status.HTTP_404_NOT_FOUND)
 
 
 @api_view(['GET'])
@@ -111,7 +109,7 @@ def check_if_physio_has_rated(request):
         has_rated = Rating.objects.filter(physiotherapist=request.user.physio).exists()
         return Response({'has_rated': has_rated}, status=status.HTTP_200_OK)
     except Exception as e:
-        return Response({'error': 'An error occurred while checking ratings'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({'error': 'Solicitud incorrecta'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
@@ -125,4 +123,4 @@ def get_my_rating(request):
         else:
             return Response(None, status=status.HTTP_204_NO_CONTENT)
     except Exception as e:
-        return Response({'error': 'An error occurred while fetching the rating'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({'error': 'Solicitud incorrecta'}, status=status.HTTP_400_BAD_REQUEST)
