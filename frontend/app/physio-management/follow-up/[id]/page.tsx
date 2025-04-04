@@ -14,6 +14,8 @@ import {
   Tooltip,
 } from "chart.js";
 import { getApiBaseUrl } from "@/utils/api";
+import { use } from "react";
+
 
 // Registrar los componentes necesarios de Chart.js
 Chart.register(
@@ -60,9 +62,31 @@ interface Treatment {
   updated_at?: string;
 }
 
-const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
-  const id = params.id;
+interface ExerciseEvolutionData {
+  exercise_name: string;
+  metric_type: string;
+  dates: string[];
+  values: number[];
+}
 
+interface EvolutionDataByMetric {
+  [exerciseName: string]: {
+    [metricType: string]: ExerciseEvolutionData;
+  };
+}
+
+interface SessionEvolutionData {
+  session_id: number;
+  session_name: string;
+  exercises: ExerciseEvolutionData[];
+}
+
+const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
+  const unwrappedParams = use(params as any);
+  const { id, sessionId } = unwrappedParams as {
+    id: string;
+    sessionId: string;
+  };
   const router = useRouter();
   const [treatment, setTreatment] = useState<Treatment | null>(null);
   const [loading, setLoading] = useState(true);
@@ -76,6 +100,124 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
   const [alertType, setAlertType] = useState<
     "success" | "error" | "info" | "warning"
   >("success");
+
+  const [evolutionData, setEvolutionData] = useState<ExerciseEvolutionData[]>(
+    []
+  );
+  const [evolutionLoading, setEvolutionLoading] = useState(false);
+  const [evolutionError, setEvolutionError] = useState<string | null>(null);
+  const [activeExerciseIndex, setActiveExerciseIndex] = useState(0);
+
+  const fetchEvolutionData = async () => {
+    try {
+      setEvolutionLoading(true);
+      setEvolutionError(null);
+
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setEvolutionError("No se ha encontrado el token de autenticación");
+        return;
+      }
+
+      const response = await fetch(
+        `${getApiBaseUrl()}/api/treatments/${id}/evolution/`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Datos recibidos del backend:", data);
+
+      // Process the data into a format suitable for our charts
+      const processedData: ExerciseEvolutionData[] = [];
+      const dataByMetric: EvolutionDataByMetric = {};
+
+      // Process each exercise
+      for (const [exerciseName, seriesData] of Object.entries(data)) {
+        // Initialize the exercise entry in our map
+        if (!dataByMetric[exerciseName]) {
+          dataByMetric[exerciseName] = {};
+        }
+
+        // For each series in the exercise
+        for (const [seriesKey, dateValues] of Object.entries(
+          seriesData as Record<string, any>
+        )) {
+          // Process date values for this series
+          for (const entry of dateValues as Array<{
+            date: string;
+            value: number;
+            metric: string;
+          }>) {
+            const metricType = entry.metric;
+
+            // Initialize the metric entry if it doesn't exist
+            if (!dataByMetric[exerciseName][metricType]) {
+              dataByMetric[exerciseName][metricType] = {
+                exercise_name: exerciseName,
+                metric_type: metricType,
+                dates: [],
+                values: [],
+              };
+            }
+
+            // Add this data point
+            const exerciseMetricData = dataByMetric[exerciseName][metricType];
+            const dateIndex = exerciseMetricData.dates.indexOf(entry.date);
+
+            if (dateIndex >= 0) {
+              // Update existing value if date already exists
+              exerciseMetricData.values[dateIndex] = entry.value;
+            } else {
+              // Add new date and value
+              exerciseMetricData.dates.push(entry.date);
+              exerciseMetricData.values.push(entry.value);
+            }
+          }
+        }
+      }
+
+      // Convert the nested map to a flat array of exercise data
+      for (const exerciseEntries of Object.values(dataByMetric)) {
+        for (const metricData of Object.values(exerciseEntries)) {
+          // Sort by date
+          const sortedIndices = metricData.dates
+            .map((date, index) => ({ date, index }))
+            .sort((a, b) => {
+              const [dayA, monthA] = a.date.split("/").map(Number);
+              const [dayB, monthB] = b.date.split("/").map(Number);
+
+              if (monthA !== monthB) return monthA - monthB;
+              return dayA - dayB;
+            })
+            .map((item) => item.index);
+
+          metricData.dates = sortedIndices.map((i) => metricData.dates[i]);
+          metricData.values = sortedIndices.map((i) => metricData.values[i]);
+
+          // Only add if there's actual data
+          if (metricData.dates.length > 0) {
+            processedData.push(metricData);
+          }
+        }
+      }
+
+      setEvolutionData(processedData);
+    } catch (error) {
+      console.error("Error fetching evolution data:", error);
+      setEvolutionError("Error al cargar los datos de evolución");
+    } finally {
+      setEvolutionLoading(false);
+    }
+  };
 
   const fetchTreatmentDetails = async () => {
     try {
@@ -146,6 +288,9 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
             homework: data.homework,
             is_active: data.is_active,
           });
+
+          fetchEvolutionData();
+          console.log("Datos de evolución procesados:", evolutionData);
         } catch (fetchError) {
           console.error("Error al obtener datos del backend:", fetchError);
           // Si falla, usamos datos mock
@@ -162,6 +307,70 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
     fetchTreatmentDetails();
   }, [id]);
 
+  const getCurrentExerciseChartData = () => {
+    if (evolutionData.length === 0 || !evolutionData[activeExerciseIndex]) {
+      return {
+        labels: [],
+        datasets: [],
+      };
+    }
+
+    const exercise = evolutionData[activeExerciseIndex];
+
+    return {
+      labels: exercise.dates,
+      datasets: [
+        {
+          label: getMetricLabel(exercise.metric_type),
+          data: exercise.values,
+          backgroundColor: getMetricColor(exercise.metric_type),
+          borderColor: getMetricColor(exercise.metric_type),
+          tension: 0.1,
+        },
+      ],
+    };
+  };
+
+  // Helper function to get a human-readable label for metric types
+  const getMetricLabel = (metricType: string) => {
+    switch (metricType) {
+      case "weight":
+        return "Peso (kg)";
+      case "time":
+        return "Tiempo (segundos)";
+      case "distance":
+        return "Distancia (metros)";
+      default:
+        return metricType;
+    }
+  };
+
+  // Helper function to get a color for each metric type
+  const getMetricColor = (metricType: string) => {
+    switch (metricType) {
+      case "weight":
+        return "rgb(204, 10, 52)";
+      case "time":
+        return "rgb(7, 194, 101)";
+      case "distance":
+        return "rgb(7, 35, 194)";
+      default:
+        return "rgb(100, 100, 100)";
+    }
+  };
+
+  const nextExercise = () => {
+    if (activeExerciseIndex < evolutionData.length - 1) {
+      setActiveExerciseIndex(activeExerciseIndex + 1);
+    }
+  };
+
+  const prevExercise = () => {
+    if (activeExerciseIndex > 0) {
+      setActiveExerciseIndex(activeExerciseIndex - 1);
+    }
+  };
+
   const handleGoBack = () => {
     router.push("/physio-management/follow-up");
   };
@@ -169,25 +378,6 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
     setSaveError(null);
-  };
-
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value, type } = e.target;
-
-    if (type === "checkbox") {
-      const checkbox = e.target as HTMLInputElement;
-      setEditedTreatment({
-        ...editedTreatment,
-        [name]: checkbox.checked,
-      });
-    } else {
-      setEditedTreatment({
-        ...editedTreatment,
-        [name]: value,
-      });
-    }
   };
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -304,39 +494,8 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
   };
 
   // Datos para los gráficos
-  const mockChartData = {
-    labels: ["14/02", "15/02", "16/02", "17/02", "18/02", "19/02", "20/02"],
-    datasets: [
-      {
-        label: "Mapa de dolor",
-        data: [1, 2, 4, 4, 5, 6, 7],
-        backgroundColor: "rgb(204, 10, 52)",
-        borderColor: "rgb(204, 10, 52)",
-      },
-      {
-        label: "Evolución del peso",
-        data: [10, 10, 9, 8, 4, 6, 5],
-        backgroundColor: "rgb(7, 194, 101)",
-        borderColor: "rgb(7, 194, 101)",
-      },
-      {
-        label: "Repeticiones",
-        data: [2, 3, 4, 5, 5, 6, 8],
-        backgroundColor: "rgb(7, 35, 194)",
-        borderColor: "rgb(7, 35, 194)",
-      },
-    ],
-  };
+  const chartData = getCurrentExerciseChartData();
 
-  // Lista de ejercicios de ejemplo
-  const mockExercises = [
-    { name: "Ejercicio 1", completion: 0 },
-    { name: "Ejercicio 2", completion: 100 },
-    { name: "Ejercicio 3", completion: 100 },
-    { name: "Ejercicio 4", completion: 75 },
-    { name: "Ejercicio 5", completion: 50 },
-    { name: "Ejercicio 6", completion: 100 },
-  ];
 
   if (loading) {
     return (
@@ -585,58 +744,82 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 mb-8">
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-2xl font-bold mb-5">Evolución del dolor</h2>
-          <div className="h-80">
-            <Line
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-              }}
-              data={mockChartData}
-            />
-          </div>
-        </div>
+          <h2 className="text-xl font-semibold mb-4">Evolución del Paciente</h2>
 
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-2xl font-bold mb-5">Progreso de ejercicios</h2>
-          <div className="h-80 overflow-y-auto">
-            {mockExercises.map((exercise, index) => (
-              <div key={index} className="mb-4">
-                <div className="flex justify-between mb-1">
-                  <span className="font-medium">{exercise.name}</span>
-                  <span
-                    className={`font-bold ${
-                      exercise.completion === 0
-                        ? "text-red-600"
-                        : exercise.completion < 50
-                        ? "text-orange-500"
-                        : exercise.completion < 100
-                        ? "text-yellow-500"
-                        : "text-green-600"
-                    }`}
-                  >
-                    {exercise.completion}%
-                  </span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    className={`h-2 rounded-full ${
-                      exercise.completion === 0
-                        ? "bg-red-600"
-                        : exercise.completion < 50
-                        ? "bg-orange-500"
-                        : exercise.completion < 100
-                        ? "bg-yellow-500"
-                        : "bg-green-600"
-                    }`}
-                    style={{ width: `${exercise.completion}%` }}
-                  ></div>
-                </div>
+          {evolutionLoading ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+          ) : evolutionError ? (
+            <div className="text-center text-red-500 py-8">
+              {evolutionError}
+            </div>
+          ) : evolutionData.length === 0 ? (
+            <div className="text-center text-gray-500 py-8">
+              No hay datos de evolución disponibles para este tratamiento.
+            </div>
+          ) : (
+            <div>
+              {/* Exercise navigation */}
+              <div className="flex justify-between items-center mb-4">
+                <button
+                  onClick={prevExercise}
+                  disabled={activeExerciseIndex === 0}
+                  className="px-3 py-1 bg-gray-200 rounded-xl disabled:opacity-50"
+                >
+                  ← Ejercicio anterior
+                </button>
+
+                <h4 className="text-md font-medium">
+                  {evolutionData[activeExerciseIndex]?.exercise_name ||
+                    "Ejercicio"}{" "}
+                  ({activeExerciseIndex + 1} de {evolutionData.length}){" - "}
+                  {getMetricLabel(
+                    evolutionData[activeExerciseIndex]?.metric_type || ""
+                  )}
+                </h4>
+
+                <button
+                  onClick={nextExercise}
+                  disabled={activeExerciseIndex >= evolutionData.length - 1}
+                  className="px-3 py-1 bg-gray-200 rounded-xl disabled:opacity-50"
+                >
+                  Siguiente ejercicio →
+                </button>
               </div>
-            ))}
-          </div>
+
+              {/* Chart */}
+              <div className="h-64 mt-4">
+                <Line
+                  data={chartData}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                      y: {
+                        beginAtZero: true,
+                        title: {
+                          display: true,
+                          text: getMetricLabel(
+                            evolutionData[activeExerciseIndex]?.metric_type ||
+                              ""
+                          ),
+                        },
+                      },
+                      x: {
+                        title: {
+                          display: true,
+                          text: "Fecha",
+                        },
+                      },
+                    },
+                  }}
+                />
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
