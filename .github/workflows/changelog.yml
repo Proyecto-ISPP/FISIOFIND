@@ -14,13 +14,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Necesario para obtener todas las tags
+          fetch-depth: 0
 
       - name: Get latest tag
         id: get-latest-tag
         run: |
           latest_tag=$(git tag --sort=-v:refname | head -n 1)
-          echo "Última tag encontrada: $latest_tag"
           if [[ -z "$latest_tag" ]]; then
             new_tag="1.0.0"
           else
@@ -29,7 +28,6 @@ jobs:
             new_tag="${new_major}.0.0"
           fi
           echo "NEW_TAG=$new_tag" >> $GITHUB_ENV
-          echo "Nueva tag a crear: $new_tag"
 
       - name: Generate changelog
         id: generate-changelog
@@ -37,57 +35,42 @@ jobs:
           echo "## 🚀 Changelog - $NEW_TAG" > CHANGELOG.md
           echo "" >> CHANGELOG.md
 
+          RANGE="$(git describe --tags --abbrev=0 2>/dev/null || echo '')..HEAD"
+
           echo "### ✨ Features" >> CHANGELOG.md
-          git log --pretty=format:"- %s (@%an)" \
-            --grep="^[Ff]eat" \
-            --invert-grep --grep="Merge pull request" \
-            --invert-grep --grep="Merge branch" \
-            $(git describe --tags --abbrev=0 2>/dev/null || echo "")..HEAD >> CHANGELOG.md
+          git log $RANGE --pretty=format:"- %s (@%an)" | grep -E '^feat:' >> CHANGELOG.md
           echo "" >> CHANGELOG.md
 
           echo "### 🐛 Fixes" >> CHANGELOG.md
-          git log --pretty=format:"- %s (@%an)" \
-            --grep="^[Ff]ix" \
-            --invert-grep --grep="Merge pull request" \
-            --invert-grep --grep="Merge branch" \
-            $(git describe --tags --abbrev=0 2>/dev/null || echo "")..HEAD >> CHANGELOG.md
+          git log $RANGE --pretty=format:"- %s (@%an)" | grep -E '^fix:' >> CHANGELOG.md
           echo "" >> CHANGELOG.md
 
           echo "### 📖 Documentation" >> CHANGELOG.md
-          git log --pretty=format:"- %s (@%an)" \
-            --grep="^[Dd]ocs" \
-            --invert-grep --grep="Merge pull request" \
-            --invert-grep --grep="Merge branch" \
-            $(git describe --tags --abbrev=0 2>/dev/null || echo "")..HEAD >> CHANGELOG.md
+          git log $RANGE --pretty=format:"- %s (@%an)" | grep -E '^docs:' >> CHANGELOG.md
           echo "" >> CHANGELOG.md
 
-          echo "### 🔀 Branch Merges" >> CHANGELOG.md
-          git log --pretty=format:"- %s (@%an)" \
-            --grep="Merge branch" \
-            $(git describe --tags --abbrev=0 2>/dev/null || echo "")..HEAD >> CHANGELOG.md
+          echo "### 🔧 Build / Chores" >> CHANGELOG.md
+          git log $RANGE --pretty=format:"- %s (@%an)" | grep -E '^build:|^chore:' >> CHANGELOG.md
           echo "" >> CHANGELOG.md
 
           echo "### 📌 Pull Request Merges" >> CHANGELOG.md
-          git log --pretty=format:"- %s (@%an)" \
-            --grep="Merge pull request" \
-            $(git describe --tags --abbrev=0 2>/dev/null || echo "")..HEAD >> CHANGELOG.md
+          git log $RANGE --pretty=format:"- %s (@%an)" | grep -E '^Merge pull request' >> CHANGELOG.md
           echo "" >> CHANGELOG.md
 
-          echo "### 🌀 Other Changes" >> CHANGELOG.md
-          git log --pretty=format:"- %s (@%an)" \
-            --invert-grep --grep="^[Ff]eat" \
-            --invert-grep --grep="^[Ff]ix" \
-            --invert-grep --grep="^[Dd]ocs" \
-            --invert-grep --grep="Merge branch" \
-            --invert-grep --grep="Merge pull request" \
-            $(git describe --tags --abbrev=0 2>/dev/null || echo "")..HEAD >> CHANGELOG.md
+          echo "### 🔀 Branch Merges" >> CHANGELOG.md
+          git log $RANGE --pretty=format:"- %s (@%an)" | grep -E '^Merge (remote-tracking branch|branch)' >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+
+          echo "### 🌀 Others" >> CHANGELOG.md
+          git log $RANGE --pretty=format:"- %s (@%an)" \
+            | grep -v -E '^feat:|^fix:|^docs:|^build:|^chore:|^Merge pull request|^Merge (remote-tracking branch|branch)' >> CHANGELOG.md
 
       - name: Commit and push CHANGELOG.md
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add CHANGELOG.md
-          git commit -m "docs: actualización CHANGELOG para $NEW_TAG"
+          git commit -m "docs: update CHANGELOG for $NEW_TAG"
           git push
 
       - name: Create new tag
