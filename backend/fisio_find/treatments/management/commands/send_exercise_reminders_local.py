@@ -6,6 +6,7 @@ import ssl
 import os
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from django.conf import settings
 
 class Command(BaseCommand):
     help = 'Versión local sin verificación SSL para pruebas de recordatorios'
@@ -43,9 +44,9 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS(f"(LOCAL) Correo enviado a {patient_user.email}"))
 
     def send_raw_email(self, subject, html_message, recipient_email):
-        sender_email = "citas@fisiofind.com"
-        password = "RSu@FdJg5KNGG#d"
-        alias_name = "noreply"  # Lo que quieres que aparezca
+        sender_email = settings.EMAIL_HOST_USER
+        password = settings.EMAIL_HOST_PASSWORD
+        alias_name = "noreply"
 
         # Logo directo (usamos Netlify o una CDN para evitar bloqueos de GitHub)
         logo_url = "https://fisiofind-landing-page.netlify.app/_astro/logo.1fTJ_rhB.png"
