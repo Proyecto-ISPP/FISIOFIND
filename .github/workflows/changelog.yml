@@ -29,15 +29,13 @@ jobs:
             new_tag="${new_major}.0.0"
           fi
           echo "NEW_TAG=$new_tag" >> $GITHUB_ENV
+          echo "latest_tag=$latest_tag" >> $GITHUB_ENV  # Guardamos la última tag en env
           echo "Nueva tag a crear: $new_tag"
 
       - name: Generate changelog
         id: generate-changelog
         run: |
-                - name: Generate changelog
-        id: generate-changelog
-        run: |
-          latest_tag=$(git tag --sort=-v:refname | head -n 1)
+          latest_tag=${{ env.latest_tag }}
 
           echo "## 🚀 Changelog - $NEW_TAG" > CHANGELOG.md
           echo "" >> CHANGELOG.md
