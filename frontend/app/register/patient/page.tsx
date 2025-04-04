@@ -5,13 +5,13 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import Image from "next/image";
 import { getApiBaseUrl } from "@/utils/api";
-import { Eye, EyeOff } from "lucide-react";
-
+import { Eye, EyeOff, Info } from "lucide-react";
 
 interface FormData {
   username: string;
   email: string;
   password: string;
+  confirm_password: string;
   first_name: string;
   last_name: string;
   dni: string;
@@ -22,9 +22,11 @@ interface FormData {
 }
 
 const GENDER_OPTIONS = [
+  { value: "", label: "Seleccione género" },
   { value: "M", label: "Masculino" },
   { value: "F", label: "Femenino" },
   { value: "O", label: "Otro" },
+  { value: "ND", label: "Prefiero no decirlo" },
 ];
 
 // Componente reutilizable para los campos del formulario
@@ -37,6 +39,7 @@ const FormField = ({
   value,
   onChange,
   error,
+  info
 }: {
   name: string;
   label: string;
@@ -48,6 +51,7 @@ const FormField = ({
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => void;
   error?: string;
+  info?: string;
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -62,6 +66,15 @@ const FormField = ({
         className="block text-sm font-medium text-gray-700 dark:text-white mb-1"
       >
         {label} {required && <span className="text-red-500">*</span>}
+        {info && (
+          <span
+            title={info}
+            className="ml-1 mt-0 text-gray-400 hover:text-gray-600 cursor-pointer"
+            style={{ display: 'inline-block', verticalAlign: 'middle' }}
+          >
+            <Info size={16} />
+          </span>
+        )}
       </label>
 
       {type === "select" ? (
@@ -91,23 +104,23 @@ const FormField = ({
             className="w-full px-4 py-2 border border-gray-300 dark:border-neutral-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1E5ACD] dark:bg-neutral-800 dark:text-white pr-10"
           />
           {type === "password" && (
-          <button 
-            type="button"
-            onClick={togglePasswordVisibility}
-            className="absolute right-2 top-1/4 -translate-y-1/2 bg-transparent border-none cursor-pointer focus:outline-none z-10 hover:bg-transparent"
-          >
-            {showPassword ? (
-              <Eye 
-                className="text-blue-600"
-                size={20} 
-              />
-            ) : (
-              <EyeOff 
-                className="text-blue-600"
-                size={20} 
-              />
-            )}
-          </button>
+            <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              className="absolute right-2 top-1/4 -translate-y-1/2 bg-transparent border-none cursor-pointer focus:outline-none z-10 hover:bg-transparent"
+            >
+              {showPassword ? (
+                <Eye
+                  className="text-blue-600"
+                  size={20}
+                />
+              ) : (
+                <EyeOff
+                  className="text-blue-600"
+                  size={20}
+                />
+              )}
+            </button>
           )}
         </div>
       )}
@@ -127,12 +140,13 @@ const PatientRegistrationForm = () => {
     username: "",
     email: "",
     password: "",
+    confirm_password: "",
     first_name: "",
     last_name: "",
     dni: "",
     phone_number: "",
     postal_code: "",
-    gender: "M",
+    gender: "",
     birth_date: "",
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -183,6 +197,13 @@ const PatientRegistrationForm = () => {
         isValid = false;
       } else if (formData.password.length < 8) {
         newErrors.password = "La contraseña debe tener al menos 8 caracteres";
+        isValid = false;
+      }
+      if (!formData.confirm_password.trim()) {
+        newErrors.confirm_password = "La confirmación de la contraseña es obligatoria";
+        isValid = false;
+      } else if (formData.confirm_password !== formData.password) {
+        newErrors.confirm_password = "Las contraseñas no coinciden";
         isValid = false;
       }
     } else if (step === 2) {
@@ -323,25 +344,22 @@ const PatientRegistrationForm = () => {
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center w-full">
                 <div
-                  className={`flex items-center justify-center w-10 h-10 rounded-full ${
-                    currentStep >= 1
+                  className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 1
                       ? "bg-[#1E5ACD] text-white"
                       : "bg-gray-200 text-gray-600"
-                  }`}
+                    }`}
                 >
                   1
                 </div>
                 <div
-                  className={`h-1 flex-1 mx-2 ${
-                    currentStep >= 2 ? "bg-[#1E5ACD]" : "bg-gray-200"
-                  }`}
+                  className={`h-1 flex-1 mx-2 ${currentStep >= 2 ? "bg-[#1E5ACD]" : "bg-gray-200"
+                    }`}
                 ></div>
                 <div
-                  className={`flex items-center justify-center w-10 h-10 rounded-full ${
-                    currentStep >= 2
+                  className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 2
                       ? "bg-[#1E5ACD] text-white"
                       : "bg-gray-200 text-gray-600"
-                  }`}
+                    }`}
                 >
                   2
                 </div>
@@ -352,9 +370,7 @@ const PatientRegistrationForm = () => {
           <form onSubmit={handleSubmit} className="p-6">
             {currentStep === 1 && (
               <div className="space-y-4">
-                <h2 className="text-xl font-semibold mb-4">
-                  Información de Cuenta
-                </h2>
+                <h2 className="text-xl font-semibold mb-4">Información de Cuenta</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="md:col-span-2">
                     <FormField
@@ -381,6 +397,32 @@ const PatientRegistrationForm = () => {
                     onChange={handleChange}
                     error={errors.password}
                   />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:col-span-2">
+                    <div>
+                      <FormField
+                        name="confirm_password"
+                        label="Confirmar contraseña"
+                        type="password"
+                        value={formData.confirm_password}
+                        onChange={handleChange}
+                        error={errors.confirm_password}
+                      />
+                    </div>
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex flex-col justify-center h-full">
+                      <h3 className="text-sm font-medium text-blue-800 mb-2 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Requisitos de contraseña
+                      </h3>
+                      <ul className="text-xs text-blue-700 space-y-1 ml-7 list-disc">
+                        <li>Mínimo 8 caracteres</li>
+                        <li>No debe ser similar a tu información personal</li>
+                        <li>No debe ser una contraseña común</li>
+                        <li>No puede ser únicamente numérica</li>
+                      </ul>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
@@ -411,6 +453,7 @@ const PatientRegistrationForm = () => {
                     value={formData.dni}
                     onChange={handleChange}
                     error={errors.dni}
+                    info="Necesitamos tu DNI para verificar tu identidad." 
                   />
                   <FormField
                     name="phone_number"
@@ -495,7 +538,7 @@ const PatientRegistrationForm = () => {
             className="mt-4 text-gray-500 hover:text-gray-700 flex items-center gap-2 mx-auto"
           >
             <svg
-              xmlns="www.w3.org/2000/svg"
+              xmlns="http://www.w3.org/2000/svg"
               width="16"
               height="16"
               viewBox="0 0 24 24"

@@ -318,14 +318,18 @@ def physio_create_service_view(request):
     new_service = request.data
     
     # Actualizar servicios existentes o añadir nuevos
-    service_title = new_service.get('id')
-    if service_title in existing_services:
-        # Si el servicio ya existe, actualizarlo
-        existing_services[str(service_title)].update(new_service)
-    else:
+    service_id = new_service.get('id')
+    service_updated = False
+
+    # Buscar si el servicio ya existe por ID
+    if service_id and service_id in existing_services:
+        # Actualizar el servicio existente
+        existing_services[service_id].update(new_service)
+        service_updated = True
+    if not service_updated:
         # Si el servicio no existe, asignar una nueva ID única y añadirlo completo
         new_id = 1
-        while str(new_id) in existing_services:
+        while str(new_id) in existing_services.keys():
             new_id += 1
         new_service['id'] = new_id
         existing_services[str(new_id)] = new_service
@@ -345,21 +349,52 @@ def physio_create_service_view(request):
 @api_view(['PUT'])
 @permission_classes([IsPhysiotherapist])
 def physio_update_service_view(request, service_id):
-    
-    """Actualiza un nuevo servicio para el fisioterapeuta autenticado o actualiza el existente"""
+    """Actualiza un servicio existente para el fisioterapeuta autenticado"""
     
     # Obtener el fisioterapeuta asociado al usuario autenticado
     physio = get_object_or_404(Physiotherapist, user=request.user)
     
-    # Obtener servicios existentes
+    # Obtener servicios existentes (asegurar que sea un diccionario)
     existing_services = physio.services or {}
     
-    # Obtener nuevos servicios del request
-    new_service = request.data
+    # Verificar que el formato sea correcto
+    if not isinstance(existing_services, dict):
+        return Response({"error": "Formato de servicios inválido"}, status=status.HTTP_400_BAD_REQUEST)
     
-    if str(service_id) not in existing_services:
-        return Response({"error": "El servicio no existe"}, status=status.HTTP_404_NOT_FOUND)
-    existing_services[str(service_id)].update(new_service)
+    # Obtener datos del servicio a actualizar
+    new_service_data = request.data
+    
+    # Convertir service_id a string para asegurar comparación correcta
+    service_id_str = str(service_id)
+    
+    # Verificar si el servicio existe
+    service_found = False
+    
+    # Depuración
+    logging.debug(f"Buscando servicio con ID: {service_id_str}")
+    logging.debug(f"Servicios disponibles: {list(existing_services.keys())}")
+    # Verificar si el ID del servicio existe directamente en las claves
+    if service_id_str in existing_services:
+        print(f"Servicio encontrado con ID {service_id_str}")
+        # Actualizar el servicio existente
+        existing_services[service_id_str].update(new_service_data)
+        service_found = True
+    
+    # Si no se encontró por ID directo, buscar por el campo 'id' dentro del objeto
+    if not service_found:
+        for existing_id, service_data in existing_services.items():
+            print(f"Comparando {service_id} con {service_data.get('id', 'no-id')}")
+            # Asegurar que ambos se comparan como strings
+            if str(service_data.get('id', '')) == str(service_id):
+                print(f"Servicio encontrado con ID interno {service_id}")
+                # Actualizar el servicio existente
+                existing_services[existing_id].update(new_service_data)
+                service_found = True
+                break
+    
+    if not service_found:
+        return Response({"error": f"No se encontró ningún servicio con ID {service_id}"}, 
+                        status=status.HTTP_404_NOT_FOUND)
 
     # Preparar los datos para el serializador
     update_data = {'services': existing_services}
@@ -368,9 +403,20 @@ def physio_update_service_view(request, service_id):
     serializer = PhysioUpdateSerializer(physio, data=update_data, partial=True)
     
     if serializer.is_valid():
-        serializer.update(physio, serializer.validated_data)
-        return Response({"message": "Servicios actualizados correctamente", "services": existing_services}, status=status.HTTP_200_OK)
+        updated_physio = serializer.save()
+        # Verificar que los cambios se guardaron
+        if updated_physio.services == existing_services:
+            print("Servicios actualizados correctamente en la base de datos")
+        else:
+            print("ADVERTENCIA: Los servicios pueden no haberse actualizado correctamente")
+            
+        return Response({
+            "message": "Servicio actualizado correctamente", 
+            "services": existing_services,
+            "updated_service_id": service_id
+        }, status=status.HTTP_200_OK)
     
+    print("Errores en el serializador:", serializer.errors)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
@@ -384,33 +430,24 @@ def physio_get_services_view(request, physio_id):
     }
     return Response(response_data)
 
-
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated, IsPhysiotherapist])
-def physio_delete_service_view(request, service_name):
-    try:
-        # Get the physiotherapist profile
-        physio = Physiotherapist.objects.get(user=request.user)
-        
-        # Get current services
-        services = physio.services
-        return Response(services)
-    except Exception as e:
-        logging.error("Error retrieving services for physiotherapist %s: %s", physio_id, str(e))
-        return Response({"error": "An internal error has occurred."}, status=status.HTTP_400_BAD_REQUEST)
-
-
-@api_view(['DELETE'])
 def physio_delete_service_view(request, service_id):
     physio = get_object_or_404(Physiotherapist, user=request.user)
     services = physio.services or {}
     
-    # Comprobar si el service_id está en alguno de los campos 'id' de los servicios
-    if str(service_id) not in services:
+    # Buscar el servicio por su 'id' dentro del JSON anidado
+    service_found = None
+    for key, service in services.items():
+        if str(service.get('id')) == str(service_id):
+            service_found = key
+            break
+
+    if not service_found:
         return Response({"error": "El servicio no existe"}, status=status.HTTP_404_NOT_FOUND)
     
     # Eliminar el servicio
-    del services[str(service_id)]
+    del services[service_found]
     physio.services = services
     physio.save()
     

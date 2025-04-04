@@ -20,139 +20,78 @@ const useRoomManagement = ({
   cleanupMedia,
   sendWebSocketMessage,
   addChatMessage,
-  onCallEndedMessage // ✅ Este callback detectará si el paciente recibe la notificación de cierre
+  onCallEndedMessage
 }) => {
   // Modal state
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
-  const [showDeleteButtons, setShowDeleteButtons] = useState(false);
-  const [waitingForDeletion, setWaitingForDeletion] = useState(false);
   const [isClient, setIsClient] = useState(false);
-  const [token, setToken] = useState(null);
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  // End call
-  const endCall = useCallback(async () => {
+  // Handle user leaving the call temporarily
+  const leaveCall = useCallback(() => {
     closeConnection();
     cleanupMedia();
-    addChatMessage('Sistema', 'Has finalizado la llamada');
+    addChatMessage('Sistema', 'Has salido de la llamada');
 
-    // If physio, show action buttons
-    if (userRole === 'physio') {
-      setModalMessage("¿Deseas eliminar la sala de la videollamada?");
-      setShowDeleteButtons(true);
-      setShowModal(true);
-    } else {
-      // Enviar mensaje WebSocket notificando que el paciente ha salido
-      sendWebSocketMessage({
-        action: 'user-left',
-        message: { role: 'patient' }
-      });
-  
-      // Redirigir al paciente después de un pequeño retraso
-      setTimeout(() => {
-        window.location.href = '/videocalls/end';
-      }, 1000);
-      
-    }
-  }, [userRole, addChatMessage, sendWebSocketMessage]);
-  
+    // Notify other participants that this user has left
+    sendWebSocketMessage({
+      action: 'user-left',
+      message: { role: userRole }
+    });
 
-  const confirmDeleteRoom = useCallback(async () => {
-    if (!isClient) return;
-  
-    try {
-      const storedToken = localStorage.getItem('token'); // Obtiene el token pero no lo almacena
-  
-      // Notificar a todos los usuarios de que la llamada se ha finalizado
-      await sendWebSocketMessage({
-        action: 'call-ended',
-        message: { text: 'La videollamada ha sido finalizada por el fisioterapeuta.' }
-      });
-  
-      // Esperar un poco antes de proceder con la eliminación
-      setTimeout(async () => {
-        const response = await axios.delete(
-          `${getApiBaseUrl()}/api/videocall/delete-room/${roomCode}/`,
-          {
-            headers: {
-              Authorization: `Bearer ${storedToken}` // Usa el token directamente aquí
-            }
-          }
-        );
-  
-        if (response.status === 204) {
-          console.log('Sala eliminada correctamente');
-  
-          // Notificar al usuario que la llamada ha finalizado
-          setModalMessage("La llamada ha finalizado");
-          setShowDeleteButtons(false);
-          setShowModal(true);
-  
-          // Cerrar la conexión WebRTC y limpiar recursos
-          closeConnection();
-          cleanupMedia();
-  
-          // Redirigir después de un tiempo
-          setTimeout(() => {
-            window.location.href = '/videocalls/end';
-          }, 2000);
-        }
-      }, 1000);
-    } catch (error) {
-      console.error('Error eliminando la sala:', error);
-      setModalMessage("Error eliminando la sala, intenta nuevamente.");
-    }
-  }, [roomCode, sendWebSocketMessage, closeConnection, cleanupMedia, isClient]);
-  
+    setModalMessage("Has salido de la llamada. Puedes volver a entrar en cualquier momento.");
+    setShowModal(true);
 
-  const cancelDelete = useCallback(() => {
-    setShowModal(false);
-  }, []);
+    // Redirect to videocalls page
+    setTimeout(() => {
+      window.location.href = '/videocalls';
+    }, 2000);
+  }, [userRole, addChatMessage, sendWebSocketMessage, closeConnection, cleanupMedia]);
 
+  // Handle when another user leaves the call
+  const handleUserLeft = useCallback((userInfo) => {
+    const role = userInfo.role === 'physio' ? 'fisioterapeuta' : 'paciente';
+    addChatMessage('Sistema', `El ${role} ha salido de la llamada temporalmente`);
+  }, [addChatMessage]);
+
+  // Handle when another user joins the call
+  const handleUserJoined = useCallback((userInfo) => {
+    const role = userInfo.role === 'physio' ? 'fisioterapeuta' : 'paciente';
+    addChatMessage('Sistema', `El ${role} se ha unido a la llamada`);
+  }, [addChatMessage]);
+
+  // Handle when a call ended message is received
   useEffect(() => {
     if (onCallEndedMessage) {
       closeConnection();
       cleanupMedia();
-      window.location.href = '/videocalls/end';
+      setModalMessage("La videollamada ha sido finalizada por el fisioterapeuta.");
+      setShowModal(true);
+      
+      setTimeout(() => {
+        window.location.href = '/videocalls/end';
+      }, 2000);
     }
   }, [onCallEndedMessage, closeConnection, cleanupMedia]);
 
-  const handleCallEnded = useCallback(() => {
-    setModalMessage("La reunión ha finalizado.");
-    setShowModal(true);
-  
-    setTimeout(() => {
-      closeConnection();
-      cleanupMedia();
-      window.location.href = '/videocalls/end/';
-    }, 2000);
-  }, [closeConnection, cleanupMedia]);
-  
+  // Close the modal
+  const closeModal = useCallback(() => {
+    setShowModal(false);
+  }, []);
 
   return {
     showModal,
     modalMessage,
-    showDeleteButtons,
     setShowModal,
     setModalMessage,
-    setShowDeleteButtons,
-    endCall,       
-    confirmDeleteRoom,
-    cancelDelete,
-    handleCallEnded,      
-    waitingForDeletion,
-    setShowModal,
-    setModalMessage,
-    setShowDeleteButtons,
-    setWaitingForDeletion,
-    endCall,
-    confirmDeleteRoom,
-    cancelDelete,
-    handleCallEnded
+    leaveCall,   // New function for physio to end call for all
+    closeModal,      // Renamed from cancelDelete
+    handleUserLeft,  // New function to handle when another user leaves
+    handleUserJoined // New function to handle when another user joins
   };
 };
 
