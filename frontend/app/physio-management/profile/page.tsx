@@ -273,7 +273,7 @@ const FisioProfile = () => {
                     setServices([]);
                 }
                 if (response.data.physio.schedule) {
-                    setSchedule(JSON.parse(response.data.physio.schedule));
+                    setSchedule(response.data.physio.schedule);
                 }
                 if (response.data.physio.specializations) {
                     const specs = Array.isArray(response.data.physio.specializations)
@@ -486,7 +486,7 @@ const FisioProfile = () => {
             .map(([day, ranges]) => {
                 if (ranges.length === 0) return null;
 
-                const timeRanges = ranges.map((interval) => `${interval[0].start} - ${interval[0].end}`).join(", ");
+                const timeRanges = ranges.map((interval) => `${interval.start} - ${interval.end}`).join(", ");
                 return `${daysOfWeek[day]}: ${timeRanges}`;
             })
             .filter(Boolean)
@@ -580,8 +580,8 @@ const FisioProfile = () => {
             formData.append("rating_avg", profile.rating_avg || "");
             formData.append("specializations", JSON.stringify(selectedSpecializations));
             // Actualizar el schedule con los datos actuales del calendario
-            const { initialized, ...scheduleWithoutInitialized } = schedule;
-            formData.append("schedule", JSON.stringify(scheduleWithoutInitialized));
+            // const { initialized, ...scheduleWithoutInitialized } = schedule;
+            // formData.append("schedule", scheduleWithoutInitialized);
 
             // formData.append("services", JSON.stringify(services));
 
@@ -1105,8 +1105,8 @@ const FisioProfile = () => {
 
             // Fix the endpoint URL - the correct endpoint should be update/ not update-schedule/
             const response = await axios.put(
-                `${getApiBaseUrl()}/api/app_user/physio/update/`,
-                { schedule: JSON.stringify(scheduleWithoutInitialized) },
+                `${getApiBaseUrl()}/api/appointment/physio/schedule/weekly/`,
+                { schedule: scheduleWithoutInitialized },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 

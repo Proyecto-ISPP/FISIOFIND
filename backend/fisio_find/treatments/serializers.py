@@ -129,11 +129,12 @@ class SessionTestResponseSerializer(serializers.ModelSerializer):
             if data.get('response_text'):
                 raise serializers.ValidationError({"response_text": "No debe incluir texto en un test de escala."})
             
-            # Validar que la escala esté dentro del rango definido en scale_labels
+            # Validar que la escala esté dentro del rango continuo definido por scale_labels
             if test.scale_labels:
                 valid_keys = list(map(int, test.scale_labels.keys()))
-                if scale not in valid_keys:
-                    raise serializers.ValidationError({"response_scale": f"El valor debe estar entre {min(valid_keys)} y {max(valid_keys)}."})
+                min_value = min(valid_keys)
+                max_value = max(valid_keys)
+                if not (min_value <= scale <= max_value):
+                    raise serializers.ValidationError({"response_scale": f"El valor debe estar entre {min_value} y {max_value}."})
         
         return data
-           
