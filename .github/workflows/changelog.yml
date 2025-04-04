@@ -38,6 +38,7 @@ jobs:
           echo "## 🚀 Changelog - $NEW_TAG" > CHANGELOG.md
           echo "" >> CHANGELOG.md
 
+          # Verifica que el rango de commits está bien
           git log --pretty=format:"%s (@%an)" $range > full_log.txt
 
           # Features
@@ -52,8 +53,7 @@ jobs:
 
           # Documentation
           echo "### 📖 Documentation" >> CHANGELOG.md
-          grep -iE "^docs" full_log.txt \
-            | grep -vE "update CHANGELOG|actualización CHANGELOG|🔖|🔄|📜" || echo "- (nada)" >> CHANGELOG.md
+          grep -iE "^docs" full_log.txt | grep -vE "update CHANGELOG|actualización CHANGELOG|🔖|🔄|📜" || echo "- (nada)" >> CHANGELOG.md
           echo "" >> CHANGELOG.md
 
           # Branch Merges
@@ -71,6 +71,7 @@ jobs:
           grep -vE "^(feat|fix|docs)" full_log.txt \
             | grep -vE "^Merge (branch|pull request)" \
             | grep -vE "update CHANGELOG|actualización CHANGELOG|🔖|🔄|📜" || echo "- (nada)" >> CHANGELOG.md
+
 
       - name: Commit and push CHANGELOG.md
         run: |
