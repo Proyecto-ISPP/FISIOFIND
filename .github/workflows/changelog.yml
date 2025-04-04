@@ -40,27 +40,42 @@ jobs:
           echo "## 🚀 Changelog - $NEW_TAG" > CHANGELOG.md
           echo "" >> CHANGELOG.md
 
-          echo "### ✨ Features" >> CHANGELOG.md
+          # Contar commits por categoría
+          features_count=$(git log --grep="^[Ff]eat:" --oneline "$latest_tag"..HEAD | wc -l)
+          fixes_count=$(git log --grep="^[Ff]ix:" --oneline "$latest_tag"..HEAD | wc -l)
+          docs_count=$(git log --grep="^[Dd]ocs:" --oneline "$latest_tag"..HEAD | wc -l)
+          others_count=$(git log --oneline "$latest_tag"..HEAD --invert-grep --grep="^[Ff]eat:" --grep="^[Ff]ix:" --grep="^[Dd]ocs:" | wc -l)
+
+          echo "### ✨ Features ($features_count)" >> CHANGELOG.md
           git log --pretty=format:"- %s (@%an)" --grep="^[Ff]eat:" "$latest_tag"..HEAD >> CHANGELOG.md
           echo "" >> CHANGELOG.md
 
-          echo "### 🐛 Fixes" >> CHANGELOG.md
+          echo "### 🐛 Fixes ($fixes_count)" >> CHANGELOG.md
           git log --pretty=format:"- %s (@%an)" --grep="^[Ff]ix:" "$latest_tag"..HEAD >> CHANGELOG.md
           echo "" >> CHANGELOG.md
 
-          echo "### 📖 Documentation" >> CHANGELOG.md
+          echo "### 📖 Documentation ($docs_count)" >> CHANGELOG.md
           git log --pretty=format:"- %s (@%an)" --grep="^[Dd]ocs:" "$latest_tag"..HEAD >> CHANGELOG.md
           echo "" >> CHANGELOG.md
 
-          echo "### 🌀 Other Changes" >> CHANGELOG.md
+          echo "### 🌀 Other Changes ($others_count)" >> CHANGELOG.md
           git log --pretty=format:"- %s (@%an)" --invert-grep --grep="^feat:" --grep="^fix:" --grep="^docs:" "$latest_tag"..HEAD >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+
+          # Agregar enlaces a los Pull Requests
+          echo "### 🔗 Pull Requests" >> CHANGELOG.md
+          git log --grep="Merge pull request" --pretty=format:"- %s" "$latest_tag"..HEAD | while read pr; do
+            pr_number=$(echo "$pr" | grep -oP "#\K[0-9]+")
+            pr_url="https://github.com/${GITHUB_REPOSITORY}/pull/$pr_number"
+            echo "- [#${pr_number}]($pr_url) ${pr}" >> CHANGELOG.md
+          done
 
       - name: Commit and push CHANGELOG.md
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add CHANGELOG.md
-          git commit -m "docs: update CHANGELOG for $NEW_TAG"
+          git commit -m "docs: actualización CHANGELOG para $NEW_TAG"
           git push
 
       - name: Create new tag
