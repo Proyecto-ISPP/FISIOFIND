@@ -1047,7 +1047,6 @@ class ListAppointmentTests(APITestCase):
             },
             gender="M"
         )
-        
         # Create a second physiotherapist for testing
         self.physio_user2 = AppUser.objects.create_user(
             username="physio2",
@@ -1060,7 +1059,6 @@ class ListAppointmentTests(APITestCase):
             first_name="Ana",
             last_name="Martínez López"
         )
-        
         self.physio2 = Physiotherapist.objects.create(
             user=self.physio_user2,
             bio="Another physio",
@@ -1092,7 +1090,6 @@ class ListAppointmentTests(APITestCase):
             },
             gender="F"
         )
-        
         # Create patient user
         self.patient_user = AppUser.objects.create_user(
             username="patient1",
@@ -1105,14 +1102,12 @@ class ListAppointmentTests(APITestCase):
             first_name="Juan",
             last_name="Rodríguez García"
         )
-        
         # Create patient profile
         self.patient = Patient.objects.create(
             user=self.patient_user,
             gender="M",
             birth_date="1990-01-01"
         )
-        
         # Create a second patient for testing
         self.patient_user2 = AppUser.objects.create_user(
             username="patient2",
@@ -1125,17 +1120,14 @@ class ListAppointmentTests(APITestCase):
             first_name="María",
             last_name="Sánchez Pérez"
         )
-        
         self.patient2 = Patient.objects.create(
             user=self.patient_user2,
             gender="F",
             birth_date="1992-05-15"
         )
-        
         # Create future date for appointments
         future_date = timezone.now() + timedelta(days=365)
         base_date = future_date.replace(hour=10, minute=0, second=0, microsecond=0)
-        
         # Create appointments with different statuses for testing
         # Appointments for physio1 with patient1
         self.appointment1 = Appointment.objects.create(
@@ -1148,7 +1140,6 @@ class ListAppointmentTests(APITestCase):
             status=StatusChoices.BOOKED,
             alternatives=""
         )
-        
         self.appointment2 = Appointment.objects.create(
             start_time=base_date + timedelta(days=1),
             end_time=base_date + timedelta(days=1, hours=1),
@@ -1159,7 +1150,6 @@ class ListAppointmentTests(APITestCase):
             status=StatusChoices.CONFIRMED,
             alternatives=""
         )
-        
         self.appointment3 = Appointment.objects.create(
             start_time=base_date + timedelta(days=2),
             end_time=base_date + timedelta(days=2, hours=1),
@@ -1170,7 +1160,6 @@ class ListAppointmentTests(APITestCase):
             status=StatusChoices.CANCELED,
             alternatives=""
         )
-        
         # Appointments for physio1 with patient2
         self.appointment4 = Appointment.objects.create(
             start_time=base_date + timedelta(days=3),
@@ -1182,7 +1171,6 @@ class ListAppointmentTests(APITestCase):
             status=StatusChoices.FINISHED,
             alternatives=""
         )
-        
         self.appointment5 = Appointment.objects.create(
             start_time=base_date + timedelta(days=4),
             end_time=base_date + timedelta(days=4, hours=1),
@@ -1193,7 +1181,6 @@ class ListAppointmentTests(APITestCase):
             status=StatusChoices.PENDING,
             alternatives=""
         )
-        
         # Appointments for physio2 with patient1
         self.appointment6 = Appointment.objects.create(
             start_time=base_date + timedelta(days=5),
@@ -1205,7 +1192,6 @@ class ListAppointmentTests(APITestCase):
             status=StatusChoices.BOOKED,
             alternatives=""
         )
-        
         # Appointments for physio2 with patient2
         self.appointment7 = Appointment.objects.create(
             start_time=base_date + timedelta(days=6),
@@ -1603,6 +1589,22 @@ class ListAppointmentTests(APITestCase):
 class UpdateAppointmentTests(APITestCase):
     def setUp(self):
         self.client = APIClient()
+        self.spain_tz = pytz.timezone("Europe/Madrid")
+        now_spain = datetime.now(self.spain_tz)
+        
+        # Fechas automáticas
+        self.future_date = (now_spain + timedelta(days=5)).astimezone(self.spain_tz)
+        self.close_date = (now_spain + timedelta(hours=24)).astimezone(self.spain_tz)
+
+        self.future_date_str_date = self.future_date.strftime("%Y-%m-%d")
+        self.close_date_str_date = self.close_date.strftime("%Y-%m-%d")
+        self_future_date_weekday = self.future_date.strftime("%A").lower()
+        self.close_date_weekday = self.close_date.strftime("%A").lower()
+        
+        self.future_date_start_time = f"{self.future_date_str_date}T10:00:00{self.future_date.strftime('%z')}"
+        self.future_date_end_time = f"{self.future_date_str_date}T11:00:00{self.future_date.strftime('%z')}"
+        self.close_date_start_time = f"{self.close_date_str_date}T10:00:00{self.close_date.strftime('%z')}"
+        self.close_date_end_time = f"{self.close_date_str_date}T11:00:00{self.close_date.strftime('%z')}"
         
         # Crear usuario fisioterapeuta
         self.physio_user = AppUser.objects.create_user(
@@ -1616,7 +1618,6 @@ class UpdateAppointmentTests(APITestCase):
             first_name="Jorge",
             last_name="García Chaparro"
         )
-        
         self.physio = Physiotherapist.objects.create(
             user=self.physio_user,
             bio="Bio example",
@@ -1624,7 +1625,18 @@ class UpdateAppointmentTests(APITestCase):
             rating_avg=4.5,
             schedule={
                 "exceptions": {},
-                "appointments": [],
+                "appointments": [
+                    {
+                        "status": "booked",
+                        "start_time": self.future_date_start_time,
+                        "end_time": self.future_date_end_time
+                    },
+                    {
+                        "status": "booked",
+                        "start_time": self.close_date_start_time,
+                        "end_time": self.close_date_end_time
+                    }
+                ],
                 "weekly_schedule": {
                     "monday": [{"start": "10:00", "end": "14:00"}],
                     "tuesday": [{"start": "10:00", "end": "15:00"}],
@@ -1640,7 +1652,6 @@ class UpdateAppointmentTests(APITestCase):
             services={"Servicio 1": {"id": 1, "title": "Consulta", "price": 30, "duration": 45}},
             gender="M"
         )
-        
         # Crear usuario paciente
         self.patient_user = AppUser.objects.create_user(
             username="patient1",
@@ -1653,18 +1664,15 @@ class UpdateAppointmentTests(APITestCase):
             first_name="Juan",
             last_name="Rodríguez García"
         )
-        
         self.patient = Patient.objects.create(
             user=self.patient_user,
             gender="M",
             birth_date="1990-01-01"
         )
-        
         # Crear cita futura (más de 48 horas desde ahora)
-        self.future_date = timezone.now() + timedelta(days=5)
         self.appointment = Appointment.objects.create(
-            start_time=self.future_date.replace(hour=10, minute=0, second=0, microsecond=0),
-            end_time=self.future_date.replace(hour=11, minute=0, second=0, microsecond=0),
+            start_time=self.future_date_start_time,
+            end_time=self.future_date_end_time,
             is_online=True,
             service='{"service": "Servicio 1"}',
             patient=self.patient,
@@ -1672,12 +1680,10 @@ class UpdateAppointmentTests(APITestCase):
             status=StatusChoices.BOOKED,
             alternatives=""
         )
-        
         # Crear cita cercana (menos de 48 horas)
-        self.close_date = timezone.now() + timedelta(hours=24)
         self.close_appointment = Appointment.objects.create(
-            start_time=self.close_date.replace(hour=10, minute=0, second=0, microsecond=0),
-            end_time=self.close_date.replace(hour=11, minute=0, second=0, microsecond=0),
+            start_time=self.close_date_start_time,
+            end_time=self.close_date_end_time,
             is_online=True,
             service='{"service": "Servicio 1"}',
             patient=self.patient,
@@ -1685,6 +1691,7 @@ class UpdateAppointmentTests(APITestCase):
             status=StatusChoices.BOOKED,
             alternatives=""
         )
+
 
     def test_update_appointment_success(self):
         # Login como fisioterapeuta
@@ -1698,8 +1705,8 @@ class UpdateAppointmentTests(APITestCase):
         url = f'/api/appointment/update/{self.appointment.id}/'
         data = {
             "alternatives": {
-                "2026-02-06": [{"start": "10:00", "end": "11:00"}],
-                "2026-02-06": [{"start": "11:00", "end": "12:00"}]
+                self.future_date_str_date: [{"start": "11:00", "end": "12:00"}],
+                (self.future_date + timedelta(days=1)).strftime("%Y-%m-%d"): [{"start": "12:00", "end": "13:00"}]
             }
         }
         response = self.client.put(url, data, format='json')
@@ -1712,8 +1719,8 @@ class UpdateAppointmentTests(APITestCase):
         url = f'/api/appointment/update/{self.appointment.id}/'
         data = {
             "alternatives": {
-                "2026-02-05": [{"start": "10:00", "end": "11:00"}],
-                "2026-02-06": [{"start": "11:00", "end": "12:00"}]
+                self.future_date_str_date: [{"start": "11:00", "end": "12:00"}],
+                (self.future_date + timedelta(days=1)).strftime("%Y-%m-%d"): [{"start": "12:00", "end": "13:00"}]
             }
         }
         response = self.client.put(url, data, format='json')
@@ -1732,8 +1739,8 @@ class UpdateAppointmentTests(APITestCase):
         url = f'/api/appointment/update/{self.appointment.id}/'
         data = {
             "alternatives": {
-                "2026-02-05": [{"start": "10:00", "end": "11:00"}],
-                "2026-02-06": [{"start": "11:00", "end": "12:00"}]
+                self.future_date_str_date: [{"start": "11:00", "end": "12:00"}],
+                (self.future_date + timedelta(days=1)).strftime("%Y-%m-%d"): [{"start": "12:00", "end": "13:00"}]
             }
         }
         response = self.client.put(url, data, format='json')
@@ -1753,8 +1760,8 @@ class UpdateAppointmentTests(APITestCase):
         url = f'/api/appointment/update/{self.close_appointment.id}/'
         data = {
             "alternatives": {
-                "2026-02-05": [{"start": "10:00", "end": "11:00"}],
-                "2026-02-06": [{"start": "11:00", "end": "12:00"}]
+                self.close_date_str_date: [{"start": "11:00", "end": "12:00"}],
+                (self.close_date + timedelta(days=1)).strftime("%Y-%m-%d"): [{"start": "12:00", "end": "13:00"}]
             }
         }
         response = self.client.put(url, data, format='json')
@@ -1774,8 +1781,8 @@ class UpdateAppointmentTests(APITestCase):
         url = f'/api/appointment/update/{self.appointment.id}/'
         data = {
             "alternatives": {
-                "2026-02-05": [{"start": "11:00", "end": "10:00"}],
-                "2026-02-06": [{"start": "11:00", "end": "12:00"}]
+                self.future_date_str_date: [{"start": "11:00", "end": "10:00"}],
+                (self.future_date + timedelta(days=1)).strftime("%Y-%m-%d"): [{"start": "11:00", "end": "12:00"}]
             }
         }
         response = self.client.put(url, data, format='json')
@@ -1792,13 +1799,11 @@ class UpdateAppointmentTests(APITestCase):
         token = login_response.data['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
 
-        current_start_time = self.appointment.start_time.strftime("%H:%M")
-        current_start_date = self.appointment.start_time.strftime("%Y-%m-%d")
         url = f'/api/appointment/update/{self.appointment.id}/'
         data = {
             "alternatives": {
-                current_start_date: [{"start": current_start_time, "end": "11:00"}],
-                "2026-02-06": [{"start": "11:00", "end": "12:00"}]
+                self.future_date_str_date: [{"start": "10:00", "end": "11:00"}],
+                (self.future_date + timedelta(days=1)).strftime("%Y-%m-%d"): [{"start": "11:00", "end": "12:00"}]
             }
         }
         response = self.client.put(url, data, format='json')
@@ -1818,9 +1823,9 @@ class UpdateAppointmentTests(APITestCase):
         url = f'/api/appointment/update/{self.appointment.id}/'
         data = {
             "alternatives": {
-                "2026-02-06": [
-                    {"start": "10:00", "end": "11:00"},
-                    {"start": "10:00", "end": "11:00"}
+                self.future_date_str_date: [
+                    {"start": "11:00", "end": "12:00"},
+                    {"start": "11:00", "end": "12:00"}
                 ]
             }
         }
@@ -1841,8 +1846,8 @@ class UpdateAppointmentTests(APITestCase):
         url = '/api/appointment/update/999/'
         data = {
             "alternatives": {
-                "2026-02-05": [{"start": "10:00", "end": "11:00"}],
-                "2026-02-06": [{"start": "11:00", "end": "12:00"}]
+                self.future_date_str_date: [{"start": "11:00", "end": "12:00"}],
+                (self.future_date + timedelta(days=1)).strftime("%Y-%m-%d"): [{"start": "12:00", "end": "13:00"}]
             }
         }
         response = self.client.put(url, data, format='json')
@@ -1867,6 +1872,27 @@ class UpdateAppointmentTests(APITestCase):
         
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['error'], "Alternatives debe ser un diccionario")
+
+    def test_update_appointment_alternative_overlap_with_other_existing_appointment(self):
+        # Login como fisioterapeuta
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'jorgito',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        url = f'/api/appointment/update/{self.appointment.id}/'
+        data = {
+            "alternatives": {
+                self.close_date_str_date: [{"start": "10:00", "end": "11:00"}],
+                (self.future_date + timedelta(days=1)).strftime("%Y-%m-%d"): [{"start": "12:00", "end": "13:00"}]
+            }
+        }
+        response = self.client.put(url, data, format='json')
+        
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("la hora de inicio y fin no se pueden solapar con otra cita del fisioterapeuta", response.data['error'])
 
 class PatchDeleteAppointmentTests(APITestCase):
     def setUp(self):

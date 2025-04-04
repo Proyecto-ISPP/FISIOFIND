@@ -448,12 +448,9 @@ def update_appointment(request, appointment_id):
     user = request.user
     data = request.data.copy()
 
-    now = datetime.now(timezone.utc)  # Aseguramos que 'now' es timezone-aware
-    start_time = appointment.start_time
-
-    # Convertimos start_time a timezone-aware si no lo es
-    if not is_aware(start_time):
-        start_time = make_aware(start_time, timezone.utc)
+    spain_tz = pytz.timezone("Europe/Madrid")
+    now = datetime.now(spain_tz)
+    start_time = appointment.start_time.astimezone(spain_tz)
 
     # Restricción de 48 horas
     if start_time - now < timedelta(hours=48):
@@ -463,42 +460,42 @@ def update_appointment(request, appointment_id):
         )
 
     # Si el usuario es fisioterapeuta
-    if hasattr(user, 'physio'):
-        # if appointment.status != "booked":
-        #     return Response({"error": "Solo puedes modificar citas con estado 'booked'"}, status=status.HTTP_403_FORBIDDEN)
+    # if appointment.status != "booked":
+    #     return Response({"error": "Solo puedes modificar citas con estado 'booked'"}, status=status.HTTP_403_FORBIDDEN)
 
-        # Verificar que la cita tenga al menos 48 horas de margen
-        if appointment.start_time - now < timedelta(hours=48):
-            return Response({"error": "Solo puedes modificar citas con al menos 48 horas de antelación"}, status=status.HTTP_403_FORBIDDEN)
+    # Verificar que la cita tenga al menos 48 horas de margen
+    if appointment.start_time - now < timedelta(hours=48):
+        return Response({"error": "Solo puedes modificar citas con al menos 48 horas de antelación"}, status=status.HTTP_403_FORBIDDEN)
 
-        alternatives = data.get("alternatives", {})
-        if not isinstance(alternatives, dict):
-            return Response({"error": "Alternatives debe ser un diccionario"}, status=status.HTTP_400_BAD_REQUEST) 
+    alternatives = data.get("alternatives", {})
+    if not isinstance(alternatives, dict):
+        return Response({"error": "Alternatives debe ser un diccionario"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Validar que haya al menos dos fechas diferentes
-        # if not isinstance(alternatives, dict) or len(alternatives.keys()) < 2:
-        #     return Response({"error": "Debes proporcionar al menos dos fechas diferentes en 'alternatives'"}, status=status.HTTP_400_BAD_REQUEST)
+    # Validar que las fechas y horas sean únicas y que no incluyan la fecha actual de la cita
+    appointment_start_time = appointment.start_time.astimezone(spain_tz).strftime("%H:%M")  # Convertir a string
+    validated_alternatives = defaultdict(set)
+    physio_appointments = Physiotherapist.objects.get(id=appointment.physiotherapist.id).schedule["appointments"]
 
-        # Validar que las fechas y horas sean únicas y que no incluyan la fecha actual de la cita
-        appointment_start_time = appointment.start_time.strftime(
-            "%H:%M")  # Convertir a string
-        validated_alternatives = defaultdict(set)
+    for date, slots in alternatives.items():
+        for slot in slots:
+            slot_start = slot["start"]
+            slot_end = slot["end"]
+            if slot_start == appointment_start_time and date == appointment.start_time.strftime("%Y-%m-%d"):
+                return Response({"error": f"No puedes agregar la fecha actual de la cita ({appointment_start_time}) en 'alternatives'"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            if slot_start >= slot_end:
+                return Response({"error": f"En {date}, la hora de inicio debe ser menor que la de fin"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            for physio_appointment in physio_appointments:
+                if date == physio_appointment["start_time"].split("T")[0]:
+                    if physio_appointment["end_time"].split("T")[1][:5] > slot_start >= physio_appointment["start_time"].split("T")[1][:5] or physio_appointment["start_time"].split("T")[1][:5] < slot_end <= physio_appointment["end_time"].split("T")[1][:5]:
+                        return Response({"error": f"En {date}, la hora de inicio y fin no se pueden solapar con otra cita del fisioterapeuta"}, status=status.HTTP_400_BAD_REQUEST)
 
-        for date, slots in alternatives.items():
-            for slot in slots:
-                slot_start = slot["start"]
-                slot_end = slot["end"]
-                if slot_start == appointment_start_time and date == appointment.start_time.date().isoformat():
-                    return Response({"error": f"No puedes agregar la fecha actual de la cita ({appointment_start_time}) en 'alternatives'"}, status=status.HTTP_400_BAD_REQUEST)
-                
-                if slot_start >= slot_end:
-                    return Response({"error": f"En {date}, la hora de inicio debe ser menor que la de fin"}, status=status.HTTP_400_BAD_REQUEST)
+            # Garantizar que cada combinación start-end sea única
+            if (slot_start, slot_end) in validated_alternatives[date]:
+                return Response({"error": f"La combinación {slot_start} - {slot_end} en {date} ya existe en 'alternatives'"}, status=status.HTTP_400_BAD_REQUEST)
 
-                # Garantizar que cada combinación start-end sea única
-                if (slot_start, slot_end) in validated_alternatives[date]:
-                    return Response({"error": f"La combinación {slot_start} - {slot_end} en {date} ya existe en 'alternatives'"}, status=status.HTTP_400_BAD_REQUEST)
-
-                validated_alternatives[date].add((slot_start, slot_end))
+            validated_alternatives[date].add((slot_start, slot_end))
 
         # Convertir los sets de vuelta a listas de diccionarios
         data["alternatives"] = {
@@ -509,17 +506,15 @@ def update_appointment(request, appointment_id):
         data["status"] = "pending"
         data["start_time"] = appointment.start_time
         data["end_time"] = appointment.end_time
-    else:
-        return Response({"error": "No tienes permisos para modificar esta cita"}, status=status.HTTP_403_FORBIDDEN)
 
     serializer = AppointmentSerializer(appointment, data=data, partial=True)
 
     if serializer.is_valid():
         serializer.save()
-        if serializer.data['alternatives']:
-            send_appointment_email(appointment.id, 'modified')
-        elif serializer.data['status'] == "confirmed":
-            send_appointment_email(appointment.id, 'modified-accepted')
+        # if serializer.data['alternatives']:
+            # send_appointment_email(appointment.id, 'modified')
+        # elif serializer.data['status'] == "confirmed":
+            # send_appointment_email(appointment.id, 'modified-accepted')
         update_schedule(data)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
