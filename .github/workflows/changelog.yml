@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - feat/changelog.yml
+      - develop
+      - main
 
 jobs:
   generate-changelog:
