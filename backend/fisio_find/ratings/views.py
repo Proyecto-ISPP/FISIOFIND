@@ -103,7 +103,7 @@ def get_rating_details(request, rating_id):
 
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([IsPhysiotherapist])
 def check_if_physio_has_rated(request):
     try:
         has_rated = Rating.objects.filter(physiotherapist=request.user.physio).exists()
