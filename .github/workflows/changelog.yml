@@ -3,10 +3,7 @@ name: Generate Changelog and Tag
 on:
   push:
     branches:
-      - feat/changelog.yml
       - main
-      - develop
-
 jobs:
   generate-changelog:
     runs-on: ubuntu-latest
