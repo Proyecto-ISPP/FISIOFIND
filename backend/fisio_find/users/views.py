@@ -1,27 +1,18 @@
-import logging
-import stripe
-import os
-from django.conf import settings
-import json
-import boto3
-from django.shortcuts import get_object_or_404
-from django.conf import settings
-from django.http import HttpResponse, StreamingHttpResponse
-from django.db.models import Q
+from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status, generics
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from .serializers import PatientRegisterSerializer, PhysioUpdateSerializer, PhysioRegisterSerializer
-from .serializers import PhysioSerializer, PatientSerializer, AppUserSerializer
-from .models import AppUser, Physiotherapist, Patient, Specialization
 from rest_framework import generics
-from .permissions import IsPhysiotherapist
-from .permissions import IsPatient
+from django.http import HttpResponse, StreamingHttpResponse
+from django.conf import settings
+from django.shortcuts import get_object_or_404
+from django.conf import settings
+
+import boto3
+import logging
+import stripe
 import json
-from .permissions import IsAdmin
-from django.db.models import Q
-from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .serializers import (
     PatientRegisterSerializer,
@@ -32,14 +23,21 @@ from .serializers import (
     VideoSerializer,
     PhysioUpdateSerializer,
 )
-from .models import Physiotherapist, Patient, AppUser, Video
+
+from .models import (
+    Physiotherapist, 
+    Patient, 
+    AppUser, 
+    Video , 
+    Specialization)
+
 from .permissions import (
     IsPatient,
     IsPhysiotherapist,
     IsPhysioOrPatient,
     IsAdmin,
 )
-
+from users.util import check_service_json
 
 class PatientProfileView(generics.RetrieveAPIView):
     permission_classes = [IsPatient]
@@ -254,8 +252,30 @@ def physio_update_view(request):
     # Ensure services are parsed as JSON if provided
     if "services" in request_data and isinstance(request_data["services"], str):
         try:
-            request_data["services"] = json.loads(request_data["services"])
+            # Comprueba estructura y parametros obligatorios de 
+            if isinstance(request_data["services"], str):
+                request_data["services"] = json.loads(request_data["services"])
+            elif isinstance(request_data["services"], dict):
+                request_data["services"] = request_data["services"]
+            else:
+                raise json.JSONDecodeError()
+            
+            lista_ids = set()
+            
+            for key, service in request_data["services"].items():
+                service = check_service_json(service)
+                if "id" not in service or service["id"] == None or not isinstance(service["id"],int):
+                    raise json.JSONDecodeError()
+                lista_ids.add(service["id"])
+                
+            if len(lista_ids) != len(request_data["services"]):
+                # Hay ids repetidos y el id tiene que ser unico
+                raise json.JSONDecodeError()
+
+                
         except json.JSONDecodeError:
+            return Response({"error": "Formato de servicios inválido."}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception:
             return Response({"error": "Formato de servicios inválido."}, status=status.HTTP_400_BAD_REQUEST)
 
     # Serialize and validate the data
@@ -313,9 +333,15 @@ def physio_create_service_view(request):
     
     # Obtener servicios existentes
     existing_services = physio.services or {}
+
+    try:
+        # Comprueba la estructura general y parametros obligatorios del json
+        new_service = check_service_json(request.data)
+    except json.JSONDecodeError:
+        return Response({"error": "Formato de servicios inválido."}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception:
+        return Response({"error": "Formato de servicios inválido."}, status=status.HTTP_400_BAD_REQUEST)
     
-    # Obtener nuevos servicios del request
-    new_service = request.data
     
     # Actualizar servicios existentes o añadir nuevos
     service_id = new_service.get('id')
@@ -346,6 +372,8 @@ def physio_create_service_view(request):
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+
 @api_view(['PUT'])
 @permission_classes([IsPhysiotherapist])
 def physio_update_service_view(request, service_id):
@@ -357,9 +385,15 @@ def physio_update_service_view(request, service_id):
     # Obtener servicios existentes (asegurar que sea un diccionario)
     existing_services = physio.services or {}
     
-    # Verificar que el formato sea correcto
-    if not isinstance(existing_services, dict):
-        return Response({"error": "Formato de servicios inválido"}, status=status.HTTP_400_BAD_REQUEST)
+    # Obtener nuevos servicios del request
+    try:
+        # Comprueba la estructura y parametros necesarios del json de service
+        new_service = check_service_json(request.data)
+
+    except json.JSONDecodeError:
+        return Response({"error": "Formato de servicios inválido."}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception:
+        return Response({"error": "Formato de servicios inválido."}, status=status.HTTP_400_BAD_REQUEST)
     
     # Obtener datos del servicio a actualizar
     new_service_data = request.data
@@ -453,165 +487,7 @@ def physio_delete_service_view(request, service_id):
     
     return Response({"message": "Servicio eliminado correctamente", "services": services}, status=status.HTTP_200_OK)
 
-@api_view(['GET'])
-@permission_classes([IsAdmin])
-def admin_search_patients_by_user(request, query):
-    matched_users = AppUser.objects.filter(
-        Q(dni__icontains=query) |
-        Q(first_name__icontains=query) |
-        Q(last_name__icontains=query) |
-        Q(email__icontains=query)
-    )
 
-    patients = Patient.objects.filter(user__in=matched_users)
-    serializer = PatientSerializer(patients, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-@api_view(['GET'])
-@permission_classes([IsAdmin])
-def admin_search_physios_by_user(request, query):
-    matched_users = AppUser.objects.filter(
-        Q(dni__icontains=query) |
-        Q(first_name__icontains=query) |
-        Q(last_name__icontains=query) |
-        Q(email__icontains=query)
-    )
-
-    physios = Physiotherapist.objects.filter(user__in=matched_users)
-    serializer = PhysioSerializer(physios, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
-
-class AdminPatientDetail(generics.RetrieveAPIView):
-    '''
-    API endpoint que retorna un solo paciente por su id para admin.
-    '''
-    permission_classes = [IsAdmin]
-    queryset = Patient.objects.all()
-    serializer_class = PatientSerializer
-    
-class AdminPhysioDetail(generics.RetrieveAPIView):
-    '''
-    API endpoint que retorna un solo paciente por su id para admin.
-    '''
-    permission_classes = [IsAdmin]
-    queryset = Physiotherapist.objects.all()
-    serializer_class = PhysioSerializer
-"""
-class AdminAppUserDetail(generics.RetrieveAPIView):
-    '''
-    API endpoint que retorna un solo user por su id para admin.
-    '''
-    permission_classes = [AllowAny]
-    queryset = AppUser.objects.all()
-    serializer_class = AppUserAdminViewSerializer
-
-class AdminPatientCreate(generics.CreateAPIView):
-    '''
-    API endpoint para crear un término para admin.
-    '''
-    permission_classes = [IsAdmin]
-    queryset = Patient.objects.all()
-    serializer_class = PatientRegisterSerializer
-
-class AdminPhysioCreate(generics.CreateAPIView):
-    '''
-    API endpoint para crear un término para admin.
-    '''
-    permission_classes = [IsAdmin]
-    queryset = Physiotherapist.objects.all()
-    serializer_class = PhysioRegisterSerializer
-    
-class AdminPhysioUpdate(generics.UpdateAPIView):
-    permission_classes = [IsAdmin]
-    queryset = Physiotherapist.objects.all()
-    serializer_class = PhysioRegisterSerializer
-    
-class AdminPatientUpdate(generics.UpdateAPIView):
-    permission_classes = [IsAdmin]
-    queryset = Patient.objects.all()
-    serializer_class = PatientRegisterSerializer
-
-
-class AdminAppUserDetail(generics.RetrieveAPIView):
-    '''
-    API endpoint que retorna un solo user por su id para admin.
-    '''
-    permission_classes = [AllowAny]
-    queryset = AppUser.objects.all()
-    serializer_class = AppUserAdminViewSerializer
-    
-
-@api_view(['GET'])
-@permission_classes([IsAdmin])
-def admin_list_patient_profiles(request):
-    user = request.user
-    if hasattr(user, 'admin'):
-        patients = Patient.objects.all()   
-        patient_data = [{
-            "patient": PatientSerializer(patient).data,
-            "user_data": AppUserSerializer(patient.user).data
-        } for patient in patients]
-        return Response({"patients": patient_data}, status=status.HTTP_200_OK)
-    return Response({"error": "No tienes permisos para ver esta información."}, status=status.HTTP_403_FORBIDDEN)
-
-
-@api_view(['GET'])
-@permission_classes([IsAdmin])
-def admin_list_physioterapist_profiles(request):
-    user = request.user
-    if hasattr(user, 'admin'):
-        physioterapists = Physiotherapist.objects.all()   
-        physioterapist_data = [{
-            "physioterapist": PhysioSerializer(physioterapist).data,
-            "user_data": AppUserSerializer(physioterapist.user).data
-        } for physioterapist in physioterapists]
-        return Response({"physioterapists": physioterapist_data}, status=status.HTTP_200_OK)
-
-    return Response({"error": "No tienes permisos para ver esta información."}, status=status.HTTP_403_FORBIDDEN)
-
-@api_view(['PATCH'])
-@permission_classes([IsAdmin])
-def admin_remove_user(request, user_id):
-    user_to_update = get_object_or_404(AppUser, id=user_id)
-
-    if hasattr(user_to_update, 'admin'):
-        return Response({"error": "No puedes eliminar a otro administrador."}, status=status.HTTP_403_FORBIDDEN)
-    
-    user_to_update.account_status = "REMOVED"
-    user_to_update.save()
-
-    return Response({"message": "Usuario marcado como REMOVED correctamente. Para eliminarlo, debe hacerlo directamente desde la base de datos."}, status=status.HTTP_200_OK)
-
-
-@api_view(['PATCH'])
-@permission_classes([IsAdmin])
-def admin_update_account_status(request, user_id):
-    user_to_update = get_object_or_404(AppUser, id=user_id)
-
-    new_status = request.data.get('account_status')
-    if not new_status:
-        return Response({"error": "Debes proporcionar un nuevo estado de cuenta."}, status=status.HTTP_400_BAD_REQUEST)
-
-    valid_statuses = [choice[0] for choice in ACCOUNT_STATUS_CHOICES]
-    if new_status not in valid_statuses:
-        return Response({"error": "Estado de cuenta inválido."}, status=status.HTTP_400_BAD_REQUEST)
-
-    user_to_update.account_status = new_status
-    user_to_update.save()
-
-    return Response({"message": "Estado de cuenta actualizado correctamente.", "new_status": new_status}, status=status.HTTP_200_OK)
-"""
-"""
-'''
-class AdminPatientDelete(generics.DestroyAPIView):
-    
-    #API endpoint para que admin elimine un término.
-
-    permission_classes = [AllowAny]
-    queryset = Patient.objects.all()
-    serializer_class = PatientRegisterSerializer
-"""
 
 @api_view(['POST'])
 @permission_classes([IsPhysiotherapist])

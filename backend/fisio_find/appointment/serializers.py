@@ -9,7 +9,7 @@ class AppointmentSerializer(serializers.Serializer):
     is_online = serializers.BooleanField()
     service = serializers.JSONField()
     patient = serializers.PrimaryKeyRelatedField(queryset=Patient.objects.all())  # Removed write_only=True
-    physiotherapist = serializers.PrimaryKeyRelatedField(queryset=Physiotherapist.objects.all(), write_only=True)
+    physiotherapist = serializers.PrimaryKeyRelatedField(queryset=Physiotherapist.objects.all()) # Removed write_only=True
     
     # En salida (GET): devuelves el nombre del paciente y del fisio
     patient_name = serializers.SerializerMethodField(read_only=True)
@@ -43,19 +43,18 @@ class AppointmentSerializer(serializers.Serializer):
         physiotherapist = data.get('physiotherapist')
         patient = data.get('patient')
 
-
         # verify that the appointment starts and ends on the same day
         if start_time.date() != end_time.date():
-            raise serializers.ValidationError("The appointment must end the same day it starts.")
+            raise serializers.ValidationError("La cita debe comenzar y terminar el mismo día.")
         
         # verify that the start time is before the end time
         if start_time.time() >= end_time.time():
-            raise serializers.ValidationError("End time must be after start time.")
+            raise serializers.ValidationError("La fecha de inicio debe ser anterior a la fecha de fin.")
 
         # verify that the physiotherapist is available
         overlapping_appointments_physio = Appointment.objects.filter(
             physiotherapist=physiotherapist,
-            status__in=['booked', 'confirmed'],  
+            status__in=['booked', 'pending', 'confirmed'],  
             start_time__lt=end_time,
             end_time__gt=start_time
         ).exclude(id=self.instance.id if self.instance else None)
@@ -63,15 +62,15 @@ class AppointmentSerializer(serializers.Serializer):
         #verify that the patient is available
         overlapping_appointments_patient = Appointment.objects.filter(
             patient=patient,
-            status__in=['booked', 'confirmed'],  
+            status__in=['booked', 'pending', 'confirmed'],  
             start_time__lt=end_time,
             end_time__gt=start_time
         ).exclude(id=self.instance.id if self.instance else None)
 
         if overlapping_appointments_physio.exists():
-            raise serializers.ValidationError("The physiotherapist is already booked at this time.")
+            raise serializers.ValidationError("El fisioterapeuta ya tiene una cita en ese horario.")
         if overlapping_appointments_patient.exists():
-            raise serializers.ValidationError("The patient is already booked at this time.")
+            raise serializers.ValidationError("El paciente ya tiene una cita en ese horario.")
 
         return data
 

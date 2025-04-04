@@ -245,7 +245,7 @@ const Calendar = ({
             `${getApiBaseUrl()}/api/appointment/schedule/${physioId}/`
           );
           if (response.status === 200) {
-            const parsed_schedule = JSON.parse(response.data.schedule);
+            const parsed_schedule = response.data.schedule;
             setSchedule(parsed_schedule);
           }
         } catch (error) {
