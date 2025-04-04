@@ -244,110 +244,22 @@ const Home = () => {
           <h2 className="text-3xl text-[#253240] font-bold mb-2 text-center">
             Encuentra a tu fisioterapeuta ideal
           </h2>
-          <p className="text-lg mx-auto text-center mb-4 max-w-2xl">
-            Busca por especialidad
-          </p>
           <div className="max-w-6xl mx-auto px-4">
-            <form className="max-w-2xl mx-auto">
-              {/* Contenedor flex para el dropdown de especialidades y el botón de búsqueda */}
-              <div className="flex items-center space-x-4 mx-auto">
-                {/* Dropdown para especialidad */}
-                <div className="w-3/4 mx-auto">
-                  <select
-                    value={specialization}
-                    onChange={(e) => setSpecialization(e.target.value)}
-                    className="border border-gray-300 rounded-md px-4 py-2 w-full"
-                  >
-                    <option value="" disabled>
-                      Especialidad
-                    </option>
-                    {specializations.map((spec, index) => (
-                      <option key={index} value={spec}>
-                        {spec}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Botón de búsqueda */}
-                <button
-                  type="button"
-                  className="hover:bg-gray-300 text-gray-700 w-16 flex items-center justify-center rounded-full transition-all"
-                  id="search-button"
-                  onClick={handleSearch}
-                >
-                  <div className="flex items-center justify-center">
-                    <Image
-                      src="./static/search.svg"
-                      alt="Search Icon"
-                      width={24}
-                      height={24}
-                    />
-                  </div>
-                </button>
-              </div>
-            </form>
-
-            {/* Mostrar la alerta si no se selecciona una especialidad */}
-            {searchAttempted && !specialization && (
-              <div className="error flex justify-center items-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-xs z-10">
-                <div className="error__icon">
-                  {/* Aquí puede ir un icono de advertencia */}
-                </div>
-                <div className="error__title">
-                  Por favor, selecciona una especialidad
-                </div>
-                <div
-                  className="error__close"
-                  onClick={() => setSpecialization("")}
-                >
-                  {/* Icono de cerrar */}
-                </div>
-              </div>
-            )}
-
-            {/* Mostrar los resultados de la búsqueda */}
-            {searchResults.length > 0 && (
-              <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {searchResults.map((physio, index) => (
-                  <CardContainer key={index}>
-                    <CardBody className="bg-gradient-to-bl from-white to-[#65C2C9]/50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-blue-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-full min-h-[350px] rounded-xl p-6 border flex flex-col justify-between">
-                      <CardItem
-                        translateZ="50"
-                        className="text-xl font-bold text-neutral-600 dark:text-white"
-                      >
-                        {physio.name}
-                      </CardItem>
-                      <CardItem
-                        as="p"
-                        translateZ="40"
-                        className="text-neutral-500 text-sm mt-2 dark:text-neutral-300"
-                      >
-                        {physio.specializations}
-                      </CardItem>
-                      <CardItem translateZ="60" className="w-full">
-                        <Image
-                          src="/static/fisioterapeuta_sample.webp"
-                          className="h-40 w-full object-cover rounded-xl group-hover/card:shadow-xl"
-                          alt="Fisioterapeuta"
-                          width={500}
-                          height={500}
-                        />
-                      </CardItem>
-                      <div className="flex justify-center mt-4">
-                        <CardItem
-                          translateZ="20"
-                          className="px-6 py-2 rounded-xl bg-[#1E5ACD] hover:bg-[#5ab3a8] text-white text-sm font-bold transition-colors cursor-pointer"
-                          onClick={() => router.push(`/appointments/create/${physio.id}`)}
-                        >
-                          Reservar cita
-                        </CardItem>
-                      </div>
-                    </CardBody>
-                  </CardContainer>
-                ))}
-              </div>
-            )}
+            <div className="max-w-2xl mx-auto flex justify-center">
+              <button
+                type="button"
+                className="flex items-center space-x-3 bg-[#1E5ACD] hover:bg-[#5ab3a8] text-white font-bold py-2 px-6 rounded-full shadow transition-all"
+                onClick={() => router.push('/advanced-search')}
+              >
+                <Image
+                  src="/static/search.svg"
+                  alt="Search Icon"
+                  width={24}
+                  height={24}
+                />
+                <span>Búsqueda avanzada</span>
+              </button>
+            </div>          
           </div>
         </section>
       </div>

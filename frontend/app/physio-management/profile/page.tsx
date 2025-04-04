@@ -246,7 +246,7 @@ const FisioProfile = () => {
                             serviceList.push({
                                 id: value.id || null,
                                 titulo: value.title || key,
-                                tipo: value.tipo || "PRIMERA_CONSULTA",
+                                tipo: value.type || "PRIMERA_CONSULTA",
                                 descripcion: value.description || "",
                                 precio: value.price ? `${value.price}€` : "",
                                 duracion: typeof value.duration === 'string' ? value.duration : `${value.duration} minutos`,
@@ -258,7 +258,7 @@ const FisioProfile = () => {
                         serviceList = parsedServices.map((service) => ({
                             id: service.id || null,
                             titulo: service.titulo || service.title || "",
-                            tipo: service.tipo || "PRIMERA_CONSULTA",
+                            tipo: service.tipo || service.type || "PRIMERA_CONSULTA",
                             descripcion: service.descripcion || service.description || "",
                             precio: service.precio || (service.price ? `${service.price}€` : ""),
                             duracion: service.duracion || (service.duration ? `${service.duration} minutos` : ""),
@@ -301,7 +301,7 @@ const FisioProfile = () => {
                 description: serviceData.descripcion,
                 price: parseFloat(serviceData.precio.replace('€', '').trim()),
                 duration: serviceData.duracion,
-                tipo: serviceData.tipo,
+                type: serviceData.tipo,
                 custom_questionnaire: serviceData.custom_questionnaire ? {
                     "UI Schema": serviceData.custom_questionnaire
                 } : null
@@ -654,7 +654,7 @@ const FisioProfile = () => {
                             serviceList.push({
                                 id: value.id || null,
                                 titulo: value.title || key,
-                                tipo: value.tipo || "PRIMERA_CONSULTA",
+                                tipo: value.type || "PRIMERA_CONSULTA",
                                 descripcion: value.description || "",
                                 precio: value.price ? `${value.price}€` : "",
                                 duracion: typeof value.duration === 'string' ? value.duration : `${value.duration} minutos`,
@@ -678,7 +678,7 @@ const FisioProfile = () => {
                             serviceList.push({
                                 id: value.id || null,
                                 titulo: value.title || key,
-                                tipo: value.tipo || "PRIMERA_CONSULTA",
+                                tipo: value.type || "PRIMERA_CONSULTA",
                                 descripcion: value.description || "",
                                 precio: value.price ? `${value.price}€` : "",
                                 duracion: typeof value.duration === 'string' ? value.duration : `${value.duration} minutos`,
@@ -703,7 +703,7 @@ const FisioProfile = () => {
                         serviceList.push({
                             id: value.id || null,
                             titulo: value.title || key,
-                            tipo: value.tipo || "PRIMERA_CONSULTA",
+                            tipo: value.type || "PRIMERA_CONSULTA",
                             descripcion: value.description || "",
                             precio: value.price ? `${value.price}€` : "",
                             duracion: typeof value.duration === 'string' ? value.duration : `${value.duration} minutos`,
