@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin 
-from .models import AppUser, Patient, Physiotherapist, Admin, Video, PatientFile, Specialization
+from .models import AppUser, Patient, Physiotherapist, Admin, Specialization
 from .forms import AppUserCreationForm, AppUserChangeForm
 
 
@@ -78,6 +78,4 @@ admin.site.register(AppUser, AppUserAdmin)
 admin.site.register(Patient, PatientAdmin)
 admin.site.register(Physiotherapist, PhysioAdmin)
 admin.site.register(Admin)
-admin.site.register(Video, VideoAdmin)
-admin.site.register(PatientFile, PatientFileAdmin)
 admin.site.register(Specialization, SpecializationAdmin)

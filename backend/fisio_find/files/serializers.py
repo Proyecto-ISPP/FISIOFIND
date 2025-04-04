@@ -3,7 +3,7 @@ from django.conf import settings
 import boto3
 import uuid
 from rest_framework import serializers
-from .models import PatientFile
+from .models import PatientFile, Video
 
 
 class PatientFileSerializer(serializers.ModelSerializer):
@@ -102,3 +102,80 @@ class PatientFileSerializer(serializers.ModelSerializer):
     def get_file_urls(self, obj):
         """Devuelve la URL completa del archivo."""
         return f"{settings.DIGITALOCEAN_ENDPOINT_URL}/{obj.file_key}"
+
+
+class VideoSerializer(serializers.ModelSerializer):
+    file = serializers.FileField(write_only=True)  # Para recibir el archivo en el request
+
+    class Meta:
+        model = Video
+        fields = ["id", "treatment", "title", "description", "file", "file_key", "file_url", "uploaded_at"]
+        extra_kwargs = {
+            "file_key": {"read_only": True},  # El usuario no debe enviar esto
+        }
+
+    def validate_file(self, file):
+        """Valida que el archivo sea un video permitido."""
+        allowed_extensions = (".mp4", ".avi", ".mov", ".mkv", ".webm")
+        if not file.name.lower().endswith(allowed_extensions):
+            raise serializers.ValidationError(f"Solo se permiten archivos con extensiones {', '.join(allowed_extensions)}.")
+        return file
+
+    def create(self, validated_data):
+        """Sube el archivo a DigitalOcean Spaces y guarda el Video en la BD."""
+        request = self.context["request"]
+        file = validated_data.pop("file")  
+        treatment = request.data.get('treatment')
+
+        try:
+            treatment_instance = Treatment.objects.get(id=treatment)
+            treatment_physio = treatment_instance.physiotherapist.user.username
+        except Treatment.DoesNotExist:
+            raise serializers.ValidationError("El tratamiento especificado no existe.")
+
+        # Generar un nombre único para evitar sobrescribir archivos
+        file_extension = file.name.split(".")[-1]
+        file_key = f"videos/{treatment_physio}/{uuid.uuid4()}.{file_extension}"
+
+        # Conectar a DigitalOcean Spaces
+        s3_client = boto3.client(
+            "s3",
+            region_name=settings.DIGITALOCEAN_REGION,
+            endpoint_url=settings.DIGITALOCEAN_ENDPOINT_URL,
+            aws_access_key_id=settings.DIGITALOCEAN_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.DIGITALOCEAN_SECRET_ACCESS_KEY,
+        )
+
+        # Intentar subir el archivo
+        try:
+            s3_client.upload_fileobj(
+                file,
+                settings.DIGITALOCEAN_SPACE_NAME,
+                file_key,
+                ExtraArgs={"ACL": "public-read"},  # Permitir acceso público
+            )
+        except Exception as e:
+            raise serializers.ValidationError(f"Error al subir archivo: {str(e)}")
+
+        # Guardar en la BD
+        video_file, created = Video.objects.get_or_create(
+            file_key=file_key,
+            treatment_id=treatment,
+            **validated_data
+        )
+        return video_file
+
+    def update(self, instance, validated_data):
+        """Actualiza un video en DigitalOcean Spaces y la BD."""
+
+        # Actualizar título y descripción si están en los datos
+        instance.title = validated_data.get("title", instance.title)
+        instance.description = validated_data.get("description", instance.description)
+
+        instance.save()
+        return instance
+
+    def get_file_url(self, obj):
+        """Devuelve la URL completa del archivo."""
+        return f"{settings.DIGITALOCEAN_ENDPOINT_URL}/{obj.file_key}"
+
