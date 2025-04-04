@@ -13,7 +13,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         today = now().strftime("%A")
-        treatments = Treatment.objects.filter(is_active=True)
+        treatments = Treatment.objects.filter(is_active=True, notifications_enabled=True)
 
         for treatment in treatments:
             patient_user = treatment.patient.user
