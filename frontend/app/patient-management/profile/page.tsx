@@ -39,6 +39,30 @@ const PatientProfile = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [pendingChanges, setPendingChanges] = useState({});
   const [oldPassword, setOldPassword] = useState(""); // State for old password
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [isDeletionEmailSent, setIsDeletionEmailSent] = useState(false);
+
+  // Add new function to handle account deletion request
+  const handleDeleteAccount = async () => {
+    try {
+      const response = await axios.post(
+        `${getApiBaseUrl()}/api/app_user/account/delete/request/`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      setIsDeletionEmailSent(true);
+      setShowDeleteConfirmation(false);
+
+    } catch (error) {
+      console.error("Delete account error:", error.response?.data || error);
+      setErrors({
+        delete: error.response?.data?.error || "Error al procesar la solicitud de eliminación de cuenta."
+      });
+    }
+  };
 
   useEffect(() => {
     setIsClient(true);
@@ -601,6 +625,53 @@ if (loading)
                   </div>
                 </div>
               )}
+              {showDeleteConfirmation && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                  <div className="bg-white dark:bg-gray-800 p-6 rounded-lg max-w-md w-full mx-4">
+                    <h3 className="text-xl font-bold text-red-600 mb-4">
+                      ¿Estás seguro de que quieres eliminar tu cuenta?
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-400 mb-6">
+                      Esta acción es irreversible y eliminará todos tus datos de la plataforma.
+                    </p>
+                    <div className="flex justify-end space-x-4">
+                      <button
+                        onClick={() => setShowDeleteConfirmation(false)}
+                        className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+                      >
+                        Cancelar
+                      </button>
+                      <button
+                        onClick={handleDeleteAccount}
+                        className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                      >
+                        Eliminar cuenta
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {isDeletionEmailSent && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                  <div className="bg-white dark:bg-gray-800 p-6 rounded-lg max-w-md w-full mx-4">
+                    <h3 className="text-xl font-bold text-blue-600 mb-4">
+                      Revisa tu correo electrónico
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-400 mb-6">
+                      Te hemos enviado un correo con las instrucciones para confirmar la eliminación de tu cuenta.
+                    </p>
+                    <div className="flex justify-end">
+                      <button
+                        onClick={() => setIsDeletionEmailSent(false)}
+                        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                      >
+                        Entendido
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <div className="flex gap-4 mt-8 w-full">
                 <GradientButton
@@ -609,6 +680,13 @@ if (loading)
                 >
                   <Save size={18} className="mr-2" />
                   Actualizar Perfil
+                </GradientButton>
+
+                <GradientButton
+                  onClick={() => setShowDeleteConfirmation(true)}
+                  className="bg-red-600 hover:bg-red-700 text-white"
+                >
+                  Eliminar cuenta
                 </GradientButton>
 
                 <Link href="/patient-management/video" passHref>

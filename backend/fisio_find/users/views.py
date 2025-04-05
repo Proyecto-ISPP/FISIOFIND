@@ -19,7 +19,7 @@ from .permissions import (
 )
 
 from users.util import check_service_json
-from .emailUtils import send_registration_confirmation_email  
+from .emailUtils import send_account_deletion_email
 from django.core import signing
 
 
@@ -543,3 +543,66 @@ def physio_delete_service_view(request, service_id):
     physio.save()
 
     return Response({"message": "Servicio eliminado correctamente", "services": services}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def request_account_deletion(request):
+    """
+    Request account deletion and send confirmation email
+    """
+    try:
+        user = request.user
+        email_sent = send_account_deletion_email(user)
+
+        if email_sent:
+            return Response({
+                "message": "Por favor, revisa tu correo para confirmar la eliminación de tu cuenta."
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response({
+                "error": "No se pudo enviar el correo de confirmación. Verifica tu dirección de correo electrónico."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+    except Exception as e:
+        logger.error(f"Error in account deletion request: {str(e)}")
+        return Response({
+            "error": f"Error al procesar tu solicitud: {str(e)}"
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def confirm_account_deletion(request, token):
+    """
+    Confirm and process account deletion
+    """
+    try:
+        data = signing.loads(token, salt='account-deletion', max_age=86400)
+        
+        if data.get('action') != 'delete_account':
+            raise signing.BadSignature('Invalid token type')
+
+        user = AppUser.objects.get(id=data['user_id'])
+        user.delete()
+
+        return Response({
+            "message": "Tu cuenta ha sido eliminada correctamente.",
+            "status": "success"
+        }, status=status.HTTP_200_OK)
+
+    except (signing.SignatureExpired, signing.BadSignature):
+        return Response({
+            "error": "El enlace ha expirado o no es válido.",
+            "status": "error"
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+    except AppUser.DoesNotExist:
+        return Response({
+            "error": "Usuario no encontrado.",
+            "status": "error"
+        }, status=status.HTTP_404_NOT_FOUND)
+
+    except Exception as e:
+        return Response({
+            "error": "Ocurrió un error al procesar tu solicitud.",
+            "status": "error"
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
