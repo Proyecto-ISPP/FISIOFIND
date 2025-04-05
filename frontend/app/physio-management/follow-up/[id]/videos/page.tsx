@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { getApiBaseUrl } from "@/utils/api";
 import axios from "axios";
 import { UploadCloud, Edit2, Trash } from "lucide-react";
+import Alert from "@/components/ui/Alert";
 
 const PhysioVideo = () => {
   const params = useParams();
@@ -13,7 +14,6 @@ const PhysioVideo = () => {
   const [description, setDescription] = useState<string>("");
   const [file, setFileKey] = useState<File | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [message, setMessage] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingVideos, setLoadingVideos] = useState<boolean>(false);  // Estado para cargar los videos
   const [videos, setVideos] = useState<any[]>([]);  // Estado para los videos
@@ -21,6 +21,25 @@ const PhysioVideo = () => {
   const [editTitle, setEditTitle] = useState<string>("");  // Título del video a editar
   const [editDescription, setEditDescription] = useState<string>("");  // Descripción del video a editar
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  // Add alert state
+  const [alert, setAlert] = useState<{
+    show: boolean;
+    type: "success" | "error" | "info" | "warning";
+    message: string;
+  }>({
+    show: false,
+    type: "info",
+    message: ""
+  });
+
+  // Function to show alerts
+  const showAlert = (type: "success" | "error" | "info" | "warning", message: string) => {
+    setAlert({
+      show: true,
+      type,
+      message
+    });
+  };
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -40,9 +59,8 @@ const PhysioVideo = () => {
         );
         setVideos(response.data);
       } catch (error) {
-        console.error("Error al obtener los videos:", error);
-        setMessage("❌ No se pudieron cargar los videos.");
-        setTimeout(() => setMessage(""), 5000);
+        // Replace console.error with showAlert
+        showAlert("error", error.response?.data?.detail || "No se pudieron cargar los videos.");
       } finally {
         setLoadingVideos(false); // Terminar de cargar los videos
       }
@@ -59,24 +77,20 @@ const PhysioVideo = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setMessage(""); // Limpiar el mensaje antes de mostrar uno nuevo
 
     // Validaciones
     if (!file) {
-      setMessage("❌ Por favor selecciona un archivo.");
-      setTimeout(() => setMessage(""), 5000);
+      showAlert("error", "Por favor selecciona un archivo.");
       return;
     }
 
     if (!title.trim()) {
-      setMessage("❌ El título no puede estar vacío.");
-      setTimeout(() => setMessage(""), 5000);
+      showAlert("error", "El título no puede estar vacío.");
       return;
     }
 
     if (!description.trim()) {
-      setMessage("❌ La descripción no puede estar vacía.");
-      setTimeout(() => setMessage(""), 5000);
+      showAlert("error", "La descripción no puede estar vacía.");
       return;
     }
 
@@ -99,8 +113,7 @@ const PhysioVideo = () => {
           },
         }
       );
-      console.log("Vídeo subido con éxito:", response.data);
-      setMessage("✅ Video subido correctamente.");
+      showAlert("success", "Video subido correctamente.");
       setTitle("");
       setDescription("");
       setFileKey(null);
@@ -121,18 +134,16 @@ const PhysioVideo = () => {
           );
           setVideos(response.data);
         } catch (error) {
-          console.error("Error al obtener los videos:", error);
-          setMessage("❌ No se pudieron cargar los videos.");
-          setTimeout(() => setMessage(""), 5000);
+          // Replace console.error with showAlert
+          showAlert("error", error.response?.data?.detail || "No se pudieron cargar los videos.");
         }
       };
       fetchVideos();
     } catch (error) {
-      console.error("Error al subir el vídeo:", error);
-      setMessage("❌ Error al subir el vídeo. Intenta nuevamente.");
+      // Replace console.error with showAlert
+      showAlert("error", error.response?.data?.detail || "Error al subir el vídeo. Intenta nuevamente.");
     } finally {
       setLoading(false);
-      setTimeout(() => setMessage(""), 5000);
     }
   };
 
@@ -146,14 +157,12 @@ const PhysioVideo = () => {
     event.preventDefault(); // Esto evita el refresco de la página
     
     if (!editTitle.trim()) {
-      setMessage("❌ El título no puede estar vacío.");
-      setTimeout(() => setMessage(""), 5000);
+      showAlert("error", "El título no puede estar vacío.");
       return;
     }
 
     if (!editDescription.trim()) {
-      setMessage("❌ La descripción no puede estar vacía.");
-      setTimeout(() => setMessage(""), 5000);
+      showAlert("error", "La descripción no puede estar vacía");
       return;
     }
 
@@ -170,10 +179,8 @@ const PhysioVideo = () => {
           },
         }
       );
-      console.log("Video actualizado correctamente:", response.data);
-      setMessage("✅ Video actualizado correctamente.");
+      showAlert("success", "Video actualizado correctamente.");
       setEditingVideo(null); // Finalizar edición
-      setTimeout(() => setMessage(""), 5000);
       // Recargar videos
       const fetchVideos = async () => {
         try {
@@ -187,16 +194,14 @@ const PhysioVideo = () => {
           );
           setVideos(response.data);
         } catch (error) {
-          console.error("Error al obtener los videos:", error);
-          setMessage("❌ No se pudieron cargar los videos.");
-          setTimeout(() => setMessage(""), 5000);
+          // Replace console.error with showAlert
+          showAlert("error", error.response?.data?.detail || "No se pudieron cargar los videos.");
         }
       };
       fetchVideos();
     } catch (error) {
-      console.error("Error al actualizar el video:", error);
-      setMessage("❌ Error al actualizar el video. Intenta nuevamente.");
-      setTimeout(() => setMessage(""), 5000);
+      // Replace console.error with showAlert
+      showAlert("error", error.response?.data?.detail || "Error al actualizar el video. Intenta nuevamente.");
     }
   };
 
@@ -210,9 +215,7 @@ const PhysioVideo = () => {
           },
         }
       );
-      console.log("Video eliminado correctamente:", response.data);
-      setMessage("✅ Video eliminado correctamente.");
-      setTimeout(() => setMessage(""), 5000);
+      showAlert("success", "Video eliminado correctamente.");
       // Recargar videos después de eliminar
       const fetchVideos = async () => {
         try {
@@ -226,21 +229,26 @@ const PhysioVideo = () => {
           );
           setVideos(response.data);
         } catch (error) {
-          console.error("Error al obtener los videos:", error);
-          setMessage("❌ No se pudieron cargar los videos.");
-          setTimeout(() => setMessage(""), 5000);
+          // Replace console.error with showAlert
+          showAlert("error", error.response?.data?.detail || "No se pudieron cargar los videos.");
         }
       };
       fetchVideos();
     } catch (error) {
-      console.error("Error al eliminar el video:", error);
-      setMessage("❌ Error al eliminar el video. Intenta nuevamente.");
-      setTimeout(() => setMessage(""), 5000);
+      // Replace console.error with showAlert
+      showAlert("error", error.response?.data?.detail || "Error al eliminar el video. Intenta nuevamente.");
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-5" style={{ background: "rgb(238, 251, 250)" }}>
+      {alert.show && (
+        <Alert 
+          type={alert.type} 
+          message={alert.message} 
+          onClose={() => setAlert({ ...alert, show: false })} 
+        />
+      )}
       <div className="bg-white w-full max-w-3xl rounded-3xl shadow-xl p-10 transition-all duration-300" style={{ boxShadow: "0 20px 60px rgba(0, 0, 0, 0.08)" }}>
         <div className="text-center mb-9">
           <h1 className="text-3xl font-bold mb-2" style={{
@@ -284,7 +292,7 @@ const PhysioVideo = () => {
               className="w-full py-[14px] px-5 text-base border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
             />
           </div>
-
+          
           <button
             type="submit"
             disabled={loading}
@@ -293,12 +301,7 @@ const PhysioVideo = () => {
             <UploadCloud className="mr-2" size={20} />
             {loading ? "Subiendo..." : "Subir Video"}
           </button>
-
-          {message && (
-            <p className={`text-center mt-4 px-4 py-2 rounded-lg ${message.startsWith("✅") ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"}`}>
-              {message}
-            </p>
-          )}
+          
         </form>
 
         <div className="mt-8">

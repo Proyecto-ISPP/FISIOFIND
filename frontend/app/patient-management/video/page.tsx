@@ -68,7 +68,7 @@ const PatientVideos = () => {
     const fetchVideos = async () => {
       const storedToken = getAuthToken();
       if (!storedToken) {
-        console.error("❌ No hay token disponible.");
+        console.error(" No hay token disponible.");
         setMessage("Error: No hay token de autenticación.");
         setLoading(false);
         return;
@@ -84,11 +84,11 @@ const PatientVideos = () => {
         if (response.data && Array.isArray(response.data)) {
           setVideos(response.data);
         } else {
-          setMessage("❌ No se encontraron videos.");
+          setMessage(" No se encontraron videos.");
         }
       } catch (error) {
         console.error("⚠️ Error al obtener los videos:", error);
-        setMessage("❌ Error al obtener los videos.");
+        setMessage(" Error al obtener los videos.");
       } finally {
         setLoading(false); // Al finalizar la carga de videos, cambia el estado
       }
@@ -100,7 +100,7 @@ const PatientVideos = () => {
   const handleVideoClick = async (videoId) => {
     const storedToken = getAuthToken();
     if (!storedToken) {
-      console.error("❌ No hay token disponible.");
+      console.error(" No hay token disponible.");
       setMessage("Error: No hay token de autenticación.");
       return;
     }
@@ -120,7 +120,7 @@ const PatientVideos = () => {
 
     } catch (error) {
       console.error("⚠️ Error al obtener el video:", error);
-      setMessage("❌ Error al obtener el video.");
+      setMessage(" Error al obtener el video.");
       setTimeout(() => setMessage(""), 5000);
     } finally {
       setIsVideoLoading(false); // Ocultar el modal de "Cargando video" cuando el video esté listo
