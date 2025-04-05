@@ -2512,3 +2512,519 @@ class PatchDeleteAppointmentTests(APITestCase):
         response = self.client.delete(f'/api/appointment/delete/{self.close_appointment.id}/', format='json')
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data['error'], 'No puedes borrar una cita con menos de 48 horas de antelación')
+
+
+class GetPhysioScheduleByIdTests(APITestCase):
+    def setUp(self):
+        self.physio_user = AppUser.objects.create_user(
+            username="jorgito",
+            email="jorgito@sample.com",
+            password="Usuar1o_1",
+            dni="77860168Q",
+            phone_number="666666666",
+            postal_code="41960",
+            account_status="ACTIVE",
+            first_name="Jorge",
+            last_name="García Chaparro"
+        )
+        self.physio = Physiotherapist.objects.create(
+            user=self.physio_user,
+            bio="Bio example",
+            autonomic_community="EXTREMADURA",
+            rating_avg=4.5,
+            schedule={
+                "exceptions": {},
+                "appointments": [],
+                "weekly_schedule": {
+                    "monday": [
+                        {
+                            "id": "ws-1743669362707-139",
+                            "start": "16:00",
+                            "end": "18:00"
+                        },
+                        {
+                            "id": "ws-1743669365620-823",
+                            "start": "10:00",
+                            "end": "14:00"
+                        }
+                    ],
+                    "tuesday": [
+                        {
+                            "id": "ws-1743669365620-821",
+                            "start": "10:00",
+                            "end": "14:00"
+                        }
+                    ]
+                }
+            },
+            birth_date="1980-01-01",
+            collegiate_number="COL1",
+            services={
+                "1": {
+                    "id": 1,
+                    "title": "Primera consulta",
+                    "tipo": "PRIMERA_CONSULTA",
+                    "price": 50,
+                    "description": "Descripción",
+                    "duration": 60,
+                    "custom_questionnaire": {
+                        "UI Schema": {
+                            "type": "Group",
+                            "label": "Cuestionario",
+                            "elements": [
+                                {"type": "Number", "label": "Edad", "scope": "#/properties/edad"},
+                                {"type": "Control", "label": "Motivo de la consulta", "scope": "#/properties/motivo_consulta"}
+                            ]
+                        }
+                    }
+                }
+            },
+            gender="M"
+        )
+        self.url = f"/api/appointment/schedule/{self.physio.id}/"
+
+    def test_get_schedule_success(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("schedule", response.data)
+        self.assertEqual(response.data["schedule"], self.physio.schedule)
+
+    def test_get_schedule_not_found(self):
+        response = self.client.get("/api/appointment/schedule/999/")
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.data["error"], "Fisioterapeuta no encontrado")
+
+    def test_get_schedule_none(self):
+        self.physio.schedule = None
+        self.physio.save()
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.data["message"], "No se ha definido un horario para este fisioterapeuta")
+
+class EditWeeklyScheduleTests(APITestCase):
+    def setUp(self):
+        self.physio_user = AppUser.objects.create_user(
+            username="jorgito",
+            email="jorgito@sample.com",
+            password="Usuar1o_1",
+            dni="77860168Q",
+            phone_number="666666666",
+            postal_code="41960",
+            account_status="ACTIVE",
+            first_name="Jorge",
+            last_name="García Chaparro"
+        )
+        self.physio = Physiotherapist.objects.create(
+            user=self.physio_user,
+            bio="Bio example",
+            autonomic_community="EXTREMADURA",
+            rating_avg=4.5,
+            schedule={
+                "exceptions": {},
+                "appointments": [],
+                "weekly_schedule": {
+                    "monday": [
+                        {
+                            "id": "ws-1743669362707-139",
+                            "start": "16:00",
+                            "end": "18:00"
+                        },
+                        {
+                            "id": "ws-1743669365620-823",
+                            "start": "10:00",
+                            "end": "14:00"
+                        }
+                    ],
+                    "tuesday": [
+                        {
+                            "id": "ws-1743669365620-821",
+                            "start": "10:00",
+                            "end": "14:00"
+                        }
+                    ]
+                }
+            },
+            birth_date="1980-01-01",
+            collegiate_number="COL1",
+            services={
+                "1": {
+                    "id": 1,
+                    "title": "Primera consulta",
+                    "tipo": "PRIMERA_CONSULTA",
+                    "price": 50,
+                    "description": "Descripción",
+                    "duration": 60,
+                    "custom_questionnaire": {
+                        "UI Schema": {
+                            "type": "Group",
+                            "label": "Cuestionario",
+                            "elements": [
+                                {"type": "Number", "label": "Edad", "scope": "#/properties/edad"},
+                                {"type": "Control", "label": "Motivo de la consulta", "scope": "#/properties/motivo_consulta"}
+                            ]
+                        }
+                    }
+                }
+            },
+            gender="M"
+        )
+        self.url = "/api/appointment/physio/schedule/weekly/"
+
+    def test_edit_weekly_schedule_success(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'jorgito',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        self.spain_tz = pytz.timezone("Europe/Madrid")
+        now_spain = datetime.now(self.spain_tz)
+        payload = {
+            "schedule": {
+                "weekly_schedule": {
+                    "monday": [{"start": "09:00", "end": "13:00"}],
+                    "tuesday": [],
+                    "wednesday": [],
+                    "thursday": [],
+                    "friday": [],
+                    "saturday": [],
+                    "sunday": []
+                },
+                "exceptions": {
+                    (now_spain + timedelta(days=2)).strftime("%Y-%m-%d"): [
+                        {"start": "09:30", "end": "10:30"}
+                    ]
+                }
+            }
+        }
+        response = self.client.put(self.url, payload, format="json")
+        print(response.data)
+        physiotherapist = Physiotherapist.objects.get(id=self.physio.id)
+        physio_schedule = physiotherapist.schedule
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("message", response.data)
+        self.assertIn("schedule", response.data)
+        self.assertEqual(response.data["message"], "Horario semanal actualizado con éxito")
+        self.assertEqual(physio_schedule["weekly_schedule"], payload["schedule"]["weekly_schedule"])
+        self.assertEqual(physio_schedule["exceptions"], payload["schedule"]["exceptions"])
+
+    def test_edit_schedule_without_physio_credentials(self):
+        self.spain_tz = pytz.timezone("Europe/Madrid")
+        now_spain = datetime.now(self.spain_tz)
+
+        payload = {
+            "schedule": {
+                "weekly_schedule": {
+                    "monday": [{"start": "09:00", "end": "13:00"}],
+                    "tuesday": [],
+                    "wednesday": [],
+                    "thursday": [],
+                    "friday": [],
+                    "saturday": [],
+                    "sunday": []
+                },
+                "exceptions": {
+                    (now_spain + timedelta(days=2)).strftime("%Y-%m-%d"): [
+                        {"start": "09:30", "end": "10:30"}
+                    ]
+                }
+            }
+        }
+        response = self.client.put(self.url, payload, format="json")
+        print(response.data)
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.data["detail"], "Las credenciales de autenticación no se proveyeron.")
+
+    def test_edit_schedule_invalid_json(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'jorgito',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        payload = {
+            "schedule": {
+                "exceptions": {}
+            }
+        }
+        response = self.client.put(self.url, payload, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data["error"], "Debe enviar un objeto JSON con el campo 'weekly_schedule'.")
+
+    def test_edit_schedule_invalid_day(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'jorgito',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        payload = {
+            "schedule": {
+                "weekly_schedule": {
+                    "funday": [{"start": "10:00", "end": "12:00"}],
+                },
+                "exceptions": {}
+            }
+        }
+        response = self.client.put(self.url, payload, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("funday no es un día válido. Usa: monday, tuesday, wednesday, thursday, friday, saturday, sunday.", response.data["error"])
+
+    def test_edit_schedule_invalid_format(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'jorgito',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        payload = {
+            "schedule": {
+                "weekly_schedule": "invalid",
+                "exceptions": {}
+            }
+        }
+        response = self.client.put(self.url, payload, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data["error"], "weekly_schedule debe ser un diccionario.")
+
+    def test_edit_schedule_invalid_time_format(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'jorgito',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        payload = {
+            "schedule": {
+                "weekly_schedule": {
+                    "monday": [{"start": "09-00", "end": "11:00"}],
+                },
+                "exceptions": {}
+            }
+        }
+        response = self.client.put(self.url, payload, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data["error"], "Los horarios 09-00 o 11:00 no son válidos. Usa formato 'HH:MM'.")
+
+    def test_edit_schedule_invalid_weekly_schedule_atributes_format(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'jorgito',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        payload = {
+            "schedule": {
+                "weekly_schedule": {
+                    "monday": [{"start_time": "09-00", "end_time": "11:00"}],
+                },
+                "exceptions": {}
+            }
+        }
+        response = self.client.put(self.url, payload, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data["error"], "El horario {'start_time': '09-00', 'end_time': '11:00'} no es válido. Debe ser un objeto con 'start' y 'end'.")
+
+    def test_edit_schedule_invalid_weekly_schedule_list_format(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'jorgito',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        payload = {
+            "schedule": {
+                "weekly_schedule": {
+                    "monday": {"start_time": "09-00", "end_time": "11:00"},
+                },
+                "exceptions": {}
+            }
+        }
+        response = self.client.put(self.url, payload, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data["error"], "Los horarios para monday deben ser una lista.")
+
+    def test_edit_schedule_invalid_range(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'jorgito',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        payload = {
+            "schedule": {
+                "weekly_schedule": {
+                    "monday": [{"start": "14:00", "end": "12:00"}],
+                },
+                "exceptions": {}
+            }
+        }
+        response = self.client.put(self.url, payload, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data["error"], "El rango 14:00-12:00 no es válido. La hora de inicio debe ser anterior a la de fin.")
+
+    def test_edit_schedule_exception_invalid_date_format(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'jorgito',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        payload = {
+            "schedule": {
+                "weekly_schedule": {
+                    "monday": [{"start": "09:00", "end": "13:00"}],
+                },
+                "exceptions": {
+                    "2025/04/10": [{"start": "09:30", "end": "10:30"}]
+                }
+            }
+        }
+        response = self.client.put(self.url, payload, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data["error"], "La fecha 2025/04/10 no tiene el formato válido YYYY-MM-DD.")
+
+    def test_edit_schedule_exception_no_exception_field(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'jorgito',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        payload = {
+            "schedule": {
+                "weekly_schedule": {
+                    "monday": [{"start": "09:00", "end": "13:00"}],
+                }
+            }
+        }
+        response = self.client.put(self.url, payload, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data["error"], "Debe enviar un objeto JSON con el campo 'exceptions'.")
+
+    def test_edit_schedule_exception_invalid_exception_list_format(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'jorgito',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        payload = {
+            "schedule": {
+                "weekly_schedule": {
+                    "monday": [{"start": "09:00", "end": "13:00"}],
+                },
+                "exceptions": {
+                    "2025-04-10": {"start": "09:30", "end": "10:30"}
+                }
+            }
+        }
+        response = self.client.put(self.url, payload, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data["error"], "Los bloques para la fecha 2025-04-10 deben ser una lista.")
+
+    def test_edit_schedule_exception_invalid_exception_fields_format(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'jorgito',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        payload = {
+            "schedule": {
+                "weekly_schedule": {
+                    "monday": [{"start": "09:00", "end": "13:00"}],
+                },
+                "exceptions": {
+                    "2025-04-10": [{"start_time": "09:30", "end_time": "10:30"}]
+                }
+            }
+        }
+        response = self.client.put(self.url, payload, format="json")
+        print(response.data)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data["error"], "El bloque {'start_time': '09:30', 'end_time': '10:30'} en la fecha 2025-04-10 no es válido. Debe ser un objeto con 'start' y 'end'.")
+
+    def test_edit_schedule_exception_invalid_exception_time_format(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'jorgito',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        payload = {
+            "schedule": {
+                "weekly_schedule": {
+                    "monday": [{"start": "09:00", "end": "13:00"}],
+                },
+                "exceptions": {
+                    "2025-04-10": [{"start": "09-30", "end": "10:30"}]
+                }
+            }
+        }
+        response = self.client.put(self.url, payload, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data["error"], "Los horarios 09-30 o 10:30 en la fecha 2025-04-10 no son válidos. Usa formato 'HH:MM'.")
+
+    def test_edit_schedule_exception_invalid_exception_time_range(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'jorgito',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        payload = {
+            "schedule": {
+                "weekly_schedule": {
+                    "monday": [{"start": "09:00", "end": "13:00"}],
+                },
+                "exceptions": {
+                    "2025-04-10": [{"start": "11:30", "end": "10:30"}]
+                }
+            }
+        }
+        response = self.client.put(self.url, payload, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data["error"], "El rango 11:30-10:30 en la fecha 2025-04-10 no es válido. La hora de inicio debe ser anterior a la de fin.")
+
+    def test_edit_schedule_exception_outside_schedule_range(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'jorgito',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        self.spain_tz = pytz.timezone("Europe/Madrid")
+        now_spain = datetime.now(self.spain_tz)
+        weekday = now_spain.strftime("%A").lower()
+        payload = {
+            "schedule": {
+                "weekly_schedule": {
+                    weekday: [{"start": "09:00", "end": "11:00"}],
+                },
+                "exceptions": {
+                    (now_spain + timedelta(days=1)).strftime("%Y-%m-%d"): [
+                        {"start": "08:00", "end": "08:30"}  # fuera del horario habitual
+                    ]
+                }
+            }
+        }
+        response = self.client.put(self.url, payload, format="json")
+        print(response.data)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data["error"], "La excepción del 2025-04-06 (08:00-08:30) no coincide con ningún horario habitual del día sunday.")
