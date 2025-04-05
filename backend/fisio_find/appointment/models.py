@@ -10,33 +10,33 @@ class StatusChoices(models.TextChoices):
 
 class Appointment(models.Model):
     id = models.AutoField(primary_key=True) 
-    start_time = models.DateTimeField(verbose_name="start_time")
-    end_time = models.DateTimeField(verbose_name="end_time")
-    is_online = models.BooleanField(verbose_name="is_online")
-    service = models.JSONField(verbose_name="service")
+    start_time = models.DateTimeField(verbose_name='Inicio')
+    end_time = models.DateTimeField(verbose_name='Final')
+    is_online = models.BooleanField( verbose_name='Es online')
+    service = models.JSONField(verbose_name='Servicio')
     patient = models.ForeignKey(
         Patient,
         on_delete=models.CASCADE,
         related_name="patient_appointments", 
-        verbose_name="Patient"
+        verbose_name='Paciente'
     )
     physiotherapist = models.ForeignKey(
         Physiotherapist,
         on_delete=models.CASCADE,
-        related_name="physio_appointments", 
-        verbose_name="Physiotherapist"
+        related_name="physio_appointments",
+        verbose_name='Fisioterapeuta'
     )
     status = models.CharField(
         max_length=50,
         choices=StatusChoices.choices,
         default=StatusChoices.BOOKED,
-        verbose_name="status"
+        verbose_name='Estado'
     )
-    alternatives = models.JSONField(verbose_name="alternatives", null=True, blank=True)
+    alternatives = models.JSONField(null=True, blank=True, verbose_name='Alternativas')
 
     class Meta:
-        verbose_name = "Appointment"
-        verbose_name_plural = "Appointment"
+        verbose_name = "Cita"
+        verbose_name_plural = "Citas"
 
     def __str__(self):
-        return f"Appointment {self.id} - {self.start_time} ({self.patient.user.username} with {self.physiotherapist.user.username})"
+        return f"Cita {self.id} - {self.start_time} ({self.patient.user.username} Con {self.physiotherapist.user.username})"
