@@ -5,6 +5,7 @@ ACCOUNT_STATUS_CHOICES = [
     ('ACTIVE', 'Active'),
     ('BANNED', 'Banned'),
     ('REMOVED', 'Removed'),
+    ('UNVERIFIED', 'Unverified'),
 ]
 
 GENDER_CHOICES = [
@@ -39,7 +40,7 @@ class AppUser(AbstractUser):
     dni = models.CharField(max_length=9, unique=True)
     phone_number = models.CharField(max_length=9)
     postal_code = models.CharField(max_length=5)
-    account_status = models.CharField(max_length=10, choices=ACCOUNT_STATUS_CHOICES, default='ACTIVE')
+    account_status = models.CharField(max_length=10, choices=ACCOUNT_STATUS_CHOICES, default='UNVERIFIED')
 
     def __str__(self):
         return f"{self.username} - {self.email}"

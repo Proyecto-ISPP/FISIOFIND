@@ -8,6 +8,7 @@ from django.http import HttpResponse
 def home(request):
     return HttpResponse("¡Bienvenido a FisioFind!")
 
+
 admin.site.index_title = "Panel de administración"
 admin.site.site_title = "Fisio Find"
 admin.site.site_header = "Fisio Find"
@@ -22,6 +23,7 @@ urlpatterns = [
     path('api/treatments/', include('treatments.urls')),
     path('api/guest_session/', include('guest_session.urls')),
     path('api/payments/', include('payment.urls')),
+    path('api/ratings/', include('ratings.urls')),
     path('api/cloud/', include('files.urls')),
 ]
 
