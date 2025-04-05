@@ -66,7 +66,7 @@ def send_appointment_email(appointment_id, action_type, role=None):
         appointment_date = appointment.start_time.strftime("%d/%m/%Y %H:%M")
         patient_email = appointment.patient.user.email
         physio_email = appointment.physiotherapist.user.email
-        frontend_domain = "http://localhost:3000"
+        frontend_domain = settings.FRONTEND_URL
 
         # Generamos un token firmado temporal (sin almacenarlo en la base de datos)
         token = signing.dumps({'appointment_id': appointment.id,
@@ -248,14 +248,14 @@ def send_email(subject, message, recipient_email):
     }
 
     
-    email = EmailMessage(
-        subject=subject,
-        body=email_body,
-        from_email="noreply-citas@fisiofind.com",
-        to=[recipient_email],
-    )
-    email.content_subtype = "html"  # Especificar que el contenido es HTML
-    email.send()
+    # email = EmailMessage(
+    #     subject=subject,
+    #     body=email_body,
+    #     from_email="noreply-citas@fisiofind.com",
+    #     to=[recipient_email],
+    # )
+    # email.content_subtype = "html"  # Especificar que el contenido es HTML
+    # email.send()
 
 
     response = requests.post(url, json=data, headers=headers)
