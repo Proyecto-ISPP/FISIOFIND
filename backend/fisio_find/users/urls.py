@@ -1,21 +1,5 @@
 from django.urls import path, re_path
-from .views import (
-    patient_register_view,
-    custom_token_obtain_view,
-    logout_view,
-    check_role_view,
-    physio_register_view,
-    validate_physio_registration,
-    process_payment,
-    physio_update_view,
-    physio_create_service_view,
-    physio_update_service_view,
-    physio_delete_service_view,
-    PatientProfileView,
-    return_user,
-    physio_get_services_view,
-    verify_registration,
-)
+from .views import *
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -36,6 +20,9 @@ urlpatterns = [
     path('current-user/', return_user, name='current_user'),
 
     path('services/<int:physio_id>/', physio_get_services_view, name='physio_get_xservices'),
+
+    path('account/delete/request/', request_account_deletion, name='request_account_deletion'),
+    path('account/delete/confirm/<str:token>/', confirm_account_deletion, name='confirm_account_deletion'),
 
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
