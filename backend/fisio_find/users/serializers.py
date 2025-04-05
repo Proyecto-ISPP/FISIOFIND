@@ -1,4 +1,3 @@
-import json
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.hashers import make_password
@@ -8,13 +7,9 @@ from django.db import transaction
 from users.validacionFisios import validar_colegiacion
 from .models import AppUser, Patient, Physiotherapist, PhysiotherapistSpecialization, Specialization, Pricing
 from datetime import date, datetime
-from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
-from datetime import date, datetime
-import boto3, uuid
 from users.util import validate_dni_match_letter, codigo_postal_no_mide_5, telefono_no_mide_9, validate_dni_structure
-from .models import AppUser, Patient, Physiotherapist, PhysiotherapistSpecialization, Specialization, Video
 
 
 class AppUserSerializer(serializers.ModelSerializer):
@@ -37,7 +32,7 @@ class AppUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = AppUser
         fields = [
-            'user_id', 'username', 'first_name', 'last_name', 'email', 
+            'user_id', 'username', 'first_name', 'last_name', 'email',
             'photo', 'dni', 'phone_number', 'postal_code', 'account_status'
         ]
         extra_kwargs = {
@@ -96,7 +91,6 @@ class PhysioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Physiotherapist
         fields = '__all__'
-        #exclude = ['user']
 
 
 class PatientSerializer(serializers.ModelSerializer):
@@ -117,7 +111,7 @@ class PatientSerializer(serializers.ModelSerializer):
 
         if value >= datetime.now().date():
             raise serializers.ValidationError("La fecha de nacimiento debe ser anterior a la fecha actual.")
-        elif value < date(1900,1,1):
+        elif value < date(1900, 1, 1):
             raise serializers.ValidationError("La fecha de nacimiento no puede ser tan atrás en el tiempo.")
         return value
 
@@ -146,11 +140,10 @@ class PatientSerializer(serializers.ModelSerializer):
 
         # Impedir la modificación del DNI
         if user_data and 'dni' in user_data:
-            user_data.pop('dni', None) 
-        
-        if 'birth_date' in validated_data:
-            validated_data.pop('birth_date', None)  
+            user_data.pop('dni', None)
 
+        if 'birth_date' in validated_data:
+            validated_data.pop('birth_date', None)
 
         # Si hay datos de usuario, actualizar solo los campos permitidos
         if user_data:
@@ -296,7 +289,7 @@ class PhysioRegisterSerializer(serializers.ModelSerializer):
             'invalid': 'Valor de plan inválido'
         }
     )
-    
+
     # Campos nuevos de Stripe (solo lectura)
     stripe_subscription_id = serializers.CharField(read_only=True)
     subscription_status = serializers.CharField(read_only=True)
@@ -339,8 +332,11 @@ class PhysioRegisterSerializer(serializers.ModelSerializer):
             collegiate_number=collegiate_number,
             autonomic_community=autonomic_community
         ).exists():
-            validation_errors["collegiate_number"] = "Ya existe un fisioterapeuta con este nombre, apellido, número de colegiado y comunidad autónoma."
-        
+            validation_errors["collegiate_number"] = (
+                "Ya existe un fisioterapeuta con este nombre, apellido, "
+                "número de colegiado y comunidad autónoma."
+            )
+
         full_name_uppercase = first_name.upper() + " " + last_name.upper()
         valid_physio = validar_colegiacion(full_name_uppercase, collegiate_number, autonomic_community)
         if not valid_physio:
@@ -413,8 +409,9 @@ class PhysioRegisterSerializer(serializers.ModelSerializer):
                 return instance
 
         except IntegrityError:
-            raise serializers.ValidationError({"error": "Error de integridad en la base de datos. Posible duplicado de datos."})
-
+            raise serializers.ValidationError({
+                "error": "Error de integridad en la base de datos. Posible duplicado de datos."
+            })
 
 
 class PhysioUpdateSerializer(serializers.ModelSerializer):
@@ -441,7 +438,8 @@ class PhysioUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Physiotherapist
-        fields = ['email', 'phone_number', 'postal_code', 'bio', 'photo', 'services', 'specializations', 'schedule', 'plan']
+        fields = ['email', 'phone_number', 'postal_code', 'bio', 'photo', 'services',
+                  'specializations', 'schedule', 'plan']
 
     def validate(self, data):
         """Validaciones solo para los campos proporcionados."""
@@ -470,7 +468,9 @@ class PhysioUpdateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Los servicios deben ser un objeto JSON.")
         for service_name, service_data in value.items():
             if not isinstance(service_data, dict):
-                raise serializers.ValidationError(f"El servicio '{service_name}' debe contener un objeto con sus propiedades.")
+                raise serializers.ValidationError(
+                    f"El servicio '{service_name}' debe contener un objeto con sus propiedades."
+                )
         return value
 
     def update(self, instance, validated_data):
@@ -500,7 +500,8 @@ class PhysioUpdateSerializer(serializers.ModelSerializer):
                     instance.physiotherapistspecialization_set.all().delete()
                     for spec_name in specializations_data:
                         specialization, _ = Specialization.objects.get_or_create(name=spec_name)
-                        PhysiotherapistSpecialization.objects.create(physiotherapist=instance, specialization=specialization)
+                        PhysiotherapistSpecialization.objects.create(physiotherapist=instance,
+                                                                     specialization=specialization)
 
                 instance.save()
                 return instance
@@ -524,122 +525,3 @@ class PatientAdminViewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Patient
         fields = '__all__'
-
-
-class VideoSerializer(serializers.ModelSerializer):
-    file = serializers.FileField(write_only=True)  # Para recibir el archivo en el request
-    file_url = serializers.SerializerMethodField()  # Para devolver la URL pública
-    patients = serializers.PrimaryKeyRelatedField(many=True, queryset=Patient.objects.all(), required=False)  
-
-    class Meta:
-        model = Video
-        fields = ["id", "patients", "title", "description", "file", "file_key", "file_url", "uploaded_at"]
-        extra_kwargs = {
-            "file_key": {"read_only": True},  # El usuario no debe enviar esto
-            "title": {"required": False}, # opcional en update
-        }
-
-    def validate_file(self, file):
-        """Valida que el archivo sea un video permitido."""
-        allowed_extensions = (".mp4")
-        if not file.name.lower().endswith(allowed_extensions):
-            raise serializers.ValidationError("Solo se permiten archivos .mp4 .")
-        return file
-
-    def create(self, validated_data):
-        """Sube el archivo a DigitalOcean Spaces y guarda el Video en la BD."""
-        file = validated_data.pop("file", None)  # Extraer archivo del request
-        if not file:
-            raise serializers.ValidationError("El archivo es requerido para crear un video.")
-        physiotherapist = self.context["request"].user.physio  # Usuario logueado
-        patients = validated_data.pop("patients", [])
-
-        # Generar un nombre único para evitar sobrescribir archivos
-        file_extension = file.name.split(".")[-1]
-        file_key = f"videos/{physiotherapist.id}/{uuid.uuid4()}.{file_extension}"
-
-        # Conectar a DigitalOcean Spaces
-        s3_client = boto3.client(
-            "s3",
-            region_name=settings.DIGITALOCEAN_REGION,
-            endpoint_url=settings.DIGITALOCEAN_ENDPOINT_URL,
-            aws_access_key_id=settings.DIGITALOCEAN_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.DIGITALOCEAN_SECRET_ACCESS_KEY,
-        )
-
-        # Intentar subir el archivo
-        try:
-            s3_client.upload_fileobj(
-                file,
-                settings.DIGITALOCEAN_SPACE_NAME,
-                file_key,
-                ExtraArgs={"ACL": "public-read"},  # Permitir acceso público
-            )
-        except Exception as e:
-            raise serializers.ValidationError(f"Error al subir archivo: {str(e)}")
-
-        # Guardar en la BD
-        video = Video.objects.create(
-            file_key=file_key,
-            physiotherapist=physiotherapist,
-            **validated_data  # Agrega título, descripción, etc.
-        )
-        video.patients.set(patients)
-        return video
-
-    def update(self, instance, validated_data):
-        """Actualiza un video en DigitalOcean Spaces y la BD."""
-        file = validated_data.pop("file", None)  # Nuevo archivo (opcional)
-        patients = validated_data.pop("patients", None)  # Lista de pacientes (opcional)
-
-        # Actualizar título y descripción si están en los datos
-        instance.title = validated_data.get("title", instance.title)
-        instance.description = validated_data.get("description", instance.description)
-
-        if file:
-            # Conectar a DigitalOcean Spaces
-            s3_client = boto3.client(
-                "s3",
-                region_name=settings.DIGITALOCEAN_REGION,
-                endpoint_url=settings.DIGITALOCEAN_ENDPOINT_URL,
-                aws_access_key_id=settings.DIGITALOCEAN_ACCESS_KEY_ID,
-                aws_secret_access_key=settings.DIGITALOCEAN_SECRET_ACCESS_KEY,
-            )
-
-            # Borrar archivo anterior de DigitalOcean
-            try:
-                s3_client.delete_object(
-                    Bucket=settings.DIGITALOCEAN_SPACE_NAME,
-                    Key=instance.file_key,
-                )
-            except Exception as e:
-                raise serializers.ValidationError(f"Error al eliminar archivo anterior: {str(e)}")
-
-            # Generar nuevo nombre único
-            file_extension = file.name.split(".")[-1]
-            new_file_key = f"videos/{instance.physiotherapist.id}/{uuid.uuid4()}.{file_extension}"
-
-            # Subir nuevo archivo
-            try:
-                s3_client.upload_fileobj(
-                    file,
-                    settings.DIGITALOCEAN_SPACE_NAME,
-                    new_file_key,
-                    ExtraArgs={"ACL": "public-read"},
-                )
-            except Exception as e:
-                raise serializers.ValidationError(f"Error al subir nuevo archivo: {str(e)}")
-
-            # Actualizar referencia en la BD
-            instance.file_key = new_file_key
-
-        # Si se pasan pacientes, actualizarlos
-        if patients is not None:
-            instance.patients.set(patients)
-
-        instance.save()
-        return instance
-
-    def get_file_url(self, obj):
-        """Devuelve la URL completa del archivo."""
-        return f"https://fisiofind-repo.fra1.digitaloceanspaces.com/{obj.file_key}"

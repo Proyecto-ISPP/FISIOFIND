@@ -1,5 +1,21 @@
 from django.urls import path, re_path
-from .views import *
+from .views import (
+    patient_register_view,
+    custom_token_obtain_view,
+    logout_view,
+    check_role_view,
+    physio_register_view,
+    validate_physio_registration,
+    process_payment,
+    physio_update_view,
+    physio_create_service_view,
+    physio_update_service_view,
+    physio_delete_service_view,
+    PatientProfileView,
+    return_user,
+    physio_get_services_view,
+    verify_registration,
+)
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -19,13 +35,7 @@ urlpatterns = [
     path('profile/', PatientProfileView.as_view(), name='profile'),
     path('current-user/', return_user, name='current_user'),
 
-    path('videos/upload/', create_file, name='upload_video'),
-    path('videos/delete/<int:video_id>/', delete_video, name='delete_video'),
-    path('videos/list-my-videos/', list_my_videos, name='list_my_videos'),
-    path('videos/stream-video/<int:video_id>/', stream_video, name='stream_video'),
-    path('videos/update-video/<int:video_id>/', update_video, name='update_video'),
-
     path('services/<int:physio_id>/', physio_get_services_view, name='physio_get_xservices'),
-    
+
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
