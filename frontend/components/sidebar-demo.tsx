@@ -61,7 +61,7 @@ export function SidebarDemo() {
   const publicLinks = [
     {
       label: "Buscar",
-      href: "/",
+      href: "/advanced-search",
       icon: (
         <IconSearch className="text-[#05668D] h-5 w-5 flex-shrink-0 mx-auto" />
       ),
@@ -75,7 +75,9 @@ export function SidebarDemo() {
     },
     {
       label: "Tratamientos",
-      href: isAuthenticated? "/physio-management/follow-up" : "/login",
+      href: urlPerfil.includes("patient") 
+           ? "/patient-management/follow-up" 
+           : "/physio-management/follow-up",
       icon: (
         <IconStethoscope className="text-[#05918F] h-5 w-5 flex-shrink-0 mx-auto" />
       ),
