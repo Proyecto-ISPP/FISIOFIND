@@ -33,6 +33,7 @@ class Command(BaseCommand):
         for treatment in treatments:
             patient_user = treatment.patient.user
             sessions_today = treatment.sessions.filter(day_of_week__contains=today)
+            treatment_url = f"https://s3.fisiofind.com/patient-management/follow-up/{treatment.id}"
 
             if not sessions_today.exists():
                 continue
@@ -49,8 +50,15 @@ class Command(BaseCommand):
                 <br><br>
                 <div style="text-align: center;">
                     <a href="https://s3.fisiofind.com/"
-                       style="display: inline-block; background-color: #00a896; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold;">
+                    style="display: inline-block; background-color: #00a896; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold;">
                         Ir a Fisio Find
+                    </a>
+                </div>
+                <br>
+                <div style="text-align: center; font-size: 14px; color: #555;">
+                    ¿No quieres recibir más recordatorios?<br>
+                    <a href="{treatment_url}" style="color: #00a896; text-decoration: underline;">
+                        Gestiona tus notificaciones aquí
                     </a>
                 </div>
             """
@@ -70,13 +78,6 @@ class Command(BaseCommand):
 
             <div style="background-color: #f4fdfd; padding: 25px; border-radius: 10px; margin-top: 24px; font-size: 16px; color: #333;">
                 {message}
-            </div>
-
-            <div style="text-align: center; margin-top: 32px;">
-                <a href="https://s3.fisiofind.com/"
-                style="display: inline-block; background-color: #00a896; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 16px; transition: background-color 0.3s;">
-                    Ir a Fisio Find
-                </a>
             </div>
 
             <div style="margin-top: 40px; text-align: center; border-top: 1px solid #e0e0e0; padding-top: 16px; font-size: 14px; color: #777;">
@@ -100,7 +101,8 @@ class Command(BaseCommand):
         data = {
             "encrypted_subject": encrypted_subject,
             "encrypted_recipient": encrypted_recipient,
-            "encrypted_body": encrypted_body
+            "encrypted_body": encrypted_body,
+            "from_name": encrypt_data("Fisio Find")  # si tu API soporta esto
         }
 
         response = requests.post(url, json=data, headers=headers)

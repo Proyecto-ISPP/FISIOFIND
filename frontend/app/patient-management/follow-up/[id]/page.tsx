@@ -278,11 +278,14 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div>
                   <p className="font-medium text-gray-700 text-sm sm:text-base">
-                    Activar recordatorios de ejercicio
+                    {notificationsEnabled
+                      ? "Recordatorios de ejercicio activados"
+                      : "Recordatorios de ejercicio desactivados"}
                   </p>
                   <p className="text-sm font-normal text-gray-500 mt-1">
-                    Habilita esta opción si deseas recibir recordatorios por
-                    email para no olvidarte de seguir tu tratamiento.
+                    {notificationsEnabled
+                      ? "Recibirás recordatorios por email para no olvidarte de seguir tu tratamiento."
+                      : "Activa esta opción si deseas recibir recordatorios por email para no olvidarte de seguir tu tratamiento."}
                   </p>
                 </div>
                 <label className="switch self-start sm:self-center">
