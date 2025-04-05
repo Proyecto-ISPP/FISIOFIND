@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from treatments.models import Treatment
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -6,11 +5,9 @@ from .serializers import PatientFileSerializer, VideoSerializer
 from django.http import StreamingHttpResponse, HttpResponse
 from django.conf import settings
 import boto3
-import uuid
 from rest_framework import status
 from users.permissions import IsPatient, IsPhysioOrPatient, IsPhysiotherapist
 from .models import PatientFile, Video
-import json
 
 
 @api_view(['POST'])
@@ -23,7 +20,7 @@ def create_file(request):
             {"message": "El ID del tratamiento es requerido"},
             status=status.HTTP_400_BAD_REQUEST
         )
-    
+
     # Aquí asumo que Treatment es el nombre del modelo y tiene una relación con el paciente
     try:
         treatment = Treatment.objects.get(id=treatment_id)
@@ -53,11 +50,12 @@ def create_file(request):
         )
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['DELETE'])
 @permission_classes([IsPatient])
 def delete_patient_file(request, file_id):
     user = request.user
-    
+
     try:
         file = PatientFile.objects.get(id=file_id)
 
@@ -71,7 +69,7 @@ def delete_patient_file(request, file_id):
 
     except PatientFile.DoesNotExist:
         return Response({"error": "Archivo no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-    
+
 
 @api_view(['PUT'])
 @permission_classes([IsPatient])
@@ -104,6 +102,7 @@ def update_patient_file(request, file_id):
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['GET'])
 @permission_classes([IsPhysioOrPatient])
 def get_patient_file_by_id(request, file_id):
@@ -120,7 +119,7 @@ def get_patient_file_by_id(request, file_id):
             return Response({"error": "No tienes permiso para ver este archivo"}, status=status.HTTP_403_FORBIDDEN)
     except PatientFile.DoesNotExist:
         return Response({"error": "Archivo no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-    
+
 
 @api_view(['GET'])
 @permission_classes([IsPhysioOrPatient])
@@ -141,7 +140,8 @@ def get_patient_files(request):
         patient_files.append(serializer.data)
 
     if not patient_files:
-        return Response({"error": "No se han encontrado archivos a los que puedas acceder"}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"error": "No se han encontrado archivos a los que puedas acceder"},
+                        status=status.HTTP_404_NOT_FOUND)
 
     return Response(patient_files, status=status.HTTP_200_OK)
 
@@ -195,7 +195,7 @@ def delete_video(request, video_id):
     user = request.user
     try:
         video = Video.objects.get(id=video_id)
-    
+
         if not hasattr(user, 'physio') or video.treatment.physiotherapist != user.physio:
             return Response({"error": "No tienes permiso para eliminar este video"}, status=status.HTTP_403_FORBIDDEN)
 
@@ -206,7 +206,7 @@ def delete_video(request, video_id):
 
     except Video.DoesNotExist:
         return Response({"error": "Video no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-    
+
 
 @api_view(['GET'])
 @permission_classes([IsPhysioOrPatient])
@@ -224,7 +224,7 @@ def list_video_by_id(request, video_id):
             return Response({"error": "No tienes permiso para ver este video"}, status=status.HTTP_403_FORBIDDEN)
     except Video.DoesNotExist:
         return Response({"error": "Video no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-    
+
 
 @api_view(['GET'])
 @permission_classes([IsPhysioOrPatient])
@@ -238,13 +238,14 @@ def list_my_videos(request):
         videos = Video.objects.filter(treatment__physiotherapist=user.physio)
     else:
         videos = []
-    
+
     for video in videos:
         serializer = VideoSerializer(video)
         videos_owner.append(serializer.data)
 
     if not videos_owner:
-        return Response({"error": "No se han encontrado videos a los que puedas acceder"}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"error": "No se han encontrado videos a los que puedas acceder"},
+                        status=status.HTTP_404_NOT_FOUND)
 
     return Response(videos_owner, status=status.HTTP_200_OK)
 
@@ -264,14 +265,15 @@ def update_video(request, video_id):
 
     # Convertir request.data en un diccionario mutable
     mutable_data = request.data.copy()
-        
+
     # Serializar con los datos nuevos
     serializer = VideoSerializer(video, data=mutable_data, partial=True, context={'request': request})
 
     if serializer.is_valid():
         serializer.save()
-        return Response({"message": "Video actualizado correctamente", "video": serializer.data}, status=status.HTTP_200_OK)
-    
+        return Response({"message": "Video actualizado correctamente", "video": serializer.data},
+                        status=status.HTTP_200_OK)
+
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -330,7 +332,7 @@ def stream_video(request, video_id):
             response["Accept-Ranges"] = "bytes"
             response["Cache-Control"] = "no-cache"
             response["Connection"] = "keep-alive"
-        
+
         return response
 
     except Video.DoesNotExist:

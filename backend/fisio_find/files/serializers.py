@@ -4,6 +4,7 @@ import boto3
 import uuid
 from rest_framework import serializers
 from .models import PatientFile, Video
+import logging
 
 
 class PatientFileSerializer(serializers.ModelSerializer):
@@ -31,7 +32,7 @@ class PatientFileSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         # Obtener la solicitud para acceder a request.data y request.FILES
         request = self.context["request"]
-        
+
         # Obtener los campos del formulario directamente desde request.data
         treatment = request.data.get('treatment')  # Recibimos treatment desde request.data
         title = request.data.get('title')
@@ -39,7 +40,7 @@ class PatientFileSerializer(serializers.ModelSerializer):
 
         if not treatment:
             raise serializers.ValidationError("El tratamiento es obligatorio.")
-        
+
         # Obtener los archivos
         files = request.FILES.getlist("files")
 
@@ -65,7 +66,7 @@ class PatientFileSerializer(serializers.ModelSerializer):
             treatment_patient = treatment_instance.patient.user.username
         except Treatment.DoesNotExist:
             raise serializers.ValidationError("El tratamiento especificado no existe.")
-        
+
         # Subir cada archivo a DigitalOcean
         for file in files:
             file_extension = file.name.split(".")[-1]
@@ -81,17 +82,19 @@ class PatientFileSerializer(serializers.ModelSerializer):
                 )
                 file_keys.append(file_key)  # Agregar el archivo a la lista de claves
             except Exception as e:
-                raise serializers.ValidationError(f"Error al subir archivo: {str(e)}")
+                logger = logging.getLogger(__name__)
+                logger.error(f"Error al subir archivo: {str(e)}")
+                raise serializers.ValidationError("Error al subir archivo. Por favor, inténtelo de nuevo más tarde.")
 
         # Guardar las claves de los archivos en el tratamiento
         treatment_file.file_key = ",".join(file_keys)
         treatment_file.save()
 
         return treatment_file
-    
+
     def update(self, instance, validated_data):
         """Actualiza un archivo en DigitalOcean Spaces y la BD."""
-    
+
         # Actualizar otros campos si están en los datos
         instance.title = validated_data.get("title", instance.title)
         instance.description = validated_data.get("description", instance.description)
@@ -155,7 +158,8 @@ class VideoSerializer(serializers.ModelSerializer):
                 ExtraArgs={"ACL": "public-read"},  # Permitir acceso público
             )
         except Exception as e:
-            raise serializers.ValidationError(f"Error al subir archivo: {str(e)}")
+            logging.error(f"Error al subir archivo: {str(e)}")
+            raise serializers.ValidationError("Error al subir archivo. Por favor, inténtelo de nuevo más tarde.")
 
         # Guardar en la BD
         video_file, created = Video.objects.get_or_create(
@@ -178,4 +182,3 @@ class VideoSerializer(serializers.ModelSerializer):
     def get_file_url(self, obj):
         """Devuelve la URL completa del archivo."""
         return f"{settings.DIGITALOCEAN_ENDPOINT_URL}/{obj.file_key}"
-
