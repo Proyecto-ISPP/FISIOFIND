@@ -9,6 +9,7 @@ import { useParams } from "next/navigation";
 import axios from "axios";
 import { getApiBaseUrl } from "@/utils/api";
 import Alert from "@/components/ui/Alert";
+import { DateTime } from 'luxon';
 
 // ----- Funciones auxiliares para trabajar con tiempos -----
 
@@ -59,14 +60,22 @@ const subtractInterval = (
   }));
 };
 
-const combineDateAndTimeToISO = (dateStr: string, timeStr: string): string => {
-  return new Date(`${dateStr}T${timeStr}:00Z`).toISOString();
+const combineDateAndTime = (dateStr: string, timeStr: string): string => {
+  const dt = DateTime.fromFormat(`${dateStr} ${timeStr}`, "yyyy-MM-dd HH:mm", {
+    zone: "Europe/Madrid",
+  });
+
+  return dt.toFormat("yyyy-MM-dd'T'HH:mm:ss");
 };
 
-const addMinutesToISO = (isoDate: string, minutes: number): string => {
-  const date = new Date(isoDate);
-  date.setMinutes(date.getMinutes() + minutes);
-  return date.toISOString();
+const addMinutesTo = (isoDate: string, minutes: number): string => {
+  const dt = DateTime.fromFormat(isoDate, "yyyy-MM-dd'T'HH:mm:ss", {
+    zone: "Europe/Madrid",
+  });
+
+  const result = dt.plus({ minutes });
+
+  return result.toFormat("yyyy-MM-dd'T'HH:mm:ss");
 };
 
 // ----- Función para calcular los slots disponibles -----
@@ -248,8 +257,8 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
   const handleSlotClick = (slot: string) => {
     if (!selectedDate) return;
     setSelectedSlot(slot);
-    const startISO = combineDateAndTimeToISO(selectedDate, slot);
-    const endISO = addMinutesToISO(startISO, serviceDuration);
+    const startISO = combineDateAndTime(selectedDate, slot);
+    const endISO = addMinutesTo(startISO, serviceDuration);
     dispatch({
       type: "SELECT_SLOT",
       payload: {

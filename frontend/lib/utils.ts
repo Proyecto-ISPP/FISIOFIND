@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { DateTime } from 'luxon';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -7,7 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export function formatAppointment(isoString: string): { date: string; time: string } {
   if (!isoString) return { date: "", time: "" };
-  
+
   const date = new Date(isoString);
 
   return {
@@ -16,10 +17,17 @@ export function formatAppointment(isoString: string): { date: string; time: stri
       day: "numeric",
       month: "long",
       year: "numeric",
+      timeZone: "Europe/Madrid",
     }),
-    time: date.toISOString().split("T")[1].slice(0, 5), // Extrae la hora en formato HH:MM UTC
+    time: date.toLocaleTimeString("es-ES", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+      timeZone: "Europe/Madrid",
+    }),
   };
 }
+
 
 
 export function prepareScheduleForBackend(schedule) {
@@ -49,10 +57,9 @@ export function prepareScheduleForBackend(schedule) {
 
 
 export function formatDateFromIso(isoDate: string): string {
-  const date = new Date(isoDate);
+   const dt = DateTime.fromISO(isoDate, {
+    zone: "Europe/Madrid",
+  });
 
-  // Formateamos la fecha en "DD-MM-YYYY HH:mm" pero en UTC
-  const formattedDate = `${String(date.getUTCDate()).padStart(2, '0')}-${String(date.getUTCMonth() + 1).padStart(2, '0')}-${date.getUTCFullYear()} ${String(date.getUTCHours()).padStart(2, '0')}:${String(date.getUTCMinutes()).padStart(2, '0')}`;
-
-  return formattedDate;
+  return dt.toFormat('dd-MM-yyyy HH:mm');
 }
