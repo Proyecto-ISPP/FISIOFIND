@@ -135,11 +135,6 @@ def cancel_payment_patient(payment_id):
         appointment = payment.appointment
         now = timezone.now()
 
-        # No se puede cancelar si la cita ya pasó
-        if now > appointment.start_time:
-            return Response({'error': 'The appointment has already passed'},
-                            status=status.HTTP_400_BAD_REQUEST)
-
         # Caso 1: Pago no realizado antes de las 48 horas antes de la cita
         if payment.status == 'Not Paid' and now < payment.payment_deadline:
             if payment.stripe_payment_intent_id:
