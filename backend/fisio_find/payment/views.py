@@ -424,17 +424,6 @@ def create_payment_setup(appointment_id, amount, user):
     try:
         appointment = Appointment.objects.get(id=appointment_id)
         
-        # Verificar que el paciente sea el dueño de la cita
-        if user.patient != appointment.patient:
-            return Response({'error': 'Sólo puedes pagar tus propias citas'}, 
-                            status=status.HTTP_403_FORBIDDEN)
-        
-        # Verificar que la fecha de pago no haya expirado
-        now = timezone.now()
-        if now > appointment.start_time:
-            return Response({'error': 'No se puede crear un SetupIntent para una cita pasada'}, 
-                            status=status.HTTP_400_BAD_REQUEST)
-        
         # --- NUEVO: Crear o recuperar el Customer en Stripe ---
         patient = user.patient
         if not patient.stripe_customer_id:

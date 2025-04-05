@@ -2,8 +2,6 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 import time
@@ -15,18 +13,19 @@ from dotenv import load_dotenv
 # Cargar las variables de entorno desde el archivo .env
 load_dotenv()
 
+
 class SeleniumScraper:
-    
+
     def __init__(self):
-        
+
         if os.getenv("DEBUG") == "True":
             # Configurar Selenium (se requiere que JS esté habilitado)
             options = webdriver.ChromeOptions()
             options.add_argument("--headless")  # Ejecutar en segundo plano
-            options.add_argument("--no-sandbox")  
+            options.add_argument("--no-sandbox")
             options.add_argument("--enable-javascript")  # Asegurar que JS está habilitado
-            options.add_argument("--disable-dev-shm-usage")  
-            
+            options.add_argument("--disable-dev-shm-usage")
+
             # Inicializar WebDriver
             self.driver = webdriver.Chrome(
                 service=Service(executable_path=ChromeDriverManager().install()),
@@ -35,11 +34,11 @@ class SeleniumScraper:
         else:
             options = webdriver.ChromeOptions()
             options.add_argument("--headless")  # Ejecutar en segundo plano
-            options.add_argument("--no-sandbox")  
+            options.add_argument("--no-sandbox")
             options.add_argument("--enable-javascript")  # Asegurar que JS está habilitado
-            options.add_argument("--disable-gpu")  
+            options.add_argument("--disable-gpu")
             options.add_argument("--window-size=1920x1080")
-            options.add_argument("--disable-dev-shm-usage") 
+            options.add_argument("--disable-dev-shm-usage")
             options.binary_location = "/usr/bin/chromium-browser"
 
             # Especificar ruta manual de ChromeDriver
@@ -50,39 +49,40 @@ class SeleniumScraper:
                 service=Service(executable_path=chromedriver_path),
                 options=options
             )
-            
 
-    def obtener_colegiado(self, valorBusqueda: str, url: str, xpath: str, loadTime: int = 2, general: str = None) -> BeautifulSoup:
+    def obtener_colegiado(
+      self, valorBusqueda: str, url: str, xpath: str, loadTime: int = 2, general: str = None) -> BeautifulSoup:
         self.driver.get(url)
         time.sleep(loadTime)  # Esperar que cargue la página
-        
+
         if "murcia" in url:
             num_sort = self.driver.find_element(By.XPATH, '//*[@id="myTable"]/thead/tr/th[3]')
             num_sort.click()
-            
+
         if general == "navarra":
             select = self.driver.find_element(By.XPATH, '//*[@id="colegio"]/option[16]')
             select.click()
-        
+
         if general == "canarias":
             select = self.driver.find_element(By.XPATH, '//*[@id="colegio"]/option[6]')
             select.click()
-            
+
         if general == "castilla y leon":
             select = self.driver.find_element(By.XPATH, '//*[@id="colegio"]/option[9]')
             select.click()
-    
+
         search_box = self.driver.find_element(By.XPATH, xpath)
         search_box.send_keys(valorBusqueda)  # Ingresar valor de búsqueda (nombre o número)
         search_box.send_keys(Keys.RETURN)
-        
+
         # Para el caso de castilla y leon, hay que hacer click en el botón de buscar
         if "cpfcyl" in url:
-            search_div = self.driver.find_element(By.XPATH, '//*[@id="cdk-accordion-child-0"]/div/form/div/web-loading-button/button/span[1]/div')
+            xpath = '//*[@id="cdk-accordion-child-0"]/div/form/div/web-loading-button/button/span[1]/div'
+            search_div = self.driver.find_element(By.XPATH, xpath)
             search_div.click()
-    
+
         time.sleep(2)  # Esperar la carga de resultados
-    
+
         soup = BeautifulSoup(self.driver.page_source, "html.parser")
         return soup
 
@@ -124,7 +124,7 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
                 except Exception as e:
                     print(f"⚠️ Error durante la validación en {comunidad}: {e}")
                     return False
-            
+
             case "aragon":  # Por número y nombre
                 url = "https://ventanilla.colfisioaragon.org/buscador-colegiados"
                 try:
@@ -138,7 +138,7 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
                 except Exception as e:
                     print(f"⚠️ Error durante la validación en {comunidad}: {e}")
                     return False
-            
+
             case "asturias":  # Por número y nombre
                 url = "https://www.cofispa.org/censo-colegiados"
                 try:
@@ -147,7 +147,7 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
                     if resultado:
                         datos = [td.text.strip() for td in resultado.find_all("td")]
                         datos = quitar_tildes(f"{datos[1]} {datos[2]} {datos[3]}")
-                        if("Mª" in datos):
+                        if ("Mª" in datos):
                             datos = datos.replace("Mª", "MARIA")
                         return datos == quitar_tildes(nombre)
                     else:
@@ -155,7 +155,7 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
                 except Exception as e:
                     print(f"⚠️ Error durante la validación en {comunidad}: {e}")
                     return False
-            
+
             case "baleares":  # Por número y nombre
                 url = "http://www.colfisiobalear.org/es/area-social-y-ciudadana/profesionales-colegiados/"
                 try:
@@ -170,7 +170,7 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
                 except Exception as e:
                     print(f"⚠️ Error durante la validación en {comunidad}: {e}")
                     return False
-            
+
             case "canarias":  # Por número y nombre (NO FUNCIONA CON HEADLESS)
                 url = "https://www.consejo-fisioterapia.org/vu_colegiados.html"
                 try:
@@ -184,7 +184,7 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
                 except Exception as e:
                     print(f"⚠️ Error durante la validación en {comunidad}: {e}")
                     return False
-            
+
             case "cantabria":  # Por número y nombre
                 url = "https://colfisiocant.org/busqueda-profesionales/"
                 try:
@@ -200,7 +200,7 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
                 except Exception as e:
                     print(f"⚠️ Error durante la validación en {comunidad}: {e}")
                     return False
-            
+
             case "castilla-la mancha":  # Por número y nombre
                 url = "https://www.coficam.org/ventanilla-unica/censo-colegial"
                 try:
@@ -216,7 +216,7 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
                 except Exception as e:
                     print(f"⚠️ Error durante la validación en {comunidad}: {e}")
                     return False
-            
+
             case "castilla y leon":  # Por número y nombre (NO FUNCIONA CON HEADLESS)
                 url = "https://www.consejo-fisioterapia.org/vu_colegiados.html"
                 try:
@@ -230,7 +230,7 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
                 except Exception as e:
                     print(f"⚠️ Error durante la validación en {comunidad}: {e}")
                     return False
-            
+
             case "cataluña":  # Por número y nombre
                 url = "https://www.fisioterapeutes.cat/es/ciudadanos/profesionales"
                 try:
@@ -246,11 +246,12 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
                 except Exception as e:
                     print(f"⚠️ Error durante la validación en {comunidad}: {e}")
                     return False
-            
+
             case "extremadura":  # Por número y nombre
                 url = "https://cofext.org/cms/colegiados.php"
                 try:
-                    soup = scraper.obtener_colegiado(quitar_tildes(nombre), url, '//*[@id="example_filter"]/label/input')
+                    xpath = '//*[@id="example_filter"]/label/input'
+                    soup = scraper.obtener_colegiado(quitar_tildes(nombre), url, xpath)
                     resultado = soup.find("tr", class_="odd")
                     if resultado:
                         datos = [td.text.strip() for td in resultado.find_all("td")]
@@ -260,7 +261,7 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
                 except Exception as e:
                     print(f"⚠️ Error durante la validación en {comunidad}: {e}")
                     return False
-            
+
             case "galicia":  # Por número y nombre
                 url = "https://www.cofiga.org/ciudadanos/colegiados"
                 try:
@@ -276,13 +277,15 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
                 except Exception as e:
                     print(f"⚠️ Error durante la validación en {comunidad}: {e}")
                     return False
-            
-            case "la rioja":  # Por número y nombre (se haría por nombre, pero si se rellena el número con ceros, no debe haber problema)
+
+            # Por número y nombre (se haría por nombre, pero si se rellena el número con ceros, no debe haber problema)
+            case "la rioja":
                 url = "https://www.coflarioja.org/ciudadanos/listado-de-fisioterapeutas/buscar-colegiados"
                 try:
                     while len(numero) < 4:
                         numero = "0" + numero
-                    soup = scraper.obtener_colegiado(numero, url, '//*[@id="busqueda-colegiados-search-input"]/div/input')
+                    xpath = '//*[@id="busqueda-colegiados-search-input"]/div/input'
+                    soup = scraper.obtener_colegiado(numero, url, xpath)
                     resultado = soup.find("tbody").tr
                     if resultado:
                         datos = [td.text.strip() for td in resultado.find_all("td")]
@@ -295,11 +298,12 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
                 except Exception as e:
                     print(f"⚠️ Error durante la validación en {comunidad}: {e}")
                     return False
-            
+
             case "madrid":  # Por nombre
                 url = "https://cfisiomad.com/#/ext/buscarcolegiado"
                 try:
-                    soup = scraper.obtener_colegiado(nombre, url, "/html/body/app-root/app-externos/section/div/app-search-collegiate/div/div/form/input[1]", 10)
+                    xpath = "/html/body/app-root/app-externos/section/div/app-search-collegiate/div/div/form/input[1]"
+                    soup = scraper.obtener_colegiado(nombre, url, xpath, 10)
                     resultado = soup.find("tbody").tr
                     if resultado:
                         datos = [td.text.strip() for td in resultado.find_all("td")]
@@ -309,7 +313,7 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
                 except Exception as e:
                     print(f"⚠️ Error durante la validación en {comunidad}: {e}")
                     return False
-            
+
             case "murcia":  # Por número y nombre
                 url = "https://cfisiomurcia.com/buscador-de-colegiados/"
                 try:
@@ -326,7 +330,7 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
                 except Exception as e:
                     print(f"⚠️ Error durante la validación en {comunidad}: {e}")
                     return False
-            
+
             case "navarra":  # Por nombre, se valida en la web general de colegiados
                 url = "https://www.consejo-fisioterapia.org/vu_colegiados.html"
                 try:
@@ -340,7 +344,7 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
                 except Exception as e:
                     print(f"⚠️ Error durante la validación en {comunidad}: {e}")
                     return False
-            
+
             case "pais vasco":  # Por nombre (TARDA MUCHO)
                 url = "https://cofpv.org/es/colegiados.asp"
                 try:
@@ -354,11 +358,12 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
                 except Exception as e:
                     print(f"⚠️ Error durante la validación en {comunidad}: {e}")
                     return False
-            
+
             case "comunidad valenciana":  # Por número y nombre
                 url = "https://app.colfisiocv.com/college/collegiatelist/"
                 try:
-                    soup = scraper.obtener_colegiado(numero, url, '//*[@id="root"]/div/div[2]/div[3]/div/div[2]/div/div[1]/div[1]/div[2]/input')
+                    xpath = '//*[@id="root"]/div/div[2]/div[3]/div/div[2]/div/div[1]/div[1]/div[2]/input'
+                    soup = scraper.obtener_colegiado(numero, url, xpath)
                     resultado = soup.find("tr", class_="bg-white border-b")
                     if resultado:
                         datos = [td.text.strip() for td in resultado.find_all("td")]
@@ -369,7 +374,7 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
                 except Exception as e:
                     print(f"⚠️ Error durante la validación en {comunidad}: {e}")
                     return False
-            
+
             case _:
                 return False
     finally:
