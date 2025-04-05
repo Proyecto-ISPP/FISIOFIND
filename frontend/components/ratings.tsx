@@ -7,6 +7,8 @@ import styles from './ratings.module.css';
 import { getApiBaseUrl } from "@/utils/api";
 import { useRouter } from "next/navigation";
 import { GradientButton } from './ui/gradient-button';
+import Alert from "@/components/ui/Alert";
+
 
 interface PhysiotherapistDetails {
   id: number;  // ID is included in your serializer
@@ -48,6 +50,21 @@ const TopRatings: React.FC = () => {
   
   const apiBaseUrl = getApiBaseUrl();
 
+  const [alertMessage, setAlertMessage] = useState<string | null>(null);
+  const [alertType, setAlertType] = useState<
+    "success" | "error" | "info" | "warning"
+  >("success");
+
+  // Add this function to show alerts
+  const showAlert = (type: "success" | "error" | "info" | "warning", message: string) => {
+    setAlertType(type);
+    setAlertMessage(message);
+    // Auto-dismiss after 5 seconds
+    setTimeout(() => {
+      setAlertMessage(null);
+    }, 5000);
+  };
+
   // Check if user is authenticated and is a physiotherapist
   useEffect(() => {
     const checkAuth = async () => {
@@ -74,12 +91,16 @@ const TopRatings: React.FC = () => {
           setIsPhysio(false);
         }
       } catch (error) {
-        console.error("Error checking user role:", error);
         setIsAuthenticated(false);
         if (error.response?.status === 401) {
           if (typeof window !== 'undefined') {
             localStorage.removeItem("token");
           }
+        }
+        if (error.response) {
+            showAlert("error",`Error: ${JSON.stringify(error.response.data)}`);
+        } else {
+            showAlert("error","Error al comprobar el rol del usuario.");
         }
       } finally {
         setIsAuthChecking(false);
@@ -110,8 +131,14 @@ const TopRatings: React.FC = () => {
         setHasRated(false);
       }
     } catch (err) {
-      console.error("Error checking if physio has rated:", err);
       setHasRated(false);
+      
+      // Add alert for error handling
+      if (axios.isAxiosError(err) && err.response) {
+        showAlert("error", `Error: ${JSON.stringify(err.response.data)}`);
+      } else {
+        showAlert("error", "Error al comprobar si ya has valorado la aplicación.");
+      }
     }
   };
 
@@ -127,15 +154,12 @@ const TopRatings: React.FC = () => {
     const fetchTopRatings = async () => {
       try {
         setLoading(true);
-        console.log("Fetching from:", `${apiBaseUrl}/api/ratings/list/`);
         const response = await axios.get(`${apiBaseUrl}/api/ratings/list/`);
         
         if (!response.data) {
           throw new Error('No data received from server');
         }
-        
-        console.log("Received data:", response.data);
-        
+                
         // Process the response and set the ratings
         const sortedRatings = response.data
           .sort((a: Rating, b: Rating) => b.punctuation - a.punctuation)
@@ -143,11 +167,14 @@ const TopRatings: React.FC = () => {
         setRatings(sortedRatings);
         
       } catch (err) {
-        console.error('Error fetching ratings:', err);
-        if (err.response) {
-          console.error('Response error:', err.response.status, err.response.data);
-        }
         setError('Failed to load ratings. Please try again later.');
+        
+        // Add alert for error handling
+        if (axios.isAxiosError(err) && err.response) {
+          showAlert("error", `Error: ${JSON.stringify(err.response.data)}`);
+        } else {
+          showAlert("error", "Error al cargar las valoraciones. Por favor, inténtalo de nuevo más tarde.");
+        }
       } finally {
         setLoading(false);
       }
@@ -206,12 +233,14 @@ const TopRatings: React.FC = () => {
       const token = getAuthToken();
       if (!token) {
         setError('You must be logged in to submit a rating');
+        showAlert("error", "Debes iniciar sesión para enviar una valoración.");
         return;
       }
 
       // Make sure the opinion is not empty
       if (!newRating.opinion.trim()) {
         setError('Please provide an opinion');
+        showAlert("error", "Por favor, proporciona una opinión.");
         return;
       }
 
@@ -222,7 +251,6 @@ const TopRatings: React.FC = () => {
       };
 
       // Log the payload for debugging
-      console.log("Submitting rating:", payload);
 
       await axios.post(
         `${apiBaseUrl}/api/ratings/create/`, 
@@ -237,6 +265,7 @@ const TopRatings: React.FC = () => {
       // Show confirmation message for ratings with 3 stars or more
       if (newRating.punctuation >= 3) {
         setConfirmationMessage('¡Gracias por valorar nuestra app!');
+        showAlert("success", "¡Gracias por valorar nuestra app!");
         setTimeout(() => setConfirmationMessage(null), 3000); // Hide after 3 seconds
       }
 
@@ -249,13 +278,15 @@ const TopRatings: React.FC = () => {
             .slice(0, 3); // Show only the first 3 ratings
           setRatings(sortedRatings);
         } catch (err) {
-          console.error('Error refreshing ratings:', err);
+          if (axios.isAxiosError(err) && err.response) {
+            showAlert("error", `Error: ${JSON.stringify(err.response.data)}`);
+          } else {
+            showAlert("error", "Error al actualizar las valoraciones. Por favor, recarga la página.");
+          }
         }
-      }, 500);
+      });
       
     } catch (err) {
-      console.error('Error submitting rating:', err);
-
       if (axios.isAxiosError(err) && err.response) {
         // Handle 400 Bad Request specifically
         if (err.response.status === 400) {
@@ -265,14 +296,18 @@ const TopRatings: React.FC = () => {
               .flat()
               .join(', ');
             setError(`Failed to submit rating: ${errorMessages}`);
+            showAlert("error", `Error al enviar la valoración: ${errorMessages}`);
           } else {
             setError('Failed to submit rating. Please check your input.');
+            showAlert("error", "Error al enviar la valoración. Por favor, revisa tu entrada.");
           }
         } else {
           setError(`Error: ${err.response.status} - ${err.response.statusText}`);
+          showAlert("error", `Error: ${err.response.status} - ${err.response.statusText}`);
         }
       } else {
         setError('Failed to submit rating. Please try again later.');
+        showAlert("error", "Error al enviar la valoración. Por favor, inténtalo de nuevo más tarde.");
       }
     }
   };
@@ -287,6 +322,15 @@ const TopRatings: React.FC = () => {
 
   return (
     <div className={styles.ratingsContainer}>
+    {alertMessage && (
+        <div className="mb-6">
+          <Alert
+            type={alertType}
+            message={alertMessage}
+            onClose={() => setAlertMessage(null)}
+          />
+        </div>
+      )}
       {/* Confirmation message */}
       {confirmationMessage && (
         <div className={styles.confirmationMessage}>
