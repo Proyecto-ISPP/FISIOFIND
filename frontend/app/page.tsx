@@ -389,7 +389,7 @@ const Home = () => {
       {!isAuthenticated && (
         <section className="py-16 bg-gray-50">
           <div className="max-w-screen-xl mx-auto px-4">
-            <h2 className="text-4xl font-bold text-[#253240] mb-12 text-center">Únete a tuFisio</h2>
+            <h2 className="text-4xl font-bold text-[#253240] mb-12 text-center">Únete a Fisio Find</h2>
             
             <div className="max-w-md mx-auto">
               <div className="mb-6">
