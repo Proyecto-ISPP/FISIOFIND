@@ -6,7 +6,7 @@ urlpatterns = [
     path('schedule/<int:pk>/', views.get_physio_schedule_by_id),
     path('physio/schedule/weekly/', views.edit_weekly_schedule ),
     path('<int:appointmentId>/', views.get_appointment_by_id, name='get_appointment_by_id'),
-    path('confirm/<str:token>/', views.confirm_appointment_using_token, name='confirm_appointment'),
+    path('confirm-appointment/<str:token>/', views.confirm_appointment_using_token, name='confirm_appointment'),
     path('confirm-alternative/<str:token>/', views.confirm_alternative_appointment, name='confirm_appointment_alternatives'),
 
     #Patients
