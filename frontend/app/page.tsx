@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
 import Modal from "@/components/ui/Modal";
 import Link from "next/link";
 import axios from "axios";
@@ -14,6 +13,7 @@ import { DemoWindow } from "@/components/demo-window";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { CookieConsent } from "@/components/CookieConsent";
 import TopRatings from "@/components/ratings";
+import { HeroHighlight, Highlight } from "@/components/ui/hero-highlight";
 
 interface Physiotherapist {
   id: string;
@@ -118,37 +118,6 @@ const Home = () => {
     setShowDraftModal(value);
   };
 
-  // Datos de ejemplo para los fisioterapeutas destacados
-  // const topPhysiotherapists: Physiotherapist[] = [
-  //   {
-  //     name: "Dr. Ana García",
-  //     speciality: "Fisioterapia Deportiva",
-  //     rating: 4.9,
-  //     image:
-  //       "https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=3328&auto=format&fit=crop",
-  //     location: "Madrid",
-  //     reviews: 128,
-  //   },
-  //   {
-  //     name: "Dr. Carlos Rodríguez",
-  //     speciality: "Rehabilitación Neurológica",
-  //     rating: 4.8,
-  //     image:
-  //       "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=3270&auto=format&fit=crop",
-  //     location: "Barcelona",
-  //     reviews: 96,
-  //   },
-  //   {
-  //     name: "Dra. Laura Martínez",
-  //     speciality: "Fisioterapia Pediátrica",
-  //     rating: 4.8,
-  //     image:
-  //       "https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=3270&auto=format&fit=crop",
-  //     location: "Valencia",
-  //     reviews: 112,
-  //   },
-  // ];
-
   const SearchPhysiotherapists = () => {
     const [searchResults, setSearchResults] = useState<Physiotherapist[]>([]);
     const [specialization, setSpecialization] = useState("");
@@ -195,41 +164,41 @@ const Home = () => {
       fetchSpecializations();
     }, []);
 
-    const handleSearch = async () => {
-      setSearchAttempted(true);
+    // const handleSearch = async () => {
+    //   setSearchAttempted(true);
 
-      if (!specialization) {
-        return;
-      }
+    //   if (!specialization) {
+    //     return;
+    //   }
 
-      try {
-        const searchUrl = `${apiBaseurl}/api/guest_session/physios-with-specializations/?specialization=${specialization}`;
-        const response = await axios.get(searchUrl);
+    //   try {
+    //     const searchUrl = `${apiBaseurl}/api/guest_session/physios-with-specializations/?specialization=${specialization}`;
+    //     const response = await axios.get(searchUrl);
 
-        if (response.status === 200) {
-          const results = response.data.map(
-            (physio: {
-              id: string;
-              first_name: string;
-              last_name: string;
-              specializations: string[];
-            }) => ({
-              id: physio.id,
-              name: `${physio.first_name} ${physio.last_name}`,
-              specializations: physio.specializations.join(", "),
-            })
-          );
-          console.log(results);
-          setSearchResults(results);
-        } else {
-          alert(response.data.detail || "No se encontraron resultados.");
-          setSearchResults([]);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setSearchResults([]);
-      }
-    };
+    //     if (response.status === 200) {
+    //       const results = response.data.map(
+    //         (physio: {
+    //           id: string;
+    //           first_name: string;
+    //           last_name: string;
+    //           specializations: string[];
+    //         }) => ({
+    //           id: physio.id,
+    //           name: `${physio.first_name} ${physio.last_name}`,
+    //           specializations: physio.specializations.join(", "),
+    //         })
+    //       );
+    //       console.log(results);
+    //       setSearchResults(results);
+    //     } else {
+    //       alert(response.data.detail || "No se encontraron resultados.");
+    //       setSearchResults([]);
+    //     }
+    //   } catch (error) {
+    //     console.error("Error fetching data:", error);
+    //     setSearchResults([]);
+    //   }
+    // };
 
     return (
       <div className="w-full flex items-center relative">
@@ -317,10 +286,22 @@ const Home = () => {
             <h1 className="text-7xl font-bold mb-12 font-alfa-slab-one relative z-10">
               <span className="text-white drop-shadow-[0_2.5px_3.5px_#41B8D5]">Fisio Find</span>
             </h1>
-            <p className="text-xl font-bold mb-14 max-w-2xl mx-auto relative z-10 text-[#253240] mt-16">
-              La plataforma especializada en fisioterapia online donde te conectamos
-              con el profesional que mejor se ajusta a tus necesidades.
-            </p>
+            <div className="max-w-4xl mx-auto relative z-10 text-[#253240] mt-16">
+              <HeroHighlight containerClassName="h-auto py-12 bg-[rgb(238, 251, 250)]">
+                <p className="text-xl font-bold leading-relaxed">
+                  La plataforma especializada en 
+                  <Highlight className="from-[#41B8D5] to-[#1E5ACD] dark:from-[#41B8D5] dark:to-[#1E5ACD]">
+                    fisioterapia
+                  </Highlight> 
+                  online donde te conectamos
+                  con el 
+                  <Highlight className="from-[#41B8D5] to-[#1E5ACD] dark:from-[#41B8D5] dark:to-[#1E5ACD]">
+                    profesional
+                  </Highlight> 
+                  que mejor se ajusta a tus necesidades.
+                </p>
+              </HeroHighlight>
+            </div>
           </div>
       </section>
 
@@ -378,61 +359,9 @@ const Home = () => {
           <br />
         </section>
       )}
-      {/* Sección “¿Eres fisioterapeuta?” */}
+    
 
-      {/* Top Physiotherapists Section */}
-      <section className="max-w-7xl mx-auto px-4 mb-12">
-        {/* <h2 className="text-3xl text-[#253240] font-bold mb-8 text-center">
-          Top Fisioterapeutas
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {topPhysiotherapists.map((physio, index) => (
-            <CardContainer key={index}>
-              <CardBody className="bg-gradient-to-bl from-white to-[#65C2C9]/50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-blue-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-full h-auto rounded-xl p-6 border">
-                <CardItem
-                  translateZ="50"
-                  className="text-xl font-bold text-neutral-600 dark:text-white"
-                >
-                  {physio.name}
-                </CardItem>
-                <CardItem
-                  as="p"
-                  translateZ="40"
-                  className="text-neutral-500 text-sm mt-2 dark:text-neutral-300"
-                >
-                  {physio.speciality}
-                </CardItem>
-                <CardItem translateZ="60" className="w-full mt-4">
-                  <img
-                    src={physio.image}
-                    className="h-48 w-full object-cover rounded-xl group-hover/card:shadow-xl"
-                    alt={physio.name}
-                  />
-                </CardItem>
-                <div className="flex justify-between items-center mt-6">
-                  <CardItem translateZ="20" className="flex items-center gap-1">
-                    <span className="text-yellow-500">★</span>
-                    <span className="font-semibold">{physio.rating}</span>
-                    <span className="text-sm text-neutral-500">
-                      ({physio.reviews} reviews)
-                    </span>
-                  </CardItem>
-                  <CardItem
-                    translateZ="20"
-                    as="button"
-                    className="px-4 py-2 rounded-xl bg-[#1E5ACD] text-white text-sm font-bold hover:bg-[#1848A3] transition-colors"
-                    onClick={() => handleViewPhysio(physio.name)}
-                  >
-                    Ver perfil
-                  </CardItem>
-                </div>
-              </CardBody>
-            </CardContainer>
-          ))}
-        </div> */}
-      </section>
-
-      {/* Top Ratings Section */}
+      {/* Ratings Section */}
       <section className="max-w-7xl mx-auto px-4 mb-12">
         <h2 className="text-3xl text-[#253240] font-bold mb-8 text-center">
           La opinión de fisioterapeutas profesionales
