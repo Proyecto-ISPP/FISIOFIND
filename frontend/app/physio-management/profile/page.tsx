@@ -132,6 +132,8 @@ const FisioProfile = () => {
     const [showRatingForm, setShowRatingForm] = useState<boolean>(false);
     const [newRating, setNewRating] = useState<{ punctuation: number; opinion: string }>({ punctuation: 5, opinion: "" });
 
+    const [confirmRatingDelete, setConfirmRatingDelete] = useState<boolean>(false);
+
     useEffect(() => {
         setIsClient(true);
     }, []);
@@ -384,12 +386,12 @@ const FisioProfile = () => {
     const handleSubmitRating = async () => {
         try {
             if (!newRating.opinion.trim()) {
-                alert("Por favor, proporciona una opinión.");
+                showAlert("error", "Por favor, proporciona una opinión.");
                 return;
             }
 
             if (newRating.opinion.trim().length > 140) {
-                alert("La opinión no puede exceder los 140 caracteres.");
+                showAlert("error", "La opinión no puede exceder los 140 caracteres.");
                 return;
             }
 
@@ -398,8 +400,6 @@ const FisioProfile = () => {
                 opinion: newRating.opinion,
                 physiotherapist: profile.user.user_id,
             };
-            console.log("Payload being sent:", payload);
-            console.log("Rating ID:", rating?.id);
 
             if (hasRated && rating) {
                 await axios.put(`${getApiBaseUrl()}/api/ratings/update/${rating.id}/`, payload, {
@@ -413,35 +413,48 @@ const FisioProfile = () => {
 
             setShowRatingForm(false);
             setHasRated(true);
-            
+        
+            if (newRating.punctuation >= 3) {
+                showAlert("success", "¡Gracias por valorar nuestra app!");
+            } else {
+                showAlert("success", "Valoración enviada correctamente.");
+            }
+                        
             // Reload the page after successful submission
             window.location.reload();
         } catch (error) {
             console.error("Error submitting rating:", error);
             if (axios.isAxiosError(error) && error.response) {
-                alert(`Error: ${JSON.stringify(error.response.data)}`);
+                showAlert("error", `Error: ${JSON.stringify(error.response.data)}`);
             } else {
-                alert("Error al enviar la valoración.");
+                showAlert("error", "Error al enviar la valoración. Por favor, inténtalo de nuevo más tarde.");
             }
         }
     };
 
     const handleDeleteRating = async () => {
         if (!rating) return;
+        setConfirmRatingDelete(true);
+    };
 
-        if (window.confirm("¿Estás seguro de que deseas eliminar tu valoración?")) {
-            try {
-                await axios.delete(`${getApiBaseUrl()}/api/ratings/delete/${rating.id}/`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-                alert("Valoración eliminada correctamente.");
-                setHasRated(false);
-                setRating(null);
-                fetchFisioProfile();
-            } catch (error) {
-                console.error("Error deleting rating:", error);
-                alert("Error al eliminar la valoración.");
+    const handleConfirmRatingDelete = async () => {
+        try {
+            await axios.delete(`${getApiBaseUrl()}/api/ratings/delete/${rating.id}/`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            showAlert("success", "Valoración eliminada correctamente.");
+            setHasRated(false);
+            setRating(null);
+            fetchFisioProfile();
+        } catch (error) {
+            console.error("Error deleting rating:", error);
+            if (axios.isAxiosError(error) && error.response) {
+                showAlert("error", `Error: ${JSON.stringify(error.response.data)}`);
+            } else {
+                showAlert("error", "Error al eliminar la valoración. Por favor, inténtalo de nuevo más tarde.");
             }
+        } finally {
+            setConfirmRatingDelete(false);
         }
     };
 
@@ -465,8 +478,12 @@ const FisioProfile = () => {
           setHasRated(false);
         }
       } catch (err) {
-        console.error("Error checking if physio has rated:", err);
         setHasRated(false);
+        if (axios.isAxiosError(err) && err.response) {
+            showAlert("error", `Error: ${JSON.stringify(err.response.data)}`);
+        } else {
+            showAlert("error", "Error al comprobar si ya has valorado la aplicación.");
+        }
       }
     };
     
@@ -1223,7 +1240,11 @@ const FisioProfile = () => {
                                     <div className={styles.stars}>
                                         {renderStars(rating.punctuation)}
                                     </div>
-                                    <p className="text-sm text-white">{rating.opinion.split(' ').slice(0, 5).join(' ').concat("...")}</p>
+                                    <p className="text-sm text-white">
+                                        {rating.opinion.split(' ')[0].length > 10
+                                            ? rating.opinion.slice(0, 10).concat("...")
+                                            : rating.opinion.split(' ').slice(0, 5).join(' ').concat("...")}
+                                    </p>
                                 </div>
                                 <div className="flex space-x-2">
                                     <GradientButton
@@ -1549,6 +1570,12 @@ const FisioProfile = () => {
             onConfirm={handleConfirmDelete}
             onCancel={() => setConfirmModal({ isOpen: false, serviceIndex: null })}
             />
+            <ConfirmModal
+                isOpen={confirmRatingDelete}
+                message="¿Estás seguro de que deseas eliminar tu valoración de la app?"
+                onConfirm={handleConfirmRatingDelete}
+                onCancel={() => setConfirmRatingDelete(false)}
+            />
             {alert.show && (
             <Alert
                 type={alert.type}
@@ -1556,7 +1583,7 @@ const FisioProfile = () => {
                 onClose={() => setAlert({ ...alert, show: false })}
                 duration={5000}
             />
-        )}
+            )}
 
       </div>
     );

@@ -166,10 +166,7 @@ const TopRatings: React.FC = () => {
           .slice(0, 3); // Show only the first 3 ratings
         setRatings(sortedRatings);
         
-      } catch (err) {
-        setError('Failed to load ratings. Please try again later.');
-        
-        // Add alert for error handling
+      } catch (err) {        
         if (axios.isAxiosError(err) && err.response) {
           showAlert("error", `Error: ${JSON.stringify(err.response.data)}`);
         } else {
@@ -232,15 +229,19 @@ const TopRatings: React.FC = () => {
     try {
       const token = getAuthToken();
       if (!token) {
-        setError('You must be logged in to submit a rating');
         showAlert("error", "Debes iniciar sesión para enviar una valoración.");
         return;
       }
 
       // Make sure the opinion is not empty
       if (!newRating.opinion.trim()) {
-        setError('Please provide an opinion');
         showAlert("error", "Por favor, proporciona una opinión.");
+        return;
+      }
+
+      // Check if opinion exceeds 140 characters
+      if (newRating.opinion.length > 140) {
+        showAlert("error", "La opinión debe tener 140 caracteres o menos.");
         return;
       }
 
@@ -264,9 +265,8 @@ const TopRatings: React.FC = () => {
 
       // Show confirmation message for ratings with 3 stars or more
       if (newRating.punctuation >= 3) {
-        setConfirmationMessage('¡Gracias por valorar nuestra app!');
         showAlert("success", "¡Gracias por valorar nuestra app!");
-        setTimeout(() => setConfirmationMessage(null), 3000); // Hide after 3 seconds
+        setTimeout(() => setConfirmationMessage(null), 3000);
       }
 
       // Refresh ratings (use a slight delay to ensure the new rating is included)
@@ -295,18 +295,14 @@ const TopRatings: React.FC = () => {
             const errorMessages = Object.values(errorData)
               .flat()
               .join(', ');
-            setError(`Failed to submit rating: ${errorMessages}`);
             showAlert("error", `Error al enviar la valoración: ${errorMessages}`);
           } else {
-            setError('Failed to submit rating. Please check your input.');
             showAlert("error", "Error al enviar la valoración. Por favor, revisa tu entrada.");
           }
         } else {
-          setError(`Error: ${err.response.status} - ${err.response.statusText}`);
           showAlert("error", `Error: ${err.response.status} - ${err.response.statusText}`);
         }
       } else {
-        setError('Failed to submit rating. Please try again later.');
         showAlert("error", "Error al enviar la valoración. Por favor, inténtalo de nuevo más tarde.");
       }
     }
@@ -323,13 +319,13 @@ const TopRatings: React.FC = () => {
   return (
     <div className={styles.ratingsContainer}>
     {alertMessage && (
-        <div className="mb-6">
-          <Alert
-            type={alertType}
-            message={alertMessage}
-            onClose={() => setAlertMessage(null)}
-          />
-        </div>
+      <div className="mb-6">
+        <Alert
+          type={alertType}
+          message={alertMessage}
+          onClose={() => setAlertMessage(null)}
+        />
+      </div>
       )}
       {/* Confirmation message */}
       {confirmationMessage && (
@@ -403,13 +399,25 @@ const TopRatings: React.FC = () => {
               </div>
             </div>
             <p className={styles.message}>
-              <span 
-                onClick={() => router.push('/login')} 
-                className={styles.loginLink}
-                style={{ color: 'blue', textDecoration: 'underline' }}
-              >
-                ¡Inicia sesión
-              </span> como fisioterapeuta y sé el primero en valorarnos!
+              {isAuthenticated && isPhysio ? (
+                <span 
+                  onClick={() => setShowRatingForm(true)} 
+                  className={styles.loginLink}
+                  style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer' }}
+                >
+                  ¡Sé el primero en valorar nuestra app!
+                </span>
+              ) : (
+                <span>
+                  <span 
+                    onClick={() => router.push('/login')} 
+                    className={styles.loginLink}
+                    style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer' }}
+                  >
+                    ¡Inicia sesión
+                  </span> como fisioterapeuta y sé el primero en valorarnos!
+                </span>
+              )}
             </p>
           </div>
         </div>
