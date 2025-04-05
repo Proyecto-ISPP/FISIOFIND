@@ -7,17 +7,17 @@ import { Play, AlertCircle, X, Loader2 } from 'lucide-react';
 import { useParams } from "next/navigation";
 
 const getAuthToken = () => {
-  return localStorage.getItem("token"); // Obtiene el token JWT
+  return localStorage.getItem("token");
 };
 
 const Pacientes = () => {
   const params = useParams();
   const id = params?.id as string;
   const [videos, setVideos] = useState<any[]>([]);
-  const [loading, setLoading] = useState<boolean>(true); // Cargando inicialmente
+  const [loading, setLoading] = useState<boolean>(true);
   const [message, setMessage] = useState<string>("");
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
-  const [isVideoLoading, setIsVideoLoading] = useState<boolean>(false); // Para controlar el modal de carga del video
+  const [isVideoLoading, setIsVideoLoading] = useState<boolean>(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isAuthChecking, setIsAuthChecking] = useState<boolean>(true);
 
@@ -48,7 +48,6 @@ const Pacientes = () => {
           window.location.href = "/not-found";
         }
       } catch (error) {
-        console.error("Error checking user role:", error);
         if (error.response?.status === 401) {
           // Token expired or invalid
           localStorage.removeItem("token");
@@ -71,7 +70,6 @@ const Pacientes = () => {
     const fetchVideos = async () => {
       const storedToken = getAuthToken();
       if (!storedToken) {
-        console.error(" No hay token disponible.");
         setMessage("Error: No hay token de autenticación.");
         setLoading(false);
         return;
@@ -90,7 +88,6 @@ const Pacientes = () => {
           setMessage(" No se encontraron videos.");
         }
       } catch (error) {
-        console.error("⚠️ Error al obtener los videos:", error);
         setMessage(" Error al obtener los videos.");
       } finally {
         setLoading(false); // Al finalizar la carga de videos, cambia el estado
@@ -103,7 +100,6 @@ const Pacientes = () => {
   const handleVideoClick = async (videoId: string) => {
     const storedToken = getAuthToken();
     if (!storedToken) {
-      console.error(" No hay token disponible.");
       setMessage("Error: No hay token de autenticación.");
       return;
     }
@@ -122,7 +118,6 @@ const Pacientes = () => {
       setVideoUrl(videoUrl); // Establecer la URL del video
 
     } catch (error) {
-      console.error("⚠️ Error al obtener el video:", error);
       setMessage(" Error al obtener el video.");
       setTimeout(() => setMessage(""), 5000);
     } finally {

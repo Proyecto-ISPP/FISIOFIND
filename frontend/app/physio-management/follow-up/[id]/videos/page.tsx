@@ -50,16 +50,18 @@ const PhysioVideo = () => {
       setLoadingVideos(true); // Establecer que estamos cargando videos
       try {
         const response = await axios.get(
-          `${getApiBaseUrl()}/api/cloud/videos/list-videos/`, // Asumiendo que esta es la ruta
+          `${getApiBaseUrl()}/api/cloud/videos/list-videos/`, 
           {
             headers: {
               Authorization: `Bearer ${storedToken}`,
             },
+            params: {
+              treatment: id // Add treatment ID as a query parameter
+            }
           }
         );
         setVideos(response.data);
       } catch (error) {
-        // Replace console.error with showAlert
         showAlert("error", error.response?.data?.detail || "No se pudieron cargar los videos.");
       } finally {
         setLoadingVideos(false); // Terminar de cargar los videos
@@ -67,7 +69,7 @@ const PhysioVideo = () => {
     };
 
     fetchVideos(); // Llamar a la función para obtener los videos
-  }, []);
+  }, [id]); // Add id as a dependency
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -134,13 +136,11 @@ const PhysioVideo = () => {
           );
           setVideos(response.data);
         } catch (error) {
-          // Replace console.error with showAlert
           showAlert("error", error.response?.data?.detail || "No se pudieron cargar los videos.");
         }
       };
       fetchVideos();
     } catch (error) {
-      // Replace console.error with showAlert
       showAlert("error", error.response?.data?.detail || "Error al subir el vídeo. Intenta nuevamente.");
     } finally {
       setLoading(false);
@@ -194,13 +194,11 @@ const PhysioVideo = () => {
           );
           setVideos(response.data);
         } catch (error) {
-          // Replace console.error with showAlert
           showAlert("error", error.response?.data?.detail || "No se pudieron cargar los videos.");
         }
       };
       fetchVideos();
     } catch (error) {
-      // Replace console.error with showAlert
       showAlert("error", error.response?.data?.detail || "Error al actualizar el video. Intenta nuevamente.");
     }
   };
@@ -229,13 +227,11 @@ const PhysioVideo = () => {
           );
           setVideos(response.data);
         } catch (error) {
-          // Replace console.error with showAlert
           showAlert("error", error.response?.data?.detail || "No se pudieron cargar los videos.");
         }
       };
       fetchVideos();
     } catch (error) {
-      // Replace console.error with showAlert
       showAlert("error", error.response?.data?.detail || "Error al eliminar el video. Intenta nuevamente.");
     }
   };
