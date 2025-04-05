@@ -5,6 +5,8 @@ on:
 jobs:
   run:
     runs-on: ubuntu-latest
+    env:
+      BASE_URL: ${{ vars.BASE_URL }}
     steps:
       - name: Call API to Process Payments
         run: |
