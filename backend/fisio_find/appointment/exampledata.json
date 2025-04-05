@@ -3,9 +3,18 @@
         "model": "users.pricing",
         "pk": 1,
         "fields": {
-            "name": "Plan Básico",
-            "price": 50,
+            "name": "blue",
+            "price": 17.99,
             "video_limit": 15
+        }
+    },
+    {
+        "model": "users.pricing",
+        "pk": 2,
+        "fields": {
+            "name": "gold",
+            "price": 24.99,
+            "video_limit": 30
         }
     },
     {
