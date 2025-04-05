@@ -3,57 +3,28 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import Modal from "@/components/ui/Modal";
 import Link from "next/link";
-import axios from "axios";
-import { getApiBaseUrl } from "@/utils/api";
 import { useAppointment } from "@/context/appointmentContext";
-import DraftModal from "@/components/ui/draftAppointmentModal";
 import { CookieConsent } from "@/components/CookieConsent";
 import TopRatings from "@/components/ratings";
 import { HeroHighlight, Highlight } from "@/components/ui/hero-highlight";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { DemoWindow } from "@/components/demo-window";
-import { ContainerTextFlip } from "@/components/ui/container-text-flip";
-
-
-interface Physiotherapist {
-  id: string;
-  name: string;
-  speciality: string;
-  rating: number;
-  image: string;
-  location: string;
-  reviews: number;
-  specializations?: string;
-}
 
 const Home = () => {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isPhysioModalOpen, setIsPhysioModalOpen] = useState(false);
-  const openPhysioModal = () => setIsPhysioModalOpen(true);
-  const closePhysioModal = () => setIsPhysioModalOpen(false);
   const [isClient, setIsClient] = useState(false);
   const [token, setToken] = useState<string | null>(null);
-  const apiBaseurl = getApiBaseUrl();
   const [showDraftModal, setShowDraftModal] = useState(false);
   const [draftData, setDraftData] = useState<any>(null);
   const { dispatch } = useAppointment();
-  const [isHomeCare, setIsHomeCare] = useState(true);
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  // Si el usuario está autenticado se abre el modal, si no, redirige al perfil público
-  const handleViewPhysio = (physioName: string) => {
-    if (isAuthenticated) {
-      openPhysioModal();
-    } else {
-      router.push(`/profile/${physioName}`);
-    }
-  };
 
   // Solo comprueba la existencia del token en localStorage
   useEffect(() => {
@@ -99,98 +70,6 @@ const Home = () => {
     setShowDraftModal(value);
   };
 
-  const SearchPhysiotherapists = () => {
-    const [searchResults, setSearchResults] = useState<Physiotherapist[]>([]);
-    const [specialization, setSpecialization] = useState("");
-    const [specializations, setSpecializations] = useState<string[]>([]);
-    const [searchAttempted, setSearchAttempted] = useState(false);
-
-    useEffect(() => {
-      const fetchSpecializations = async () => {
-        try {
-          const response = await axios.get(
-            `${getApiBaseUrl()}/api/guest_session/specializations/`
-          );
-
-          if (response.status === 200) {
-            if (response.data && response.data.length > 0) {
-              setSpecializations(["", ...response.data]);
-            } else {
-              console.warn("Specializations list is empty.");
-              setSpecializations([]); // Set an empty list if no data is returned
-            }
-          } else {
-            console.warn("Unexpected response status:", response.status);
-          }
-        } catch (error) {
-          console.error("Error fetching data:", error);
-        }
-      };
-
-      fetchSpecializations();
-    }, []);
-
-    return (
-      <div className="w-full max-w-screen-xl mx-auto px-4 py-8">
-        {showDraftModal && draftData && (
-          <DraftModal
-            draftData={draftData}
-            onResume={handleResumeDraft}
-            onDiscard={handleDiscardDraft}
-          />
-        )}
-        <div className="bg-[rgb(238, 251, 250)] rounded-xl shadow-lg p-6 mb-12">
-          <div className="mb-6">
-            <div className="flex items-center mb-8">
-              <div className={`relative mr-4 ${isHomeCare ? 'text-white' : 'text-[#253240]'}`}>
-                <div className={`h-8 w-8 rounded-full flex items-center justify-center ${isHomeCare ? 'bg-[#41B8D5]' : 'bg-gray-200'}`}>
-                  <span className="text-sm font-bold">✓</span>
-                </div>
-                <span className="text-sm font-medium mt-1 block">A domicilio</span>
-              </div>
-              <div className={`relative mr-4 ${!isHomeCare ? 'text-white' : 'text-[#253240]'}`}>
-                <div className={`h-8 w-8 rounded-full flex items-center justify-center ${!isHomeCare ? 'bg-[#41B8D5]' : 'bg-gray-200'}`}>
-                  <span className="text-sm font-bold"></span>
-                </div>
-                <span className="text-sm font-medium mt-1 block">En consulta</span>
-              </div>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-4">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Ubicación o profesional"
-                  className="w-full py-3 px-4 border border-gray-300 rounded-lg"
-                />
-                <div className="absolute text-xs text-gray-500 top-1 left-4">
-                  ¿Dónde o Quién?
-                </div>
-              </div>
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Fecha"
-                  className="w-full py-3 px-4 border border-gray-300 rounded-lg"
-                />
-                <div className="absolute text-xs text-gray-500 top-1 left-4">
-                  ¿Cuándo?
-                </div>
-              </div>
-              <button
-                className="bg-[#05668D] hover:bg-[#05AC9C] text-white py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                Buscar
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
 
   return (
     <div className="min-h-screen w-full z=90" style={{ backgroundColor: "rgb(238, 251, 250)" }}>
@@ -486,39 +365,6 @@ const Home = () => {
           <p>© 2025 Fisio Find. Bajo licencia MIT</p>
         </div>
       </footer>
-
-      {/* Modal para usuarios no autenticados */}
-      {isPhysioModalOpen && (
-        <Modal onClose={closePhysioModal}>
-          <div className="p-6 bg-white rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold mb-4">Acceso requerido</h2>
-            <p className="mb-4">
-              Por favor, inicia sesión o crea una cuenta para ver el perfil del
-              fisioterapeuta.
-            </p>
-            <div className="flex justify-end gap-4">
-              <button
-                className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300"
-                onClick={closePhysioModal}
-              >
-                Cancelar
-              </button>
-              <button
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                onClick={() => router.push("/profile/login")}
-              >
-                Iniciar sesión
-              </button>
-              <button
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-                onClick={() => router.push("/profile/signup")}
-              >
-                Crear cuenta
-              </button>
-            </div>
-          </div>
-        </Modal>
-      )}
     </div>
   );
 };
