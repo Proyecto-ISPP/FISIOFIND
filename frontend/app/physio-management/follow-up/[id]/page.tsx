@@ -75,15 +75,9 @@ interface EvolutionDataByMetric {
   };
 }
 
-interface SessionEvolutionData {
-  session_id: number;
-  session_name: string;
-  exercises: ExerciseEvolutionData[];
-}
-
 const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
   const unwrappedParams = use(params as any);
-  const { id, sessionId } = unwrappedParams as {
+  const { id } = unwrappedParams as {
     id: string;
     sessionId: string;
   };
@@ -148,7 +142,7 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
         }
 
         // For each series in the exercise
-        for (const [seriesKey, dateValues] of Object.entries(
+        for (const [, dateValues] of Object.entries(
           seriesData as Record<string, any>
         )) {
           // Process date values for this series
