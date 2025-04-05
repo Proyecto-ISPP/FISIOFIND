@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from encrypted_fields.fields import EncryptedCharField
 
 ACCOUNT_STATUS_CHOICES = [
     ('ACTIVE', 'Active'),
@@ -37,7 +38,7 @@ AUTONOMIC_COMMUNITY_CHOICES = [
 
 class AppUser(AbstractUser):
     photo = models.ImageField(null=True, blank=True, upload_to='profile_photos/')
-    dni = models.CharField(max_length=9, unique=True)
+    dni = EncryptedCharField(max_length=9, unique=True)
     phone_number = models.CharField(max_length=9)
     postal_code = models.CharField(max_length=5)
     account_status = models.CharField(max_length=10, choices=ACCOUNT_STATUS_CHOICES, default='UNVERIFIED')
@@ -49,7 +50,7 @@ class AppUser(AbstractUser):
 class Patient(models.Model):
     user = models.OneToOneField(AppUser, on_delete=models.CASCADE, related_name='patient')
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
-    stripe_customer_id = models.CharField(max_length=255, blank=True, null=True)
+    stripe_customer_id = EncryptedCharField(max_length=255, blank=True, null=True)
     birth_date = models.DateField()
 
     def __str__(self):
