@@ -1,0 +1,81 @@
+name: Generate Changelog and Tag
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+  generate-changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Necesario para obtener todas las tags
+
+      - name: Get latest tag
+        id: get-latest-tag
+        run: |
+          latest_tag=$(git tag --sort=-v:refname | head -n 1)
+          echo "Última tag encontrada: $latest_tag"
+          if [[ -z "$latest_tag" ]]; then
+            new_tag="1.0.0"
+          else
+            major=$(echo "$latest_tag" | cut -d. -f1)
+            new_major=$((major + 1))
+            new_tag="${new_major}.0.0"
+          fi
+          echo "NEW_TAG=$new_tag" >> $GITHUB_ENV
+          echo "latest_tag=$latest_tag" >> $GITHUB_ENV  # Guardamos la última tag en env
+          echo "Nueva tag a crear: $new_tag"
+
+      - name: Generate changelog
+        id: generate-changelog
+        run: |
+          latest_tag=$(git tag --sort=-v:refname | head -n 1)
+
+          echo "## 🚀 Changelog - $NEW_TAG" > CHANGELOG.md
+          echo "" >> CHANGELOG.md
+
+          # Contar commits por categoría
+          features_count=$(git log --grep="^[Ff]eat:" --oneline "$latest_tag"..HEAD | wc -l)
+          fixes_count=$(git log --grep="^[Ff]ix:" --oneline "$latest_tag"..HEAD | wc -l)
+          docs_count=$(git log --grep="^[Dd]ocs:" --oneline "$latest_tag"..HEAD | wc -l)
+          others_count=$(git log --oneline "$latest_tag"..HEAD --invert-grep --grep="^[Ff]eat:" --grep="^[Ff]ix:" --grep="^[Dd]ocs:" | wc -l)
+
+          echo "### ✨ Features ($features_count)" >> CHANGELOG.md
+          git log --pretty=format:"- %s (@%an)" --grep="^[Ff]eat:" "$latest_tag"..HEAD >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+
+          echo "### 🐛 Fixes ($fixes_count)" >> CHANGELOG.md
+          git log --pretty=format:"- %s (@%an)" --grep="^[Ff]ix:" "$latest_tag"..HEAD >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+
+          echo "### 📖 Documentation ($docs_count)" >> CHANGELOG.md
+          git log --pretty=format:"- %s (@%an)" --grep="^[Dd]ocs:" "$latest_tag"..HEAD >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+
+          echo "### 🌀 Other Changes ($others_count)" >> CHANGELOG.md
+          git log --pretty=format:"- %s (@%an)" --invert-grep --grep="^feat:" --grep="^fix:" --grep="^docs:" "$latest_tag"..HEAD >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+
+          # Agregar enlaces a los Pull Requests
+          echo "### 🔗 Pull Requests" >> CHANGELOG.md
+          git log --grep="Merge pull request" --pretty=format:"- %s" "$latest_tag"..HEAD | while read pr; do
+            pr_number=$(echo "$pr" | grep -oP "#\K[0-9]+")
+            pr_url="https://github.com/${GITHUB_REPOSITORY}/pull/$pr_number"
+            echo "- [#${pr_number}]($pr_url) ${pr}" >> CHANGELOG.md
+          done
+
+      - name: Commit and push CHANGELOG.md
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add CHANGELOG.md
+          git commit -m "docs: actualización CHANGELOG para $NEW_TAG"
+          git push
+
+      - name: Create new tag
+        run: |
+          git tag $NEW_TAG
+          git push origin $NEW_TAG

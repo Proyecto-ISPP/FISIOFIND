@@ -15,7 +15,8 @@ interface CheckoutFormProps {
     end_time: string;
     is_online: boolean;
     service: {
-      type: string;
+      tipo: string;
+      title: string;
       price: number;
       duration: number;
     };
@@ -83,7 +84,10 @@ const CheckoutForm = ({ request, token }: CheckoutFormProps) => {
           end_time: appointmentData.end_time,
           is_online: appointmentData.is_online,
           service: {
+            id: appointmentData?.service.id,
+            title: appointmentData?.service.title,
             type: appointmentData?.service.type,
+            tipo: appointmentData?.service.tipo,
             price: appointmentData?.service.price,
             duration: appointmentData.service.duration,
             questionaryResponses: appointmentData?.questionaryResponses,

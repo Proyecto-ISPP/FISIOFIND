@@ -357,14 +357,17 @@ const SeguimientoPage = () => {
   // Cargar tratamientos desde la API
   useEffect(() => {
     const fetchTreatments = async () => {
+      // Add early return if not authenticated or not a physiotherapist
+      if (!token || userRole !== "physiotherapist") {
+        setLoading(false);
+        return;
+      }
+      
       try {
         setLoading(true);
 
         // Intentamos obtener los datos del backend
         try {
-          // Usar token si está disponible en localStorage
-          const token = localStorage.getItem("token") || "";
-
           let url = `${getApiBaseUrl()}/api/treatments/physio/`;
           if (activeFilter !== null) {
             url += `?is_active=${activeFilter}`;
@@ -400,7 +403,7 @@ const SeguimientoPage = () => {
       }
     };
     fetchTreatments();
-  }, [extractActivePatients, activeFilter]);
+  }, [extractActivePatients, activeFilter, token, userRole]);
 
   // Aplicar filtros cuando cambien
   useEffect(() => {
@@ -654,7 +657,7 @@ const SeguimientoPage = () => {
       <div>
         <h2 className="text-2xl font-bold mb-4">Tratamientos existentes</h2>
 
-        <div className="bg-white rounded-lg shadow p-4 mb-6">
+        <div className="bg-white rounded-xl shadow p-4 mb-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between">
             <div className="mb-4 md:mb-0">
               <h2 className="text-lg font-semibold mb-2">Filtrar por estado</h2>
@@ -804,7 +807,7 @@ const SeguimientoPage = () => {
 
                   <div className="mb-4">
                     <div className="flex justify-between mb-1">
-                      <span className="text-gray-600">Inicio:</span>
+                      <span className="text-gray-600">Inicio</span>
                       <span>
                         {new Date(treatment.start_time).toLocaleDateString(
                           "es-ES"
@@ -812,7 +815,7 @@ const SeguimientoPage = () => {
                       </span>
                     </div>
                     <div className="flex justify-between mb-1">
-                      <span className="text-gray-600">Fin:</span>
+                      <span className="text-gray-600">Fin</span>
                       <span>
                         {new Date(treatment.end_time).toLocaleDateString(
                           "es-ES"
@@ -820,7 +823,7 @@ const SeguimientoPage = () => {
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Estado:</span>
+                      <span className="text-gray-600">Estado</span>
                       <span
                         className={
                           treatment.is_active
@@ -831,13 +834,6 @@ const SeguimientoPage = () => {
                         {treatment.is_active ? "Activo" : "Inactivo"}
                       </span>
                     </div>
-                  </div>
-
-                  <div className="border-t pt-4">
-                    <h4 className="font-semibold mb-2">Deberes asignados:</h4>
-                    <p className="text-gray-700 text-sm line-clamp-2">
-                      {treatment.homework}
-                    </p>
                   </div>
                 </div>
 

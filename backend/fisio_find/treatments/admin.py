@@ -24,8 +24,8 @@ class ExerciseAdmin(admin.ModelAdmin):
         'physiotherapist__user__email','physiotherapist__user__username','physiotherapist__user__first_name','physiotherapist__user__last_name','physiotherapist__user__dni',
         'title', 'description',
         ]
-    list_filter = ['area']
-    list_display = ['id','title', 'physiotherapist__user__username', 'area']
+    list_filter = ['body_region', 'exercise_type']
+    list_display = ['id','title', 'physiotherapist__user__username', 'body_region', 'exercise_type']
 
 class SessionAdmin(admin.ModelAdmin):
     search_fields = [
