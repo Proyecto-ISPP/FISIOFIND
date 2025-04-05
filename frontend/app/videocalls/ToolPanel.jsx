@@ -5,16 +5,19 @@ import styles from './Room.module.css';
 import Historial from './tools/Historial';
 import Modelo3D from './hooks/3DModel';
 import Plantillas from './tools/Templates';
-import Cuestionarios from './tools/Questionnaires';
+import QuestionnaireTool from './tools/QuestionnaireTool';
 
 const ToolPanel = ({
   selectedTool,
   activePainMap,
   handlePainMapSelect,
   sendPainMapToPatient,
-  partsColored, // Añadido para pasarlo a mapa dolor
-  sendWebSocketMessage, // Añadido para pasarlo a mapa dolor
-  userRole // Añadido para pasarlo a AnatomicalModel
+  partsColored,
+  sendWebSocketMessage,
+  userRole,
+  addChatMessage,
+  onCloseTool,
+  token
 }) => {
   if (!selectedTool) return null;
 
@@ -33,7 +36,14 @@ const ToolPanel = ({
           sendWebSocketMessage={sendWebSocketMessage}
         />
       )}
-      {selectedTool === 'cuestionarios' && <Cuestionarios />}
+      {selectedTool === 'cuestionarios' && (
+        <QuestionnaireTool
+          sendWebSocketMessage={sendWebSocketMessage}
+          addChatMessage={addChatMessage}
+          onClose={onCloseTool}
+          token={token}
+        />
+      )}
     </div>
   );
 };

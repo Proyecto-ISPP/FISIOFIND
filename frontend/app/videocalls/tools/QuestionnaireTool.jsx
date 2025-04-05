@@ -24,19 +24,20 @@ const QuestionnaireTool = ({
   onClose,
   token
 }) => {
-  const [questionnaires, setQuestionnaires] = useState(initialQuestionnaires);
+  const [questionnaires, setQuestionnaires] = useState([]);
   const [selectedQuestionnaire, setSelectedQuestionnaire] = useState(null);
   const [editingQuestionnaire, setEditingQuestionnaire] = useState(null);
-  const [mode, setMode] = useState('list'); // 'list', 'view', 'edit', 'create'
+  const [mode, setMode] = useState('list');
   const [formData, setFormData] = useState({
     title: '',
     questions: [],
     newQuestion: { label: '', type: 'string', options: [] }
   });
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Cargar cuestionarios
   useEffect(() => {
     const fetchQuestionnaires = async () => {
+      setIsLoading(true);
       try {
         const response = await axios.get(`${getApiBaseUrl()}/api/questionnaires/list/`, {
           headers: { Authorization: `Bearer ${token}` }
@@ -44,8 +45,12 @@ const QuestionnaireTool = ({
         setQuestionnaires(response.data);
       } catch (error) {
         console.error('Error fetching questionnaires:', error);
+        addChatMessage('Error', 'No se pudieron cargar los cuestionarios');
+      } finally {
+        setIsLoading(false);
       }
     };
+    
     fetchQuestionnaires();
   }, [token]);
 
@@ -61,6 +66,14 @@ const QuestionnaireTool = ({
   }, [editingQuestionnaire, mode]);
 
   const handleSendQuestionnaire = () => {
+    if (!selectedQuestionnaire) {
+      return addChatMessage('Error', 'No hay cuestionario seleccionado');
+    }
+    // Validar que el cuestionario tenga preguntas
+    if (!selectedQuestionnaire.questions || selectedQuestionnaire.questions.length === 0) {
+      return addChatMessage('Error', 'El cuestionario no tiene preguntas');
+    }
+  
     sendWebSocketMessage({
       action: 'send-questionnaire',
       message: {
@@ -68,7 +81,9 @@ const QuestionnaireTool = ({
         questionnaire: selectedQuestionnaire
       }
     });
+    
     addChatMessage('Sistema', `Cuestionario "${selectedQuestionnaire.title}" enviado al paciente`);
+    setMode('list'); // Volver a la lista después de enviar
   };
 
   const handleAddQuestion = () => {
@@ -176,60 +191,77 @@ const QuestionnaireTool = ({
             </button>
           </div>
 
-          <button 
-            onClick={() => {
-              setEditingQuestionnaire(null);
-              setFormData({
-                title: '',
-                questions: [],
-                newQuestion: { label: '', type: 'string', options: [] }
-              });
-              setMode('create');
-            }}
-            className={styles.actionButton}
-          >
-            <FontAwesomeIcon icon={faPlus} /> Nuevo Cuestionario
-          </button>
-
-          <div className={styles.questionnaireList}>
-            {questionnaires.map(q => (
-              <div 
-                key={q.id} 
-                className={`${styles.questionnaireItem} ${
-                  selectedQuestionnaire?.id === q.id ? styles.selected : ''
-                }`}
+          {isLoading ? (
+            <div className={styles.loadingMessage}>Cargando cuestionarios...</div>
+          ) : (
+            <>
+              <button 
+                onClick={() => {
+                  setEditingQuestionnaire(null);
+                  setFormData({
+                    title: '',
+                    questions: [],
+                    newQuestion: { label: '', type: 'string', options: [] }
+                  });
+                  setMode('create');
+                }}
+                className={styles.actionButton}
               >
-                <div 
-                  className={styles.questionnaireTitle}
-                  onClick={() => {
-                    setSelectedQuestionnaire(q);
-                    setMode('view');
-                  }}
-                >
-                  {q.title}
-                </div>
-                <div className={styles.questionnaireActions}>
-                  <button 
-                    onClick={() => {
-                      setEditingQuestionnaire(q);
-                      setMode('edit');
-                    }}
-                    className={styles.iconButton}
-                    title="Editar"
-                  >
-                    <FontAwesomeIcon icon={faEdit} />
-                  </button>
-                  <button 
-                    onClick={() => handleDeleteQuestionnaire(q.id)}
-                    className={styles.iconButton}
-                    title="Eliminar"
-                  >
-                    <FontAwesomeIcon icon={faTrash} />
-                  </button>
-                </div>
+                <FontAwesomeIcon icon={faPlus} /> Nuevo Cuestionario
+              </button>
+
+              <div className={styles.questionnaireList}>
+                {questionnaires.length === 0 ? (
+                  <div className={styles.emptyMessage}>
+                    No hay cuestionarios creados. Crea uno nuevo para empezar.
+                  </div>
+                ) : (
+                  questionnaires.map(q => (
+                    <div 
+                      key={q.id} 
+                      className={`${styles.questionnaireItem} ${
+                        selectedQuestionnaire?.id === q.id ? styles.selected : ''
+                      }`}
+                      onClick={() => {
+                        setSelectedQuestionnaire(q);
+                        setMode('view');
+                      }}
+                    >
+                      <div className={styles.questionnaireTitle}>
+                        {q.title}
+                        <div className={styles.questionnaireMeta}>
+                          <span>{q.questions?.length || 0} preguntas</span>
+                        </div>
+                      </div>
+                      <div className={styles.questionnaireActions}>
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setEditingQuestionnaire(q);
+                            setMode('edit');
+                          }}
+                          className={styles.iconButton}
+                          title="Editar"
+                        >
+                          <FontAwesomeIcon icon={faEdit} />
+                        </button>
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteQuestionnaire(q.id);
+                          }}
+                          className={styles.iconButton}
+                          title="Eliminar"
+                        >
+                          <FontAwesomeIcon icon={faTrash} />
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
-            ))}
-          </div>
+            </>
+          )}
         </>
       )}
 

@@ -1583,3 +1583,171 @@
   border-radius: 4px;
   border: 1px solid #dee2e6;
 }
+
+/* Estilos para el cuestionario del paciente */
+.questionnaireModal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+}
+
+.modalHeader {
+  padding: 15px 20px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modalHeader h3 {
+  margin: 0;
+  color: #2c3e50;
+}
+
+.questionnaireForm {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.formActions {
+  padding: 15px 20px;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Fondo semitransparente */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 999;
+}
+
+/* Estilos para el visualizador de respuestas */
+.responseViewer {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  width: 80%;
+  max-width: 700px;
+  max-height: 80vh;
+  z-index: 1050;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.responseHeader {
+  padding: 15px;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8f9fa;
+}
+
+.responseHeader h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #2c3e50;
+}
+
+.headerActions {
+  display: flex;
+  gap: 10px;
+}
+
+.actionIconButton {
+  background: none;
+  border: none;
+  color: #3498db;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 5px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.actionIconButton:hover {
+  background-color: #e9f2fc;
+}
+
+.responseContent {
+  padding: 15px;
+  overflow-y: auto;
+  flex-grow: 1;
+}
+
+.responseTimestamp {
+  font-style: italic;
+  color: #7f8c8d;
+  margin-bottom: 15px;
+  font-size: 0.9rem;
+}
+
+.responseStatus {
+  display: flex;
+  align-items: center;
+  color: #27ae60;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+.statusIcon {
+  margin-right: 5px;
+}
+
+.responseItems {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.responseItem {
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 12px;
+  background-color: #f9f9f9;
+}
+
+.questionText {
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #34495e;
+}
+
+.answerText {
+  padding: 8px;
+  background-color: white;
+  border-radius: 4px;
+  border-left: 3px solid #3498db;
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}

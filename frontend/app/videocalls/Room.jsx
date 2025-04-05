@@ -18,7 +18,8 @@ import useMediaControls from './hooks/useMediaControls';
 import useChat from './hooks/useChat';
 import useRoomManagement from './hooks/useRoomManagement';
 import MapaDolor from './tools/MapaDolor';
-import QuestionnaireTool from './tools/QuestionnaireTool';
+import QuestionnaireResponseViewer from './tools/QuestionnaireResponseViewer';
+import PatientQuestionnaire from './tools/PatientQuestionnaire';
 
 import { faCancel } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -42,6 +43,8 @@ const Room = ({ roomCode }) => {
 
   const [questionnaires, setQuestionnaires] = useState([]);
   const [activeQuestionnaire, setActiveQuestionnaire] = useState(null);
+  const [questionnaireResponse, setQuestionnaireResponse] = useState(null);
+  const [responseQuestionnaire, setResponseQuestionnaire] = useState(null);
 
   // Inicializamos los hooks SIEMPRE
   const webSocket = useWebSocket(roomCode, userRole, () => {});
@@ -164,16 +167,39 @@ useEffect(() => {
               setPartsColored(data.message.partsSelected);
             }
             break;
-          case 'send-questionnaire':
-            if (userRole === 'patient') {
-              setActiveQuestionnaire(data.message.questionnaire);
-            }
-            break;
-          case 'submit-questionnaire':
-            if (userRole === 'physio') {
-              addChatMessage('Sistema', `Respuestas recibidas: ${JSON.stringify(data.message.responses)}`);
-            }
-            break;
+            case 'send-questionnaire':
+              if (userRole === 'patient') {
+                setActiveQuestionnaire(data.message.questionnaire);
+                chat.addChatMessage(
+                  'Sistema', 
+                  `Has recibido el cuestionario: "${data.message.questionnaire.title}"`
+                );
+              }
+              break;
+              case 'submit-questionnaire':
+                if (userRole === 'physio') {
+                  chat.addChatMessage(
+                    'Sistema', 
+                    `El paciente ha respondido al cuestionario: "${data.message.questionnaireTitle}"`
+                  );
+                  
+                  // Buscar el cuestionario completo para mostrar las preguntas correctamente
+                  const matchingQuestionnaire = questionnaires.find(q => q.id === data.message.questionnaireId);
+                  
+                  if (matchingQuestionnaire) {
+                    setResponseQuestionnaire(matchingQuestionnaire);
+                    setQuestionnaireResponse(data.message.responses);
+                  } else {
+                    // Si no encontramos el cuestionario, usamos la información básica disponible
+                    setResponseQuestionnaire({
+                      id: data.message.questionnaireId,
+                      title: data.message.questionnaireTitle,
+                      questions: []
+                    });
+                    setQuestionnaireResponse(data.message.responses);
+                  }
+                }
+                break;
           default:
             webRTC.handleWebSocketMessage(data);
         }
@@ -316,12 +342,14 @@ useEffect(() => {
       )}
 
       {!showTools && activeQuestionnaire && (
-        <PatientQuestionnaire
-          questionnaire={activeQuestionnaire}
-          sendWebSocketMessage={webSocket.sendWebSocketMessage}
-          addChatMessage={chat.addChatMessage}
-          onClose={() => setActiveQuestionnaire(null)}
-        />
+        <>
+          <div className={styles.modalOverlay} onClick={() => setActiveQuestionnaire(null)} />
+          <PatientQuestionnaire
+            questionnaire={activeQuestionnaire}
+            sendWebSocketMessage={webSocket.sendWebSocketMessage}
+            onClose={() => setActiveQuestionnaire(null)}
+          />
+        </>
       )}
 
       {showTools && (
@@ -334,22 +362,16 @@ useEffect(() => {
           />
           {selectedTool && (
             <ToolPanel
-              selectedTool={selectedTool}
-              activePainMap={activePainMap}
-              handlePainMapSelect={handlePainMapSelect}
-              sendPainMapToPatient={sendPainMapToPatient}
-              userRole={userRole}
-              partsColored={partsColored}
-              sendWebSocketMessage={webSocket.sendWebSocketMessage}
-              questionnaires={questionnaires}
-            />
-          )}
-          {selectedTool === 'cuestionarios' && (
-            <QuestionnaireTool
-            initialQuestionnaires={questionnaires}
+            selectedTool={selectedTool}
+            activePainMap={activePainMap}
+            handlePainMapSelect={handlePainMapSelect}
+            sendPainMapToPatient={sendPainMapToPatient}
+            userRole={userRole}
+            partsColored={partsColored}
             sendWebSocketMessage={webSocket.sendWebSocketMessage}
+            questionnaires={questionnaires}
             addChatMessage={chat.addChatMessage}
-            onClose={() => setSelectedTool(null)}
+            onCloseTool={() => setSelectedTool(null)}
             token={token}
           />
           )}
@@ -370,6 +392,18 @@ useEffect(() => {
           </button>
         </div>
       )}
+      {userRole === 'physio' && questionnaireResponse && (
+        <div className={styles.modalOverlay}>
+          <QuestionnaireResponseViewer
+            responseData={questionnaireResponse}
+            questionnaire={responseQuestionnaire}
+            onClose={() => {
+              setQuestionnaireResponse(null);
+              setResponseQuestionnaire(null);
+            }}
+          />
+        </div>
+)}
     </div>
   );
 };
