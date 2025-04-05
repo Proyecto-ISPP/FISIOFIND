@@ -1712,7 +1712,6 @@ class UpdateAppointmentTests(APITestCase):
             }
         }
         response = self.client.put(url, data, format='json')
-        print(response.data)
         
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['status'], 'pending')
