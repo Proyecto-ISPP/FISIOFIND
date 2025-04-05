@@ -9,17 +9,23 @@ import { bodyFemaleBack } from "./assets/bodyFemaleBack";
 import { SvgFemaleWrapper } from "./components/SvgFemaleWrapper";
 
 export type Slug =
-  | "abs"
+  | "abs1"
+  | "abs2"
+  | "abs3"
+  | "abs4"
   | "adductors"
   | "ankles"
   | "biceps"
+  | "calves-left"
+  | "calves-right"
   | "calves"
   | "chest"
   | "deltoids"
   | "deltoids"
   | "feet"
   | "forearm"
-  | "gluteal"
+  | "gluteal-med"
+  | "gluteal-max"
   | "hamstring"
   | "hands"
   | "hair"
@@ -32,7 +38,9 @@ export type Slug =
   | "tibialis"
   | "trapezius"
   | "triceps"
-  | "upper-back";
+  | "lats"
+  | "romboid"
+  | "romboid2";
 
 export interface BodyPart {
   color?: string;

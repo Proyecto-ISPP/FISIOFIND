@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShare, faCancel } from '@fortawesome/free-solid-svg-icons';
 import MapaDolor from './MapaDolor';
 
-const Plantillas = ({ activePainMap, handlePainMapSelect, sendPainMapToPatient, partsColored, sendWebSocketMessage }) => {
+const Plantillas = ({ activePainMap, handlePainMapSelect, sendPainMapToPatient, partsColoredFront, partsColoredBack, sendWebSocketMessage }) => {
   // TODO: [ENLACE BACKEND] Traer listado de plantillas guardadas en la base de datos
 
   return (
@@ -18,7 +18,12 @@ const Plantillas = ({ activePainMap, handlePainMapSelect, sendPainMapToPatient, 
             onClick={() => handlePainMapSelect(activePainMap === 'female' ? null : 'female')}
           >
             <div className={styles.painMapIcon}>
-              <MapaDolor gender={"female"} scale={0.27} partsColored={[]} sendWebSocketMessage={() => {}} />
+              <MapaDolor 
+              gender={"female"} 
+              scale={0.27} 
+              partsColoredFront={[]} 
+              partsColoredBack={[]} 
+              sendWebSocketMessage={() => {}} />
             </div>
             <span>Modelo A</span>
           </div>
@@ -28,7 +33,12 @@ const Plantillas = ({ activePainMap, handlePainMapSelect, sendPainMapToPatient, 
             onClick={() => handlePainMapSelect(activePainMap === 'male' ? null : 'male')}
           >
             <div className={styles.painMapIcon}>
-              <MapaDolor gender={"male"} scale={0.27} partsColored={[]} sendWebSocketMessage={() => {}} />
+              <MapaDolor 
+                gender={"male"} 
+                scale={0.27} 
+                partsColoredFront={[]} 
+                partsColoredBack={[]}
+                sendWebSocketMessage={() => {}} />
             </div>
             <span>Modelo B</span>
           </div>
@@ -36,7 +46,12 @@ const Plantillas = ({ activePainMap, handlePainMapSelect, sendPainMapToPatient, 
 
         {activePainMap && (
           <div className={styles.painMapActions}>
-            <MapaDolor scale={1} gender={activePainMap} partsColored={partsColored} sendWebSocketMessage={sendWebSocketMessage}/>
+            <MapaDolor scale={1} 
+              gender={activePainMap} 
+              partsColoredFront={partsColoredFront} 
+              partsColoredBack={partsColoredBack}
+              sendWebSocketMessage={sendWebSocketMessage}
+              />
             <div className='flex flex-row gap-2'>
               <button 
                 className={`${styles.actionButton} ${styles.primaryAction}`}
