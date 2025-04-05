@@ -11,9 +11,9 @@ import { getApiBaseUrl } from "@/utils/api";
 import { useAppointment } from "@/context/appointmentContext";
 import DraftModal from "@/components/ui/draftAppointmentModal";
 import { DemoWindow } from "@/components/demo-window";
-import { WavyBackground } from "@/components/ui/wavy-background";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { CookieConsent } from "@/components/CookieConsent";
+import TopRatings from "@/components/ratings";
 
 interface Physiotherapist {
   id: string;
@@ -38,7 +38,6 @@ const Home = () => {
   const apiBaseurl = getApiBaseUrl();
   const [showDraftModal, setShowDraftModal] = useState(false);
   const [draftData, setDraftData] = useState<any>(null);
-  const [returnUrl, setReturnUrl] = useState<string | null>(null);
   const { dispatch } = useAppointment();
 
   useEffect(() => {
@@ -64,7 +63,6 @@ const Home = () => {
   }, [isClient, token]);
 
   // Efecto para mover imágenes flotantes al hacer scroll
-  // Modify the floating images styles
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
@@ -384,10 +382,10 @@ const Home = () => {
 
       {/* Top Physiotherapists Section */}
       <section className="max-w-7xl mx-auto px-4 mb-12">
-        <h2 className="text-3xl text-[#253240] font-bold mb-8 text-center">
+        {/* <h2 className="text-3xl text-[#253240] font-bold mb-8 text-center">
           Top Fisioterapeutas
         </h2>
-        {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {topPhysiotherapists.map((physio, index) => (
             <CardContainer key={index}>
               <CardBody className="bg-gradient-to-bl from-white to-[#65C2C9]/50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-blue-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-full h-auto rounded-xl p-6 border">
@@ -432,6 +430,14 @@ const Home = () => {
             </CardContainer>
           ))}
         </div> */}
+      </section>
+
+      {/* Top Ratings Section */}
+      <section className="max-w-7xl mx-auto px-4 mb-12">
+        <h2 className="text-3xl text-[#253240] font-bold mb-8 text-center">
+          La opinión de fisioterapeutas profesionales
+        </h2>
+        <TopRatings />
       </section>
 
       {/* Footer */}

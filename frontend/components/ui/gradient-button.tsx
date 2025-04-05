@@ -4,17 +4,37 @@ import { cn } from "@/lib/utils";
 interface GradientButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "danger" | "grey" | "create" | "edit";
   fullWidth?: boolean;
+  margin?: "none" | "sm" | "md" | "lg";
+  padding?: "default" | "wide" | "narrow"; // Added padding prop for text
   children: React.ReactNode;
 }
 
 const GradientButton = ({
   variant = "create",
   fullWidth = false,
+  margin = "none",
+  padding = "default", // Default padding
   className,
   children,
   ...props
 }: GradientButtonProps) => {
-  const baseStyles = "py-4 text-white font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5";
+  // Base styles with smaller text size but keeping rounded-xl corners
+  const baseStyles = "text-white text-sm font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5";
+  
+  // Margin styles for the button
+  const marginStyles = {
+    none: "",
+    sm: "my-2",
+    md: "my-4",
+    lg: "my-6"
+  };
+  
+  // Padding styles with smaller values for a more compact button
+  const paddingStyles = {
+    narrow: "py-1.5 px-3",
+    default: "py-2 px-4",
+    wide: "py-2 px-8"
+  };
   
   const variantStyles = {
     // Legacy variants (for backward compatibility)
@@ -36,15 +56,12 @@ const GradientButton = ({
     }
   };
 
-  // Handle legacy variant names
-  const mappedVariant = variant === "create" ? "blue" : 
-                        variant === "edit" ? "green" : 
-                        variant;
-
   return (
     <button
       className={cn(
         baseStyles,
+        paddingStyles[padding], // Apply text padding
+        marginStyles[margin],
         fullWidth ? "w-full" : "",
         className
       )}
