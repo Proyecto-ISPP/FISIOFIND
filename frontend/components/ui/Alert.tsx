@@ -50,7 +50,7 @@ const Alert: React.FC<AlertProps> = ({
   }, [onClose, duration]);
 
   return (
-    <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-[90%] max-w-md animate-in fade-in slide-in-from-top-2 duration-500">
+    <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-[99999] w-[90%] max-w-md animate-in fade-in slide-in-from-top-2 duration-500">
       <div
         role="alert"
         className={`${bg} ${border} ${text} border-l-4 px-4 py-3 rounded-lg flex items-center justify-between shadow-lg transition-all duration-300 ease-in-out`}

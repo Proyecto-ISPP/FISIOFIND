@@ -7,6 +7,8 @@ import ScheduleCalendar from "@/components/ui/ScheduleCalendar";
 import { getApiBaseUrl } from "@/utils/api";
 import { GradientButton } from "@/components/ui/gradient-button";
 import Link from "next/link"; 
+import Alert from "@/components/ui/Alert";
+import ConfirmModal from "@/components/ui/ConfirmModal";
 
 const getAuthToken = () => {
     return localStorage.getItem("token"); // Obtiene el token JWT
@@ -99,6 +101,29 @@ const FisioProfile = () => {
     });
     const [isClient, setIsClient] = useState(false);
     const [token, setToken] = useState<string | null>(null);
+    const [alert, setAlert] = useState<{
+        show: boolean;
+        type: "success" | "error" | "info" | "warning";
+        message: string;
+    }>({
+        show: false,
+        type: "info",
+        message: ""
+    });
+
+    // Función helper para mostrar alertas
+    const showAlert = (type: "success" | "error" | "info" | "warning", message: string) => {
+        setAlert({
+            show: true,
+            type,
+            message
+        });
+    }; 
+
+    const [confirmModal, setConfirmModal] = useState({
+        isOpen: false,
+        serviceIndex: null
+    });
 
     useEffect(() => {
         setIsClient(true);
@@ -188,7 +213,7 @@ const FisioProfile = () => {
                             serviceList.push({
                                 id: value.id || null,
                                 titulo: value.title || key,
-                                tipo: value.tipo || "PRIMERA_CONSULTA",
+                                tipo: value.type || "PRIMERA_CONSULTA",
                                 descripcion: value.description || "",
                                 precio: value.price ? `${value.price}€` : "",
                                 duracion: typeof value.duration === 'string' ? value.duration : `${value.duration} minutos`,
@@ -200,7 +225,7 @@ const FisioProfile = () => {
                         serviceList = parsedServices.map((service) => ({
                             id: service.id || null,
                             titulo: service.titulo || service.title || "",
-                            tipo: service.tipo || "PRIMERA_CONSULTA",
+                            tipo: service.tipo || service.type || "PRIMERA_CONSULTA",
                             descripcion: service.descripcion || service.description || "",
                             precio: service.precio || (service.price ? `${service.price}€` : ""),
                             duracion: service.duracion || (service.duration ? `${service.duration} minutos` : ""),
@@ -215,7 +240,7 @@ const FisioProfile = () => {
                     setServices([]);
                 }
                 if (response.data.physio.schedule) {
-                    setSchedule(JSON.parse(response.data.physio.schedule));
+                    setSchedule(response.data.physio.schedule);
                 }
                 if (response.data.physio.specializations) {
                     const specs = Array.isArray(response.data.physio.specializations)
@@ -243,7 +268,7 @@ const FisioProfile = () => {
                 description: serviceData.descripcion,
                 price: parseFloat(serviceData.precio.replace('€', '').trim()),
                 duration: serviceData.duracion,
-                tipo: serviceData.tipo,
+                type: serviceData.tipo,
                 custom_questionnaire: serviceData.custom_questionnaire ? {
                     "UI Schema": serviceData.custom_questionnaire
                 } : null
@@ -296,9 +321,9 @@ const FisioProfile = () => {
         } catch (error) {
             console.error("Error al actualizar servicio:", error);
             if (error.response) {
-                alert(`Error: ${JSON.stringify(error.response.data)}`);
+                showAlert("error",`Error: ${JSON.stringify(error.response.data)}`);
             } else {
-                alert("Error al actualizar el servicio.");
+                showAlert("error","Error al actualizar el servicio.");
             }
             return false;
         }
@@ -315,9 +340,9 @@ const FisioProfile = () => {
         } catch (error) {
             console.error("Error al eliminar servicio:", error);
             if (error.response) {
-                alert(`Error: ${JSON.stringify(error.response.data)}`);
+                showAlert("error",`Error: ${JSON.stringify(error.response.data)}`);
             } else {
-                alert("Error al eliminar el servicio.");
+                showAlert("error","Error al eliminar el servicio.");
             }
             return false;
         }
@@ -341,7 +366,7 @@ const FisioProfile = () => {
             .map(([day, ranges]) => {
                 if (ranges.length === 0) return null;
 
-                const timeRanges = ranges.map((interval) => `${interval[0].start} - ${interval[0].end}`).join(", ");
+                const timeRanges = ranges.map((interval) => `${interval.start} - ${interval.end}`).join(", ");
                 return `${daysOfWeek[day]}: ${timeRanges}`;
             })
             .filter(Boolean)
@@ -406,7 +431,7 @@ const FisioProfile = () => {
         );
 
         if (!isValid) {
-            alert("Por favor, corrige los errores antes de enviar.");
+            showAlert("error", "Por favor, corrige los errores antes de enviar.");
             return;
         }
 
@@ -435,8 +460,8 @@ const FisioProfile = () => {
             formData.append("rating_avg", profile.rating_avg || "");
             formData.append("specializations", JSON.stringify(selectedSpecializations));
             // Actualizar el schedule con los datos actuales del calendario
-            const { initialized, ...scheduleWithoutInitialized } = schedule;
-            formData.append("schedule", JSON.stringify(scheduleWithoutInitialized));
+            // const { initialized, ...scheduleWithoutInitialized } = schedule;
+            // formData.append("schedule", scheduleWithoutInitialized);
 
             // formData.append("services", JSON.stringify(services));
 
@@ -445,16 +470,16 @@ const FisioProfile = () => {
             });
 
             if (response.status === 200 && editingServiceIndex === null) {
-                alert("Perfil actualizado correctamente");
+                showAlert("success", "Perfil actualizado correctamente");
             }
 
             fetchFisioProfile();
         } catch (error) {
             console.error("Error updating profile:", error);
             if (error.response) {
-                alert(`Error: ${JSON.stringify(error.response.data)}`);
+                showAlert("error", `Error: ${JSON.stringify(error.response.data)}`);
             } else {
-                alert("Error actualizando el perfil.");
+                showAlert("error", "Error actualizando el perfil.");
             }
         }
     };
@@ -509,7 +534,7 @@ const FisioProfile = () => {
                             serviceList.push({
                                 id: value.id || null,
                                 titulo: value.title || key,
-                                tipo: value.tipo || "PRIMERA_CONSULTA",
+                                tipo: value.type || "PRIMERA_CONSULTA",
                                 descripcion: value.description || "",
                                 precio: value.price ? `${value.price}€` : "",
                                 duracion: typeof value.duration === 'string' ? value.duration : `${value.duration} minutos`,
@@ -518,9 +543,9 @@ const FisioProfile = () => {
                         });
                         setServices(serviceList);
                         setProfile(prev => ({ ...prev, services: serviceList }));
-                        alert("Servicio actualizado correctamente");
+                        showAlert("success", "Servicio actualizado correctamente");
                     } else {
-                        alert("Error al actualizar el servicio");
+                        showAlert("error","Error al actualizar el servicio");
                     }
                 } else {
                     // Si no tiene ID pero estamos editando, es raro pero tratarlo como un nuevo servicio
@@ -533,7 +558,7 @@ const FisioProfile = () => {
                             serviceList.push({
                                 id: value.id || null,
                                 titulo: value.title || key,
-                                tipo: value.tipo || "PRIMERA_CONSULTA",
+                                tipo: value.type || "PRIMERA_CONSULTA",
                                 descripcion: value.description || "",
                                 precio: value.price ? `${value.price}€` : "",
                                 duracion: typeof value.duration === 'string' ? value.duration : `${value.duration} minutos`,
@@ -542,9 +567,9 @@ const FisioProfile = () => {
                         });
                         setServices(serviceList);
                         setProfile(prev => ({ ...prev, services: serviceList }));
-                        alert("Servicio actualizado correctamente");
+                        showAlert("success", "Servicio actualizado correctamente");
                     } else {
-                        alert("Error al añadir el servicio");
+                        showAlert("error","Error al añadir el servicio");
                     }
                 }
             } else {
@@ -558,7 +583,7 @@ const FisioProfile = () => {
                         serviceList.push({
                             id: value.id || null,
                             titulo: value.title || key,
-                            tipo: value.tipo || "PRIMERA_CONSULTA",
+                            tipo: value.type || "PRIMERA_CONSULTA",
                             descripcion: value.description || "",
                             precio: value.price ? `${value.price}€` : "",
                             duracion: typeof value.duration === 'string' ? value.duration : `${value.duration} minutos`,
@@ -567,14 +592,14 @@ const FisioProfile = () => {
                     });
                     setServices(serviceList);
                     setProfile(prev => ({ ...prev, services: serviceList }));
-                    alert("Servicio añadido correctamente");
+                    showAlert("success","Servicio añadido correctamente");
                 } else {
-                    alert("Error al añadir el servicio");
+                    showAlert("error","Error al añadir el servicio");
                 }
             }
         } catch (error) {
             console.error("Error al gestionar el servicio:", error);
-            alert("Error al procesar la operación");
+            showAlert("error","Error al procesar la operación");
         } finally {
             setEditingServiceIndex(null);
             setShowServiceModal(false);
@@ -588,32 +613,37 @@ const FisioProfile = () => {
     };
 
     const handleDeleteService = async (index) => {
-        if (window.confirm("¿Estás seguro de que deseas eliminar este servicio?")) {
-            try {
-                const serviceToDelete = services[index];
+        setConfirmModal({
+            isOpen: true,
+            serviceIndex: index
+        });
+    };
 
-                if (serviceToDelete.id) {
-                    // Eliminar de la API
-                    const success = await deleteServiceFromAPI(serviceToDelete.id);
-
-                    if (success) {
-                        // Solo actualizar el estado local si la API devuelve éxito
-                        const updatedServices = [...services];
-                        updatedServices.splice(index, 1);
-                        setServices(updatedServices);
-                        setProfile(prev => ({ ...prev, services: updatedServices }));
-                        alert("Servicio eliminado correctamente");
-                    } else {
-                        alert("Error al eliminar el servicio");
-                    }
+    const handleConfirmDelete = async () => {
+        const index = confirmModal.serviceIndex;
+        try {
+            const serviceToDelete = services[index];
+    
+            if (serviceToDelete.id) {
+                const success = await deleteServiceFromAPI(serviceToDelete.id);
+    
+                if (success) {
+                    const updatedServices = [...services];
+                    updatedServices.splice(index, 1);
+                    setServices(updatedServices);
+                    setProfile(prev => ({ ...prev, services: updatedServices }));
+                    showAlert("success","Servicio eliminado correctamente");
                 } else {
-                    // Si no tiene ID, es un servicio que nunca se guardó en la API
-                    alert("No se puede eliminar un servicio que no ha sido guardado");
+                    showAlert("error","Error al eliminar el servicio");
                 }
-            } catch (error) {
-                console.error("Error al eliminar el servicio:", error);
-                alert("Error al eliminar el servicio");
+            } else {
+                showAlert("warning","No se puede eliminar un servicio que no ha sido guardado");
             }
+        } catch (error) {
+            console.error("Error al eliminar el servicio:", error);
+            showAlert("error","Error al eliminar el servicio");
+        } finally {
+            setConfirmModal({ isOpen: false, serviceIndex: null });
         }
     };
 
@@ -753,9 +783,9 @@ const FisioProfile = () => {
 
         // Handle custom title based on type
         useEffect(() => {
-            if (tipo === "PRIMERA_CONSULTA" && !editingService) {
+            if (tipo === "PRIMERA_CONSULTA") {
                 setTitulo("Primera consulta");
-            } else if (tipo === "CONTINUAR_TRATAMIENTO" && !editingService) {
+            } else if (tipo === "CONTINUAR_TRATAMIENTO") {
                 setTitulo("Continuación de tratamiento");
             }
         }, [tipo]);
@@ -763,17 +793,17 @@ const FisioProfile = () => {
         const handleSave = () => {
             // Validación básica
             if (!titulo.trim()) {
-                alert("El título es obligatorio");
+                showAlert("warning","El título es obligatorio");
                 return;
             }
 
             if (!precio.trim()) {
-                alert("El precio es obligatorio");
+                showAlert("warning","El precio es obligatorio");
                 return;
             }
 
             if (!duracion || parseInt(duracion) <= 0) {
-                alert("La duración debe ser mayor a 0 minutos");
+                showAlert("warning","La duración debe ser mayor a 0 minutos");
                 return;
             }
 
@@ -790,7 +820,7 @@ const FisioProfile = () => {
         };
 
         return (
-            <div className="modal-overlay">
+            <div className="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
                 <div className="modal-content">
                     <div className="modal-header flex justify-between items-center">
                         <h2>{editingService ? "Editar servicio" : "Añadir servicio"}</h2>
@@ -905,9 +935,16 @@ const FisioProfile = () => {
                                         <input
                                             type="text"
                                             value={newQuestion}
-                                            onChange={(e) => setNewQuestion(e.target.value)}
+                                            onChange={(e) => {
+                                                if (e.target.value.length <= 100) {
+                                                    setNewQuestion(e.target.value);
+                                                }
+                                            }}
                                             placeholder="Ej. ¿Tiene alguna lesión previa?"
                                         />
+                                        {newQuestion.length > 100 && (
+                                            <p className="text-red-500 text-sm">Máximo 100 caracteres permitidos.</p>
+                                        )}
                                         <GradientButton
                                             variant="create"
                                             onClick={addQuestion}
@@ -940,7 +977,7 @@ const FisioProfile = () => {
         try {
             const token = localStorage.getItem("token");
             if (!token) {
-                alert("No hay token disponible.");
+                showAlert("warning", "No hay token disponible.");
                 return;
             }
 
@@ -948,20 +985,20 @@ const FisioProfile = () => {
 
             // Fix the endpoint URL - the correct endpoint should be update/ not update-schedule/
             const response = await axios.put(
-                `${getApiBaseUrl()}/api/app_user/physio/update/`,
-                { schedule: JSON.stringify(scheduleWithoutInitialized) },
+                `${getApiBaseUrl()}/api/appointment/physio/schedule/weekly/`,
+                { schedule: scheduleWithoutInitialized },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
             if (response.status === 200) {
-                alert("Horario guardado correctamente.");
+                showAlert("success","Horario guardado correctamente.");
                 setScheduleModalOpen(false);
             } else {
                 throw new Error("Error al guardar el horario.");
             }
         } catch (error) {
             console.error("Error al guardar el horario:", error);
-            alert(`Error al guardar el horario: ${error.message}`);
+            showAlert("error", `Error al guardar el horario: ${error.message}`);
         }
     };
 
@@ -1236,7 +1273,7 @@ const FisioProfile = () => {
 
                 {/* Modal para editar el horario */}
                 {scheduleModalOpen && (
-                    <div className="schedule-modal-overlay">
+                    <div className="schedule-modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
                         <div className="schedule-modal-content">
                             <div className="schedule-modal-header">
                                 <h2 className="schedule-modal-title">Configuración de horario</h2>
@@ -1277,6 +1314,20 @@ const FisioProfile = () => {
                     </div>
                 )}
             </div>
+            <ConfirmModal
+            isOpen={confirmModal.isOpen}
+            message="¿Estás seguro de que deseas eliminar este servicio?"
+            onConfirm={handleConfirmDelete}
+            onCancel={() => setConfirmModal({ isOpen: false, serviceIndex: null })}
+            />
+            {alert.show && (
+            <Alert
+                type={alert.type}
+                message={alert.message}
+                onClose={() => setAlert({ ...alert, show: false })}
+                duration={5000}
+            />
+        )}
         </div>
     );
 };

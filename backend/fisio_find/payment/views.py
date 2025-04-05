@@ -127,17 +127,10 @@ def confirm_payment(request, payment_id):
         return Response({'error': f'Error confirming payment'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['POST'])
-@permission_classes([IsPatient])
-def cancel_payment_patient(request, payment_id):
+def cancel_payment_patient(payment_id):
     """Cancel an appointment and handle refund if applicable."""
     try:
         payment = Payment.objects.get(id=payment_id)
-
-        # Verificar que el usuario sea el paciente asociado
-        if request.user.patient != payment.appointment.patient:
-            return Response({'error': 'You can only cancel your own appointments'},
-                            status=status.HTTP_403_FORBIDDEN)
 
         appointment = payment.appointment
         now = timezone.now()
@@ -197,20 +190,11 @@ def cancel_payment_patient(request, payment_id):
         return Response({'error': 'An internal error has occurred. Please try again later.'}, status=status.HTTP_400_BAD_REQUEST)
     
 
-@api_view(['POST'])
-@permission_classes([IsPhysiotherapist])
-def cancel_payment_pyshio(request, appointment_id):
+def cancel_payment_pyshio(appointment_id):
     """Cancel an appointment and handle refund if applicable."""
     try:
 
         payment = Payment.objects.get(appointment_id=appointment_id)
-        
-        appointment = payment.appointment
-        
-        # Verificar que el pyshio sea el paciente asociado
-        if request.user.id != appointment.physiotherapist_id:
-            return Response({'error': 'You can only cancel your own appointments'}, 
-                            status=status.HTTP_403_FORBIDDEN)
 
         appointment = payment.appointment
         now = timezone.now()
@@ -435,33 +419,18 @@ def total_money(request):
         return Response({'error': 'An internal error has occurred. Please try again later.'}, status=status.HTTP_400_BAD_REQUEST)
 
 #generar un SetupIntent para almacenar el método de pago sin cobrarlo de inmediato
-
-@api_view(['POST'])
-@permission_classes([IsPatient])
-def create_payment_setup(request):
+def create_payment_setup(appointment_id, amount, user):
     """Crea un SetupIntent para almacenar el método de pago sin cobrarlo de inmediato."""
-    appointment_id = request.data.get('appointment_id')
-    amount = request.data.get('amount', 1000)  # Monto en centavos
     try:
         appointment = Appointment.objects.get(id=appointment_id)
         
-        # Verificar que el paciente sea el dueño de la cita
-        if request.user.patient != appointment.patient:
-            return Response({'error': 'Sólo puedes pagar tus propias citas'}, 
-                            status=status.HTTP_403_FORBIDDEN)
-        
-        # Verificar que la fecha de pago no haya expirado
-        if _check_deadline(appointment):
-            return Response({'error': 'El plazo para el pago ha expirado y la cita fue cancelada'}, 
-                            status=status.HTTP_400_BAD_REQUEST)
-        
         # --- NUEVO: Crear o recuperar el Customer en Stripe ---
-        patient = request.user.patient
+        patient = user.patient
         if not patient.stripe_customer_id:
             # Se crea el Customer en Stripe con el email del usuario
             customer = stripe.Customer.create(
-                email=request.user.email,
-                name=f"{request.user.first_name} {request.user.last_name}"
+                email=user.email,
+                name=f"{user.first_name} {user.last_name}"
             )
             patient.stripe_customer_id = customer.id
             patient.save()
@@ -485,15 +454,14 @@ def create_payment_setup(request):
             }
         )
         serializer = PaymentSerializer(payment)
-        return Response({
-            'payment': serializer.data,
-            'client_secret': setup_intent['client_secret']  # Se envía al frontend para confirmar el SetupIntent
-        }, status=status.HTTP_201_CREATED)
+        return {'payment': serializer.data,
+                'client_secret': setup_intent['client_secret']}  # Se envía al frontend para confirmar el SetupIntent
 
     except Appointment.DoesNotExist:
         return Response({'error': 'Cita no encontrada'}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         logging.error(f'Error al procesar el pago: {str(e)}')
+        appointment.delete()  # Eliminar la cita si ocurre un error
         return Response({'error': 'An error occurred while processing your payment. Please try again later.'}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])

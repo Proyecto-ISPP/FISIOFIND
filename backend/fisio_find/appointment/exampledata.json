@@ -79,10 +79,6 @@
                         {
                             "end": "12:00",
                             "start": "10:00"
-                        },
-                        {
-                            "end": "16:00",
-                            "start": "14:00"
                         }
                     ]
                 },
@@ -107,49 +103,76 @@
                     "friday": [],
                     "monday": [
                         {
+                            "id": "ws-1743669362707-139",
                             "end": "14:00",
                             "start": "10:00"
                         }
                     ],
-                    "saturday": [],
                     "sunday": [],
-                    "thursday": [],
                     "tuesday": [
                         {
+                            "id": "ws-1743669365620-823",
                             "end": "15:00",
                             "start": "10:00"
                         }
                     ],
+                    "saturday": [],
+                    "thursday": [],
                     "wednesday": []
                 }
             },
             "birth_date": "1980-01-01",
             "collegiate_number": "COL1",
             "services": {
-                "Servicio 1": {
+                "1": {
                     "id": 1,
-                    "title": "Primera consulta",
+                    "tipo": "PRIMERA_CONSULTA",
                     "price": 30,
-                    "description": "Evaluaremos tu estado físico, hablaremos sobre tus molestias y realizaremos pruebas para diseñar un plan de tratamiento personalizado que se adapte a tus necesidades y estilo de vida.",
-                    "duration": 45,
+                    "title": "Primera consulta",
+                    "duration": 60,
+                    "description": "",
                     "custom_questionnaire": {
                         "UI Schema": {
                             "type": "Group",
                             "label": "Cuestionario Personalizado",
                             "elements": [
                                 {
-                                    "type": "Control",
-                                    "label": "¿Qué te duele?",
-                                    "scope": "#/properties/q1"
+                                    "type": "Number",
+                                    "label": "Peso (kg)",
+                                    "scope": "#/properties/peso"
+                                },
+                                {
+                                    "type": "Number",
+                                    "label": "Altura (cm)",
+                                    "scope": "#/properties/altura"
+                                },
+                                {
+                                    "type": "Number",
+                                    "label": "Edad",
+                                    "scope": "#/properties/edad"
                                 },
                                 {
                                     "type": "Control",
-                                    "label": "¿Cómo describirías el dolor?",
-                                    "scope": "#/properties/q2"
+                                    "label": "Nivel de actividad física",
+                                    "scope": "#/properties/actividad_fisica"
+                                },
+                                {
+                                    "type": "Control",
+                                    "label": "Motivo de la consulta",
+                                    "scope": "#/properties/motivo_consulta"
                                 }
                             ]
                         }
                     }
+                },
+                "2": {
+                    "id": 2,
+                    "tipo": "CONTINUAR_TRATAMIENTO",
+                    "price": 30,
+                    "title": "Continuación de tratamiento",
+                    "duration": 45,
+                    "description": "",
+                    "custom_questionnaire": null
                 }
             },
             "gender": "M",

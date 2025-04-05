@@ -47,6 +47,7 @@ const Wizard: React.FC<WizardProps> = ({ steps, token, isClient }) => {
                 parsedServices.push({
                   id: service.id,
                   title: service.title || "",
+                  tipo: service.tipo || "",
                   price: typeof service.price === 'number' ? service.price : parseFloat(service.price || "0"),
                   description: service.description || "",
                   duration: service.duration || "",

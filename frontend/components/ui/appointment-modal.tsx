@@ -45,10 +45,10 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
     const handleResize = () => {
       setModalMaxHeight(`${window.innerHeight * 0.85}px`);
     };
-    
+
     handleResize(); // Ejecutar al montar
     window.addEventListener('resize', handleResize);
-    
+
     return () => {
       window.removeEventListener('resize', handleResize);
     };
@@ -73,13 +73,13 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
           },
         }
       );
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         alert(`Error: ${errorData.error || "No se pudo descargar la factura"}`);
         return;
       }
-  
+
       // Convertir la respuesta en un blob (archivo descargable)
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
@@ -94,7 +94,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
       alert("Error al descargar la factura.");
     }
   };
-  
+
   const getStatusBadge = () => {
     if (!selectedEvent) return null;
 
@@ -129,57 +129,28 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
     if (!selectedEvent) return;
     if (isClient) {
       if (token) {
-        // let url = ""
-        // if (currentRole === "patient") {
-        //   url = `${getApiBaseUrl()}/api/payments/${selectedEvent.id}/cancel/`;
-        // } else if (currentRole === "physiotherapist") {
-        //   url = `${getApiBaseUrl()}/api/payments/${selectedEvent.id}/cancel-physio/`;
-        // }
-        // axios
-        //   .post(
-        //     url,
-        //     {},
-        //     {
-        //       headers: {
-        //         Authorization: "Bearer " + token,
-        //       },
-        //     }
-
-        //   ).then((response) =>
-        //     {
-              // const status = response.status;
-              // console.log(status);
-              
-              axios.delete(
-                `${getApiBaseUrl()}/api/appointment/delete/${selectedEvent.id}/`,
-                {
-                  headers: {
-                    Authorization: "Bearer " + token,
-                  },
-                }
-              )
-              .then((response) => {
-                const status = response.status;
-                if (status == 204) {
-                  alert("La cita fue cancelada correctamente.");
-                  setSelectedEvent(null);
-                  window.location.reload();
-                }
-              })
-              .catch((error) => {
-                if (error.response) {
-                  const msg = error.response.data.error;
-                  alert(msg);
-                }
-              });
-    
-          // })
-          // .catch((error) => {
-          //   if (error.response) {
-          //     const msg = error.response.data.error;
-          //     alert(msg);
-          //   }
-          // });
+        axios.delete(
+          `${getApiBaseUrl()}/api/appointment/delete/${selectedEvent.id}/`,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
+        )
+          .then((response) => {
+            const status = response.status;
+            if (status == 204) {
+              alert("La cita fue cancelada correctamente.");
+              setSelectedEvent(null);
+              window.location.reload();
+            }
+          })
+          .catch((error) => {
+            if (error.response) {
+              const msg = error.response.data.error;
+              alert(msg);
+            }
+          });
       }
     }
   };
@@ -248,10 +219,10 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
 
   const isMoreThan48HoursAway = () => {
     if (!selectedEvent?.start) return false;
-    
+
     const eventDate = new Date(selectedEvent.start);
     const now = new Date();
-    
+
     const diffInHours = (eventDate.getTime() - now.getTime()) / (1000 * 60 * 60); // Convierte la diferencia de milisegundos a horas
     return diffInHours > 48;
   };
@@ -266,7 +237,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
     >
       {/* Backdrop */}
       <div className="absolute inset-0 bg-gray-900 bg-opacity-40 backdrop-blur-sm"></div>
-      
+
       {/* Modal Card - Con altura máxima y scroll */}
       <div
         className={`bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 relative z-50 flex flex-col ${isClosing ? 'scale-95' : 'scale-100'} transition-all duration-200`}
@@ -313,19 +284,19 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
 
           {/* Download invoice */}
           {currentRole === "patient" && (
-          <button
-            className="absolute top-3 right-[3.25rem] bg-teal-400 bg-opacity-20 hover:bg-opacity-30 text-white p-1.5 rounded-full transition-colors duration-150"
-            onClick={() => handleDownloadInvoice(selectedEvent.id, token)}
-            aria-label="Descargar"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-              <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-              <g id="SVGRepo_iconCarrier"> 
+            <button
+              className="absolute top-3 right-[3.25rem] bg-teal-400 bg-opacity-20 hover:bg-opacity-30 text-white p-1.5 rounded-full transition-colors duration-150"
+              onClick={() => handleDownloadInvoice(selectedEvent.id, token)}
+              aria-label="Descargar"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                <g id="SVGRepo_iconCarrier">
                   <path d="M7 18H6.2C5.0799 18 4.51984 18 4.09202 17.782C3.71569 17.5903 3.40973 17.2843 3.21799 16.908C3 16.4802 3 15.9201 3 14.8V10.2C3 9.0799 3 8.51984 3.21799 8.09202C3.40973 7.71569 3.71569 7.40973 4.09202 7.21799C4.51984 7 5.0799 7 6.2 7H7M17 18H17.8C18.9201 18 19.4802 18 19.908 17.782C20.2843 17.5903 20.5903 17.2843 20.782 16.908C21 16.4802 21 15.9201 21 14.8V10.2C21 9.07989 21 8.51984 20.782 8.09202C20.5903 7.71569 20.2843 7.40973 19.908 7.21799C19.4802 7 18.9201 7 17.8 7H17M7 11H7.01M17 7V5.4V4.6C17 4.03995 17 3.75992 16.891 3.54601C16.7951 3.35785 16.6422 3.20487 16.454 3.10899C16.2401 3 15.9601 3 15.4 3H8.6C8.03995 3 7.75992 3 7.54601 3.10899C7.35785 3.20487 7.20487 3.35785 7.10899 3.54601C7 3.75992 7 4.03995 7 4.6V5.4V7M17 7H7M8.6 21H15.4C15.9601 21 16.2401 21 16.454 20.891C16.6422 20.7951 16.7951 20.6422 16.891 20.454C17 20.2401 17 19.9601 17 19.4V16.6C17 16.0399 17 15.7599 16.891 15.546C16.7951 15.3578 16.6422 15.2049 16.454 15.109C16.2401 15 15.9601 15 15.4 15H8.6C8.03995 15 7.75992 15 7.54601 15.109C7.35785 15.2049 7.20487 15.3578 7.10899 15.546C7 15.7599 7 16.0399 7 16.6V19.4C7 19.9601 7 20.2401 7.10899 20.454C7.20487 20.6422 7.35785 20.7951 7.54601 20.891C7.75992 21 8.03995 21 8.6 21Z" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-              </g>
-            </svg>
-          </button>)}
+                </g>
+              </svg>
+            </button>)}
 
           {/* Close button */}
           <button
@@ -339,9 +310,9 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
             </svg>
           </button>
         </div>
-        
+
         {/* Content - Con scroll */}
-        <div 
+        <div
           ref={modalContentRef}
           className="p-6 overflow-y-auto flex-grow"
         >
@@ -368,93 +339,93 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
               )}
             </div>
           )}
-          
+
           {/* Questionary responses - Solo visible para fisioterapeutas */}
-          {currentRole === "physiotherapist" && 
-           selectedEvent.service?.questionaryResponses && 
-           Object.keys(selectedEvent.service.questionaryResponses).length > 0 && (
-            <div className="mb-6 bg-gray-50 rounded-lg p-4 border border-gray-200">
-              <h3 className="text-sm font-medium text-teal-700 mb-3 pb-2 border-b border-gray-200">
-                Información del paciente
-              </h3>
-              
-              <div className="space-y-4">
-                {/* Sección de datos personales comunes */}
-                <div>
-                  <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
-                    Datos básicos
-                  </h4>
-                  <div className="grid grid-cols-1 gap-2">
-                    {/* Mostrar peso con unidad */}
-                    {selectedEvent.service.questionaryResponses.peso && (
-                      <div className="flex justify-between py-1.5 border-b border-gray-100">
-                        <span className="text-sm font-medium text-gray-600">Peso:</span> 
-                        <span className="text-sm text-gray-800">{selectedEvent.service.questionaryResponses.peso} kg</span>
-                      </div>
-                    )}
-                    
-                    {/* Mostrar altura con unidad */}
-                    {selectedEvent.service.questionaryResponses.altura && (
-                      <div className="flex justify-between py-1.5 border-b border-gray-100">
-                        <span className="text-sm font-medium text-gray-600">Altura:</span> 
-                        <span className="text-sm text-gray-800">{selectedEvent.service.questionaryResponses.altura} cm</span>
-                      </div>
-                    )}
-                    
-                    {/* Mostrar edad con unidad */}
-                    {selectedEvent.service.questionaryResponses.edad && (
-                      <div className="flex justify-between py-1.5 border-b border-gray-100">
-                        <span className="text-sm font-medium text-gray-600">Edad:</span> 
-                        <span className="text-sm text-gray-800">{selectedEvent.service.questionaryResponses.edad} años</span>
-                      </div>
-                    )}
-                    
-                    {/* Nivel de actividad física */}
-                    {selectedEvent.service.questionaryResponses.actividad_fisica && (
-                      <div className="flex justify-between py-1.5 border-b border-gray-100">
-                        <span className="text-sm font-medium text-gray-600">Nivel de actividad:</span> 
-                        <span className="text-sm text-gray-800">{selectedEvent.service.questionaryResponses.actividad_fisica}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-                
-                {/* Motivo de consulta - con más espacio ya que suele ser texto largo */}
-                {selectedEvent.service.questionaryResponses.motivo_consulta && (
+          {currentRole === "physiotherapist" &&
+            selectedEvent.service?.questionaryResponses &&
+            Object.keys(selectedEvent.service.questionaryResponses).length > 0 && (
+              <div className="mb-6 bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <h3 className="text-sm font-medium text-teal-700 mb-3 pb-2 border-b border-gray-200">
+                  Información del paciente
+                </h3>
+
+                <div className="space-y-4">
+                  {/* Sección de datos personales comunes */}
                   <div>
                     <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
-                      Motivo de consulta
+                      Datos básicos
                     </h4>
-                    <div className="bg-white p-3 rounded border border-gray-100">
-                      <p className="text-sm text-gray-800">{selectedEvent.service.questionaryResponses.motivo_consulta}</p>
+                    <div className="grid grid-cols-1 gap-2">
+                      {/* Mostrar peso con unidad */}
+                      {selectedEvent.service.questionaryResponses.peso && (
+                        <div className="flex justify-between py-1.5 border-b border-gray-100">
+                          <span className="text-sm font-medium text-gray-600">Peso:</span>
+                          <span className="text-sm text-gray-800">{selectedEvent.service.questionaryResponses.peso} kg</span>
+                        </div>
+                      )}
+
+                      {/* Mostrar altura con unidad */}
+                      {selectedEvent.service.questionaryResponses.altura && (
+                        <div className="flex justify-between py-1.5 border-b border-gray-100">
+                          <span className="text-sm font-medium text-gray-600">Altura:</span>
+                          <span className="text-sm text-gray-800">{selectedEvent.service.questionaryResponses.altura} cm</span>
+                        </div>
+                      )}
+
+                      {/* Mostrar edad con unidad */}
+                      {selectedEvent.service.questionaryResponses.edad && (
+                        <div className="flex justify-between py-1.5 border-b border-gray-100">
+                          <span className="text-sm font-medium text-gray-600">Edad:</span>
+                          <span className="text-sm text-gray-800">{selectedEvent.service.questionaryResponses.edad} años</span>
+                        </div>
+                      )}
+
+                      {/* Nivel de actividad física */}
+                      {selectedEvent.service.questionaryResponses.actividad_fisica && (
+                        <div className="flex justify-between py-1.5 border-b border-gray-100">
+                          <span className="text-sm font-medium text-gray-600">Nivel de actividad:</span>
+                          <span className="text-sm text-gray-800">{selectedEvent.service.questionaryResponses.actividad_fisica}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
-                )}
-                
-                {/* Otras preguntas personalizadas */}
-                {Object.entries(selectedEvent.service.questionaryResponses)
-                  .filter(([key]) => !['peso', 'altura', 'edad', 'actividad_fisica', 'motivo_consulta'].includes(key))
-                  .length > 0 && (
+
+                  {/* Motivo de consulta - con más espacio ya que suele ser texto largo */}
+                  {selectedEvent.service.questionaryResponses.motivo_consulta && (
                     <div>
                       <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
-                        Información adicional
+                        Motivo de consulta
                       </h4>
-                      <div className="grid grid-cols-1 gap-2">
-                        {Object.entries(selectedEvent.service.questionaryResponses)
-                          .filter(([key]) => !['peso', 'altura', 'edad', 'actividad_fisica', 'motivo_consulta'].includes(key))
-                          .map(([key, value], index) => (
-                            <div key={index} className="py-1.5 border-b border-gray-100 last:border-0">
-                              <div className="text-sm font-medium text-gray-600 mb-1">{key}:</div>
-                              <div className="text-sm text-gray-800 break-words">{String(value)}</div>
-                            </div>
-                          ))}
+                      <div className="bg-white p-3 rounded border border-gray-100">
+                        <p className="text-sm text-gray-800">{selectedEvent.service.questionaryResponses.motivo_consulta}</p>
                       </div>
                     </div>
                   )}
+
+                  {/* Otras preguntas personalizadas */}
+                  {Object.entries(selectedEvent.service.questionaryResponses)
+                    .filter(([key]) => !['peso', 'altura', 'edad', 'actividad_fisica', 'motivo_consulta'].includes(key))
+                    .length > 0 && (
+                      <div>
+                        <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
+                          Información adicional
+                        </h4>
+                        <div className="grid grid-cols-1 gap-2">
+                          {Object.entries(selectedEvent.service.questionaryResponses)
+                            .filter(([key]) => !['peso', 'altura', 'edad', 'actividad_fisica', 'motivo_consulta'].includes(key))
+                            .map(([key, value], index) => (
+                              <div key={index} className="py-1.5 border-b border-gray-100 last:border-0">
+                                <div className="text-sm font-medium text-gray-600 mb-1">{key}:</div>
+                                <div className="text-sm text-gray-800 break-words">{String(value)}</div>
+                              </div>
+                            ))}
+                        </div>
+                      </div>
+                    )}
+                </div>
               </div>
-            </div>
-          )}
-          
+            )}
+
           {/* Alternatives selector */}
           {selectedEvent.alternatives && currentRole === "patient" && (
             <div className="mt-6 p-4 border border-gray-200 rounded-lg bg-gray-50">
@@ -467,7 +438,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
               </div>
             </div>
           )}
-          
+
           {/* Action buttons - Ahora van dentro del área con scroll */}
           {selectedEvent.status !== "finished" && (
             <div className="flex flex-wrap gap-3 mt-6 justify-end">
