@@ -1,7 +1,13 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from .models import AppUser
-from .util import *
+from .util import (
+    telefono_no_mide_9,
+    codigo_postal_no_mide_5,
+    validate_dni_structure,
+    validate_dni_match_letter
+)
+
 
 class AppUserCreationForm(UserCreationForm):
     class Meta:
@@ -16,6 +22,7 @@ class AppUserCreationForm(UserCreationForm):
         if qs.exists():
             raise forms.ValidationError("El nombre de usuario ya está en uso.")
         return username
+
     def clean_email(self):
         email = self.cleaned_data.get('email')
         if not email:
@@ -60,6 +67,7 @@ class AppUserCreationForm(UserCreationForm):
     class Meta:
         model = AppUser
         fields = ('username', 'email', 'dni', 'phone_number', 'postal_code', 'photo', 'account_status')
+
 
 class AppUserChangeForm(UserChangeForm):
 
@@ -112,7 +120,6 @@ class AppUserChangeForm(UserChangeForm):
         if qs.exists():
             raise forms.ValidationError("El DNI ya está en uso.")
         return dni
-
 
     class Meta:
         model = AppUser
