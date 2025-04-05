@@ -1,7 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-import boto3
-from django.conf import settings
 
 ACCOUNT_STATUS_CHOICES = [
     ('ACTIVE', 'Active'),

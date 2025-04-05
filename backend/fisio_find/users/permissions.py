@@ -1,6 +1,5 @@
 from rest_framework.permissions import BasePermission
-from appointment.models import Appointment
-from treatments.models import Treatment
+
 
 class IsPatient(BasePermission):
     """
@@ -8,7 +7,8 @@ class IsPatient(BasePermission):
     """
     def has_permission(self, request, view):
         return hasattr(request.user, 'patient')
-    
+
+
 class IsPhysiotherapist(BasePermission):
     """
     Permite el acceso a usuarios que sean fisioterapeutas.
@@ -16,13 +16,15 @@ class IsPhysiotherapist(BasePermission):
     def has_permission(self, request, view):
         return hasattr(request.user, 'physio')
 
+
 class IsPhysioOrPatient(BasePermission):
     """
     Permite el acceso a usuarios que sean pacientes o fisioterapeutas.
     """
     def has_permission(self, request, view):
         return hasattr(request.user, 'patient') or hasattr(request.user, 'physio')
-    
+
+
 class IsAdmin(BasePermission):
     """
     Permite el acceso a usuarios que sean administrador.

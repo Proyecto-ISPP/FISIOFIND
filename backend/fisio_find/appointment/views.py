@@ -1,22 +1,18 @@
 from collections import defaultdict
-from datetime import datetime, timedelta
-from rest_framework import generics
+from datetime import datetime, timedelta, timezone
 from rest_framework.filters import SearchFilter, OrderingFilter
 from appointment.models import Appointment, Physiotherapist, Patient
 from appointment.serializers import AppointmentSerializer
 from rest_framework.permissions import IsAuthenticated
 from payment.views import cancel_payment_patient, cancel_payment_pyshio, create_payment_setup
 from users.permissions import IsPhysiotherapist, IsPatient, IsPhysioOrPatient
-from users.permissions import IsAdmin
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 from django.core.exceptions import ValidationError
-from rest_framework.views import APIView
 from django.utils.timezone import make_aware, is_aware
 from django.utils.dateparse import parse_datetime
-from datetime import datetime, timezone, timedelta
 from appointment.emailUtils import send_appointment_email
 from django.core import signing
 from django.core.signing import BadSignature, SignatureExpired
@@ -33,6 +29,7 @@ class StandardResultsSetPagination(PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 100
 
+
 def update_schedule(data):
     if isinstance(data, Appointment):
         physio_id = data.physiotherapist.id
@@ -40,11 +37,11 @@ def update_schedule(data):
         physio_id = data.get('physiotherapist')
     if not physio_id:
         return Response({"error": "Debes proporcionar un ID de fisioterapeuta"}, status=status.HTTP_400_BAD_REQUEST)
-    
+
     physiotherapist = Physiotherapist.objects.get(id=physio_id)
     if not physiotherapist:
         return Response({"error": "Fisioterapeuta no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-    
+
     current_schedule = physiotherapist.schedule
     if not current_schedule:
         return Response({"error": "No se ha definido un horario para este fisioterapeuta"}, status=status.HTTP_404_NOT_FOUND)
@@ -70,7 +67,7 @@ def update_schedule(data):
 @permission_classes([IsAuthenticated, IsPatient])
 def create_appointment_patient(request):
     patient = request.user.patient
-    
+
     weekly_days = {
         "monday": "lunes",
         "tuesday": "martes",
@@ -89,21 +86,21 @@ def create_appointment_patient(request):
         physiotherapist = Physiotherapist.objects.get(id=data['physiotherapist'])
     except Physiotherapist.DoesNotExist:
         return Response({"error": "Fisioterapeuta no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-    
+
     schedule = physiotherapist.schedule
     weekly_schedule = schedule.get('weekly_schedule', {})
     exceptions = schedule.get('exceptions', {})
-    
+
     selected_service = data.get('service',{})
     if selected_service == None or selected_service == {}:
         return Response({"error": "Debes de seleccionar un servicio"}, status=status.HTTP_400_BAD_REQUEST)
-    
+
     physio_services = physiotherapist.services
     try:
         selected_service = validate_service_with_questionary(selected_service, physio_services)
     except Exception:
         return Response({"error": "Debes de enviar un cuestionario válido"}, status=status.HTTP_400_BAD_REQUEST)
-    
+
     # Parsear fechas de la solicitud
     start_time = parse_datetime(data['start_time'])
     if not is_aware(start_time):
@@ -156,7 +153,6 @@ def create_appointment_patient(request):
             patient=appointment.patient,
             appointment=appointment
         )
-        
 
         return Response({'appointment_data': serializer.data, 'payment_data': payment_data}, status=status.HTTP_201_CREATED)
 
@@ -189,7 +185,7 @@ def create_appointment_physio(request):
             patient=appointment.patient,
             appointment=appointment
         )
-       
+
         return Response(AppointmentSerializer(appointment).data, status=status.HTTP_201_CREATED)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -311,10 +307,9 @@ def edit_weekly_schedule(request):
                 if not _is_valid_time_range(start, end):
                     raise ValidationError(
                         f"El rango {start}-{end} no es válido. La hora de inicio debe ser anterior a la de fin.")
-                
+
         # Actualizar solo el weekly_schedule en el schedule existente
         current_schedule['weekly_schedule'] = weekly_schedule
-
 
         # Validar la estructura de exceptions
         if not isinstance(data, dict) or 'exceptions' not in data:
@@ -340,7 +335,7 @@ def edit_weekly_schedule(request):
                 date_obj = datetime.strptime(date_str, "%Y-%m-%d")
             except ValueError:
                 raise ValidationError(f"La fecha {date_str} no tiene el formato válido YYYY-MM-DD.")
-            
+
             if not isinstance(blocks, list):
                 raise ValidationError(f"Los bloques para la fecha {date_str} deben ser una lista.")
 
@@ -482,10 +477,10 @@ def update_appointment(request, appointment_id):
             slot_end = slot["end"]
             if slot_start == appointment_start_time and date == appointment.start_time.strftime("%Y-%m-%d"):
                 return Response({"error": f"No puedes agregar la fecha actual de la cita ({appointment_start_time}) en 'alternatives'"}, status=status.HTTP_400_BAD_REQUEST)
-            
+
             if slot_start >= slot_end:
                 return Response({"error": f"En {date}, la hora de inicio debe ser menor que la de fin"}, status=status.HTTP_400_BAD_REQUEST)
-            
+
             for physio_appointment in physio_appointments:
                 if date == physio_appointment["start_time"].split("T")[0]:
                     if physio_appointment["end_time"].split("T")[1][:5] > slot_start >= physio_appointment["start_time"].split("T")[1][:5] or physio_appointment["start_time"].split("T")[1][:5] < slot_end <= physio_appointment["end_time"].split("T")[1][:5]:
@@ -511,10 +506,6 @@ def update_appointment(request, appointment_id):
 
     if serializer.is_valid():
         serializer.save()
-        # if serializer.data['alternatives']:
-            # send_appointment_email(appointment.id, 'modified')
-        # elif serializer.data['status'] == "confirmed":
-            # send_appointment_email(appointment.id, 'modified-accepted')
         update_schedule(data)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -533,7 +524,7 @@ def accept_alternative(request, appointment_id):
     alternatives = appointment.alternatives
     if alternatives == "":
         return Response({"error": "No puedes aceptar una alternativa si la cita no tiene alternativas"}, status=status.HTTP_400_BAD_REQUEST)
-    
+
     # Verificar que el usuario autenticado sea el paciente correspondiente
     if user.patient != appointment.patient:
         return Response({"error": "No autorizado para aceptar una alternativa de esta cita"}, status=status.HTTP_403_FORBIDDEN)
@@ -542,7 +533,7 @@ def accept_alternative(request, appointment_id):
 
     if not selected_start_date or not selected_end_date:
         return Response({"error": "Debes proporcionar un 'start_time' y un 'end_time' válidos"}, status=status.HTTP_400_BAD_REQUEST)
-    
+
     # Extraer la fecha y la hora de las fechas
     selected_date = selected_start_date.split('T')[0]  # Ejemplo: "2025-04-07"
     selected_start_time = selected_start_date.split('T')[1][:5]  # Ejemplo: "10:00"
@@ -575,6 +566,7 @@ def accept_alternative(request, appointment_id):
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def confirm_appointment(request, appointment_id):
@@ -600,7 +592,7 @@ def confirm_appointment(request, appointment_id):
     appointment.status = "confirmed"
     appointment.save()
     # send_appointment_email(appointment.id, 'confirmed')
-    
+
     # Serializar la cita actualizada
     serializer = AppointmentSerializer(appointment)
 
@@ -717,7 +709,7 @@ def delete_appointment(request, appointment_id):
     except Exception as e:
         print(e)
         return Response({'error': 'An internal error has occurred. Please try again later.'}, status=status.HTTP_400_BAD_REQUEST)
-    
+
     # Enviar el correo con el rol del usuario
     send_appointment_email(appointment.id, 'canceled', role)
 
@@ -756,6 +748,7 @@ def get_appointment_by_id(request, appointmentId):
     except Exception as e:
         return Response({"error": "Bad request"}, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def confirm_appointment_using_token(request, token):
@@ -784,8 +777,8 @@ def confirm_appointment_using_token(request, token):
     appointment.save()
     send_appointment_email(appointment.id, 'confirmed')
 
-
     return Response({"message": "¡Cita aceptada con éxito!"}, status=status.HTTP_200_OK)
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated, IsPhysiotherapist])
@@ -799,14 +792,14 @@ def list_finished_appointments_physio(request):
             {'detail': 'Debe ser fisioterapeuta para ver las citas'}, 
             status=status.HTTP_403_FORBIDDEN
         )
-    
+
     # Filtrar por estado finalizado
     status_filter = request.query_params.get('status', 'finished')
-    
+
     appointments = Appointment.objects.filter(
         physiotherapist=physiotherapist,
         status=status_filter
     ).order_by('-end_time')
-    
+
     serializer = AppointmentSerializer(appointments, many=True)
     return Response(serializer.data)

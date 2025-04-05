@@ -1,4 +1,3 @@
-import json
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.hashers import make_password
@@ -8,12 +7,9 @@ from django.db import transaction
 from users.validacionFisios import validar_colegiacion
 from .models import AppUser, Patient, Physiotherapist, PhysiotherapistSpecialization, Specialization, Pricing
 from datetime import date, datetime
-from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
-from datetime import date, datetime
 from users.util import validate_dni_match_letter, codigo_postal_no_mide_5, telefono_no_mide_9, validate_dni_structure
-from .models import AppUser, Patient, Physiotherapist, PhysiotherapistSpecialization, Specialization
 
 
 class AppUserSerializer(serializers.ModelSerializer):
@@ -36,7 +32,7 @@ class AppUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = AppUser
         fields = [
-            'user_id', 'username', 'first_name', 'last_name', 'email', 
+            'user_id', 'username', 'first_name', 'last_name', 'email',
             'photo', 'dni', 'phone_number', 'postal_code', 'account_status'
         ]
         extra_kwargs = {
@@ -95,7 +91,6 @@ class PhysioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Physiotherapist
         fields = '__all__'
-        #exclude = ['user']
 
 
 class PatientSerializer(serializers.ModelSerializer):
@@ -116,7 +111,7 @@ class PatientSerializer(serializers.ModelSerializer):
 
         if value >= datetime.now().date():
             raise serializers.ValidationError("La fecha de nacimiento debe ser anterior a la fecha actual.")
-        elif value < date(1900,1,1):
+        elif value < date(1900, 1, 1):
             raise serializers.ValidationError("La fecha de nacimiento no puede ser tan atrás en el tiempo.")
         return value
 
@@ -145,11 +140,10 @@ class PatientSerializer(serializers.ModelSerializer):
 
         # Impedir la modificación del DNI
         if user_data and 'dni' in user_data:
-            user_data.pop('dni', None) 
-        
-        if 'birth_date' in validated_data:
-            validated_data.pop('birth_date', None)  
+            user_data.pop('dni', None)
 
+        if 'birth_date' in validated_data:
+            validated_data.pop('birth_date', None)
 
         # Si hay datos de usuario, actualizar solo los campos permitidos
         if user_data:
@@ -295,7 +289,7 @@ class PhysioRegisterSerializer(serializers.ModelSerializer):
             'invalid': 'Valor de plan inválido'
         }
     )
-    
+
     # Campos nuevos de Stripe (solo lectura)
     stripe_subscription_id = serializers.CharField(read_only=True)
     subscription_status = serializers.CharField(read_only=True)
@@ -338,8 +332,11 @@ class PhysioRegisterSerializer(serializers.ModelSerializer):
             collegiate_number=collegiate_number,
             autonomic_community=autonomic_community
         ).exists():
-            validation_errors["collegiate_number"] = "Ya existe un fisioterapeuta con este nombre, apellido, número de colegiado y comunidad autónoma."
-        
+            validation_errors["collegiate_number"] = (
+                "Ya existe un fisioterapeuta con este nombre, apellido, "
+                "número de colegiado y comunidad autónoma."
+            )
+
         full_name_uppercase = first_name.upper() + " " + last_name.upper()
         valid_physio = validar_colegiacion(full_name_uppercase, collegiate_number, autonomic_community)
         if not valid_physio:
@@ -412,8 +409,9 @@ class PhysioRegisterSerializer(serializers.ModelSerializer):
                 return instance
 
         except IntegrityError:
-            raise serializers.ValidationError({"error": "Error de integridad en la base de datos. Posible duplicado de datos."})
-
+            raise serializers.ValidationError({
+                "error": "Error de integridad en la base de datos. Posible duplicado de datos."
+            })
 
 
 class PhysioUpdateSerializer(serializers.ModelSerializer):
@@ -440,7 +438,8 @@ class PhysioUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Physiotherapist
-        fields = ['email', 'phone_number', 'postal_code', 'bio', 'photo', 'services', 'specializations', 'schedule', 'plan']
+        fields = ['email', 'phone_number', 'postal_code', 'bio', 'photo', 'services',
+                  'specializations', 'schedule', 'plan']
 
     def validate(self, data):
         """Validaciones solo para los campos proporcionados."""
@@ -469,7 +468,9 @@ class PhysioUpdateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Los servicios deben ser un objeto JSON.")
         for service_name, service_data in value.items():
             if not isinstance(service_data, dict):
-                raise serializers.ValidationError(f"El servicio '{service_name}' debe contener un objeto con sus propiedades.")
+                raise serializers.ValidationError(
+                    f"El servicio '{service_name}' debe contener un objeto con sus propiedades."
+                )
         return value
 
     def update(self, instance, validated_data):
@@ -499,7 +500,8 @@ class PhysioUpdateSerializer(serializers.ModelSerializer):
                     instance.physiotherapistspecialization_set.all().delete()
                     for spec_name in specializations_data:
                         specialization, _ = Specialization.objects.get_or_create(name=spec_name)
-                        PhysiotherapistSpecialization.objects.create(physiotherapist=instance, specialization=specialization)
+                        PhysiotherapistSpecialization.objects.create(physiotherapist=instance,
+                                                                     specialization=specialization)
 
                 instance.save()
                 return instance

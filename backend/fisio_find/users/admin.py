@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin as BaseUserAdmin 
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from .models import AppUser, Patient, Physiotherapist, Admin, Specialization, PhysiotherapistSpecialization
 from .forms import AppUserCreationForm, AppUserChangeForm
 
@@ -9,7 +9,7 @@ class AppUserAdmin(BaseUserAdmin):
     form = AppUserChangeForm
     model = AppUser
 
-    list_display = ['id','username', 'first_name', 'email', 'dni', 'account_status']
+    list_display = ['id', 'username', 'first_name', 'email', 'dni', 'account_status']
 
     fieldsets = BaseUserAdmin.fieldsets + (
         (None, {
@@ -32,13 +32,13 @@ class AppUserAdmin(BaseUserAdmin):
 
 
 class PatientAdmin(admin.ModelAdmin):
-    search_fields = ['user__email', 'user__username', 'user__first_name','user__last_name','user__dni', 'gender']
+    search_fields = ['user__email', 'user__username', 'user__first_name', 'user__last_name', 'user__dni', 'gender']
     list_filter = ['gender']
-    list_display = ['id', 'user__username', 'user__first_name','user__last_name','user__email']
+    list_display = ['id', 'user__username', 'user__first_name', 'user__last_name', 'user__email']
 
 
 class PhysioAdmin(admin.ModelAdmin):
-    search_fields = ['user__email', 'user__username','user__first_name','user__last_name','user__dni', 'gender',
+    search_fields = ['user__email', 'user__username', 'user__first_name', 'user__last_name', 'user__dni', 'gender',
                      'autonomic_community', 'collegiate_number']
     list_filter = ['gender', 'autonomic_community']
     list_display = ['id', 'user__username', 'user__email', 'collegiate_number', 'autonomic_community']
@@ -80,4 +80,3 @@ admin.site.register(Physiotherapist, PhysioAdmin)
 admin.site.register(Specialization)
 admin.site.register(PhysiotherapistSpecialization)
 admin.site.register(Admin)
-admin.site.register(Specialization, SpecializationAdmin)
