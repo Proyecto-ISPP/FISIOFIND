@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Line } from "react-chartjs-2";
 import Alert from "@/components/ui/Alert";
+
 import {
   Chart,
   LineElement,
@@ -603,6 +604,14 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
             className="bg-[#6bc9be] hover:bg-[#5ab8ad] text-white font-semibold py-2 px-4 rounded-xl inline-flex items-center"
           >
             Gestionar Sesiones
+          </button>
+          <button
+            onClick={() =>
+              router.push(`/physio-management/follow-up/${id}/videos`)
+            }
+            className="bg-[#6bc9be] hover:bg-[#5ab8ad] text-white font-semibold py-2 px-4 rounded-xl inline-flex items-center"
+          >
+            Gestionar Videos
           </button>
           <button
             onClick={handleEditToggle}
