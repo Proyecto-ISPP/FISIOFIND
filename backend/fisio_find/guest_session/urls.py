@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import SearchPhysiotherapistView, PhysiotherapistsWithSpecializationView, ListSpecializationsView, advanced_search
+from .views import SearchPhysiotherapistView, PhysiotherapistsWithSpecializationView
+from .views import ListSpecializationsView, advanced_search
 
 urlpatterns = [
     path('search-physios/', SearchPhysiotherapistView.as_view(), name='search-physios'),

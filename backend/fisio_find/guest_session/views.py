@@ -1,5 +1,4 @@
 import base64
-from decimal import Decimal
 import json
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
@@ -7,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import Q
 from users.models import Physiotherapist
-from users.models import Specialization 
+from users.models import Specialization
 from rest_framework.decorators import api_view, permission_classes
 import random
 
@@ -86,6 +85,7 @@ class PhysiotherapistsWithSpecializationView(APIView):
         except Specialization.DoesNotExist:
             return Response({"error": "Especialidad no encontrada"}, status=status.HTTP_404_NOT_FOUND)
 
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def advanced_search(request):
@@ -103,7 +103,11 @@ def advanced_search(request):
         filters &= Q(specializations__name__iexact=specialization)
 
     if gender and gender != 'indifferent':
-        filters &= Q(gender__iexact=gender[0])  # 'M' o 'F'
+        # Fix gender mapping
+        gender_map = {'male': 'M', 'female': 'F'}
+        gender_code = gender_map.get(gender, '')
+        if gender_code:
+            filters &= Q(gender__iexact=gender_code)  # 'M' o 'F'
 
     if postal_code:
         filters &= Q(user__postal_code__icontains=postal_code)
@@ -118,34 +122,58 @@ def advanced_search(request):
     if max_price:
         try:
             max_price_value = float(max_price)
-            physiotherapists = [
-                physio for physio in physiotherapists
-                if any(
-                    float(service.get('price', float('inf'))) <= max_price_value
-                    for service in physio.services.values()
-                )
-            ]
+            # Handle potential None or invalid services
+            filtered_physios = []
+            for physio in physiotherapists:
+                services = physio.services or {}
+                if isinstance(services, str):
+                    try:
+                        services = json.loads(services)
+                    except json.JSONDecodeError:
+                        services = {}
+
+                if not services:
+                    continue
+
+                # Check if any service price is less than or equal to max_price
+                has_affordable_service = False
+                for service_key, service_data in services.items():
+                    if isinstance(service_data, dict) and 'price' in service_data:
+                        try:
+                            price = float(service_data['price'])
+                            if price <= max_price_value:
+                                has_affordable_service = True
+                                break
+                        except (ValueError, TypeError):
+                            continue
+
+                if has_affordable_service:
+                    filtered_physios.append(physio)
+
+            physiotherapists = filtered_physios
         except (ValueError, TypeError):
             pass  # Ignora si max_price no es válido
 
     # Filtro por schedule (mañana, tarde, noche)
-    if schedule:
-        time_ranges = {
-            'mañana': (time_to_minutes('06:00'), time_to_minutes('14:00')),
-            'tarde': (time_to_minutes('14:00'), time_to_minutes('20:00')),
-            'noche': (time_to_minutes('20:00'), time_to_minutes('23:59'))
-        }
-        
-        if schedule in time_ranges:
-            req_start_min, req_end_min = time_ranges[schedule]
-            physiotherapists = [
-                physio for physio in physiotherapists
-                if has_availability_any_day(
-                    get_weekly_schedule(physio.schedule),
-                    req_start_min,
-                    req_end_min
-                )
-            ]
+    time_ranges = {
+        'mañana': (time_to_minutes('06:00'), time_to_minutes('14:00')),
+        'tarde': (time_to_minutes('14:00'), time_to_minutes('20:00')),
+        'noche': (time_to_minutes('20:00'), time_to_minutes('23:59'))
+    }
+
+    if schedule and schedule in time_ranges:
+        req_start_min, req_end_min = time_ranges[schedule]
+        filtered_physios = []
+        for physio in physiotherapists:
+            try:
+                weekly_schedule = get_weekly_schedule(physio.schedule)
+                if has_availability_any_day(weekly_schedule, req_start_min, req_end_min):
+                    filtered_physios.append(physio)
+            except Exception as e:
+                # Skip this physiotherapist if there's an error processing their schedule
+                continue
+
+        physiotherapists = filtered_physios
 
     exact_matches = weighted_shuffle(physiotherapists)[:12]
 
@@ -184,7 +212,7 @@ def advanced_search(request):
         for physio in physios:
             specializations = physio.specializations.all()
             specialization_names = [s.name for s in specializations]
-            
+
             # Manejar el campo image
             image_data = None
             if physio.user.photo:
@@ -211,6 +239,7 @@ def advanced_search(request):
         'suggestedMatches': serialize(suggested_matches)
     }, status=status.HTTP_200_OK)
 
+
 def weighted_shuffle(physios):
     golds = [p for p in physios if is_gold_physio(p)]
     regulars = [p for p in physios if not is_gold_physio(p)]
@@ -223,8 +252,10 @@ def weighted_shuffle(physios):
             shuffled.append(physio)
     return shuffled
 
+
 def is_gold_physio(physio):
     return physio.plan and physio.plan.name == 'Gold'
+
 
 def time_to_minutes(time_str):
     """Convierte un string de tiempo HH:MM a minutos desde medianoche."""
@@ -236,6 +267,7 @@ def time_to_minutes(time_str):
     except (ValueError, TypeError):
         return 0  # Valor por defecto si la conversión falla
 
+
 def has_availability_any_day(weekly_schedule, req_start_min, req_end_min):
     """Verifica si hay disponibilidad en cualquier día que se solape con el rango solicitado."""
     for day_schedule in weekly_schedule.values():
@@ -244,7 +276,7 @@ def has_availability_any_day(weekly_schedule, req_start_min, req_end_min):
                 slot = slot[0]  # Toma el primer elemento de la lista
                 start_str = slot.get('start', '00:00')
                 end_str = slot.get('end', '00:00')
-                
+
                 # Si start y end están vacíos, asumir todo el día (00:00 - 23:59)
                 if not start_str and not end_str:
                     slot_start_min = time_to_minutes('00:00')  # 0 minutos
@@ -252,10 +284,11 @@ def has_availability_any_day(weekly_schedule, req_start_min, req_end_min):
                 else:
                     slot_start_min = time_to_minutes(start_str)
                     slot_end_min = time_to_minutes(end_str)
-                
+
                 if slot_start_min <= req_end_min and slot_end_min >= req_start_min:
                     return True
     return False
+
 
 def get_weekly_schedule(schedule):
     """Obtiene el weekly_schedule manejando tanto cadenas como diccionarios."""
