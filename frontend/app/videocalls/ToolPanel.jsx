@@ -12,7 +12,8 @@ const ToolPanel = ({
   activePainMap,
   handlePainMapSelect,
   sendPainMapToPatient,
-  partsColored, // Añadido para pasarlo a mapa dolor
+  partsColoredFront, // Añadido para pasarlo a mapa dolor
+  partsColoredBack, // Añadido para pasarlo a mapa dolor
   sendWebSocketMessage, // Añadido para pasarlo a mapa dolor
   userRole // Añadido para pasarlo a AnatomicalModel
 }) => {
@@ -29,7 +30,8 @@ const ToolPanel = ({
           activePainMap={activePainMap}
           handlePainMapSelect={handlePainMapSelect}
           sendPainMapToPatient={sendPainMapToPatient}
-          partsColored={partsColored}
+          partsColoredFront={partsColoredFront}
+          partsColoredBack={partsColoredBack}
           sendWebSocketMessage={sendWebSocketMessage}
         />
       )}
