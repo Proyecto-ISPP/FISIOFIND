@@ -566,7 +566,7 @@ def request_account_deletion(request):
     except Exception as e:
         logger.error(f"Error in account deletion request: {str(e)}")
         return Response({
-            "error": f"Error al procesar tu solicitud: {str(e)}"
+            "error": "Ocurrió un error al procesar tu solicitud."
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET'])
