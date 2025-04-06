@@ -79,7 +79,7 @@ const Home = () => {
       <CookieConsent />
 
       {/* Header */}
-      {!isAuthenticated && (
+      {/* {!isAuthenticated && (
         <header className="bg-[rgb(238, 251, 250)] shadow-md py-4">
           <div className="max-w-screen-xl mx-auto px-4 flex justify-between items-center">
             <div className="hidden md:flex items-center space-x-2">
@@ -88,12 +88,7 @@ const Home = () => {
                 className="flex items-center space-x-3 bg-[#41B8D5] hover:bg-[#5ab3a8] text-white font-bold py-2 px-6 rounded-full shadow transition-all"
                 onClick={() => router.push("/advanced-search")}
               >
-                <Image
-                  src="/static/search.svg"
-                  alt="Search Icon"
-                  width={24}
-                  height={24}
-                />
+                <Image src="/static/search.svg" alt="Search Icon" width={24} height={24} />
                 <span>Encuentra el fisio que más se adapta a tí </span>
               </button>
             </div>
@@ -118,6 +113,33 @@ const Home = () => {
                     "_blank"
                   )
                 }
+              >
+                ¿Eres fisio?
+              </button>
+            </div>
+          </div>
+        </header>
+      )} */}
+      {!isAuthenticated && (
+        <header className="bg-[rgb(238, 251, 250)] shadow-md py-4">
+          <div className="max-w-screen-xl mx-auto px-4 flex justify-end items-center">
+            {/* Botones alineados a la derecha */}
+            <div className="flex items-center space-x-3 md:space-x-3">
+              <button
+                className="text-[#05668D] hover:text-[#05AC9C] px-3 py-2 font-medium"
+                onClick={() => router.push("/login")}
+              >
+                Iniciar sesión
+              </button>
+              <button
+                className="bg-[#41B8D5] hover:bg-[#05AC9C] text-white px-4 py-2 rounded-full font-medium"
+                onClick={() => router.push("/register")}
+              >
+                Regístrate
+              </button>
+              <button
+                className="border border-[#1E5ACD] text-[#1E5ACD] hover:bg-[#1E5ACD] hover:text-white px-4 py-2 rounded-full font-medium"
+                onClick={() => window.open("https://fisiofind-landing-page.netlify.app/", "_blank")}
               >
                 ¿Eres fisio?
               </button>
@@ -157,7 +179,7 @@ const Home = () => {
                   },
                 }}
               >
-                <span>Accede a la Búsqueda Avanzada</span>
+                <span>Encuentra a tu fisioterapeuta ideal  </span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5 ml-2"
