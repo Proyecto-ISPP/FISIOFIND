@@ -362,7 +362,7 @@ const Home = () => {
           </div>
         </div>
         <div className="text-center mt-8 pt-8 border-t border-gray-700">
-          <p>© 2025 Fisio Find. Bajo licencia MIT</p>
+          <p>© 2025 Fisio Finder. Bajo licencia MIT</p>
         </div>
       </footer>
     </div>
