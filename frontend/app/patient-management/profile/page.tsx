@@ -17,7 +17,6 @@ import {
   Film,
 } from "lucide-react";
 import { GradientButton } from "@/components/ui/gradient-button";
-import { Play } from "next/font/google";
 import Link from "next/link";
 
 const BASE_URL = `${getApiBaseUrl()}`;
@@ -137,7 +136,7 @@ const PatientProfile = () => {
           first_name: userData.user_data.first_name,
           last_name: userData.user_data.last_name,
           email: userData.user_data.email,
-          phone_number: userData.user_data.phone_number,
+          phone_number: userData.user_data.phone_number ?? "",
           photo: userData.user_data.photo,
           postal_code: userData.user_data.postal_code,
           username: userData.user_data.username,
@@ -213,7 +212,6 @@ const PatientProfile = () => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Create URL for preview
       const previewUrl = URL.createObjectURL(file);
 
       setProfile((prevProfile) => ({
@@ -244,8 +242,6 @@ const PatientProfile = () => {
 
     if (!profile.user.username)
       newErrors.username = "El nombre de usuario es obligatorio";
-    if (!profile.user.phone_number)
-      newErrors.phone_number = "El teléfono es obligatorio";
     if (!profile.user.dni) newErrors.dni = "El DNI es obligatorio";
     if (!profile.user.email) newErrors.email = "El email es obligatorio";
     if (!profile.user.postal_code)
@@ -275,7 +271,6 @@ const PatientProfile = () => {
     setSuccess("");
     setErrors({});
 
-    // Check if sensitive fields have been changed
     if (pendingChanges.dni || pendingChanges.password) {
       setShowConfirmation(true);
       return;
@@ -291,7 +286,6 @@ const PatientProfile = () => {
       return;
     }
 
-    // Verifica si hay token
     if (!token) {
       setErrors({ general: "No hay token disponible." });
       return;
@@ -302,13 +296,8 @@ const PatientProfile = () => {
 
       // Add user fields, including sensitive fields like DNI and password
       Object.entries(profile.user).forEach(([key, value]) => {
-        if (
-          value &&
-          key !== "photo" &&
-          key !== "photoFile" &&
-          key !== "preview"
-        ) {
-          formData.append(`user.${key}`, value);
+        if (key !== "photo" && key !== "photoFile" && key !== "preview") {
+          formData.append(`user.${key}`, value || "");
         }
       });
 
@@ -318,7 +307,7 @@ const PatientProfile = () => {
       }
       if (pendingChanges.password) {
         formData.append("user.password", pendingChanges.password);
-        formData.append("user.old_password", oldPassword); // Include old password
+        formData.append("user.old_password", oldPassword);
       }
 
       // Add patient fields
@@ -330,21 +319,16 @@ const PatientProfile = () => {
         formData.append("user.photo", selectedFile);
       }
 
-      // Realizar la solicitud de actualización
-      const response = await axios.patch(
-        `${getApiBaseUrl()}/api/app_user/profile/`,
-        formData,
-        {
-          headers: {
-            Authorization: "Bearer " + token,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await axios.patch(`${getApiBaseUrl()}/api/app_user/profile/`, formData, {
+        headers: {
+          Authorization: "Bearer " + token,
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       if (response.status === 200) {
         setSuccess("Perfil actualizado correctamente");
-        fetchPatientProfile(); // Recargar perfil automáticamente
+        fetchPatientProfile();
       }
     } catch (error) {
       if (error.response && error.response.data) {
@@ -383,17 +367,12 @@ const PatientProfile = () => {
   };
 
   const getImageSrc = () => {
-    // If there's a preview URL (user has uploaded a new image)
     if (profile.user.preview) {
       return profile.user.preview;
     }
-
-    // If there's a photo from the backend
     if (profile?.user?.photo) {
       return `${getApiBaseUrl()}/api/app_user${profile.user.photo}`;
     }
-
-    // Default avatar if no photo is available
     return "/default_avatar.png";
   };
 
@@ -432,7 +411,6 @@ const PatientProfile = () => {
         style={{ boxShadow: "0 20px 60px rgba(0, 0, 0, 0.08)" }}
       >
         <div className="flex flex-col md:flex-row">
-          {/* Left sidebar with photo and user info */}
           <div className="bg-gradient-to-b from-[#1E5ACD] to-[#3a6fd8] p-8 md:w-1/3 flex flex-col items-center justify-start text-white">
             <div className="relative mb-6 mt-4">
               <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg">
@@ -467,7 +445,7 @@ const PatientProfile = () => {
               </div>
               <div className="flex items-center">
                 <Phone size={16} className="mr-2 opacity-70" />
-                <p className="text-sm">{profile.user.phone_number}</p>
+                <p className="text-sm">{profile.user.phone_number || "No proporcionado"}</p>
               </div>
               <div className="flex items-center">
                 <FileText size={16} className="mr-2 opacity-70" />
@@ -475,7 +453,6 @@ const PatientProfile = () => {
               </div>
             </div>
           </div>
-
           {/* Right side with form */}
           <div className="p-8 md:w-2/3">
             <h1
@@ -521,7 +498,7 @@ const PatientProfile = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Teléfono
+                    Teléfono <span className="text-gray-500 text-xs">(opcional)</span>
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
@@ -530,6 +507,7 @@ const PatientProfile = () => {
                     <input
                       type="text"
                       name="phone_number"
+                      required={false}
                       value={profile.user.phone_number}
                       onChange={handleChange}
                       className="w-full pl-10 pr-3 py-3 border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
@@ -671,7 +649,6 @@ const PatientProfile = () => {
                 )}
               </div>
 
-              {/* Confirmation Modal */}
               {showConfirmation && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                   <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-sm">
