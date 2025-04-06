@@ -5,13 +5,17 @@ import json
     
 class Questionnaire(models.Model):
     physiotherapist = models.ForeignKey(Physiotherapist, on_delete=models.CASCADE, related_name='questionnaires')
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, verbose_name="Título")
     json_schema = models.JSONField()
     ui_schema = models.JSONField()
-    questions = models.JSONField()
+    questions = models.JSONField(verbose_name="Preguntas")
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        verbose_name = "Cuestionario"
+        verbose_name_plural = "Cuestionarios"
 
     def clean(self):
         # Validar que el json_schema y ui_schema estén correctamente formateados
