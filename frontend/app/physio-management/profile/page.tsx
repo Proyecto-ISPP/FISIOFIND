@@ -63,7 +63,11 @@ const FisioProfile = () => {
         schedule: "",
         specializations: "",
         services: [] as Service[],
-        plan: ""
+        plan: "",
+        degree: "",
+        university:"",
+        experience: "",
+        workplace:""
     });
 
     const [editingServiceIndex, setEditingServiceIndex] = useState<number | null>(null);
@@ -221,7 +225,11 @@ const FisioProfile = () => {
                     schedule: response.data.physio.schedule,
                     specializations: response.data.physio.specializations,
                     services: [],
-                    plan: response.data.physio.plan
+                    plan: response.data.physio.plan,
+                    degree: response.data.physio.degree,
+                    university: response.data.physio.university,
+                    experience: response.data.physio.experience,
+                    workplace: response.data.physio.workplace,
                 });
                 try {
                     let parsedServices = [];
@@ -538,6 +546,7 @@ const FisioProfile = () => {
                 // Only validate max length if bio has content
                 if (value && value.length > 500) error = "Máximo 500 caracteres.";
                 break;
+            
         }
 
         setFormErrors((prevErrors) => ({ ...prevErrors, [name]: error }));
@@ -551,7 +560,15 @@ const FisioProfile = () => {
 
         if (name === "bio") {
             setProfile((prevProfile) => ({ ...prevProfile, bio: value }));
-        } else {
+        } // Si el campo es alguno de los otros, se actualiza dentro de "user"
+        else if (["degree", "university", "experience", "workplace"].includes(name)) {
+            setProfile((prevProfile) => ({
+                ...prevProfile,
+                [name]: value,  // Se actualiza directamente el campo del perfil
+            }));
+        }
+        // Para los campos dentro de "user" se hace de la forma habitual
+        else {
             setProfile((prevProfile) => ({
                 ...prevProfile,
                 user: { ...prevProfile.user, [name]: value },
@@ -563,7 +580,7 @@ const FisioProfile = () => {
         e.preventDefault();
 
         // Validar todos los campos antes de enviar
-        const isValid = ["email", "phone_number", "postal_code", "bio"].every((field) =>
+        const isValid = ["email", "phone_number", "postal_code", "bio", "degree", "university", "experience", "workplace"].every((field) =>
             validateField(field, (field === "bio" ? profile.bio : profile.user[field]) || "")
         );
 
@@ -596,6 +613,11 @@ const FisioProfile = () => {
             }
             formData.append("rating_avg", profile.rating_avg || "");
             formData.append("specializations", JSON.stringify(selectedSpecializations));
+            formData.append("degree", profile.degree || "");
+            formData.append("university", profile.university || "");
+            formData.append("experience", profile.experience || "");
+            formData.append("workplace", profile.workplace || "");
+
             // Actualizar el schedule con los datos actuales del calendario
             // const { initialized, ...scheduleWithoutInitialized } = schedule;
             // formData.append("schedule", scheduleWithoutInitialized);
@@ -1427,6 +1449,58 @@ const FisioProfile = () => {
                                 className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
                             />
                             {formErrors.bio && <span className="text-red-500 text-sm">{formErrors.bio}</span>}
+                        </div>
+
+                        {/* Titulación */}
+                        <div className="space-y-2">
+                            <label className="block text-sm font-large text-gray-700 mb-2 mt-4">Titulación</label>
+                            <input
+                                type="text"
+                                name="degree"
+                                value={profile.degree || ""}
+                                onChange={handleChange}
+                                className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+                            />
+                            {formErrors.degree && <span className="text-red-500 text-sm">{formErrors.degree}</span>}
+                        </div>
+
+                        {/* Universidad */}
+                        <div className="space-y-2">
+                            <label className="block text-sm font-large text-gray-700 mb-2 mt-4">Universidad</label>
+                            <input
+                                type="text"
+                                name="university"
+                                value={profile.university || ""}
+                                onChange={handleChange}
+                                className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+                            />
+                            {formErrors.university && <span className="text-red-500 text-sm">{formErrors.university}</span>}
+                        </div>
+
+                        {/* Experiencia */}
+                        <div className="space-y-2">
+                            <label className="block text-sm font-large text-gray-700 mb-2 mt-4">Experiencia</label>
+                            <textarea
+                                name="experience"
+                                value={profile.experience || ""}
+                                onChange={handleChange}
+                                rows={4}
+                                className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+                            />
+                            {formErrors.experience && <span className="text-red-500 text-sm">{formErrors.experience}</span>}
+                        </div>
+
+                        {/* Centro de trabajo */}
+                        <div className="space-y-2">
+                            <label className="block text-sm font-large text-gray-700 mb-2 mt-4">Centro de trabajo</label>
+                            <input
+                                type="text"
+                                name="workplace"
+                                value={profile.workplace || ""}
+                                onChange={handleChange}
+                                className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+                            />
+                            {formErrors.workplace && <span className="text-red-500 text-sm">{formErrors.workplace}</span>}
                         </div>
 
                         {/* Sección de servicios */}
