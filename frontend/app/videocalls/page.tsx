@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { getApiBaseUrl } from "@/utils/api";
 import { IconHeart, IconHeadphones, IconVideo } from "@tabler/icons-react";
+import RestrictedAccess from "@/components/RestrictedAccess";
 
 
 interface RoomDetails {
@@ -115,40 +116,16 @@ const VideoCallPage = () => {
   }
 
   if (!token || !userRole) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
-        <div
-          className="bg-white p-8 rounded-3xl shadow-xl text-center max-w-md w-full transition-all duration-300"
-          style={{ boxShadow: "0 20px 60px rgba(0, 0, 0, 0.08)" }}
-        >
-          <h2
-            className="text-2xl font-bold mb-4"
-            style={{
-              background: "linear-gradient(90deg, #1E5ACD, #3a6fd8)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-            }}
-          >
-            Acceso restringido
-          </h2>
-          <p className="text-gray-700 mb-6">
-            🔒 Necesitas iniciar sesión para acceder a las videollamadas.
-          </p>
-          <button
-            onClick={() => (window.location.href = "/login")}
-            className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 w-full"
-          >
-            Iniciar Sesión
-          </button>
-        </div>
-      </div>
-    );
+    return <RestrictedAccess message="Necesitas iniciar sesión para acceder a las videollamadas" />
   }
+
   const hasTestRoom = rooms.some((room) => room.is_test_room);
   return (
     <div
       className="min-h-screen flex flex-col items-center justify-start p-5 bg-gradient-to-br from-gray-50 to-gray-100"
     >
+      <br></br>
+      <br></br>
       <div className="bg-white w-full max-w-3xl rounded-3xl shadow-xl p-10 mb-8 transition-all duration-300">
         <div className="text-center mb-9">
           <h1

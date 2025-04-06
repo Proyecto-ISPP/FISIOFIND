@@ -2,9 +2,10 @@ import logging
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.utils import timezone
 
 from users.permissions import IsPatient, IsPhysioOrPatient, IsPhysiotherapist
-from .models import Exercise, ExerciseLog, ExerciseSession, Series, Session, SessionTest, Treatment
+from .models import Exercise, ExerciseLog, ExerciseSession, Series, Session, SessionTest, Treatment, SessionTestResponse
 from appointment.models import Appointment
 from .serializers import ExerciseLogSerializer, ExerciseSerializer, ExerciseSessionSerializer, SeriesSerializer, SessionSerializer, SessionTestResponseSerializer, SessionTestSerializer, TreatmentSerializer, TreatmentDetailSerializer
 
@@ -206,6 +207,31 @@ class TreatmentDetailView(APIView):
                 {'detail': 'No se ha encontrado el tratamiento'},
                 status=status.HTTP_404_NOT_FOUND
             )
+            
+class ToggleTreatmentNotificationsView(APIView):
+    """
+    Vista para que el paciente o fisioterapeuta activen/desactiven los recordatorios de ejercicios.
+    """
+    permission_classes = [IsPatient]
+
+    def patch(self, request, pk):
+        try:
+            treatment = Treatment.objects.get(pk=pk)
+
+            user = request.user
+            if treatment.physiotherapist.user != user and treatment.patient.user != user:
+                return Response({'detail': 'No tienes permiso para modificar este tratamiento'}, status=403)
+
+            notifications_enabled = request.data.get('notifications_enabled')
+            if notifications_enabled is None:
+                return Response({'detail': 'Se requiere el valor "notifications_enabled"'}, status=400)
+
+            treatment.notifications_enabled = bool(notifications_enabled)
+            treatment.save()
+            return Response({'notifications_enabled': treatment.notifications_enabled}, status=200)
+
+        except Treatment.DoesNotExist:
+            return Response({'detail': 'Tratamiento no encontrado'}, status=404)
             
 class SessionCreateView(APIView):
     """
@@ -459,29 +485,66 @@ class SessionTestResponseView(APIView):
     
     def post(self, request, session_id):
         patient = request.user.patient
+        
         try:
             session = Session.objects.get(id=session_id)
+            test = session.test
+            
+            # Verificar que el paciente pertenece al tratamiento
             if session.treatment.patient != patient:
                 return Response(
                     {'detail': 'No tiene permiso para responder a este test'},
                     status=status.HTTP_403_FORBIDDEN
                 )
-            test = session.test
-        except (SessionTest.DoesNotExist, Session.DoesNotExist):
+                
+            # Verificar si ya ha respondido hoy
+            today = timezone.now().date()
+            already_responded_today = SessionTestResponse.objects.filter(
+                test=test,
+                patient=patient,
+                submitted_at__date=today
+            ).exists()
+            
+            if already_responded_today:
+                return Response(
+                    {'detail': 'Ya has respondido a este test hoy'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+                
+            # Verificar si ha alcanzado el límite de respuestas (días de la sesión)
+            total_responses = SessionTestResponse.objects.filter(
+                test=test,
+                patient=patient
+            ).count()
+            
+            if total_responses >= len(session.day_of_week):
+                return Response(
+                    {'detail': f'Ya has completado el máximo de {len(session.day_of_week)} respuestas para este test'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+                
+            # Crear la respuesta
+            data = request.data.copy()
+            data['test'] = test.id
+            data['patient'] = patient.id
+            
+            serializer = SessionTestResponseSerializer(data=data)
+            if serializer.is_valid():
+                # Pass patient explicitly to save method to ensure it's set
+                response = serializer.save(patient=patient, test=test)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
+        except Session.DoesNotExist:
             return Response(
-                {'detail': 'No se ha encontrado el test'},
+                {'detail': 'No se ha encontrado la sesión'},
                 status=status.HTTP_404_NOT_FOUND
             )
-        
-        data = request.data.copy()
-        data['test'] = test.id
-        data['patient'] = patient.id
-        
-        serializer = SessionTestResponseSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save(patient=patient)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except SessionTest.DoesNotExist:
+            return Response(
+                {'detail': 'No se ha encontrado el test para esta sesión'},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
 
 class SessionTestResponseListView(APIView):
@@ -564,9 +627,10 @@ class ExerciseListView(APIView):
 class ExerciseDetailView(APIView):
     """
     Vista para ver, editar y eliminar un ejercicio.
-    Solo el fisioterapeuta que creó el ejercicio tiene permiso para realizar estas acciones.
+    El fisioterapeuta que creó el ejercicio tiene permiso para realizar todas las acciones.
+    Los pacientes pueden ver los ejercicios que forman parte de sus tratamientos.
     """
-    permission_classes = [IsPhysiotherapist]
+    permission_classes = [IsPhysioOrPatient]
 
     def get(self, request, pk):
         """
@@ -574,16 +638,31 @@ class ExerciseDetailView(APIView):
         """
         try:
             exercise = Exercise.objects.get(pk=pk)
+            user = request.user
 
-            # Verificar que el usuario sea el fisioterapeuta que creó el ejercicio
-            if exercise.physiotherapist.user != request.user:
-                return Response(
-                    {'detail': 'No tiene permiso para ver este ejercicio'},
-                    status=status.HTTP_403_FORBIDDEN
+            # Si es fisioterapeuta, verificar que sea el creador del ejercicio
+            if hasattr(user, 'physio') and user.physio:
+                if exercise.physiotherapist.user == user:
+                    serializer = ExerciseSerializer(exercise)
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+                
+            # Si es paciente, verificar que el ejercicio esté en alguna de sus sesiones de tratamiento
+            elif hasattr(user, 'patient') and user.patient:
+                # Buscar si el ejercicio está en alguna sesión de tratamiento del paciente
+                exercise_sessions = ExerciseSession.objects.filter(
+                    exercise=exercise,
+                    session__treatment__patient=user.patient
                 )
-
-            serializer = ExerciseSerializer(exercise)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+                
+                if exercise_sessions.exists():
+                    serializer = ExerciseSerializer(exercise)
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+            
+            # Si no cumple ninguna de las condiciones anteriores, denegar acceso
+            return Response(
+                {'detail': 'No tiene permiso para ver este ejercicio'},
+                status=status.HTTP_403_FORBIDDEN
+            )
 
         except Exercise.DoesNotExist:
             return Response(
@@ -1098,21 +1177,35 @@ class ExerciseLogListView(APIView):
         try:
             # Verificar que la sesión de ejercicios existe
             exercise_session = ExerciseSession.objects.get(id=exercise_session_id)
-            treatment = exercise_session.session.treatment
+            
+            # Query ExerciseLog model directly
+            exercise_logs = ExerciseLog.objects.filter(
+                series__exercise_session=exercise_session
+            )
+            
+            # Verificar permisos - Fix the permission check
             user = request.user
-
-            # Verificar que el usuario sea el fisioterapeuta o el paciente asociado
-            if treatment.physiotherapist.user != user and treatment.patient.user != user:
+            if hasattr(user, 'physio') and user.physio:
+                if exercise_session.session.treatment.physiotherapist != user.physio:
+                    return Response(
+                        {'detail': 'No tiene permiso para ver estos registros'},
+                        status=status.HTTP_403_FORBIDDEN
+                    )
+            elif hasattr(user, 'patient') and user.patient:
+                if exercise_session.session.treatment.patient != user.patient:
+                    return Response(
+                        {'detail': 'No tiene permiso para ver estos registros'},
+                        status=status.HTTP_403_FORBIDDEN
+                    )
+            else:
                 return Response(
-                    {'detail': 'No tiene permiso para ver los registros de este ejercicio'},
+                    {'detail': 'Usuario no autorizado'},
                     status=status.HTTP_403_FORBIDDEN
                 )
-
-            # Obtener los registros de progreso
-            exercise_logs = exercise_session.exercise_logs.all()
+            
             serializer = ExerciseLogSerializer(exercise_logs, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-
+            return Response(serializer.data)
+            
         except ExerciseSession.DoesNotExist:
             return Response(
                 {'detail': 'No se ha encontrado la sesión de ejercicios'},
@@ -1202,3 +1295,53 @@ class ExerciseLogDetailView(APIView):
                 {'detail': 'No se ha encontrado el registro'},
                 status=status.HTTP_404_NOT_FOUND
             )
+            
+            
+class ExerciseLogEvolutionView(APIView):
+    permission_classes = [IsPhysioOrPatient]
+
+    def get(self, request, treatment_id):
+        try:
+            treatment = Treatment.objects.get(id=treatment_id)
+            user = request.user
+
+            if treatment.physiotherapist.user != user and treatment.patient.user != user:
+                return Response({'detail': 'No tiene permiso'}, status=403)
+
+            logs = ExerciseLog.objects.filter(
+                series__exercise_session__session__treatment=treatment,
+                patient=treatment.patient
+            ).select_related('series__exercise_session__exercise')
+
+            # Estructura: { ejercicio: { serie: [datos por fecha] } }
+            data = defaultdict(lambda: defaultdict(list))
+
+            for log in logs:
+                exercise = log.series.exercise_session.exercise.title
+                serie_number = log.series.series_number
+                date_str = log.date.strftime("%d/%m")
+
+                # Valor pautado según prioridad: peso > tiempo > distancia
+                if log.series.weight is not None:
+                    metric_value = log.series.weight
+                    metric_type = "weight"
+                elif log.series.time is not None:
+                    metric_value = log.series.time.total_seconds()
+                    metric_type = "time"
+                elif log.series.distance is not None:
+                    metric_value = log.series.distance
+                    metric_type = "distance"
+                else:
+                    continue
+
+                data[exercise][f"Serie {serie_number}"].append({
+                    "date": date_str,
+                    "value": metric_value,
+                    "metric": metric_type,
+                })
+
+            return Response(data, status=200)
+
+        except Treatment.DoesNotExist:
+            return Response({'detail': 'Tratamiento no encontrado'}, status=404)
+

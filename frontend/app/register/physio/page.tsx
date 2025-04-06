@@ -9,6 +9,7 @@ import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { Eye, EyeOff, Info } from "lucide-react";
+import Alert from '@/components/ui/Alert';
 import IdentityVerificationStep from "@/components/IdentityVerificationStep"; // Asegúrate de tener este componente implementado
 
 // Tipado de los datos del formulario (igual que en tu register)
@@ -300,6 +301,31 @@ const PhysioSignUpForm = () => {
   const [isValidating, setIsValidating] = useState<boolean>(false);
   const [isClient, setIsClient] = useState<boolean>(false);
 
+  const [alert, setAlert] = useState<{
+    show: boolean;
+    type: "success" | "error" | "info" | "warning";
+    message: string;
+  }>({
+    show: false,
+    type: "info",
+    message: ""
+  });
+
+  const showAlert = (type: "success" | "error" | "info" | "warning", message: string) => {
+    setAlert({
+      show: true,
+      type,
+      message
+    });
+    setTimeout(() => {
+      setAlert({
+        show: false,
+        type: "info",
+        message: ""
+      });
+    }, 5000);
+  };
+
   React.useEffect(() => {
     setIsClient(true);
   }, []);
@@ -441,21 +467,28 @@ const PhysioSignUpForm = () => {
         formData,
         { headers: { "Content-Type": "application/json" } }
       );
+      
       if (response.status === 201) {
+        showAlert("success", "¡Registro exitoso! Iniciando sesión...");
+        // Auto login
         const loginResponse = await axios.post(
           `${getApiBaseUrl()}/api/app_user/login/`,
           { username: formData.username, password: formData.password },
           { headers: { "Content-Type": "application/json" } }
         );
+        
         if (loginResponse.status === 200) {
           if (isClient) {
             localStorage.setItem("token", loginResponse.data.access);
-            router.push("/");
+            setTimeout(() => {
+              router.push("/");
+            }, 1000);
           }
         }
       }
     } catch (error: any) {
       if (axios.isAxiosError(error) && error.response) {
+        showAlert("error", "Error en el registro. Por favor, verifica tus datos.");
         setErrors(error.response.data);
       }
     } finally {
@@ -479,6 +512,14 @@ const PhysioSignUpForm = () => {
   };
 
   return (
+    <div>
+      {alert.show && (
+        <Alert
+          type={alert.type}
+          message={alert.message}
+          onClose={() => setAlert({ ...alert, show: false })}
+        />
+      )}
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white dark:from-neutral-900 dark:to-black py-8">
       <div className="max-w-5xl mx-auto px-4">
         <div className="text-center mb-8">
@@ -932,6 +973,7 @@ const PhysioSignUpForm = () => {
           </button>
         </div>
       </div>
+    </div>
     </div>
   );
 };
