@@ -65,6 +65,13 @@ const TopRatings: React.FC = () => {
     }, 5000);
   };
 
+  const getPhysioPhotoUrl = (physiotherapist_details: PhysiotherapistDetails | undefined) => {
+    if (physiotherapist_details?.photo) {
+      return `${getApiBaseUrl()}${physiotherapist_details.photo}`;
+    }
+    return "/default_avatar.png";
+  };
+
   // Check if user is authenticated and is a physiotherapist
   useEffect(() => {
     const checkAuth = async () => {
@@ -431,19 +438,13 @@ const TopRatings: React.FC = () => {
             >
               <div className={styles.header}>
                 <div className={styles.image}>
-                {rating.physiotherapist_details?.photo && (
-                  <Image 
-                    src={rating.physiotherapist_details.photo} 
-                    alt={rating.physiotherapist_details?.full_name || 'Fisioterapeuta anónimo'}
-                    width={100}
-                    height={100}
-                    className={styles.profileImage}
-                    onError={(e) => {
-                      e.currentTarget.src = '/default-avatar.png';
-                    }}
-                    unoptimized
-                  />
-                )}
+                  {rating.physiotherapist_details?.photo && (
+                    <img
+                      src={getPhysioPhotoUrl(rating.physiotherapist_details)}
+                      alt={`${rating.physiotherapist_details?.full_name || 'Physiotherapist'}'s photo`}
+                      className="w-16 h-16 rounded-full object-cover border-2 border-gray-200 shadow-md"
+                    />
+                  )}
                 </div>
                 <div>
                   <div className={styles.stars}>
