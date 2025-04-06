@@ -305,7 +305,7 @@ const FisioProfile = () => {
                 description: serviceData.descripcion,
                 price: parseFloat(serviceData.precio.replace('€', '').trim()),
                 duration: serviceData.duracion,
-                type: serviceData.tipo,
+                tipo: serviceData.tipo,
                 custom_questionnaire: serviceData.custom_questionnaire ? {
                     "UI Schema": serviceData.custom_questionnaire
                 } : null
@@ -321,9 +321,10 @@ const FisioProfile = () => {
         } catch (error: unknown) {
             console.error("Error al añadir servicio:", error);
             if (axios.isAxiosError(error) && error.response) {
-                alert(`Error: ${JSON.stringify(error.response.data)}`);
+                console.error("Respuesta de error del backend:", error.response.data);
+                showAlert('error',`Error: ${JSON.stringify(error.response.data)}`);
             } else {
-                alert("Error al añadir el servicio.");
+                showAlert('error', "Error al añadir el servicio.");
             }
             return null;
         }

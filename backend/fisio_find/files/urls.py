@@ -1,6 +1,17 @@
 from django.urls import path
-from .views import *
-from django.conf import settings
+from .views import (
+    create_file,
+    delete_patient_file,
+    update_patient_file,
+    get_patient_file_by_id,
+    get_patient_files,
+    create_video,
+    delete_video,
+    list_video_by_id,
+    list_my_videos,
+    update_video,
+    stream_video
+)
 
 urlpatterns = [
     path('files/create-files/', create_file, name='create_file'),

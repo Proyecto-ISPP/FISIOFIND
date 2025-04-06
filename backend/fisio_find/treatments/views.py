@@ -208,6 +208,31 @@ class TreatmentDetailView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
             
+class ToggleTreatmentNotificationsView(APIView):
+    """
+    Vista para que el paciente o fisioterapeuta activen/desactiven los recordatorios de ejercicios.
+    """
+    permission_classes = [IsPatient]
+
+    def patch(self, request, pk):
+        try:
+            treatment = Treatment.objects.get(pk=pk)
+
+            user = request.user
+            if treatment.physiotherapist.user != user and treatment.patient.user != user:
+                return Response({'detail': 'No tienes permiso para modificar este tratamiento'}, status=403)
+
+            notifications_enabled = request.data.get('notifications_enabled')
+            if notifications_enabled is None:
+                return Response({'detail': 'Se requiere el valor "notifications_enabled"'}, status=400)
+
+            treatment.notifications_enabled = bool(notifications_enabled)
+            treatment.save()
+            return Response({'notifications_enabled': treatment.notifications_enabled}, status=200)
+
+        except Treatment.DoesNotExist:
+            return Response({'detail': 'Tratamiento no encontrado'}, status=404)
+            
 class SessionCreateView(APIView):
     """
     Vista para que un fisioterapeuta pueda crear distintas sesiones de entrenamiento dentro de un tratamiento.

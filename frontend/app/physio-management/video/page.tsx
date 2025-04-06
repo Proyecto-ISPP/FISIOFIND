@@ -93,14 +93,14 @@ const UploadVideo = () => {
         if (response.data && Array.isArray(response.data)) {
           setVideos(response.data);
         } else {
-          setMessage("❌ No se encontraron videos.");
+          setMessage(" No se encontraron videos.");
         }
       } catch (error) {
         if (error.response?.status === 401) {
-          setMessage("❌ Sesión expirada. Por favor, inicia sesión nuevamente.");
+          setMessage(" Sesión expirada. Por favor, inicia sesión nuevamente.");
           router.push("/login");
         } else {
-          setMessage("❌ Error al obtener los videos.");
+          setMessage(" Error al obtener los videos.");
         }
         console.error("⚠️ Error al obtener los videos:", error);
       } finally {
@@ -121,19 +121,19 @@ const UploadVideo = () => {
 
   const handleUpload = async () => {
     if (!file) {
-      setMessage("❌ Por favor selecciona un archivo.");
+      setMessage(" Por favor selecciona un archivo.");
       setTimeout(() => setMessage(""), 5000);
       return;
     }
 
     if (!title.trim()) {
-      setMessage("❌ El título no puede estar vacío.");
+      setMessage(" El título no puede estar vacío.");
       setTimeout(() => setMessage(""), 5000);
       return;
     }
 
     if (!description.trim()) {
-      setMessage("❌ La descripción no puede estar vacía.");
+      setMessage(" La descripción no puede estar vacía.");
       setTimeout(() => setMessage(""), 5000);
       return;
     }
@@ -219,7 +219,7 @@ const UploadVideo = () => {
         alert(error.response.data.errorManaged);
       } else {
         if (error.response?.status === 401) {
-          setMessage("❌ Sesión expirada. Por favor, inicia sesión nuevamente.");
+          setMessage(" Sesión expirada. Por favor, inicia sesión nuevamente.");
         } else {
           const errorMessage =
             error.response?.data?.detail ||
@@ -227,7 +227,7 @@ const UploadVideo = () => {
             error.message ||
             "Error desconocido al subir el video.";
   
-          setMessage(`❌ ${errorMessage}`);
+          setMessage(` ${errorMessage}`);
         }
       }
 
@@ -270,9 +270,9 @@ const UploadVideo = () => {
       // Error handling remains the same
       // ...
       if (error.response?.status === 401) {
-        setMessage("❌ Sesión expirada. Por favor, inicia sesión nuevamente.");
+        setMessage(" Sesión expirada. Por favor, inicia sesión nuevamente.");
       } else {
-        setMessage("❌ Error al eliminar el video.");
+        setMessage(" Error al eliminar el video.");
       }
       setTimeout(() => setMessage(""), 5000);
     }
@@ -352,7 +352,7 @@ const UploadVideo = () => {
       }
     } catch (error) {
       console.error("Error updating video:", error.response?.data || error);
-      setMessage("❌ Error al actualizar el video.");
+      setMessage(" Error al actualizar el video.");
       setTimeout(() => setMessage(""), 5000);
     }
   };
@@ -503,7 +503,7 @@ const UploadVideo = () => {
           {message && (
             <div
               className={`mt-4 p-4 rounded-xl text-center ${
-                message.includes("❌") 
+                message.includes("") 
                   ? "bg-red-50 text-red-600 border border-red-100" 
                   : "bg-green-50 text-green-600 border border-green-100"
               }`}
