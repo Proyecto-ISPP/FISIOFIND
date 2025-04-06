@@ -303,7 +303,7 @@ const FisioProfile = () => {
                 description: serviceData.descripcion,
                 price: parseFloat(serviceData.precio.replace('€', '').trim()),
                 duration: serviceData.duracion,
-                type: serviceData.tipo,
+                tipo: serviceData.tipo,
                 custom_questionnaire: serviceData.custom_questionnaire ? {
                     "UI Schema": serviceData.custom_questionnaire
                 } : null
@@ -319,9 +319,10 @@ const FisioProfile = () => {
         } catch (error: unknown) {
             console.error("Error al añadir servicio:", error);
             if (axios.isAxiosError(error) && error.response) {
-                alert(`Error: ${JSON.stringify(error.response.data)}`);
+                console.error("Respuesta de error del backend:", error.response.data);
+                showAlert('error',`Error: ${JSON.stringify(error.response.data)}`);
             } else {
-                alert("Error al añadir el servicio.");
+                showAlert('error', "Error al añadir el servicio.");
             }
             return null;
         }
@@ -1178,13 +1179,13 @@ const FisioProfile = () => {
     if (error) return <p>Error: {error}</p>;
 
     return (
-        <div
-            className="min-h-screen flex items-center justify-center px-6"
+<div
+            className="min-h-screen flex items-center justify-center px-6 py-12"
             style={{ backgroundColor: "rgb(238, 251, 250)" }}
         >
             <div className="w-full max-w-5xl bg-white shadow-lg rounded-2xl overflow-hidden grid grid-cols-3">
                 {/* Barra lateral izquierda - Sección de perfil */}
-                <div className="col-span-1 text-white p-6 flex flex-col items-center" style={{ backgroundColor: "#05668D" }}>
+                <div className="col-span-1 text-white p-6 flex flex-col items-center" style={{ backgroundColor: "#0A7487" }}>
                     <div className="relative mb-4">
                         <img
                             src={getImageSrc()}
@@ -1352,15 +1353,21 @@ const FisioProfile = () => {
 
                         {/* Desplegable de especializaciones */}
                         <div className="space-y-2">
-                            <label className="block text-sm font-large text-gray-700 mb-4 mt-4">Especializaciones</label>
+                            <label className="block text-sm font-large text-gray-700 mb-4 mt-4">Especialidades</label>
                             <div className="specializations-container">
                                 <div className="selected-tags">
                                     {selectedSpecializations.map((spec) => (
-                                        <div key={spec} className="tag">
+                                        <div key={spec} className="tag" style={{backgroundColor: '#41B8D5'}}>
                                             {spec}
                                             <span
                                                 className="remove-tag"
                                                 onClick={() => setSelectedSpecializations(prev => prev.filter(s => s !== spec))}
+                                                style={{
+                                                    color: '#ff5757',
+                                                    transition: 'color 0.2s ease',
+                                                }}
+                                                onMouseOver={(e) => e.currentTarget.style.color = '#ffffff'}
+                                                onMouseOut={(e) => e.currentTarget.style.color = '#ff5757'}
                                             >
                                                 ×
                                             </span>
@@ -1372,6 +1379,7 @@ const FisioProfile = () => {
                                     <div
                                         className="dropdown-header"
                                         onClick={() => setDropdownOpen(!dropdownOpen)}
+                                        style={{ borderColor: '#41B8D5' }}
                                     >
                                         {selectedSpecializations.length > 0
                                             ? `${selectedSpecializations.length} seleccionadas`
@@ -1387,6 +1395,7 @@ const FisioProfile = () => {
                                                 className="search-input"
                                                 value={searchQuery}
                                                 onChange={(e) => setSearchQuery(e.target.value)}
+                                                style={{ borderColor: '#41B8D5' }}
                                             />
 
                                             {availableSpecializations
@@ -1405,8 +1414,9 @@ const FisioProfile = () => {
                                                                     setSelectedSpecializations(prev => prev.filter(s => s !== spec));
                                                                 }
                                                             }}
+                                                            style={{ accentColor: '#41B8D5' }}
                                                         />
-                                                        <span className="checkmark"></span>
+                                                        <span className="checkmark" style={{ borderColor: '#41B8D5', backgroundColor: selectedSpecializations.includes(spec) ? '#41B8D5' : 'transparent' }}></span>
                                                         {spec}
                                                     </label>
                                                 ))}
@@ -1477,7 +1487,7 @@ const FisioProfile = () => {
                                                     }}
                                                     className="text-red-500 hover:bg-red-100 p-2 rounded"
                                                 >
-                                                    <Trash2 className="w-4 h-4" />
+                                                    <Trash2 className="w-4 h-4 text-white" />
                                                 </GradientButton>
                                             </div>
                                         </div>

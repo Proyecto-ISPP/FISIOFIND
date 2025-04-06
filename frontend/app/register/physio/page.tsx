@@ -10,9 +10,9 @@ import { loadStripe } from "@stripe/stripe-js";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { Eye, EyeOff, Info } from "lucide-react";
 import Alert from '@/components/ui/Alert';
+import IdentityVerificationStep from "@/components/IdentityVerificationStep"; // Asegúrate de tener este componente implementado
 
-
-// Tipado de los datos del formulario
+// Tipado de los datos del formulario (igual que en tu register)
 interface FormData {
   username: string;
   email: string;
@@ -30,7 +30,7 @@ interface FormData {
   plan: string;
 }
 
-// Opciones de género (sin valor por defecto)
+// Opciones de género
 const GENDER_OPTIONS = [
   { value: "", label: "Seleccione género" },
   { value: "M", label: "Masculino" },
@@ -64,7 +64,7 @@ const AUTONOMIC_COMMUNITY_OPTIONS = [
 // Carga de Stripe
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
-// Icono de check (para las listas)
+// Icono de check
 const CheckIcon = ({ className }: { className?: string }) => (
   <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 20 20" fill="currentColor">
     <path
@@ -75,7 +75,7 @@ const CheckIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-// Icono de estrella (para destacar ventajas)
+// Icono de estrella
 const StarIcon = ({ className }: { className?: string }) => (
   <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 20 20" fill="currentColor">
     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -92,7 +92,7 @@ interface FormFieldProps {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
   error?: string;
-  info?: string; // dato opcional para mostrar botón de info
+  info?: string;
 }
 
 const FormField = ({
@@ -123,7 +123,7 @@ const FormField = ({
           <span
             title={info}
             className="ml-1 mt-0 text-gray-400 hover:text-gray-600 cursor-pointer"
-            style={{ display: 'inline-block', verticalAlign: 'middle' }}
+            style={{ display: "inline-block", verticalAlign: "middle" }}
           >
             <Info size={16} />
           </span>
@@ -175,9 +175,9 @@ const FormField = ({
   );
 };
 
-// Componente para el pago (paso 5)
+// Componente para el pago (Paso 6)
 interface StripePaymentFormProps {
-  amount: number; // en céntimos
+  amount: number;
   onPaymentSuccess: () => Promise<void>;
 }
 
@@ -201,7 +201,6 @@ const StripePaymentForm = ({ amount, onPaymentSuccess }: StripePaymentFormProps)
         return;
       }
 
-      // Crea método de pago
       const { error: stripeError, paymentMethod } = await stripe.createPaymentMethod({
         type: "card",
         card: cardElement,
@@ -212,7 +211,6 @@ const StripePaymentForm = ({ amount, onPaymentSuccess }: StripePaymentFormProps)
         return;
       }
 
-      // Llamada a tu endpoint de pago
       const response = await axios.post(`${getApiBaseUrl()}/api/app_user/physio/payment/`, {
         payment_method_id: paymentMethod?.id,
         amount,
@@ -220,7 +218,6 @@ const StripePaymentForm = ({ amount, onPaymentSuccess }: StripePaymentFormProps)
       });
 
       if (response.data.success) {
-        // Esperamos a que se complete el registro en el padre
         await onPaymentSuccess();
       } else {
         setError("El pago no fue exitoso");
@@ -280,11 +277,8 @@ const StripePaymentForm = ({ amount, onPaymentSuccess }: StripePaymentFormProps)
 
 const PhysioSignUpForm = () => {
   const router = useRouter();
-
-  // currentStep: 1→2→3→4→5
+  // currentStep: 1→2→3→4→5→6
   const [currentStep, setCurrentStep] = useState<number>(1);
-
-  // Datos del formulario (se agregó confirm_password y se puso género vacío)
   const [formData, setFormData] = useState<FormData>({
     username: "",
     email: "",
@@ -301,7 +295,6 @@ const PhysioSignUpForm = () => {
     autonomic_community: "",
     plan: "gold",
   });
-
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [validationMessage, setValidationMessage] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -337,7 +330,6 @@ const PhysioSignUpForm = () => {
     setIsClient(true);
   }, []);
 
-  // Manejo de cambios en los inputs
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       const { name, value } = e.target;
@@ -353,7 +345,6 @@ const PhysioSignUpForm = () => {
     [errors]
   );
 
-  // Validación por paso
   const validateStep = (step: number) => {
     const newErrors: { [key: string]: string } = {};
     let isValid = true;
@@ -419,7 +410,7 @@ const PhysioSignUpForm = () => {
         isValid = false;
       }
     } else if (step === 3) {
-      // Ejemplo: podrías validar si el número colegiado no está vacío (se deja sencillo)
+      // Validar, por ejemplo, el número colegiado
     } else if (step === 4) {
       if (!formData.plan) {
         newErrors.plan = "Selecciona un plan para continuar";
@@ -430,21 +421,18 @@ const PhysioSignUpForm = () => {
     return isValid;
   };
 
-  // Avanzar al siguiente paso
   const handleNextStep = () => {
     if (validateStep(currentStep)) {
       setCurrentStep(currentStep + 1);
     }
   };
 
-  // Retroceder al paso anterior
   const handlePrevStep = () => {
     setCurrentStep(currentStep - 1);
   };
 
-  // Validar datos en backend antes de ir al pago (paso 5)
-  const handleProceedToPayment = async () => {
-    // Validamos 1, 2, 4 (y 3 si lo deseas) antes de pasar
+  // Validar datos en backend antes de pasar a la verificación (Paso 5)
+  const handleProceedToVerification = async () => {
     if (!validateStep(1) || !validateStep(2) || !validateStep(3) || !validateStep(4)) {
       setValidationMessage("Corrige los errores antes de proceder.");
       return;
@@ -457,8 +445,8 @@ const PhysioSignUpForm = () => {
         { headers: { "Content-Type": "application/json" } }
       );
       if (response.data.valid) {
-        setValidationMessage("Todos los datos son correctos. Proceda con el pago.");
-        setCurrentStep(5);
+        setValidationMessage("Todos los datos son correctos. Proceda con la verificación.");
+        setCurrentStep(5); // Paso 5: Verificación de identidad
       }
     } catch (error: any) {
       if (axios.isAxiosError(error) && error.response) {
@@ -470,7 +458,7 @@ const PhysioSignUpForm = () => {
     }
   };
 
-  // Registro final tras el pago
+  // Registro final tras el pago (Paso 6)
   const registerPhysio = async () => {
     setIsSubmitting(true);
     try {
@@ -482,7 +470,6 @@ const PhysioSignUpForm = () => {
       
       if (response.status === 201) {
         showAlert("success", "¡Registro exitoso! Iniciando sesión...");
-        
         // Auto login
         const loginResponse = await axios.post(
           `${getApiBaseUrl()}/api/app_user/login/`,
@@ -509,7 +496,6 @@ const PhysioSignUpForm = () => {
     }
   };
 
-  // Maneja el submit en pasos 1-4
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (currentStep < 4) {
@@ -517,11 +503,10 @@ const PhysioSignUpForm = () => {
         setCurrentStep(currentStep + 1);
       }
     } else if (currentStep === 4) {
-      handleProceedToPayment();
+      handleProceedToVerification();
     }
   };
 
-  // Llamado desde el formulario de pago (paso 5) cuando el pago es exitoso
   const handlePaymentSuccess = async () => {
     await registerPhysio();
   };
@@ -552,63 +537,37 @@ const PhysioSignUpForm = () => {
         </div>
 
         <div className="bg-white dark:bg-black rounded-xl shadow-xl overflow-hidden">
-          {/* Progress Steps - 5 pasos */}
+          {/* Progress Steps - 6 pasos */}
           <div className="px-6 pt-6">
             <div className="flex items-center w-full mb-8">
               {/* Paso 1 */}
-              <div
-                className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 1 ? "bg-[#1E5ACD] text-white" : "bg-gray-200 text-gray-600"
-                  }`}
-              >
+              <div className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 1 ? "bg-[#1E5ACD] text-white" : "bg-gray-200 text-gray-600"}`}>
                 1
               </div>
-              <div
-                className={`h-1 flex-1 mx-2 ${currentStep >= 2 ? "bg-[#1E5ACD]" : "bg-gray-200"
-                  }`}
-              ></div>
-
+              <div className={`h-1 flex-1 mx-2 ${currentStep >= 2 ? "bg-[#1E5ACD]" : "bg-gray-200"}`}></div>
               {/* Paso 2 */}
-              <div
-                className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 2 ? "bg-[#1E5ACD] text-white" : "bg-gray-200 text-gray-600"
-                  }`}
-              >
+              <div className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 2 ? "bg-[#1E5ACD] text-white" : "bg-gray-200 text-gray-600"}`}>
                 2
               </div>
-              <div
-                className={`h-1 flex-1 mx-2 ${currentStep >= 3 ? "bg-[#1E5ACD]" : "bg-gray-200"
-                  }`}
-              ></div>
-
+              <div className={`h-1 flex-1 mx-2 ${currentStep >= 3 ? "bg-[#1E5ACD]" : "bg-gray-200"}`}></div>
               {/* Paso 3 */}
-              <div
-                className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 3 ? "bg-[#1E5ACD] text-white" : "bg-gray-200 text-gray-600"
-                  }`}
-              >
+              <div className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 3 ? "bg-[#1E5ACD] text-white" : "bg-gray-200 text-gray-600"}`}>
                 3
               </div>
-              <div
-                className={`h-1 flex-1 mx-2 ${currentStep >= 4 ? "bg-[#1E5ACD]" : "bg-gray-200"
-                  }`}
-              ></div>
-
+              <div className={`h-1 flex-1 mx-2 ${currentStep >= 4 ? "bg-[#1E5ACD]" : "bg-gray-200"}`}></div>
               {/* Paso 4 */}
-              <div
-                className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 4 ? "bg-[#1E5ACD] text-white" : "bg-gray-200 text-gray-600"
-                  }`}
-              >
+              <div className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 4 ? "bg-[#1E5ACD] text-white" : "bg-gray-200 text-gray-600"}`}>
                 4
               </div>
-              <div
-                className={`h-1 flex-1 mx-2 ${currentStep >= 5 ? "bg-[#1E5ACD]" : "bg-gray-200"
-                  }`}
-              ></div>
-
+              <div className={`h-1 flex-1 mx-2 ${currentStep >= 5 ? "bg-[#1E5ACD]" : "bg-gray-200"}`}></div>
               {/* Paso 5 */}
-              <div
-                className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 5 ? "bg-[#1E5ACD] text-white" : "bg-gray-200 text-gray-600"
-                  }`}
-              >
+              <div className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 5 ? "bg-[#1E5ACD] text-white" : "bg-gray-200 text-gray-600"}`}>
                 5
+              </div>
+              <div className={`h-1 flex-1 mx-2 ${currentStep >= 6 ? "bg-[#1E5ACD]" : "bg-gray-200"}`}></div>
+              {/* Paso 6 */}
+              <div className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 6 ? "bg-[#1E5ACD] text-white" : "bg-gray-200 text-gray-600"}`}>
+                6
               </div>
             </div>
           </div>
@@ -616,7 +575,6 @@ const PhysioSignUpForm = () => {
           {/* Formulario pasos 1 a 4 */}
           {currentStep < 5 && (
             <form onSubmit={handleSubmit} className="p-6">
-              {/* Paso 1: Cuenta */}
               {currentStep === 1 && (
                 <div className="space-y-4">
                   <h2 className="text-xl font-semibold mb-4">Información de Cuenta</h2>
@@ -646,7 +604,6 @@ const PhysioSignUpForm = () => {
                       onChange={handleChange}
                       error={errors.password}
                     />
-                    {/* Confirmar contraseña y requisitos en la misma fila */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:col-span-2">
                       <div>
                         <FormField
@@ -658,7 +615,6 @@ const PhysioSignUpForm = () => {
                           error={errors.confirm_password}
                         />
                       </div>
-                      {/* Componente de requisitos de contraseña a la derecha */}
                       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex flex-col justify-center h-full">
                         <h3 className="text-sm font-medium text-blue-800 mb-2 flex items-center">
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -678,7 +634,6 @@ const PhysioSignUpForm = () => {
                 </div>
               )}
 
-              {/* Paso 2: Personal */}
               {currentStep === 2 && (
                 <div className="space-y-4">
                   <h2 className="text-xl font-semibold mb-4">Información Personal</h2>
@@ -734,7 +689,6 @@ const PhysioSignUpForm = () => {
                 </div>
               )}
 
-              {/* Paso 3: Profesional */}
               {currentStep === 3 && (
                 <div className="space-y-4">
                   <h2 className="text-xl font-semibold mb-4">Información Profesional</h2>
@@ -768,11 +722,10 @@ const PhysioSignUpForm = () => {
                           className="text-blue-600 hover:text-blue-800 text-sm inline-flex items-center gap-1"
                         >
                           <Info size={14} />
-                          Verificar datos en el colegio oficial de {
-                            AUTONOMIC_COMMUNITY_OPTIONS.find(
-                              (c) => c.value === formData.autonomic_community
-                            )?.label
-                          }
+                          Verificar datos en el colegio oficial de{" "}
+                          {AUTONOMIC_COMMUNITY_OPTIONS.find(
+                            (c) => c.value === formData.autonomic_community
+                          )?.label}
                         </a>
                       </div>
                     )}
@@ -787,7 +740,6 @@ const PhysioSignUpForm = () => {
                 </div>
               )}
 
-              {/* Paso 4: Plan */}
               {currentStep === 4 && (
                 <div className="space-y-6">
                   <h2 className="text-2xl font-bold text-[#1E5ACD] text-center">
@@ -796,10 +748,11 @@ const PhysioSignUpForm = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
                     {/* Fisio Blue */}
                     <label
-                      className={`relative cursor-pointer p-6 rounded-xl border-2 transition-all ${formData.plan === "blue"
-                        ? "border-[#1E5ACD] bg-blue-50 dark:bg-blue-900/30"
-                        : "border-gray-200 hover:border-blue-200 dark:border-neutral-700 dark:hover:border-blue-600"
-                        }`}
+                      className={`relative cursor-pointer p-6 rounded-xl border-2 transition-all ${
+                        formData.plan === "blue"
+                          ? "border-[#1E5ACD] bg-blue-50 dark:bg-blue-900/30"
+                          : "border-gray-200 hover:border-blue-200 dark:border-neutral-700 dark:hover:border-blue-600"
+                      }`}
                     >
                       <div className="flex items-start gap-4">
                         <div className="mt-1">
@@ -849,10 +802,11 @@ const PhysioSignUpForm = () => {
 
                     {/* Fisio Gold */}
                     <label
-                      className={`relative cursor-pointer p-6 rounded-xl border-2 transition-all ${formData.plan === "gold"
-                        ? "border-amber-400 bg-amber-50 dark:bg-amber-900/30"
-                        : "border-gray-200 hover:border-amber-200 dark:border-neutral-700 dark:hover:border-amber-600"
-                        }`}
+                      className={`relative cursor-pointer p-6 rounded-xl border-2 transition-all ${
+                        formData.plan === "gold"
+                          ? "border-amber-400 bg-amber-50 dark:bg-amber-900/30"
+                          : "border-gray-200 hover:border-amber-200 dark:border-neutral-700 dark:hover:border-amber-600"
+                      }`}
                     >
                       <div className="flex items-start gap-4">
                         <div className="mt-1">
@@ -922,7 +876,6 @@ const PhysioSignUpForm = () => {
                     Anterior
                   </button>
                 )}
-                {/* Botón Siguiente (pasos 1-3) */}
                 {currentStep < 4 && (
                   <button
                     type="button"
@@ -932,14 +885,13 @@ const PhysioSignUpForm = () => {
                     Siguiente
                   </button>
                 )}
-                {/* Botón para proceder al pago (paso 4) */}
                 {currentStep === 4 && (
                   <button
                     type="button"
-                    onClick={handleProceedToPayment}
+                    onClick={handleProceedToVerification}
                     className="ml-auto px-6 py-2 bg-[#1E5ACD] hover:bg-[#1848A3] text-white font-medium rounded-md transition-colors"
                   >
-                    Continuar al Pago
+                    Continuar a Verificación
                   </button>
                 )}
               </div>
@@ -951,11 +903,12 @@ const PhysioSignUpForm = () => {
               )}
               {validationMessage && !isValidating && (
                 <p
-                  className={`text-center mt-4 ${validationMessage.toLowerCase().includes("corrige") ||
+                  className={`text-center mt-4 ${
+                    validationMessage.toLowerCase().includes("corrige") ||
                     validationMessage.toLowerCase().includes("errores")
-                    ? "text-red-600"
-                    : "text-green-600"
-                    }`}
+                      ? "text-red-600"
+                      : "text-green-600"
+                  }`}
                 >
                   {validationMessage}
                 </p>
@@ -963,17 +916,23 @@ const PhysioSignUpForm = () => {
             </form>
           )}
 
-          {/* Paso 5: Pago */}
+          {/* Paso 5: Verificación de Identidad */}
           {currentStep === 5 && (
+            <IdentityVerificationStep
+              formData={formData}
+              onVerificationSuccess={() => setCurrentStep(6)}
+            />
+          )}
+
+          {/* Paso 6: Pago */}
+          {currentStep === 6 && (
             <div className="p-6">
               <Elements stripe={stripePromise}>
                 <StripePaymentForm
-                  amount={formData.plan === "blue" ? 1799 : 2499} // en céntimos
+                  amount={formData.plan === "blue" ? 1799 : 2499}
                   onPaymentSuccess={handlePaymentSuccess}
                 />
               </Elements>
-
-              {/* Mientras se está registrando al fisio */}
               {isSubmitting && (
                 <p className="text-center text-blue-600 mt-4">
                   Terminando de registrar tus datos...
@@ -1018,6 +977,5 @@ const PhysioSignUpForm = () => {
     </div>
   );
 };
-
 
 export default PhysioSignUpForm;

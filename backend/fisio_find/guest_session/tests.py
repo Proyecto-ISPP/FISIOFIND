@@ -1,11 +1,8 @@
-from django.test import TestCase
-
 from rest_framework.test import APITestCase
 from django.urls import reverse
 from users.models import AppUser
 from users.models import Physiotherapist, Specialization
 from users.models import Pricing
-from django.utils import timezone
 
 class PhysioSearchTests(APITestCase):
     @classmethod

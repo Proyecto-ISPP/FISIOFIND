@@ -114,7 +114,7 @@ useEffect(() => {
       });
       console.log("✅ Acceso validado con backend:", response.data);
     } catch (error) {
-      console.error("❌ Acceso denegado por backend:", error.response?.data || error.message);
+      console.error(" Acceso denegado por backend:", error.response?.data || error.message);
       alert("No tienes permiso para acceder a esta sala.");
       window.location.href = '/videocalls';
       return;
