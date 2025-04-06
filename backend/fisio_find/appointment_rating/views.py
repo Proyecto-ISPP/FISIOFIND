@@ -1,5 +1,6 @@
 from django.utils import timezone
 from datetime import timedelta
+from django.db.models import Avg, Count
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
@@ -8,7 +9,8 @@ from django.shortcuts import get_object_or_404
 from appointment.models import Appointment
 from .models import AppointmentRating
 from .serializers import AppointmentRatingSerializer
-from users.permissions import IsPatient, IsPhysioOrPatient
+from rest_framework.permissions import IsAuthenticated
+from users.permissions import IsPatient, IsPhysioOrPatient, IsPhysiotherapist
 
 @api_view(['GET'])
 @permission_classes([IsPhysioOrPatient])
@@ -17,6 +19,34 @@ def list_ratings(request, physio_id):
     ratings = AppointmentRating.objects.filter(physiotherapist_id=physio_id)
     serializer = AppointmentRatingSerializer(ratings, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsPhysiotherapist])
+def get_my_rating(request):
+    """
+    Calcula la valoración media y la cantidad de valoraciones del fisioterapeuta autenticado.
+    """
+    try:
+        aggregate_data = AppointmentRating.objects.filter(physiotherapist=request.user.physio).aggregate(
+            average=Avg('score'),
+            count=Count('id')
+        )
+        avg_score = aggregate_data['average']
+        ratings_count = aggregate_data['count']
+
+        # Si existen valoraciones, redondeamos el promedio a dos decimales.
+        if ratings_count > 0 and avg_score is not None:
+            avg_score = round(avg_score, 2)
+        else:
+            avg_score = None
+
+        data = {
+            "rating": avg_score,
+            "ratings_count": ratings_count
+        }
+        return Response(data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'error': 'Solicitud incorrecta'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
@@ -94,25 +124,31 @@ def create_or_update_rating(request, appointment_id):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # Verificar si ya existe una valoración para esta cita
-    existing_rating = AppointmentRating.objects.filter(appointment=appointment, patient=request.user.patient).first()
+    existing_rating = AppointmentRating.objects.filter(
+        appointment=appointment,
+        patient=request.user.patient
+    ).first()
 
-    request.data['appointment'] = appointment.id  
+    request.data['appointment'] = appointment.id
 
-    # Si no existe una valoración, se crea una nueva
     if not existing_rating:
         # Crear nueva valoración
         serializer = AppointmentRatingSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(patient=request.user.patient, physiotherapist=appointment.physiotherapist, appointment=appointment)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)  # Creación exitosa
+            serializer.save(
+                patient=request.user.patient,
+                physiotherapist=appointment.physiotherapist,
+                appointment=appointment
+            )
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # Si ya existe, se actualiza
     else:
-        # Editar valoración existente
-        serializer = AppointmentRatingSerializer(existing_rating, data=request.data, partial=True)  # partial=True para solo actualizar los campos enviados
+        # Actualizar la valoración existente y actualizar updated_at
+        serializer = AppointmentRatingSerializer(existing_rating, data=request.data, partial=True)
         if serializer.is_valid():
-            serializer.save()  # Solo actualizamos los campos enviados
-            return Response(serializer.data, status=status.HTTP_200_OK)  # Edición exitosa
+            rating = serializer.save()
+            rating.updated_at = timezone.now()
+            rating.save()
+            return Response(AppointmentRatingSerializer(rating).data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

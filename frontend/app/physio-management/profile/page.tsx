@@ -10,6 +10,7 @@ import Link from "next/link";
 import styles from '@/components/ratings.module.css';
 import Alert from "@/components/ui/Alert";
 import ConfirmModal from "@/components/ui/ConfirmModal";
+import PhysioterapistRating from "@/components/ui/PhysioterapistRating";
 
 
 const getAuthToken = () => {
@@ -133,6 +134,7 @@ const FisioProfile = () => {
     const [newRating, setNewRating] = useState<{ punctuation: number; opinion: string }>({ punctuation: 5, opinion: "" });
 
     const [confirmRatingDelete, setConfirmRatingDelete] = useState<boolean>(false);
+    const [physioterapistId, setPhysioterapistId] = useState(null);
 
     useEffect(() => {
         setIsClient(true);
@@ -199,7 +201,7 @@ const FisioProfile = () => {
                     headers: { Authorization: `Bearer ${storedToken}` },
                 });
                 console.log("response", response.data);
-
+                setPhysioterapistId(response.data.physio.id);
                 setProfile({
                     user: {
                         dni: response.data.physio.user_data.dni,
@@ -1212,6 +1214,10 @@ const FisioProfile = () => {
 
                     <h2 className="text-xl font-bold mb-2">{profile.user.username}</h2>
                     <p className="text-blue-200 mb-4">Profesional</p>
+
+                    {/* Sección de valoración general*/}
+
+                    <PhysioterapistRating physioterapistId={physioterapistId}/>
 
                     {/* Sección de horario */}
                     <div className="w-full mt-4">
