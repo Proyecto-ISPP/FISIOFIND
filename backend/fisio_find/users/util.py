@@ -55,7 +55,7 @@ def check_service_json(service_json):
     if new_service["tipo"] == "CONTINUAR_TRATAMIENTO" and new_service["title"] != "Continuación de tratamiento":
         raise json.JSONDecodeError()
     
-    if not isinstance(new_service["price"], int):
+    if not (isinstance(new_service["price"], int) or isinstance(new_service["price"], float)):
         raise json.JSONDecodeError()
     
     if not isinstance(new_service["duration"], int):
