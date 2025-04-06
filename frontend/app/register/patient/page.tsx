@@ -483,7 +483,7 @@ const PatientRegistrationForm = () => {
                     label="Número de teléfono"
                     type="tel"
                     required={false}
-                    value={formData.phone_number}
+                    value={formData.phone_number || ""}
                     onChange={handleChange}
                     error={errors.phone_number}
                   />
