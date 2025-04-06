@@ -124,6 +124,8 @@ const VideoCallPage = () => {
     <div
       className="min-h-screen flex flex-col items-center justify-start p-5 bg-gradient-to-br from-gray-50 to-gray-100"
     >
+      <br></br>
+      <br></br>
       <div className="bg-white w-full max-w-3xl rounded-3xl shadow-xl p-10 mb-8 transition-all duration-300">
         <div className="text-center mb-9">
           <h1

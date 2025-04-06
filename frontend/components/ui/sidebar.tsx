@@ -45,16 +45,40 @@ export const SidebarProvider = ({
   const open = openProp !== undefined ? openProp : openState;
   const setOpen = setOpenProp !== undefined ? setOpenProp : setOpenState;
 
-  // Update main content margin when sidebar opens/closes
+  // Update main content margin when sidebar opens/closes - only on desktop
   useEffect(() => {
     const mainContent = document.querySelector('main');
     if (mainContent) {
-      if (open) {
-        mainContent.style.marginLeft = '240px';
+      // Only apply margin on desktop screens
+      const isMobile = window.innerWidth < 768;
+      if (!isMobile) {
+        if (open) {
+          mainContent.style.marginLeft = '240px';
+        } else {
+          mainContent.style.marginLeft = '80px';
+        }
       } else {
-        mainContent.style.marginLeft = '80px';
+        // Reset margin on mobile
+        mainContent.style.marginLeft = '0';
       }
     }
+  }, [open]);
+
+  // Add resize listener to adjust margins when screen size changes
+  useEffect(() => {
+    const handleResize = () => {
+      const mainContent = document.querySelector('main');
+      if (mainContent) {
+        if (window.innerWidth < 768) {
+          mainContent.style.marginLeft = '0';
+        } else {
+          mainContent.style.marginLeft = open ? '240px' : '80px';
+        }
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, [open]);
 
   return (
@@ -175,27 +199,27 @@ export const MobileSidebar = ({
       >
         <div className="flex justify-end z-100 w-full">
           <IconMenu2
-            className="text-neutral-800 dark:text-neutral-200"
+            className="text-[#05668D] dark:text-[#05668D]"
             onClick={() => setOpen(!open)}
           />
         </div>
         <AnimatePresence>
           {open && (
             <motion.div
-              initial={{ x: "-100%", opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: "-100%", opacity: 0 }}
+              initial={{ y: "-100%", opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: "-100%", opacity: 0 }}
               transition={{
                 duration: 0.3,
                 ease: "easeInOut",
               }}
               className={cn(
-                "fixed h-full w-full inset-0 bg-white dark:bg-neutral-900 p-10 z-[100] flex flex-col justify-between",
+                "fixed top-0 left-0 right-0 bg-white dark:bg-neutral-900 p-6 z-[100] flex flex-col shadow-md",
                 className
               )}
             >
               <div
-                className="absolute right-10 top-10 z-100 text-neutral-800 dark:text-neutral-200"
+                className="absolute left-6 top-6 z-100 text-[#05668D] dark:text-[#05668D]"
                 onClick={() => setOpen(!open)}
               >
                 <IconX />

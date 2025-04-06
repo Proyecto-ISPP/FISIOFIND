@@ -194,6 +194,8 @@ useEffect(() => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <br></br>
+      <br></br>
       <h1 className="text-3xl font-bold mb-8">Mis Tratamientos</h1>
 
       {loading && (
