@@ -1,11 +1,11 @@
-## 🚀 Changelog - 2.90.0
+## 🚀 Changelog - 2.90.1
 
-### ✨ Features (1)
-- feat: prueba (@Julen Redondo)
-### 🐛 Fixes (0)
+### ✨ Features (0)
 
+### 🐛 Fixes (1)
+- fix: prueba nueva (@Julen Redondo)
 ### 📖 Documentation (0)
 
-### 🌀 Other Changes (1)
-- Merge branch 'fix/changelog.yml' of https://github.com/Proyecto-ISPP/FISIOFIND into fix/changelog.yml (@Julen Redondo)
+### 🌀 Other Changes (0)
+
 ### 🔗 Pull Requests
