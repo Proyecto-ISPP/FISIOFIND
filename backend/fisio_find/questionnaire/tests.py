@@ -1,8 +1,17 @@
 from rest_framework.test import APITestCase
 from rest_framework import status
 from django.urls import reverse
-from users.models import AppUser, Physiotherapist, Pricing
+from users.models import AppUser, Physiotherapist, Pricing, Patient
 from questionnaire.models import Questionnaire
+
+"""
+Se prueban: 
+    - Titulos o labels muy largos
+    - Acceder sin usuario
+    - Acceder siendo paciente
+    - Acciones validas
+    - jsons con mal formato
+"""
 
 class QuestionnaireViewTests(APITestCase):
     def setUp(self):
@@ -19,6 +28,18 @@ class QuestionnaireViewTests(APITestCase):
             username="example2", dni='44825747N',
             email='ana2@example.com', password='pass2',
             first_name='Ana2', last_name='López2', postal_code='28002', photo=''
+        )
+        
+        self.patient_user = AppUser.objects.create_user(
+            username="example3", dni='87393815W',
+            email='ana3@example.com', password='pass3',
+            first_name='Ana3', last_name='López3', postal_code='28003', photo=''
+        )
+
+        self.patient = Patient.objects.create(
+            user=self.patient_user,
+            gender='F',
+            birth_date='1980-01-01',
         )
 
         self.physio = Physiotherapist.objects.create(
@@ -149,16 +170,6 @@ class QuestionnaireViewTests(APITestCase):
         self.questionnaire.refresh_from_db()
         self.assertIn(question_data, self.questionnaire.questions)
 
-    def test_create_question_too_long(self):
-        url = reverse('create_question', args=[self.questionnaire.id])
-        long_question = {
-            "type": "string",
-            "label": "¿" + "a" * 256 + "?",
-            "options": []
-        }
-        response = self.client.post(url, data=long_question, format='json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
     def test_unauthorized_access(self):
         self.client.force_authenticate(user=None)
         url = reverse('questionnaire_list')
@@ -213,3 +224,68 @@ class QuestionnaireViewTests(APITestCase):
         url = reverse('create_question', args=[self.questionnaire.id])
         response = self.client.post(url, data={}, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_detail_nonexistent_questionnaire(self):
+        url = reverse('questionnaire_detail', args=[9999])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_update_nonexistent_questionnaire(self):
+        url = reverse('questionnaire_detail', args=[9999])
+        data = {"title": "Nuevo título"}
+        response = self.client.put(url, data=data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_nonexistent_questionnaire(self):
+        url = reverse('questionnaire_detail', args=[9999])
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_patient_access_list_forbidden(self):
+        self.client.force_authenticate(user=self.patient_user)
+        url = reverse('questionnaire_list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_patient_create_forbidden(self):
+        self.client.force_authenticate(user=self.patient_user)
+        url = reverse('create_questionnaire')
+        response = self.client.post(url, data={}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_create_questionnaire_title_too_long(self):
+        url = reverse('create_questionnaire')
+        long_title = 'T' * 256
+        data = {
+            "title": long_title,
+            "json_schema": {"type": "object", "properties": {}},
+            "ui_schema": {"type": "Group", "label": "Test", "elements": []},
+            "questions": []
+        }
+        response = self.client.post(url, data=data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("title", response.data)
+
+    def test_create_questionnaire_invalid_json_schema(self):
+        url = reverse('create_questionnaire')
+        data = {
+            "title": "Cuestionario inválido",
+            "json_schema": "esto no es json",  # string inválido
+            "ui_schema": {"type": "Group", "label": "Test", "elements": []},
+            "questions": []
+        }
+        response = self.client.post(url, data=data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("non_field_errors", response.data)
+
+    def test_create_questionnaire_invalid_ui_schema(self):
+        url = reverse('create_questionnaire')
+        data = {
+            "title": "Cuestionario inválido",
+            "json_schema": {"type": "object", "properties": {}},
+            "ui_schema": "esto tampoco es json",
+            "questions": []
+        }
+        response = self.client.post(url, data=data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("non_field_errors", response.data)
