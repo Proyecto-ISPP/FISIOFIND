@@ -1,36 +1,41 @@
+import logging
+import os
+import time
+import unicodedata
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
-import time
-import unicodedata
-import os
 from dotenv import load_dotenv
-
 
 # Cargar las variables de entorno desde el archivo .env
 load_dotenv()
 
+# Configurar el logger
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    filename="/ruta/a/tu/archivo_de_logs.log",  # Cambia esta ruta según tus necesidades
+    filemode="a"
+)
 
 class SeleniumScraper:
 
     def __init__(self):
-
+        logging.info("Inicializando SeleniumScraper")
         if os.getenv("DEBUG") == "True":
-            # Configurar Selenium (se requiere que JS esté habilitado)
             options = webdriver.ChromeOptions()
             options.add_argument("--headless")  # Ejecutar en segundo plano
             options.add_argument("--no-sandbox")
             options.add_argument("--enable-javascript")  # Asegurar que JS está habilitado
             options.add_argument("--disable-dev-shm-usage")
-
-            # Inicializar WebDriver
             self.driver = webdriver.Chrome(
                 service=Service(executable_path=ChromeDriverManager().install()),
                 options=options
             )
+            logging.info("SeleniumScraper inicializado en modo DEBUG")
         else:
             options = webdriver.ChromeOptions()
             options.add_argument("--headless")  # Ejecutar en segundo plano
@@ -40,62 +45,85 @@ class SeleniumScraper:
             options.add_argument("--window-size=1920x1080")
             options.add_argument("--disable-dev-shm-usage")
             options.binary_location = "/usr/bin/chromium-browser"
-
-            # Especificar ruta manual de ChromeDriver
             chromedriver_path = "/usr/bin/chromedriver"
-
-            # Inicializar WebDriver con ruta manual
             self.driver = webdriver.Chrome(
                 service=Service(executable_path=chromedriver_path),
                 options=options
             )
+            logging.info("SeleniumScraper inicializado en modo producción")
 
     def obtener_colegiado(
-      self, valorBusqueda: str, url: str, xpath: str, loadTime: int = 2, general: str = None) -> BeautifulSoup:
+        self, valorBusqueda: str, url: str, xpath: str, loadTime: int = 2, general: str = None
+    ) -> BeautifulSoup:
+        logging.info("Accediendo a la URL: %s", url)
         self.driver.get(url)
         time.sleep(loadTime)  # Esperar que cargue la página
 
         if "murcia" in url:
-            num_sort = self.driver.find_element(By.XPATH, '//*[@id="myTable"]/thead/tr/th[3]')
-            num_sort.click()
+            try:
+                num_sort = self.driver.find_element(By.XPATH, '//*[@id="myTable"]/thead/tr/th[3]')
+                num_sort.click()
+                logging.debug("Click en ordenación realizado en la página de Murcia")
+            except Exception as e:
+                logging.error("Error al hacer click en ordenación en Murcia: %s", e, exc_info=True)
 
         if general == "navarra":
-            select = self.driver.find_element(By.XPATH, '//*[@id="colegio"]/option[16]')
-            select.click()
+            try:
+                select = self.driver.find_element(By.XPATH, '//*[@id="colegio"]/option[16]')
+                select.click()
+                logging.debug("Seleccionado elemento para Navarra")
+            except Exception as e:
+                logging.error("Error al seleccionar opción para Navarra: %s", e, exc_info=True)
 
         if general == "canarias":
-            select = self.driver.find_element(By.XPATH, '//*[@id="colegio"]/option[6]')
-            select.click()
+            try:
+                select = self.driver.find_element(By.XPATH, '//*[@id="colegio"]/option[6]')
+                select.click()
+                logging.debug("Seleccionado elemento para Canarias")
+            except Exception as e:
+                logging.error("Error al seleccionar opción para Canarias: %s", e, exc_info=True)
 
         if general == "castilla y leon":
-            select = self.driver.find_element(By.XPATH, '//*[@id="colegio"]/option[9]')
-            select.click()
+            try:
+                select = self.driver.find_element(By.XPATH, '//*[@id="colegio"]/option[9]')
+                select.click()
+                logging.debug("Seleccionado elemento para Castilla y León")
+            except Exception as e:
+                logging.error("Error al seleccionar opción para Castilla y León: %s", e, exc_info=True)
 
-        search_box = self.driver.find_element(By.XPATH, xpath)
-        search_box.send_keys(valorBusqueda)  # Ingresar valor de búsqueda (nombre o número)
-        search_box.send_keys(Keys.RETURN)
+        try:
+            search_box = self.driver.find_element(By.XPATH, xpath)
+            search_box.send_keys(valorBusqueda)  # Ingresar valor de búsqueda
+            search_box.send_keys(Keys.RETURN)
+            logging.info("Realizada búsqueda con valor: %s", valorBusqueda)
+        except Exception as e:
+            logging.error("Error al interactuar con el campo de búsqueda: %s", e, exc_info=True)
 
-        # Para el caso de castilla y leon, hay que hacer click en el botón de buscar
         if "cpfcyl" in url:
-            xpath = '//*[@id="cdk-accordion-child-0"]/div/form/div/web-loading-button/button/span[1]/div'
-            search_div = self.driver.find_element(By.XPATH, xpath)
-            search_div.click()
+            try:
+                xpath_button = '//*[@id="cdk-accordion-child-0"]/div/form/div/web-loading-button/button/span[1]/div'
+                search_div = self.driver.find_element(By.XPATH, xpath_button)
+                search_div.click()
+                logging.debug("Click en botón de búsqueda para cpfcyl realizado")
+            except Exception as e:
+                logging.error("Error al hacer click en el botón de búsqueda para cpfcyl: %s", e, exc_info=True)
 
         time.sleep(2)  # Esperar la carga de resultados
-
         soup = BeautifulSoup(self.driver.page_source, "html.parser")
+        logging.info("HTML de la página obtenido")
         return soup
 
     def cerrar(self):
         try:
             self.driver.quit()
+            logging.info("Driver cerrado correctamente")
         except Exception as e:
-            print("Error al cerrar el driver:", e)
-        # Intentar detener el servicio para asegurarnos que se mata el proceso
+            logging.error("Error al cerrar el driver: %s", e, exc_info=True)
         try:
             self.driver.service.stop()
+            logging.info("Servicio del driver detenido correctamente")
         except Exception as e:
-            print("Error al detener el servicio del driver:", e)
+            logging.error("Error al detener el servicio del driver: %s", e, exc_info=True)
 
 
 def quitar_tildes(texto):
@@ -103,14 +131,11 @@ def quitar_tildes(texto):
 
 
 def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
-    """
-    Valida si un fisioterapeuta está colegiado en su comunidad autónoma.
-    Devuelve True o False según la validación y se asegura de cerrar el driver.
-    """
+    logging.info("Iniciando validación de colegiación para '%s' en %s", nombre, comunidad)
     scraper = SeleniumScraper()
     try:
         match comunidad.lower():
-            case "andalucia":  # Por número y nombre, ver caso 00001
+            case "andalucia":
                 url = "https://colfisio.org/registro-censo-fisioterapeutas"
                 try:
                     soup = scraper.obtener_colegiado(nombre, url, '//*[@id="input-458"]')
@@ -118,28 +143,34 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
                     if resultado:
                         datos = quitar_tildes(resultado.text.replace("\n", "").strip())
                         num = datos.split(" ")[1]
-                        return numero == num
+                        valid = numero == num
+                        logging.info("Validación en Andalucía %s", "exitosa" if valid else "fallida")
+                        return valid
                     else:
+                        logging.warning("No se encontró el resultado esperado en Andalucía")
                         return False
                 except Exception as e:
-                    print(f"⚠️ Error durante la validación en {comunidad}: {e}")
+                    logging.error("Error durante la validación en Andalucía: %s", e, exc_info=True)
                     return False
 
-            case "aragon":  # Por número y nombre
+            case "aragon":
                 url = "https://ventanilla.colfisioaragon.org/buscador-colegiados"
                 try:
                     soup = scraper.obtener_colegiado(numero, url, "//*[@id='numeroColegiado']")
                     resultado = soup.find("div", class_="card-body")
                     if resultado:
                         datos = quitar_tildes(resultado.h4.text.strip().upper())
-                        return datos == quitar_tildes(nombre)
+                        valid = datos == quitar_tildes(nombre)
+                        logging.info("Validación en Aragón %s", "exitosa" if valid else "fallida")
+                        return valid
                     else:
+                        logging.warning("No se encontró el resultado esperado en Aragón")
                         return False
                 except Exception as e:
-                    print(f"⚠️ Error durante la validación en {comunidad}: {e}")
+                    logging.error("Error durante la validación en Aragón: %s", e, exc_info=True)
                     return False
 
-            case "asturias":  # Por número y nombre
+            case "asturias":
                 url = "https://www.cofispa.org/censo-colegiados"
                 try:
                     soup = scraper.obtener_colegiado(numero, url, '//*[@id="number"]')
@@ -147,16 +178,19 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
                     if resultado:
                         datos = [td.text.strip() for td in resultado.find_all("td")]
                         datos = quitar_tildes(f"{datos[1]} {datos[2]} {datos[3]}")
-                        if ("Mª" in datos):
+                        if "Mª" in datos:
                             datos = datos.replace("Mª", "MARIA")
-                        return datos == quitar_tildes(nombre)
+                        valid = datos == quitar_tildes(nombre)
+                        logging.info("Validación en Asturias %s", "exitosa" if valid else "fallida")
+                        return valid
                     else:
+                        logging.warning("No se encontró el resultado esperado en Asturias")
                         return False
                 except Exception as e:
-                    print(f"⚠️ Error durante la validación en {comunidad}: {e}")
+                    logging.error("Error durante la validación en Asturias: %s", e, exc_info=True)
                     return False
 
-            case "baleares":  # Por número y nombre
+            case "baleares":
                 url = "http://www.colfisiobalear.org/es/area-social-y-ciudadana/profesionales-colegiados/"
                 try:
                     soup = scraper.obtener_colegiado(numero, url, "//*[@id='student_number']")
@@ -164,28 +198,34 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
                     if resultado:
                         datos = resultado.div.p.text.upper().split(", ")
                         datos = quitar_tildes(f"{datos[1]} {datos[0]}")
-                        return datos == quitar_tildes(nombre)
+                        valid = datos == quitar_tildes(nombre)
+                        logging.info("Validación en Baleares %s", "exitosa" if valid else "fallida")
+                        return valid
                     else:
+                        logging.warning("No se encontró el resultado esperado en Baleares")
                         return False
                 except Exception as e:
-                    print(f"⚠️ Error durante la validación en {comunidad}: {e}")
+                    logging.error("Error durante la validación en Baleares: %s", e, exc_info=True)
                     return False
 
-            case "canarias":  # Por número y nombre (NO FUNCIONA CON HEADLESS)
+            case "canarias":
                 url = "https://www.consejo-fisioterapia.org/vu_colegiados.html"
                 try:
                     soup = scraper.obtener_colegiado(nombre, url, '//*[@id="nombre"]')
                     resultado = soup.find("tr", class_="colegiado")
                     if resultado:
                         datos = [td.text.strip() for td in resultado.find_all("td")]
-                        return numero == datos[1]
+                        valid = numero == datos[1]
+                        logging.info("Validación en Canarias %s", "exitosa" if valid else "fallida")
+                        return valid
                     else:
+                        logging.warning("No se encontró el resultado esperado en Canarias")
                         return False
                 except Exception as e:
-                    print(f"⚠️ Error durante la validación en {comunidad}: {e}")
+                    logging.error("Error durante la validación en Canarias: %s", e, exc_info=True)
                     return False
 
-            case "cantabria":  # Por número y nombre
+            case "cantabria":
                 url = "https://colfisiocant.org/busqueda-profesionales/"
                 try:
                     soup = scraper.obtener_colegiado(nombre, url, "//*[@id='tablepress-1_filter']/label/input")
@@ -194,14 +234,17 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
                         datos = [td.text.strip() for td in resultado.find_all("td")]
                         while len(numero) < 3:
                             numero = "0" + numero
-                        return numero == datos[0].replace("39/", "")
+                        valid = numero == datos[0].replace("39/", "")
+                        logging.info("Validación en Cantabria %s", "exitosa" if valid else "fallida")
+                        return valid
                     else:
+                        logging.warning("No se encontró el resultado esperado en Cantabria")
                         return False
                 except Exception as e:
-                    print(f"⚠️ Error durante la validación en {comunidad}: {e}")
+                    logging.error("Error durante la validación en Cantabria: %s", e, exc_info=True)
                     return False
 
-            case "castilla-la mancha":  # Por número y nombre
+            case "castilla-la mancha":
                 url = "https://www.coficam.org/ventanilla-unica/censo-colegial"
                 try:
                     soup = scraper.obtener_colegiado(numero, url, '//*[@id="num_colegiado"]')
@@ -210,28 +253,34 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
                         datos = [td.text.strip() for td in resultado.find_all("td")]
                         datos = quitar_tildes(f"{datos[1]}").split(", ")
                         cadena = f"{datos[1]} {datos[0]}".upper()
-                        return cadena == quitar_tildes(nombre)
+                        valid = cadena == quitar_tildes(nombre)
+                        logging.info("Validación en Castilla-la Mancha %s", "exitosa" if valid else "fallida")
+                        return valid
                     else:
+                        logging.warning("No se encontró el resultado esperado en Castilla-la Mancha")
                         return False
                 except Exception as e:
-                    print(f"⚠️ Error durante la validación en {comunidad}: {e}")
+                    logging.error("Error durante la validación en Castilla-la Mancha: %s", e, exc_info=True)
                     return False
 
-            case "castilla y leon":  # Por número y nombre (NO FUNCIONA CON HEADLESS)
+            case "castilla y leon":
                 url = "https://www.consejo-fisioterapia.org/vu_colegiados.html"
                 try:
                     soup = scraper.obtener_colegiado(nombre, url, '//*[@id="nombre"]')
                     resultado = soup.find("tr", class_="colegiado")
                     if resultado:
                         datos = [td.text.strip() for td in resultado.find_all("td")]
-                        return numero == datos[1]
+                        valid = numero == datos[1]
+                        logging.info("Validación en Castilla y León %s", "exitosa" if valid else "fallida")
+                        return valid
                     else:
+                        logging.warning("No se encontró el resultado esperado en Castilla y León")
                         return False
                 except Exception as e:
-                    print(f"⚠️ Error durante la validación en {comunidad}: {e}")
+                    logging.error("Error durante la validación en Castilla y León: %s", e, exc_info=True)
                     return False
 
-            case "cataluña":  # Por número y nombre
+            case "cataluña":
                 url = "https://www.fisioterapeutes.cat/es/ciudadanos/profesionales"
                 try:
                     soup = scraper.obtener_colegiado(numero, url, '//*[@id="ncol"]')
@@ -240,14 +289,17 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
                         datos = quitar_tildes(resultado.text.upper())
                         if "Mª" in datos:
                             datos = datos.replace("Mª", "MARIA")
-                        return datos == quitar_tildes(nombre)
+                        valid = datos == quitar_tildes(nombre)
+                        logging.info("Validación en Cataluña %s", "exitosa" if valid else "fallida")
+                        return valid
                     else:
+                        logging.warning("No se encontró el resultado esperado en Cataluña")
                         return False
                 except Exception as e:
-                    print(f"⚠️ Error durante la validación en {comunidad}: {e}")
+                    logging.error("Error durante la validación en Cataluña: %s", e, exc_info=True)
                     return False
 
-            case "extremadura":  # Por número y nombre
+            case "extremadura":
                 url = "https://cofext.org/cms/colegiados.php"
                 try:
                     xpath = '//*[@id="example_filter"]/label/input'
@@ -255,14 +307,17 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
                     resultado = soup.find("tr", class_="odd")
                     if resultado:
                         datos = [td.text.strip() for td in resultado.find_all("td")]
-                        return numero == datos[2]
+                        valid = numero == datos[2]
+                        logging.info("Validación en Extremadura %s", "exitosa" if valid else "fallida")
+                        return valid
                     else:
+                        logging.warning("No se encontró el resultado esperado en Extremadura")
                         return False
                 except Exception as e:
-                    print(f"⚠️ Error durante la validación en {comunidad}: {e}")
+                    logging.error("Error durante la validación en Extremadura: %s", e, exc_info=True)
                     return False
 
-            case "galicia":  # Por número y nombre
+            case "galicia":
                 url = "https://www.cofiga.org/ciudadanos/colegiados"
                 try:
                     soup = scraper.obtener_colegiado(numero, url, '//*[@id="num_colegiado"]')
@@ -271,14 +326,16 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
                         datos = [td.text.strip() for td in resultado.find_all("td")]
                         datos = quitar_tildes(datos[1].upper()).split(", ")
                         cadena = f"{datos[1]} {datos[0]}"
-                        return cadena == quitar_tildes(nombre)
+                        valid = cadena == quitar_tildes(nombre)
+                        logging.info("Validación en Galicia %s", "exitosa" if valid else "fallida")
+                        return valid
                     else:
+                        logging.warning("No se encontró el resultado esperado en Galicia")
                         return False
                 except Exception as e:
-                    print(f"⚠️ Error durante la validación en {comunidad}: {e}")
+                    logging.error("Error durante la validación en Galicia: %s", e, exc_info=True)
                     return False
 
-            # Por número y nombre (se haría por nombre, pero si se rellena el número con ceros, no debe haber problema)
             case "la rioja":
                 url = "https://www.coflarioja.org/ciudadanos/listado-de-fisioterapeutas/buscar-colegiados"
                 try:
@@ -292,14 +349,17 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
                         cadena = quitar_tildes(f"{datos[1]} {datos[2]}".upper())
                         if "Mª" in cadena:
                             cadena = cadena.replace("Mª", "MARIA")
-                        return cadena == quitar_tildes(nombre)
+                        valid = cadena == quitar_tildes(nombre)
+                        logging.info("Validación en La Rioja %s", "exitosa" if valid else "fallida")
+                        return valid
                     else:
+                        logging.warning("No se encontró el resultado esperado en La Rioja")
                         return False
                 except Exception as e:
-                    print(f"⚠️ Error durante la validación en {comunidad}: {e}")
+                    logging.error("Error durante la validación en La Rioja: %s", e, exc_info=True)
                     return False
 
-            case "madrid":  # Por nombre
+            case "madrid":
                 url = "https://cfisiomad.com/#/ext/buscarcolegiado"
                 try:
                     xpath = "/html/body/app-root/app-externos/section/div/app-search-collegiate/div/div/form/input[1]"
@@ -307,14 +367,17 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
                     resultado = soup.find("tbody").tr
                     if resultado:
                         datos = [td.text.strip() for td in resultado.find_all("td")]
-                        return numero == datos[0]
+                        valid = numero == datos[0]
+                        logging.info("Validación en Madrid %s", "exitosa" if valid else "fallida")
+                        return valid
                     else:
+                        logging.warning("No se encontró el resultado esperado en Madrid")
                         return False
                 except Exception as e:
-                    print(f"⚠️ Error durante la validación en {comunidad}: {e}")
+                    logging.error("Error durante la validación en Madrid: %s", e, exc_info=True)
                     return False
 
-            case "murcia":  # Por número y nombre
+            case "murcia":
                 url = "https://cfisiomurcia.com/buscador-de-colegiados/"
                 try:
                     soup = scraper.obtener_colegiado(numero, url, '//*[@id="myTable_filter"]/label/input')
@@ -324,42 +387,51 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
                         cadena = quitar_tildes(f"{datos[0]} {datos[1]}")
                         if "Mª" in cadena:
                             cadena = cadena.replace("Mª", "MARIA")
-                        return cadena == quitar_tildes(nombre)
+                        valid = cadena == quitar_tildes(nombre)
+                        logging.info("Validación en Murcia %s", "exitosa" if valid else "fallida")
+                        return valid
                     else:
+                        logging.warning("No se encontró el resultado esperado en Murcia")
                         return False
                 except Exception as e:
-                    print(f"⚠️ Error durante la validación en {comunidad}: {e}")
+                    logging.error("Error durante la validación en Murcia: %s", e, exc_info=True)
                     return False
 
-            case "navarra":  # Por nombre, se valida en la web general de colegiados
+            case "navarra":
                 url = "https://www.consejo-fisioterapia.org/vu_colegiados.html"
                 try:
                     soup = scraper.obtener_colegiado(nombre, url, '//*[@id="nombre"]', general=comunidad)
                     resultado = soup.find("tr", class_="colegiado")
                     if resultado:
                         datos = [td.text.strip() for td in resultado.find_all("td")]
-                        return numero == datos[1]
+                        valid = numero == datos[1]
+                        logging.info("Validación en Navarra %s", "exitosa" if valid else "fallida")
+                        return valid
                     else:
+                        logging.warning("No se encontró el resultado esperado en Navarra")
                         return False
                 except Exception as e:
-                    print(f"⚠️ Error durante la validación en {comunidad}: {e}")
+                    logging.error("Error durante la validación en Navarra: %s", e, exc_info=True)
                     return False
 
-            case "pais vasco":  # Por nombre (TARDA MUCHO)
+            case "pais vasco":
                 url = "https://cofpv.org/es/colegiados.asp"
                 try:
                     soup = scraper.obtener_colegiado(nombre, url, '//*[@id="busqueda"]')
                     resultado = soup.find("table", class_="tabletwo").tbody.tr
                     if resultado:
                         datos = [td.text.strip() for td in resultado.find_all("td")]
-                        return numero == datos[0]
+                        valid = numero == datos[0]
+                        logging.info("Validación en País Vasco %s", "exitosa" if valid else "fallida")
+                        return valid
                     else:
+                        logging.warning("No se encontró el resultado esperado en País Vasco")
                         return False
                 except Exception as e:
-                    print(f"⚠️ Error durante la validación en {comunidad}: {e}")
+                    logging.error("Error durante la validación en País Vasco: %s", e, exc_info=True)
                     return False
 
-            case "comunidad valenciana":  # Por número y nombre
+            case "comunidad valenciana":
                 url = "https://app.colfisiocv.com/college/collegiatelist/"
                 try:
                     xpath = '//*[@id="root"]/div/div[2]/div[3]/div/div[2]/div/div[1]/div[1]/div[2]/input'
@@ -368,14 +440,19 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
                     if resultado:
                         datos = [td.text.strip() for td in resultado.find_all("td")]
                         cadena = quitar_tildes(f"{datos[2]} {datos[3]}").upper()
-                        return cadena == quitar_tildes(nombre)
+                        valid = cadena == quitar_tildes(nombre)
+                        logging.info("Validación en Comunidad Valenciana %s", "exitosa" if valid else "fallida")
+                        return valid
                     else:
+                        logging.warning("No se encontró el resultado esperado en Comunidad Valenciana")
                         return False
                 except Exception as e:
-                    print(f"⚠️ Error durante la validación en {comunidad}: {e}")
+                    logging.error("Error durante la validación en Comunidad Valenciana: %s", e, exc_info=True)
                     return False
 
             case _:
+                logging.warning("Comunidad no reconocida: %s", comunidad)
                 return False
     finally:
         scraper.cerrar()
+        logging.info("Finalizada la validación de colegiación para '%s'", nombre)
