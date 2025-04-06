@@ -12,6 +12,7 @@ import cryptography.hazmat.primitives.padding as padding
 
 logger = logging.getLogger(__name__)
 
+
 def encrypt_data(data):
     key = bytes.fromhex(settings.ENCRYPTION_KEY)
     iv = os.urandom(16)
@@ -33,14 +34,16 @@ class Command(BaseCommand):
         for treatment in treatments:
             patient_user = treatment.patient.user
             sessions_today = treatment.sessions.filter(day_of_week__contains=today)
-            frontend_url = {settings.FRONTEND_URL}
-            treatment_url = f"{frontend_url}patient-management/follow-up/{treatment.id}"
 
             if not sessions_today.exists():
                 continue
 
             session_names = [s.name or f"Sesión {s.id}" for s in sessions_today]
             session_list_html = "".join(f"<li>{name}</li>" for name in session_names)
+
+            # URLs en texto plano (no cifradas)
+            frontend_url = settings.FRONTEND_URL
+            treatment_url = f"{frontend_url}patient-management/follow-up/{treatment.id}"
 
             subject = "🏋️ ¡Hora de tus ejercicios de hoy!"
             message = f"""
@@ -104,7 +107,7 @@ class Command(BaseCommand):
             "encrypted_subject": encrypted_subject,
             "encrypted_recipient": encrypted_recipient,
             "encrypted_body": encrypted_body,
-            "from_name": encrypt_data("Fisio Find")  # si tu API soporta esto
+            "from_name": encrypt_data("Fisio Find")
         }
 
         response = requests.post(url, json=data, headers=headers)
