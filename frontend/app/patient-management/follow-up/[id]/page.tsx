@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import RestrictedAccess from "@/components/RestrictedAccess";
 import { getApiBaseUrl } from "@/utils/api";
+import { Film, ArrowLeft } from "lucide-react";
 
 interface User {
   username: string;
@@ -139,6 +140,10 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
     router.push(`/patient-management/follow-up/${params.id}/sessions`);
   };
 
+  const handleViewVideos = () => {
+    router.push(`/patient-management/follow-up/${params.id}/videos`);
+  };
+
   const handleGoBack = () => {
     router.push("/patient-management/follow-up");
   };
@@ -155,22 +160,9 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
     <div className="container mx-auto px-4 py-8">
       <button
         onClick={handleGoBack}
-        className="mb-6 flex items-center text-blue-600 hover:text-blue-800"
+        className="mb-6 flex items-center text-blue-600 hover:text-blue-800 transition-colors duration-200 font-medium"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-5 w-5 mr-1"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M15 19l-7-7 7-7"
-          />
-        </svg>
+        <ArrowLeft className="mr-2" size={20} />
         Volver a mis tratamientos
       </button>
 
@@ -189,9 +181,7 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
       {treatment && (
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
           <div
-            className={`p-2 text-center text-white text-lg font-semibold ${
-              treatment.is_active ? "bg-green-500" : "bg-gray-500"
-            }`}
+            className={`p-2 text-center text-white text-lg font-semibold ${treatment.is_active ? "bg-green-500" : "bg-gray-500"}`}
           >
             {treatment.is_active ? "Tratamiento Activo" : "Tratamiento Histórico"}
           </div>
@@ -225,7 +215,8 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
               </div>
             </div>
 
-            <div className="mt-8">
+            <div className="mt-8 flex space-x-4">
+              {/* Botón Ver Sesiones */}
               <button
                 onClick={handleViewSessions}
                 className="w-full md:w-auto px-6 py-3 bg-[#05668d] text-white rounded-xl hover:bg-[#045a7c] transition flex items-center justify-center"
@@ -245,6 +236,14 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
                   />
                 </svg>
                 Ver Sesiones
+              </button>
+              <button
+                onClick={handleViewVideos
+                }
+                className="bg-[#6bc9be] hover:bg-[#5ab8ad] text-white font-semibold py-2 px-4 rounded-xl inline-flex items-center"
+              >
+                <Film className="mr-2" size={20} />
+                Ver Videos
               </button>
             </div>
           </div>
