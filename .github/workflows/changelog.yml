@@ -14,8 +14,8 @@ jobs:
         with:
           fetch-depth: 0  
 
-      - name: Get version based on feat/fix commits
-        id: get-version
+      - name: Get latest tag
+        id: get-latest-tag
         run: |
           # Obtener la última tag semántica válida
           latest_tag=$(git tag --sort=-v:refname | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1)
@@ -25,33 +25,35 @@ jobs:
             major=0
             minor=0
             patch=0
+            log_range=""
           else
             # Separar la última tag en major, minor y patch
             IFS='.' read -r major minor patch <<< "$latest_tag"
+            log_range="$latest_tag..HEAD"
           fi
 
-          # Contar feats (acumulativos)
-          feature_count=$(git log --grep="^feat:" --oneline | wc -l)
+          echo "Última tag encontrada: $latest_tag"
+          
+          # Contar commits de tipo 'feat:' para el incremento de 'minor'
+          feature_count=$(git log --grep="^feat:" --oneline $log_range | wc -l)
+
+          # Contar commits de tipo 'fix:', 'docs:', y otros para el incremento de 'patch'
+          non_feature_commits=$(git log --grep="^(fix|docs|other)" --oneline $log_range | wc -l)
+
+          # Incrementar el 'minor' por la cantidad de feats
           minor=$((minor + feature_count))
 
-          # Contar commits no feat (para incrementar el patch)
-          last_feat_commit=$(git log --grep="^feat:" --pretty=format:"%H" | head -n 1)
-          if [[ -n "$last_feat_commit" ]]; then
-            # Contar commits que no sean feat: después del último feat
-            non_feat_commits=$(git log "${last_feat_commit}..HEAD" --invert-grep --grep="^feat:" --oneline | wc -l)
+          # Si hay un feat después de un patch, reiniciar el patch a 0
+          if (( feature_count > 0 )); then
+            patch=0  # Reiniciar el patch al haber feats
           else
-            # Si no hay ningún feat, contar todos los commits no feat:
-            non_feat_commits=$(git log --invert-grep --grep="^feat:" --oneline | wc -l)
+            patch=$((patch + non_feature_commits))  # Incrementar el patch por otros cambios
           fi
 
-          patch=$((patch + non_feat_commits))
-
-          # Si hay un commit de tipo fix, aumentar el patch
-          fix_count=$(git log --grep="^fix:" --oneline | wc -l)
-          patch=$((patch + fix_count))
+          # Mostrar el nuevo cálculo
+          echo "Nueva versión: $major.$minor.$patch"
 
           new_tag="${major}.${minor}.${patch}"
-          echo "🔖 Nueva tag a crear: $new_tag"
           echo "NEW_TAG=$new_tag" >> $GITHUB_ENV
           echo "latest_tag=$latest_tag" >> $GITHUB_ENV
 
@@ -98,7 +100,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add CHANGELOG.md
-          git commit -m "docs: actualizacion CHANGELOG para $NEW_TAG"
+          git commit -m "docs: actualización CHANGELOG para $NEW_TAG"
           git push
 
       - name: Create new tag
