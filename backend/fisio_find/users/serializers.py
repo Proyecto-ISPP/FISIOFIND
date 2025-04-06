@@ -17,8 +17,10 @@ class AppUserSerializer(serializers.ModelSerializer):
     photo = serializers.ImageField(required=False)  # Ensure photo is handled as an optional field
 
     phone_number = serializers.CharField(
+        required=False,
+        allow_blank=True,
         validators=[RegexValidator(regex=r'^\d{9}$', message="El número de teléfono debe tener exactamente 9 dígitos.")]
-    )
+        )
 
     dni = serializers.CharField(
         validators=[
@@ -56,9 +58,19 @@ class AppUserSerializer(serializers.ModelSerializer):
 
     def validate_phone_number(self, value):
         """Verifica si el teléfono ya está en uso, excluyendo al propio usuario"""
+        # Si el valor es una cadena vacía, convertir a None y aceptar
+        if value == "":
+            return None
+
+        # Si se proporciona un valor, validar el formato (9 dígitos)
+        if value and len(value) != 9:
+            raise serializers.ValidationError("El teléfono debe tener 9 dígitos")
+
+        # Verificar si el número ya está en uso por otro usuario
         user = self.context.get('request').user
-        if AppUser.objects.filter(phone_number=value).exclude(id=user.id).exists():
+        if value and AppUser.objects.filter(phone_number=value).exclude(id=user.id).exists():
             raise serializers.ValidationError("El número de teléfono ya está en uso.")
+
         return value
 
     def validate_postal_code(self, value):
@@ -122,8 +134,6 @@ class PatientSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"username": "El nombre de usuario es obligatorio."})
         if not user_data.get('email'):
             raise serializers.ValidationError({"email": "El email es obligatorio."})
-        if not user_data.get('phone_number'):
-            raise serializers.ValidationError({"phone_number": "El teléfono es obligatorio."})
         if not user_data.get('dni'):
             raise serializers.ValidationError({"dni": "El DNI es obligatorio."})
         if not data.get('gender'):
@@ -171,7 +181,7 @@ class PatientRegisterSerializer(serializers.ModelSerializer):
     )
 
     password = serializers.CharField(write_only=True, required=True)
-    phone_number = serializers.CharField(required=True)
+    phone_number = serializers.CharField(required=False)
     postal_code = serializers.CharField(required=True)
     first_name = serializers.CharField(
         required=True
@@ -204,7 +214,7 @@ class PatientRegisterSerializer(serializers.ModelSerializer):
         if validate_dni_match_letter(data['dni']):
             validation_errors["dni"] = "La letra del DNI no coincide con el número."
 
-        if telefono_no_mide_9(data['phone_number']):
+        if 'phone_number' in data and data['phone_number'] and telefono_no_mide_9(data['phone_number']):
             validation_errors["phone_number"] = "El número de teléfono debe tener 9 caracteres."
 
         if codigo_postal_no_mide_5(data['postal_code']):
@@ -237,7 +247,7 @@ class PatientRegisterSerializer(serializers.ModelSerializer):
                     first_name=validated_data.pop('first_name'),
                     last_name=validated_data.pop('last_name'),
                     dni=validated_data.pop('dni'),
-                    phone_number=validated_data.pop('phone_number'),
+                    phone_number=validated_data.pop('phone_number', None),
                     postal_code=validated_data.pop('postal_code'),
                     password=make_password(validated_data.pop('password'))  # Encripta la contraseña
                 )
@@ -272,7 +282,7 @@ class PhysioRegisterSerializer(serializers.ModelSerializer):
 
     first_name = serializers.CharField(required=True)
     last_name = serializers.CharField(required=True)
-    phone_number = serializers.CharField(required=True)
+    phone_number = serializers.CharField(required=False)
     postal_code = serializers.CharField(required=True)
     photo = serializers.ImageField(required=False)
     services = serializers.JSONField(required=False)
@@ -316,7 +326,7 @@ class PhysioRegisterSerializer(serializers.ModelSerializer):
             validation_errors["dni"] = "El DNI debe tener 8 números seguidos de una letra válida."
         if validate_dni_match_letter(data['dni']):
             validation_errors["dni"] = "La letra del DNI no coincide con el número."
-        if telefono_no_mide_9(data['phone_number']):
+        if 'phone_number' in data and data['phone_number'] and telefono_no_mide_9(data['phone_number']):
             validation_errors["phone_number"] = "El número de teléfono debe tener 9 caracteres."
         if codigo_postal_no_mide_5(data['postal_code']):
             validation_errors["postal_code"] = "El código postal debe tener 5 caracteres."
@@ -365,7 +375,7 @@ class PhysioRegisterSerializer(serializers.ModelSerializer):
                     email=validated_data.pop('email'),
                     dni=validated_data.pop('dni'),
                     password=make_password(validated_data.pop('password')),
-                    phone_number=validated_data.pop('phone_number'),
+                    phone_number=validated_data.pop('phone_number', None),
                     postal_code=validated_data.pop('postal_code'),
                     first_name=first_name,
                     last_name=last_name

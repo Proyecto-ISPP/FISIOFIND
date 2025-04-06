@@ -13,6 +13,7 @@ GENDER_CHOICES = [
     ('M', 'Male'),
     ('F', 'Female'),
     ('O', 'Other'),
+    ('P', 'Prefer not to say'),
 ]
 
 AUTONOMIC_COMMUNITY_CHOICES = [
@@ -39,7 +40,7 @@ AUTONOMIC_COMMUNITY_CHOICES = [
 class AppUser(AbstractUser):
     photo = models.ImageField(null=True, blank=True, upload_to='profile_photos/', verbose_name='Foto')
     dni = EncryptedCharField(max_length=9, unique=True, verbose_name='DNI')
-    phone_number = models.CharField(max_length=9, verbose_name='Número de teléfono')
+    phone_number = models.CharField(max_length=9, verbose_name='Número de teléfono', null=True, blank=True)
     postal_code = models.CharField(max_length=5, verbose_name='Código postal')
     account_status = models.CharField(max_length=10, choices=ACCOUNT_STATUS_CHOICES, default='UNVERIFIED', verbose_name='Estado de la cuenta')
 
