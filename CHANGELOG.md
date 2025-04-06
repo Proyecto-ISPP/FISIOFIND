@@ -1,4 +1,4 @@
-## 🚀 Changelog - 2.1.0
+## 🚀 Changelog - 2.332.11
 
 ### ✨ Features (92)
 - feat: copyright (@guaridpin)
@@ -93,7 +93,8 @@
 - feat: Listado de videollamadas con activacion segun hora de la cita (@Letee2)
 - feat: Vincular modelo Room a Usuario y Cita (@Letee2)
 - feat: Vincular CRUD de citas con Videollamada (@Letee2)
-### 🐛 Fixes (127)
+### 🐛 Fixes (128)
+- fix: intento de arreglo de changelog (@Julen Redondo)
 - fix:. cambio en changelog (@Julen Redondo)
 - fix: prueba (@guaridpin)
 - fix: pequeño cambio para comprobar el chagelog (@guaridpin)
@@ -221,7 +222,8 @@
 - fix: actualizado guardado de horario del fisio para que se almacene un JSON y no una string (@MiguelEncina)
 - fix: borrado frontend/app/videocalls/tools/body-highlighter/package-lock.json para evitar falsos positivos de vulnerabilidades en dependencias por dependabot (@Delfin)
 - fix: actualizada version de django en requirements.txt para solucionar vulnerabilidades en dependencias (@Delfin)
-### 📖 Documentation (48)
+### 📖 Documentation (49)
+- docs: actualización CHANGELOG para 2.1.0 (@github-actions[bot])
 - docs: actualización CHANGELOG para 4.5.0 (@github-actions[bot])
 - docs: actualización CHANGELOG para 3.5.1 (@github-actions[bot])
 - docs: actualización CHANGELOG para 3.4.0 (@github-actions[bot])
