@@ -211,8 +211,19 @@ function App() {
               borderRadius: '4px',
               backgroundColor: editingQuestionnaire && editingQuestionnaire.id === q.id ? '#f5f5f5' : 'transparent'
             }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'flex-start', // Cambiado de 'center' a 'flex-start'
+                flexWrap: 'wrap', // Permitir que los elementos se envuelvan si no hay espacio
+                gap: '10px' // Espacio entre elementos cuando se envuelven
+              }}>
+                <div style={{
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  wordWrap: 'break-word', 
+                  maxWidth: 'calc(100% - 190px)' // Reservar espacio para los botones
+                }}>
                   <strong>{q.title}</strong>
                   {editingQuestionnaire && editingQuestionnaire.id === q.id && (
                     <span style={{ color: '#1976d2', marginLeft: '10px', fontSize: '14px' }}>
@@ -220,17 +231,21 @@ function App() {
                     </span>
                   )}
                 </div>
-                <div>
+                <div style={{ 
+                  display: 'flex', 
+                  flexShrink: 0 // Evitar que los botones se reduzcan
+                }}>
                   <button 
                     onClick={() => editQuestionnaire(q)} 
                     style={{ 
-                      marginLeft: '1rem',
+                      marginRight: '0.5rem',
                       padding: '6px 12px',
                       backgroundColor: '#1976d2',
                       color: 'white',
                       border: 'none',
                       borderRadius: '4px',
-                      cursor: 'pointer'
+                      cursor: 'pointer',
+                      whiteSpace: 'nowrap' // Evitar que el texto del botón se divida
                     }}
                   >
                     Ver/Editar
@@ -238,13 +253,13 @@ function App() {
                   <button 
                     onClick={() => handleRequestDelete(q.id)} 
                     style={{ 
-                      marginLeft: '0.5rem',
                       padding: '6px 12px',
                       backgroundColor: editingQuestionnaire && editingQuestionnaire.id === q.id ? '#ccc' : '#d32f2f',
                       color: 'white',
                       border: 'none',
                       borderRadius: '4px',
-                      cursor: editingQuestionnaire && editingQuestionnaire.id === q.id ? 'not-allowed' : 'pointer'
+                      cursor: editingQuestionnaire && editingQuestionnaire.id === q.id ? 'not-allowed' : 'pointer',
+                      whiteSpace: 'nowrap' // Evitar que el texto del botón se divida
                     }}
                     disabled={!!editingQuestionnaire && editingQuestionnaire.id === q.id}
                   >
