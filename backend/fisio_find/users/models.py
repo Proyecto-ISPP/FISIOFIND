@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from encrypted_fields.fields import EncryptedCharField
 
 ACCOUNT_STATUS_CHOICES = [
     ('ACTIVE', 'Active'),
@@ -37,29 +38,36 @@ AUTONOMIC_COMMUNITY_CHOICES = [
 
 
 class AppUser(AbstractUser):
-    photo = models.ImageField(null=True, blank=True, upload_to='profile_photos/')
-    dni = models.CharField(max_length=9, unique=True)
-    phone_number = models.CharField(max_length=9, null=True, blank=True)
-    postal_code = models.CharField(max_length=5)
-    account_status = models.CharField(max_length=10, choices=ACCOUNT_STATUS_CHOICES, default='UNVERIFIED')
+    photo = models.ImageField(null=True, blank=True, upload_to='profile_photos/', verbose_name='Foto')
+    dni = EncryptedCharField(max_length=9, unique=True, verbose_name='DNI')
+    phone_number = models.CharField(max_length=9, verbose_name='Número de teléfono', null=True, blank=True)
+    postal_code = models.CharField(max_length=5, verbose_name='Código postal')
+    account_status = models.CharField(max_length=10, choices=ACCOUNT_STATUS_CHOICES, default='UNVERIFIED', verbose_name='Estado de la cuenta')
     is_subscribed = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.username} - {self.email}"
 
+    class Meta:
+        verbose_name = "Usuario"
+        verbose_name_plural = "Usuarios"
 
 class Patient(models.Model):
-    user = models.OneToOneField(AppUser, on_delete=models.CASCADE, related_name='patient')
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
-    stripe_customer_id = models.CharField(max_length=255, blank=True, null=True)
-    birth_date = models.DateField()
+    user = models.OneToOneField(AppUser, on_delete=models.CASCADE, related_name='patient', verbose_name='Usuario')
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, verbose_name='Género')
+    stripe_customer_id = EncryptedCharField(max_length=255, blank=True, null=True, verbose_name='ID Stripe')
+    birth_date = models.DateField(verbose_name='Fecha de nacimiento')
 
     def __str__(self):
         return f"{self.user.username} - {self.user.email}"
 
+    class Meta:
+        verbose_name = "Paciente"
+        verbose_name_plural = "Pacientes"
+
 
 class Specialization(models.Model):
-    name = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=50, unique=True, verbose_name='Nombre')
 
     def __str__(self):
         return self.name
@@ -72,6 +80,10 @@ class PhysiotherapistSpecialization(models.Model):
     specialization = models.ForeignKey(
         'Specialization', on_delete=models.SET_NULL, null=True, blank=True
     )
+    
+    class Meta:
+        verbose_name = "Relación fisio-especialización"
+        verbose_name_plural = "Relaciones fisio-especialización"
 
 
 class Pricing(models.Model):
@@ -84,29 +96,34 @@ class Pricing(models.Model):
 
 
 class Physiotherapist(models.Model):
-    user = models.OneToOneField(AppUser, on_delete=models.CASCADE, related_name='physio')
-    bio = models.TextField(null=True, blank=True)
-    autonomic_community = models.CharField(max_length=30, choices=AUTONOMIC_COMMUNITY_CHOICES)
-    rating_avg = models.FloatField(null=True, blank=True)
-    schedule = models.JSONField(null=True, blank=True)
-    birth_date = models.DateField()
-    collegiate_number = models.CharField(max_length=30)
-    services = models.JSONField(null=True, blank=True)
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
-    specializations = models.ManyToManyField(Specialization, through="PhysiotherapistSpecialization")
+    user = models.OneToOneField(AppUser, on_delete=models.CASCADE, related_name='physio', verbose_name='Usuario')
+    bio = models.TextField(null=True, blank=True, verbose_name='Bio')
+    autonomic_community = models.CharField(max_length=30, choices=AUTONOMIC_COMMUNITY_CHOICES, verbose_name='Comunidad autónoma')
+    rating_avg = models.FloatField(null=True, blank=True, verbose_name='Media valoraciones')
+    schedule = models.JSONField(null=True, blank=True, verbose_name='Agenda')
+    birth_date = models.DateField(verbose_name='Fecha de naciemiento')
+    collegiate_number = models.CharField(max_length=30, verbose_name='Número de colegiado')
+    services = models.JSONField(null=True, blank=True, verbose_name='Servicios')
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, verbose_name='Género')
+    specializations = models.ManyToManyField(Specialization, through="PhysiotherapistSpecialization", verbose_name='Especialización')
     plan = models.ForeignKey(
         Pricing,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='physios'
+        related_name='physios',
+        verbose_name='Plan'
     )
     # Campos para integración con Stripe
-    stripe_subscription_id = models.CharField(max_length=255, blank=True, null=True)
-    subscription_status = models.CharField(max_length=20, default='pending')  # Valores: 'pending', 'active', 'canceled'
+    stripe_subscription_id = models.CharField(max_length=255, blank=True, null=True, verbose_name='ID Stripe')
+    subscription_status = models.CharField(max_length=20, default='pending', verbose_name='Estado de la suscripción')  # Valores: 'pending', 'active', 'canceled'
 
     def __str__(self):
         return f"{self.user.username} - {self.user.email}"
+
+    class Meta:
+        verbose_name = "Fisioterapeuta"
+        verbose_name_plural = "Fisioterapeutas"
 
 
 class Admin(models.Model):
