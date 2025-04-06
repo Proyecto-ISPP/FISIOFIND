@@ -20,7 +20,7 @@ class QuestionnaireSerializer(serializers.ModelSerializer):
                 label = question.get('label', '')  # Obtiene el texto de la pregunta
                 print(f"Pregunta: {label} (Longitud: {len(label)})")  # Depuración
 
-                if len(label) > 75:
+                if len(label) > 76:
                     raise serializers.ValidationError(
                         {"questions": "Cada pregunta no puede exceder los 75 caracteres."}
                     )
