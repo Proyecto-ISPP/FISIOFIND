@@ -7,6 +7,7 @@ from users.models import Patient, Physiotherapist
 class Treatment(models.Model):
     physiotherapist = models.ForeignKey(Physiotherapist, on_delete=models.CASCADE, related_name='treatments')
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='treatments')
+    notifications_enabled = models.BooleanField(default=True, help_text="Si está activado, el paciente recibirá recordatorios de realización de ejercicios por email")
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     homework = models.TextField(blank=True, null=True)

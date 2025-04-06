@@ -6,15 +6,15 @@ from treatments.models import Treatment
 
 class PatientFile(models.Model):
     treatment = models.ForeignKey(Treatment, on_delete=models.CASCADE, related_name='treatment_files')
-    title = models.CharField(max_length=255)
-    description = models.TextField(blank=True, null=True)
+    title = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True, max_length=255)
     uploaded_at = models.DateTimeField(auto_now_add=True)
     file_key = models.CharField(max_length=500, unique=True)
     file_type = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
         return self.title
-    
+
     def delete_from_storage(self):
         """Elimina el archivo de DigitalOcean Spaces"""
         s3_client = boto3.client(
