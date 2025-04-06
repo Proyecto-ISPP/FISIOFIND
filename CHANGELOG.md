@@ -1,11 +1,11 @@
-## 🚀 Changelog - 10.0.0
+## 🚀 Changelog - 3.0.0
 
 ### ✨ Features (0)
 
-### 🐛 Fixes (0)
-
+### 🐛 Fixes (1)
+- fix: pruebas en el script (@Benjamín Maureira Flores)
 ### 📖 Documentation (0)
 
-### 🌀 Other Changes (1)
-- Update frontend/app/confirm-appointment/[token]/page.tsx (@Daniel Vela Camacho)
+### 🌀 Other Changes (0)
+
 ### 🔗 Pull Requests

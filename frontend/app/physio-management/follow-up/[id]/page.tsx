@@ -614,6 +614,14 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
             Gestionar Videos
           </button>
           <button
+            onClick={() =>
+              router.push(`/physio-management/follow-up/${id}/videos`)
+            }
+            className="bg-[#6bc9be] hover:bg-[#5ab8ad] text-white font-semibold py-2 px-4 rounded-xl inline-flex items-center"
+          >
+            Archivos subidos
+          </button>
+          <button
             onClick={handleEditToggle}
             className="bg-[#05668d] hover:bg-[#045272] text-white font-semibold py-2 px-4 rounded-xl inline-flex items-center"
           >

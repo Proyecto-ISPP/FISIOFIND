@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import RestrictedAccess from "@/components/RestrictedAccess";
 import { getApiBaseUrl } from "@/utils/api";
-import { Film, ArrowLeft } from "lucide-react";
+import { Film, ArrowLeft, File } from "lucide-react";
 
 interface User {
   username: string;
@@ -318,6 +318,14 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
               >
                 <Film className="mr-2" size={20} />
                 Ver Videos
+              </button>
+              <button
+                onClick={handleViewVideos
+                }
+                className="bg-[#6bc9be] hover:bg-[#5ab8ad] text-white font-semibold py-2 px-4 rounded-xl inline-flex items-center"
+              >
+                <File className="mr-2" size={20} />
+                Adjuntar Archivos
               </button>
             </div>
           </div>
