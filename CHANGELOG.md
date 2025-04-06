@@ -1,4 +1,4 @@
-## 🚀 Changelog - 2.1.0
+## 🚀 Changelog - 2.83.13
 
 ### ✨ Features (90)
 - Merge pull request #456 from Proyecto-ISPP/feat/frontend-archivos (@Antonio Macías)
@@ -91,7 +91,8 @@
 - feat: Listado de videollamadas con activacion segun hora de la cita (@Letee2)
 - feat: Vincular modelo Room a Usuario y Cita (@Letee2)
 - feat: Vincular CRUD de citas con Videollamada (@Letee2)
-### 🐛 Fixes (123)
+### 🐛 Fixes (124)
+- fix: intento arreglo changelog (@Julen Redondo)
 - fix: versionado cambiado (@Julen Redondo)
 - fix: desencriptacion de links del correo (@Antonio Macías)
 - fix: arreglo de header con sidebar de movil (@Antonio Macías)
@@ -215,7 +216,8 @@
 - fix: actualizado guardado de horario del fisio para que se almacene un JSON y no una string (@MiguelEncina)
 - fix: borrado frontend/app/videocalls/tools/body-highlighter/package-lock.json para evitar falsos positivos de vulnerabilidades en dependencias por dependabot (@Delfin)
 - fix: actualizada version de django en requirements.txt para solucionar vulnerabilidades en dependencias (@Delfin)
-### 📖 Documentation (41)
+### 📖 Documentation (42)
+- docs: actualización CHANGELOG para 2.1.0 (@github-actions[bot])
 - docs: actualización CHANGELOG para 10.0.0 (@github-actions[bot])
 - docs: actualización CHANGELOG para 9.0.0 (@github-actions[bot])
 - docs: actualización CHANGELOG para 8.0.0 (@github-actions[bot])
