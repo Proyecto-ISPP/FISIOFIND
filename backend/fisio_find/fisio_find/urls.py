@@ -27,4 +27,8 @@ urlpatterns = [
     path('api/cloud/', include('files.urls')),
 ]
 
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+if settings.DEBUG:
+    # Serve profile photos
+    urlpatterns += static(settings.PROFILE_PHOTOS_URL, document_root=settings.PROFILE_PHOTOS_ROOT)
+    # Serve other media files
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
