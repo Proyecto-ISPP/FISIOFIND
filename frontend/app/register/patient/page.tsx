@@ -303,7 +303,7 @@ const PatientRegistrationForm = () => {
     try {
       const response = await axios.post(
         `${getApiBaseUrl()}/api/app_user/patient/register/`,
-        formData,
+        requestData,
         { headers: { "Content-Type": "application/json" } }
       );
 
