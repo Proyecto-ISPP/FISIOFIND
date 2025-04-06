@@ -60,11 +60,16 @@ const PhysioVideo = () => {
             }
           }
         );
-        setVideos(response.data);
+        // Check if response.data is an array (even if empty)
+        if (Array.isArray(response.data)) {
+          setVideos(response.data);
+        } else {
+          setVideos([]);
+        }
       } catch (error) {
-        showAlert("error", error.response?.data?.detail || "No se pudieron cargar los videos.");
+        setVideos([]);
       } finally {
-        setLoadingVideos(false); // Terminar de cargar los videos
+        setLoadingVideos(false);
       }
     };
 
@@ -91,8 +96,20 @@ const PhysioVideo = () => {
       return;
     }
 
+    // Add character limit validation for title
+    if (title.length > 100) {
+      showAlert("error", "El título no puede exceder los 100 caracteres.");
+      return;
+    }
+
     if (!description.trim()) {
       showAlert("error", "La descripción no puede estar vacía.");
+      return;
+    }
+
+    // Add character limit validation for description
+    if (description.length > 255) {
+      showAlert("error", "La descripción no puede exceder los 255 caracteres.");
       return;
     }
 
@@ -161,8 +178,20 @@ const PhysioVideo = () => {
       return;
     }
 
+    // Add character limit validation for edit title
+    if (editTitle.length > 100) {
+      showAlert("error", "El título no puede exceder los 100 caracteres.");
+      return;
+    }
+
     if (!editDescription.trim()) {
       showAlert("error", "La descripción no puede estar vacía");
+      return;
+    }
+
+    // Add character limit validation for edit description
+    if (editDescription.length > 255) {
+      showAlert("error", "La descripción no puede exceder los 255 caracteres.");
       return;
     }
 
@@ -203,18 +232,62 @@ const PhysioVideo = () => {
     }
   };
 
+  // Add state for delete confirmation
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{
+    show: boolean;
+    videoId: number | null;
+  }>({
+    show: false,
+    videoId: null
+  });
+
+  // Function to show delete confirmation
+  const confirmDelete = (videoId: number) => {
+    setDeleteConfirmation({
+      show: true,
+      videoId
+    });
+  };
+
+  // Function to cancel delete
+  const cancelDelete = () => {
+    setDeleteConfirmation({
+      show: false,
+      videoId: null
+    });
+  };
+
+  // Modify handleDelete to be called after confirmation
   const handleDelete = async (videoId) => {
+    // Close the confirmation modal
+    setDeleteConfirmation({
+      show: false,
+      videoId: null
+    });
+    
     try {
-      const response = await axios.delete(
-        `${getApiBaseUrl()}/api/cloud/videos/delete-video/${videoId}`,
+      // Make sure we have a token
+      if (!token) {
+        showAlert("error", "No hay token de autenticación disponible.");
+        return;
+      }
+
+      await axios.delete(
+        `${getApiBaseUrl()}/api/cloud/videos/delete-video/${videoId}/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
           },
         }
       );
+      
       showAlert("success", "Video eliminado correctamente.");
-      // Recargar videos después de eliminar
+      
+      // Refresh videos list by filtering out the deleted video
+      setVideos(videos.filter(video => video.id !== videoId));
+      
+      // Also fetch fresh data from the server
       const fetchVideos = async () => {
         try {
           const response = await axios.get(
@@ -223,16 +296,32 @@ const PhysioVideo = () => {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
+              params: {
+                treatment: id
+              }
             }
           );
-          setVideos(response.data);
-        } catch (error) {
-          showAlert("error", error.response?.data?.detail || "No se pudieron cargar los videos.");
+          if (Array.isArray(response.data)) {
+            setVideos(response.data);
+          } else {
+            setVideos([]);
+          }
+        } catch (fetchError) {
+          // Just set to empty array if there's an error
+          setVideos([]);
         }
       };
+      
       fetchVideos();
     } catch (error) {
-      showAlert("error", error.response?.data?.detail || "Error al eliminar el video. Intenta nuevamente.");
+      // Check if the error is a 404 (video already deleted)
+      if (error.response && error.response.status === 404) {
+        showAlert("success", "Video eliminado correctamente.");
+        // Refresh the video list by filtering out the deleted video
+        setVideos(videos.filter(video => video.id !== videoId));
+      } else {
+        showAlert("error", error.response?.data?.detail || "Error al eliminar el video. Intenta nuevamente.");
+      }
     }
   };
 
@@ -245,6 +334,31 @@ const PhysioVideo = () => {
           onClose={() => setAlert({ ...alert, show: false })} 
         />
       )}
+      
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmation.show && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl">
+            <h3 className="text-xl font-bold mb-4">Confirmar eliminación</h3>
+            <p className="mb-6">¿Estás seguro de que deseas eliminar este video? Esta acción no se puede deshacer.</p>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={cancelDelete}
+                className="px-4 py-2 border border-gray-300 rounded-xl hover:bg-gray-100 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={() => handleDelete(deleteConfirmation.videoId)}
+                className="px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-colors"
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      
       <div className="bg-white w-full max-w-3xl rounded-3xl shadow-xl p-10 transition-all duration-300" style={{ boxShadow: "0 20px 60px rgba(0, 0, 0, 0.08)" }}>
         <div className="text-center mb-9">
           <h1 className="text-3xl font-bold mb-2" style={{
@@ -252,56 +366,14 @@ const PhysioVideo = () => {
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
           }}>
-            Subir Video
+            Videos del Tratamiento
           </h1>
-          <p className="text-gray-600">Sube y administra videos del tratamiento para tus pacientes</p>
+          <p className="text-gray-600">Administra los videos para tus pacientes</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Formulario para crear un nuevo video */}
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Título"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="w-full py-[14px] px-5 text-base border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
-            />
-          </div>
-
-          <div className="relative">
-            <textarea
-              placeholder="Descripción"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="w-full py-[14px] px-5 text-base border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
-              rows={3}
-            />
-          </div>
-
-          <div className="relative">
-            <input
-              type="file"
-              accept="video/*"
-              onChange={handleFileChange}
-              ref={fileInputRef}
-              className="w-full py-[14px] px-5 text-base border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
-            />
-          </div>
-          
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 flex items-center justify-center"
-          >
-            <UploadCloud className="mr-2" size={20} />
-            {loading ? "Subiendo..." : "Subir Video"}
-          </button>
-          
-        </form>
-
-        <div className="mt-8">
-          <h2 className="text-xl font-bold mb-4">Videos del Tratamiento</h2>
+        {/* Videos list moved to the top */}
+        <div className="mb-8">
+          <h2 className="text-xl font-bold mb-4">Videos Disponibles</h2>
 
           {loadingVideos ? (
             <p className="text-center">Cargando videos...</p>
@@ -325,7 +397,7 @@ const PhysioVideo = () => {
                         </button>
                         
                         <button
-                          onClick={() => handleDelete(video.id)}
+                          onClick={() => confirmDelete(video.id)}
                           className="bg-red-500 text-white p-2 rounded-xl hover:bg-red-600 transition-all duration-200"
                           title="Eliminar video"
                         >
@@ -342,18 +414,75 @@ const PhysioVideo = () => {
           )}
         </div>
 
+        {/* Upload form made smaller */}
+        <div className="border-t pt-6">
+          <h2 className="text-xl font-bold mb-4">Subir Nuevo Video</h2>
+          <form onSubmit={handleSubmit} className="space-y-3">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Título"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="w-full py-3 px-4 text-sm border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
+                maxLength={100}
+              />
+              <div className="text-right text-xs text-gray-500 mt-1">
+                {title.length}/100 caracteres
+              </div>
+            </div>
+
+            <div className="relative">
+              <textarea
+                placeholder="Descripción"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="w-full py-3 px-4 text-sm border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
+                rows={2}
+                maxLength={255}
+              />
+              <div className="text-right text-xs text-gray-500 mt-1">
+                {description.length}/255 caracteres
+              </div>
+            </div>
+
+            <div className="relative">
+              <input
+                type="file"
+                accept="video/*"
+                onChange={handleFileChange}
+                ref={fileInputRef}
+                className="w-full py-2 px-4 text-sm border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
+              />
+            </div>
+            
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-2 px-4 rounded-xl transition-all duration-200 flex items-center justify-center"
+            >
+              <UploadCloud className="mr-2" size={18} />
+              {loading ? "Subiendo..." : "Subir Video"}
+            </button>
+          </form>
+        </div>
+
         {editingVideo && (
-          <div className="mt-8">
+          <div className="mt-8 border-t pt-6">
             <h2 className="text-xl font-bold mb-4">Editar Video</h2>
-            <form onSubmit={handleUpdate} className="space-y-4">
+            <form onSubmit={handleUpdate} className="space-y-3">
               <div className="relative">
                 <input
                   type="text"
                   placeholder="Título"
                   value={editTitle}
                   onChange={(e) => setEditTitle(e.target.value)}
-                  className="w-full py-[14px] px-5 text-base border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
+                  className="w-full py-3 px-4 text-sm border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
+                  maxLength={100}
                 />
+                <div className="text-right text-xs text-gray-500 mt-1">
+                  {editTitle.length}/100 caracteres
+                </div>
               </div>
 
               <div className="relative">
@@ -361,17 +490,30 @@ const PhysioVideo = () => {
                   placeholder="Descripción"
                   value={editDescription}
                   onChange={(e) => setEditDescription(e.target.value)}
-                  className="w-full py-[14px] px-5 text-base border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
-                  rows={3}
+                  className="w-full py-3 px-4 text-sm border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
+                  rows={2}
+                  maxLength={255}
                 />
+                <div className="text-right text-xs text-gray-500 mt-1">
+                  {editDescription.length}/255 caracteres
+                </div>
               </div>
 
-              <button
-                type="submit"
-                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200"
-              >
-                Actualizar Video
-              </button>
+              <div className="flex space-x-3">
+                <button
+                  type="button"
+                  onClick={() => setEditingVideo(null)}
+                  className="w-1/2 border border-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-xl hover:bg-gray-100 transition-all duration-200"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="w-1/2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-2 px-4 rounded-xl transition-all duration-200"
+                >
+                  Actualizar
+                </button>
+              </div>
             </form>
           </div>
         )}
