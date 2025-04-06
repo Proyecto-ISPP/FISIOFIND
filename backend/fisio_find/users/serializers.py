@@ -435,15 +435,29 @@ class PhysioUpdateSerializer(serializers.ModelSerializer):
             'invalid': 'Valor de plan inválido'
         }
     )
+    degree = serializers.CharField()
+    university = serializers.CharField()
+    experience = serializers.CharField()
+    workplace = serializers.CharField()
 
     class Meta:
         model = Physiotherapist
         fields = ['email', 'phone_number', 'postal_code', 'bio', 'photo', 'services',
-                  'specializations', 'schedule', 'plan']
+                  'specializations', 'schedule', 'plan', 'degree',
+                  'university', 'experience', 'workplace']
 
     def validate(self, data):
         """Validaciones solo para los campos proporcionados."""
         validation_errors = dict()
+
+        # Validar que estos campos estén informados si aún no existen en el modelo
+        required_fields = ['degree', 'university', 'experience', 'workplace']
+        for field in required_fields:
+            valor_actual = getattr(self.instance, field, None)
+            nuevo_valor = data.get(field)
+
+            if not valor_actual and not nuevo_valor:
+                validation_errors[field] = f"El campo {field} es obligatorio."
         if 'dni' in data:
             if not validate_dni_structure(data['dni']):
                 validation_errors["dni"] = "El DNI debe tener 8 números seguidos de una letra válida."
@@ -502,6 +516,14 @@ class PhysioUpdateSerializer(serializers.ModelSerializer):
                         specialization, _ = Specialization.objects.get_or_create(name=spec_name)
                         PhysiotherapistSpecialization.objects.create(physiotherapist=instance,
                                                                      specialization=specialization)
+                if "degree" in validated_data:
+                    instance.degree = validated_data.get("degree")
+                if "university" in validated_data:
+                    instance.university = validated_data.get("university")
+                if "experience" in validated_data:
+                    instance.experience = validated_data.get("experience")
+                if "workplace" in validated_data:
+                    instance.workplace = validated_data.get("workplace")
 
                 instance.save()
                 return instance

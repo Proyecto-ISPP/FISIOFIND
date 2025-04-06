@@ -102,6 +102,10 @@ class Physiotherapist(models.Model):
     # Campos para integración con Stripe
     stripe_subscription_id = models.CharField(max_length=255, blank=True, null=True)
     subscription_status = models.CharField(max_length=20, default='pending')  # Valores: 'pending', 'active', 'canceled'
+    degree = models.CharField(max_length=255, blank=True, null=True)
+    university = models.CharField(max_length=255, blank=True, null=True)
+    experience = models.TextField(blank=True, null=True)
+    workplace = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.user.username} - {self.user.email}"
