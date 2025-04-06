@@ -16,6 +16,7 @@ interface SingleRating {
   updated_at: string | null;
   service_name: string;
   comment: string;
+  is_reported: boolean; // Añadido para el estado de reportado
 }
 
 type SortOrder = "chronological" | "scoreAsc" | "scoreDesc";
@@ -65,6 +66,29 @@ const PhysioterapistRating: React.FC<PhysioterapistRatingProps> = ({
     fetchRatingData();
   }, []);
 
+  const reportRating = async (ratingId: number) => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    try {
+      const response = await fetch(
+        `${getApiBaseUrl()}/api/appointment_ratings/report/${ratingId}/`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      console.log("Rating reported successfully.");
+    } catch (error) {
+      console.error("Error reporting rating:", error);
+    }
+  };
+
   // Función para abrir el modal y cargar las valoraciones detalladas
   const openModal = async () => {
     setModalOpen(true);
@@ -86,6 +110,7 @@ const PhysioterapistRating: React.FC<PhysioterapistRatingProps> = ({
       }
       const data: SingleRating[] = await response.json();
       setRatingsList(data);
+      console.log("Ratings list:", data);
     } catch (error) {
       console.error("Error fetching ratings list:", error);
     }
@@ -176,37 +201,47 @@ const PhysioterapistRating: React.FC<PhysioterapistRatingProps> = ({
             : "Cargando..."}
         </span>
       </div>
-
       {/* Modal */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center text-black">
-          {/* Backdrop */}
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          {/* Backdrop con transición */}
           <div
-            className="absolute inset-0 bg-black opacity-50"
+            className="absolute inset-0 bg-black opacity-40 transition-opacity duration-300"
             onClick={closeModal}
           ></div>
           {/* Contenido del modal */}
-          <div className="relative bg-white rounded-lg p-6 w-11/12 md:w-3/4 lg:w-1/2 max-h-[90vh] flex flex-col">
+          <div className="relative bg-white rounded-xl shadow-2xl p-6 w-11/12 md:w-3/4 lg:w-1/2 max-h-[90vh] flex flex-col transform transition-all duration-300">
             {/* Cabecera fija */}
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold">Valoraciones</h2>
+            <div className="flex justify-between items-center border-b pb-3 mb-4">
+              <h2 className="text-2xl font-bold text-gray-800">Valoraciones</h2>
               <button
-                className="text-gray-600 hover:text-gray-900"
+                className="p-2 rounded-full hover:bg-gray-200 transition-colors"
                 onClick={closeModal}
+                title="Cerrar"
               >
-                Cerrar
+                <svg
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                  className="w-6 h-6 text-gray-600"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
               </button>
             </div>
 
             {/* Opciones de ordenación */}
-            <div className="mb-4">
-              <label className="mr-2">Ordenar por:</label>
+            <div className="mb-4 flex items-baseline gap-4">
+              <label className="text-gray-700 mr-2">Ordenar por:</label>
               <select
                 value={sortOrder}
                 onChange={(e) => setSortOrder(e.target.value as SortOrder)}
-                className="border rounded p-1"
+                className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 max-w-72"
               >
-                <option value="chronological">Cronológico</option>
+                <option value="chronological">Fecha</option>
                 <option value="scoreAsc">Puntuación (menor a mayor)</option>
                 <option value="scoreDesc">Puntuación (mayor a menor)</option>
               </select>
@@ -214,8 +249,8 @@ const PhysioterapistRating: React.FC<PhysioterapistRatingProps> = ({
 
             {/* Lista de valoraciones scrollable */}
             <div
-              className="grid gap-4 overflow-auto"
-              style={{ maxHeight: "calc(90vh - 160px)" }}
+              className="overflow-y-auto pr-2 space-y-4"
+              style={{ maxHeight: "calc(90vh - 180px)" }}
             >
               {sortRatings(ratingsList).map((rating) => {
                 // Determinar la fecha a mostrar: si se editó, mostramos updated_at con la etiqueta "(editado)"
@@ -232,60 +267,69 @@ const PhysioterapistRating: React.FC<PhysioterapistRatingProps> = ({
                 return (
                   <div
                     key={rating.id}
-                    className="border rounded-lg p-4 shadow-sm flex flex-col gap-2"
+                    className="border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow bg-gray-50"
                   >
-                    <div className="flex justify-between items-center">
-                      <span className="font-bold">{rating.patient_name}</span>
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-bold text-gray-800">
+                        {rating.patient_name}
+                      </span>
                       <div className="flex items-center gap-2">
                         <span className="text-sm text-gray-600">
                           {dateToShow}
                         </span>
                         <button
-                          className="self-end p-1 text-red-600 hover:text-red-700"
-                          onClick={() =>
-                            console.log(`Reportar valoración ${rating.id}`)
-                          }
+                          className="p-1 text-red-600 hover:text-red-700"
+                          onClick={() => reportRating(rating.id)}
                           title="Reportar valoración"
                         >
                           <svg
+                            className={`w-5 h-5 ${
+                              rating.is_reported
+                                ? "fill-red-600 text-white"
+                                : "fill-black text-red-600"
+                            }`}
                             fill="currentColor"
                             viewBox="0 0 24 24"
                             xmlns="http://www.w3.org/2000/svg"
-                            className="w-5 h-5"
                           >
                             <path
                               fillRule="evenodd"
-                              d="M16,2 C16.2652165,2 16.5195704,2.10535684 16.7071068,2.29289322 L21.7071068,7.29289322 C21.8946432,7.4804296 22,7.73478351 22,8 L22,15 C22,15.2339365 21.9179838,15.4604694 21.7682213,15.6401844 L16.7682213,21.6401844 C16.5782275,21.868177 16.2967798,22 16,22 L8,22 C7.73478351,22 7.4804296,21.8946432 7.29289322,21.7071068 L2.29289322,16.7071068 C2.10535684,16.5195704 2,16.2652165 2,16 L2,8 C2,7.73478351 2.10535684,7.4804296 2.29289322,7.29289322 L7.29289322,2.29289322 C7.4804296,2.10535684 7.73478351,2 8,2 L16,2 Z M15.5857864,4 L8.41421356,4 L4,8.41421356 L4,15.5857864 L8.41421356,20 L15.5316251,20 L20,14.6379501 L20,8.41421356 L15.5857864,4 Z M12,16 C12.5522847,16 13,16.4477153 13,17 C13,17.5522847 12.5522847,18 12,18 C11.4477153,18 11,17.5522847 11,17 C11,16.4477153 11.4477153,16 12,16 Z M12,6 C12.5522847,6 13,6.44771525 13,7 L13,13 C13,13.5522847 12.5522847,14 12,14 C11.4477153,14 11,13.5522847 11,13 L11,7 C11,6.44771525 11.4477153,6 12,6 Z"
+                              d="M16,2 C16.265,2 16.52,2.105 16.707,2.293 L21.707,7.293 C21.895,7.48 22,7.735 22,8 L22,15 C22,15.234 21.918,15.46 21.768,15.64 L16.768,21.64 C16.578,21.868 16.297,22 16,22 L8,22 C7.735,22 7.48,21.895 7.293,21.707 L2.293,16.707 C2.105,16.52 2,16.265 2,16 L2,8 C2,7.735 2.105,7.48 2.293,7.293 L7.293,2.293 C7.48,2.105 7.735,2 8,2 L16,2 Z M15.586,4 L8.414,4 L4,8.414 L4,15.586 L8.414,20 L15.532,20 L20,14.638 L20,8.414 L15.586,4 Z M12,16 C12.552,16 13,16.448 13,17 C13,17.552 12.552,18 12,18 C11.448,18 11,17.552 11,17 C11,16.448 11.448,16 12,16 Z M12,6 C12.552,6 13,6.448 13,7 L13,13 C13,13.552 12.552,14 12,14 C11.448,14 11,13.552 11,13 L11,7 C11,6.448 11.448,6 12,6 Z"
                             ></path>
                           </svg>
                         </button>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="font-semibold text-gray-700">
                         {Number(rating.score).toFixed(1)}
                       </span>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="20"
                         height="20"
+                        style={{ marginBottom: "3px" }}
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
                         strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        className="lucide lucide-star text-amber-500"
+                        className="text-amber-500"
                       >
                         <path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z" />
                       </svg>
                     </div>
-                    <div>
-                      <span className="font-medium">Servicio: </span>
-                      <span>{rating.service_name}</span>
+                    <div className="mb-1">
+                      <span className="font-medium text-gray-700">
+                        Servicio:
+                      </span>{" "}
+                      <span className="text-gray-600">
+                        {rating.service_name}
+                      </span>
                     </div>
                     <div>
-                      <p className="text-sm">{rating.comment}</p>
+                      <p className="text-gray-700 text-sm">{rating.comment}</p>
                     </div>
                   </div>
                 );

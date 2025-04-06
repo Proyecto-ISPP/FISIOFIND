@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import create_last_finished_rating, create_or_update_rating, get_appointment_rating, get_my_rating, list_ratings, create_rating
+from .views import create_last_finished_rating, create_or_update_rating, get_appointment_rating, get_my_rating, list_ratings, create_rating, report_rating
 
 urlpatterns = [
     path('<int:physio_id>/', list_ratings, name='ratings-list'),  # GET para obtener valoraciones de un fisio
@@ -8,4 +8,5 @@ urlpatterns = [
     path('appointment/<int:appointment_id>/', get_appointment_rating, name='get_appointment_rating'),
     path('appointment/<int:appointment_id>/edit/', create_or_update_rating, name='create_or_update_rating'),
     path('last_finished/create/', create_last_finished_rating, name='create_last_finished_rating'),
+    path('report/<int:rating_id>/', report_rating, name='create_last_finished_rating'),
 ]

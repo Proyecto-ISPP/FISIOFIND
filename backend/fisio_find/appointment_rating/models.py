@@ -12,6 +12,7 @@ class AppointmentRating(models.Model):
     comment = models.TextField(blank=True, null=True)  # Comentario opcional
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(blank=True, null=True)
+    is_reported = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ('physiotherapist', 'patient', 'appointment')  # Una única valoración por usuario para cada fisioterapeuta

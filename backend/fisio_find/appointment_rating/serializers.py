@@ -20,6 +20,7 @@ class AppointmentRatingSerializer(serializers.ModelSerializer):
             'created_at',
             'updated_at',
             'is_edited',            # Booleano que indica si fue editado
+            'is_reported',         # Booleano que indica si fue reportado
         ]
         read_only_fields = ['patient', 'physiotherapist', 'created_at']
 
