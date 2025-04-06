@@ -56,7 +56,6 @@ def unsubscribe_via_token(request):
             try:
                 user = AppUser.objects.get(email=email)
             except AppUser.DoesNotExist:
-                print("hola")
                 return Response({'detail': 'Usuario no encontrado.'}, status=status.HTTP_404_NOT_FOUND)
             user.is_subscribed = False
             user.save()
