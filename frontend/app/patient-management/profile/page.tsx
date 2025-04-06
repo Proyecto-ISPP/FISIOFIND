@@ -3,7 +3,19 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { getApiBaseUrl } from "@/utils/api";
-import { Phone, Mail, MapPin, Calendar, FileText, Users, Camera, Save, Check, Lock, Film } from 'lucide-react';
+import {
+  Phone,
+  Mail,
+  MapPin,
+  Calendar,
+  FileText,
+  Users,
+  Camera,
+  Save,
+  Check,
+  Lock,
+  Film,
+} from "lucide-react";
 import { GradientButton } from "@/components/ui/gradient-button";
 import Link from "next/link";
 
@@ -36,7 +48,32 @@ const PatientProfile = () => {
   const [token, setToken] = useState<string | null>(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [pendingChanges, setPendingChanges] = useState({});
-  const [oldPassword, setOldPassword] = useState("");
+  const [oldPassword, setOldPassword] = useState(""); // State for old password
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [isDeletionEmailSent, setIsDeletionEmailSent] = useState(false);
+
+  // Add new function to handle account deletion request
+  const handleDeleteAccount = async () => {
+    try {
+      const response = await axios.post(
+        `${getApiBaseUrl()}/api/app_user/account/delete/request/`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      setIsDeletionEmailSent(true);
+      setShowDeleteConfirmation(false);
+    } catch (error) {
+      console.error("Delete account error:", error.response?.data || error);
+      setErrors({
+        delete:
+          error.response?.data?.error ||
+          "Error al procesar la solicitud de eliminación de cuenta.",
+      });
+    }
+  };
 
   useEffect(() => {
     setIsClient(true);
@@ -46,10 +83,11 @@ const PatientProfile = () => {
 
   useEffect(() => {
     if (isClient && token) {
-      axios.get(`${getApiBaseUrl()}/api/app_user/check-role/`, {
-        headers: { "Authorization": "Bearer " + token }
-      })
-        .then(response => {
+      axios
+        .get(`${getApiBaseUrl()}/api/app_user/check-role/`, {
+          headers: { Authorization: "Bearer " + token },
+        })
+        .then((response) => {
           const role = response.data.user_role;
           if (role !== "patient") {
             location.href = "/permissions-error/";
@@ -57,7 +95,7 @@ const PatientProfile = () => {
             fetchPatientProfile();
           }
         })
-        .catch(error => {
+        .catch((error) => {
           console.error("Error al obtener el rol del usuario:", error);
           location.href = "/permissions-error/";
         });
@@ -75,9 +113,12 @@ const PatientProfile = () => {
         return;
       }
 
-      const response = await axios.get(`${getApiBaseUrl()}/api/app_user/current-user/`, {
-        headers: { Authorization: "Bearer " + token },
-      });
+      const response = await axios.get(
+        `${getApiBaseUrl()}/api/app_user/current-user/`,
+        {
+          headers: { Authorization: "Bearer " + token },
+        }
+      );
 
       console.log("Respuesta del backend:", response.data);
 
@@ -102,11 +143,13 @@ const PatientProfile = () => {
           account_status: userData.user_data.account_status,
         },
         birth_date: userData.birth_date,
-        gender: userData.gender
+        gender: userData.gender,
       });
-
     } catch (error) {
-      console.error("Error al obtener el perfil:", error.response ? error.response.data : error);
+      console.error(
+        "Error al obtener el perfil:",
+        error.response ? error.response.data : error
+      );
       setErrors({ general: "Error obteniendo el perfil." });
     } finally {
       setLoading(false);
@@ -140,8 +183,11 @@ const PatientProfile = () => {
   };
 
   const confirmSensitiveChanges = async () => {
-    if ('password' in pendingChanges && !oldPassword) {
-      setErrors({ password: "Debes ingresar tu contraseña actual para actualizar la contraseña." });
+    if ("password" in pendingChanges && !oldPassword) {
+      setErrors({
+        password:
+          "Debes ingresar tu contraseña actual para actualizar la contraseña.",
+      });
       return;
     }
 
@@ -167,18 +213,25 @@ const PatientProfile = () => {
     const file = e.target.files[0];
     if (file) {
       const previewUrl = URL.createObjectURL(file);
-      
+
       setProfile((prevProfile) => ({
         ...prevProfile,
         user: {
           ...prevProfile.user,
           photo: prevProfile.user.photo,
           photoFile: file,
-          preview: previewUrl
+          preview: previewUrl,
         },
       }));
-      
+
       setSelectedFile(file);
+    }
+  };
+
+  const handleImageClick = () => {
+    const fileInput = document.getElementById("file-input");
+    if (fileInput) {
+      fileInput.click();
     }
   };
 
@@ -187,12 +240,17 @@ const PatientProfile = () => {
     const today = new Date();
     const birthDate = new Date(profile.birth_date);
 
-    if (!profile.user.username) newErrors.username = "El nombre de usuario es obligatorio";
+    if (!profile.user.username)
+      newErrors.username = "El nombre de usuario es obligatorio";
+    if (!profile.user.phone_number)
+      newErrors.phone_number = "El teléfono es obligatorio";
     if (!profile.user.dni) newErrors.dni = "El DNI es obligatorio";
     if (!profile.user.email) newErrors.email = "El email es obligatorio";
-    if (!profile.user.postal_code) newErrors.postal_code = "El código postal es obligatorio";
+    if (!profile.user.postal_code)
+      newErrors.postal_code = "El código postal es obligatorio";
     if (!profile.gender) newErrors.gender = "El género es obligatorio";
-    if (!profile.birth_date) newErrors.birth_date = "La fecha de nacimiento es obligatoria";
+    if (!profile.birth_date)
+      newErrors.birth_date = "La fecha de nacimiento es obligatoria";
 
     if (profile.user.phone_number && profile.user.phone_number.length !== 9) {
       newErrors.phone_number = "El teléfono debe tener 9 dígitos";
@@ -203,7 +261,8 @@ const PatientProfile = () => {
     }
 
     if (profile.birth_date && birthDate >= today) {
-      newErrors.birth_date = "La fecha de nacimiento debe ser anterior a la fecha actual";
+      newErrors.birth_date =
+        "La fecha de nacimiento debe ser anterior a la fecha actual";
     }
 
     return newErrors;
@@ -321,8 +380,10 @@ const PatientProfile = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-5" 
-           style={{ backgroundColor: "rgb(238, 251, 250)" }}>
+      <div
+        className="min-h-screen flex items-center justify-center p-5"
+        style={{ backgroundColor: "rgb(238, 251, 250)" }}
+      >
         <div className="bg-white rounded-3xl shadow-xl p-8 w-full max-w-md text-center">
           <div className="animate-pulse flex flex-col items-center">
             <div className="rounded-full bg-gray-200 h-32 w-32 mb-4"></div>
@@ -334,38 +395,51 @@ const PatientProfile = () => {
     );
   }
 
+  if (loading)
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-xl font-semibold text-gray-600 animate-pulse">
+          Cargando perfil...
+        </p>
+      </div>
+    );
   return (
-    <div className="min-h-screen flex items-center justify-center p-5" 
-         style={{ backgroundColor: "rgb(238, 251, 250)" }}>
-      
-      <div className="bg-white w-full max-w-3xl rounded-3xl shadow-xl overflow-hidden"
-           style={{ boxShadow: "0 20px 60px rgba(0, 0, 0, 0.08)" }}>
-        
+    <div
+      className="min-h-screen flex items-center justify-center p-5"
+      style={{ backgroundColor: "rgb(238, 251, 250)" }}
+    >
+      <div
+        className="bg-white w-full max-w-3xl rounded-3xl shadow-xl overflow-hidden"
+        style={{ boxShadow: "0 20px 60px rgba(0, 0, 0, 0.08)" }}
+      >
         <div className="flex flex-col md:flex-row">
           <div className="bg-gradient-to-b from-[#1E5ACD] to-[#3a6fd8] p-8 md:w-1/3 flex flex-col items-center justify-start text-white">
             <div className="relative mb-6 mt-4">
               <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg">
-                <img 
-                  src={getImageSrc()} 
-                  alt="Profile" 
+                <img
+                  src={getImageSrc()}
+                  alt="Profile"
                   className="w-full h-full object-cover"
                 />
               </div>
-              <label htmlFor="file-input" className="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-md cursor-pointer text-[#1E5ACD] hover:bg-gray-100 transition-all duration-200">
+              <label
+                htmlFor="file-input"
+                className="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-md cursor-pointer text-[#1E5ACD] hover:bg-gray-100 transition-all duration-200"
+              >
                 <Camera size={20} />
               </label>
-              <input 
-                id="file-input" 
-                type="file" 
-                accept="image/*" 
-                onChange={handleFileChange} 
+              <input
+                id="file-input"
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
                 className="hidden"
               />
             </div>
-            
+
             <h2 className="text-xl font-bold mb-1">{profile.user.username}</h2>
             <p className="text-blue-100 mb-6">Paciente</p>
-            
+
             <div className="w-full space-y-4">
               <div className="flex items-center">
                 <Mail size={16} className="mr-2 opacity-70" />
@@ -381,27 +455,31 @@ const PatientProfile = () => {
               </div>
             </div>
           </div>
-          
+          {/* Right side with form */}
           <div className="p-8 md:w-2/3">
-            <h1 className="text-2xl font-bold mb-6"
-                style={{ 
-                  background: "linear-gradient(90deg, #1E5ACD, #3a6fd8)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent"
-                }}>
+            <h1
+              className="text-2xl font-bold mb-6"
+              style={{
+                background: "linear-gradient(90deg, #1E5ACD, #3a6fd8)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              }}
+            >
               Perfil del Paciente
             </h1>
-            
+
             {success && (
               <div className="mb-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl flex items-center">
                 <Check size={18} className="mr-2" />
                 {success}
               </div>
             )}
-            
+
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email
+                </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                     <Mail size={18} />
@@ -414,9 +492,11 @@ const PatientProfile = () => {
                     className="w-full pl-10 pr-3 py-3 border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
                   />
                 </div>
-                {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
+                {errors.email && (
+                  <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                )}
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -435,11 +515,17 @@ const PatientProfile = () => {
                       className="w-full pl-10 pr-3 py-3 border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
                     />
                   </div>
-                  {errors.phone_number && <p className="mt-1 text-sm text-red-600">{errors.phone_number}</p>}
+                  {errors.phone_number && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.phone_number}
+                    </p>
+                  )}
                 </div>
-                
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Código Postal</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Código Postal
+                  </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                       <MapPin size={18} />
@@ -452,13 +538,19 @@ const PatientProfile = () => {
                       className="w-full pl-10 pr-3 py-3 border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
                     />
                   </div>
-                  {errors.postal_code && <p className="mt-1 text-sm text-red-600">{errors.postal_code}</p>}
+                  {errors.postal_code && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.postal_code}
+                    </p>
+                  )}
                 </div>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Fecha de Nacimiento</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Fecha de Nacimiento
+                  </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                       <Calendar size={18} />
@@ -471,11 +563,17 @@ const PatientProfile = () => {
                       className="w-full pl-10 pr-3 py-3 border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none bg-gray-50 text-gray-500"
                     />
                   </div>
-                  {errors.birth_date && <p className="mt-1 text-sm text-red-600">{errors.birth_date}</p>}
+                  {errors.birth_date && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.birth_date}
+                    </p>
+                  )}
                 </div>
-                
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Género</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Género
+                  </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                       <Users size={18} />
@@ -492,17 +590,29 @@ const PatientProfile = () => {
                       <option value="O">Otro</option>
                     </select>
                     <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-400">
-                      <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                      <svg
+                        className="h-5 w-5"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                          clipRule="evenodd"
+                        />
                       </svg>
                     </div>
                   </div>
-                  {errors.gender && <p className="mt-1 text-sm text-red-600">{errors.gender}</p>}
+                  {errors.gender && (
+                    <p className="mt-1 text-sm text-red-600">{errors.gender}</p>
+                  )}
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">DNI</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  DNI
+                </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                     <FileText size={18} />
@@ -515,11 +625,15 @@ const PatientProfile = () => {
                     className="w-full pl-10 pr-3 py-3 border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
                   />
                 </div>
-                {errors.dni && <p className="mt-1 text-sm text-red-600">{errors.dni}</p>}
+                {errors.dni && (
+                  <p className="mt-1 text-sm text-red-600">{errors.dni}</p>
+                )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Contraseña
+                </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                     <Lock size={18} />
@@ -532,26 +646,38 @@ const PatientProfile = () => {
                     className="w-full pl-10 pr-3 py-3 border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
                   />
                 </div>
-                {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
+                {errors.password && (
+                  <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+                )}
               </div>
 
               {showConfirmation && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                   <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-sm">
-                    <h2 className="text-lg font-bold mb-4">Confirmar Cambios</h2>
+                    <h2 className="text-lg font-bold mb-4">
+                      Confirmar Cambios
+                    </h2>
                     <p className="text-sm text-gray-600 mb-6">
-                      Estás a punto de cambiar información sensible (DNI o contraseña). Si estás cambiando tu contraseña, ingresa tu contraseña actual.
+                      Estás a punto de cambiar información sensible (DNI o
+                      contraseña). Si estás cambiando tu contraseña, ingresa tu
+                      contraseña actual.
                     </p>
                     {pendingChanges.password && (
                       <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Contraseña Actual</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Contraseña Actual
+                        </label>
                         <input
                           type="password"
                           value={oldPassword}
                           onChange={(e) => setOldPassword(e.target.value)}
                           className="w-full px-3 py-2 border-2 border-gray-200 rounded-xl outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
                         />
-                        {errors.old_password && <p className="mt-1 text-sm text-red-600">{errors.old_password}</p>}
+                        {errors.old_password && (
+                          <p className="mt-1 text-sm text-red-600">
+                            {errors.old_password}
+                          </p>
+                        )}
                       </div>
                     )}
                     <div className="flex justify-end space-x-4">
@@ -574,6 +700,55 @@ const PatientProfile = () => {
                   </div>
                 </div>
               )}
+              {showDeleteConfirmation && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                  <div className="bg-white dark:bg-gray-800 p-6 rounded-lg max-w-md w-full mx-4">
+                    <h3 className="text-xl font-bold text-red-600 mb-4">
+                      ¿Estás seguro de que quieres eliminar tu cuenta?
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-400 mb-6">
+                      Esta acción es irreversible y eliminará todos tus datos de
+                      la plataforma.
+                    </p>
+                    <div className="flex justify-end space-x-4">
+                      <button
+                        onClick={() => setShowDeleteConfirmation(false)}
+                        className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+                      >
+                        Cancelar
+                      </button>
+                      <button
+                        onClick={handleDeleteAccount}
+                        className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                      >
+                        Eliminar cuenta
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {isDeletionEmailSent && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                  <div className="bg-white dark:bg-gray-800 p-6 rounded-lg max-w-md w-full mx-4">
+                    <h3 className="text-xl font-bold text-blue-600 mb-4">
+                      Revisa tu correo electrónico
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-400 mb-6">
+                      Te hemos enviado un correo con las instrucciones para
+                      confirmar la eliminación de tu cuenta.
+                    </p>
+                    <div className="flex justify-end">
+                      <button
+                        onClick={() => setIsDeletionEmailSent(false)}
+                        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                      >
+                        Entendido
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <div className="flex gap-4 mt-8 w-full">
                 <GradientButton
@@ -582,6 +757,14 @@ const PatientProfile = () => {
                 >
                   <Save size={18} className="mr-2" />
                   Actualizar Perfil
+                </GradientButton>
+
+                <GradientButton
+                  variant="danger"
+                  onClick={() => setShowDeleteConfirmation(true)}
+                  className="w-full"
+                >
+                  Eliminar cuenta
                 </GradientButton>
 
                 <Link href="/patient-management/video" passHref>
