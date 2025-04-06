@@ -136,7 +136,7 @@ const PatientProfile = () => {
           first_name: userData.user_data.first_name,
           last_name: userData.user_data.last_name,
           email: userData.user_data.email,
-          phone_number: userData.user_data.phone_number,
+          phone_number: userData.user_data.phone_number ?? "",
           photo: userData.user_data.photo,
           postal_code: userData.user_data.postal_code,
           username: userData.user_data.username,
@@ -242,8 +242,6 @@ const PatientProfile = () => {
 
     if (!profile.user.username)
       newErrors.username = "El nombre de usuario es obligatorio";
-    if (!profile.user.phone_number)
-      newErrors.phone_number = "El teléfono es obligatorio";
     if (!profile.user.dni) newErrors.dni = "El DNI es obligatorio";
     if (!profile.user.email) newErrors.email = "El email es obligatorio";
     if (!profile.user.postal_code)
