@@ -17,7 +17,7 @@ load_dotenv()
 logging.basicConfig(
     level=logging.DEBUG,
     format="%(asctime)s - %(levelname)s - %(message)s",
-    filename="/ruta/a/tu/archivo_de_logs.log",  # Cambia esta ruta según tus necesidades
+    filename="/validation.log",  # Cambia esta ruta según tus necesidades
     filemode="a"
 )
 
