@@ -1317,45 +1317,38 @@ const FisioProfile = () => {
   }
   if (error) return <p>Error: {error}</p>;
 
-  return (
-    <div
-      className="min-h-screen flex items-center justify-center px-6"
-      style={{ backgroundColor: "rgb(238, 251, 250)" }}
-    >
-      <div className="w-full max-w-5xl bg-white shadow-lg rounded-2xl overflow-hidden grid grid-cols-3">
-        {/* Barra lateral izquierda - Sección de perfil */}
+    return (
         <div
-          className="col-span-1 text-white p-6 flex flex-col items-center"
-          style={{ backgroundColor: "#05668D" }}
+            className="min-h-screen flex items-center justify-center px-6"
+            style={{ backgroundColor: "rgb(238, 251, 250)" }}
         >
-          <div className="relative mb-4">
-            <img
-              src={getImageSrc()}
-              alt="Perfil"
-              className={`w-40 h-40 rounded-full object-cover border-4 ${
-                profile.plan === 2 ? "border-yellow-400" : "border-white"
-              }`}
-            />
-            <label
-              htmlFor="file-upload"
-              className="absolute bottom-0 right-0 bg-white text-blue-600 p-2 rounded-full cursor-pointer"
-            >
-              <Camera className="w-5 h-5" />
-              <input
-                id="file-upload"
-                type="file"
-                className="hidden"
-                onChange={handleFileChange}
-              />
-            </label>
-          </div>
-          {Number(profile.plan) === 2 && (
-            <label className="flex items-center gap-1">
-              <StarIcon className="w-4 h-4 text-amber-500 fill-amber-500" />
-              <span>Fisio GOLD</span>
-              <StarIcon className="w-4 h-4 text-amber-500 fill-amber-500" />
-            </label>
-          )}
+            <div className="w-full max-w-5xl bg-white shadow-lg rounded-2xl overflow-hidden grid grid-cols-3">
+                {/* Barra lateral izquierda - Sección de perfil */}
+                <div className="col-span-1 text-white p-6 flex flex-col items-center" style={{ backgroundColor: "#05668D" }}>
+                    <div className="relative mb-4">
+                        <img
+                            src={getImageSrc()}
+                            alt="Perfil"
+                            className={`w-40 h-40 rounded-full object-cover border-4 ${profile.plan === 2 ? "border-yellow-400" : "border-white"}`}
+                        />
+                        <label
+                            htmlFor="file-upload"
+                            className="absolute bottom-0 right-0 bg-white text-blue-600 p-2 rounded-full cursor-pointer"
+                        >
+                            <Camera className="w-5 h-5" />
+                            <input
+                                id="file-upload"
+                                type="file"
+                                className="hidden"
+                                onChange={handleFileChange}
+                            />
+                        </label>
+                    </div>
+                    <label className="flex items-center gap-1">
+                        <StarIcon className="w-4 h-4 text-amber-500 fill-amber-500" />
+                        <span>Fisio GOLD</span>
+                        <StarIcon className="w-4 h-4 text-amber-500 fill-amber-500" />
+                    </label>
 
           <h2 className="text-xl font-bold mb-2">{profile.user.username}</h2>
           <p className="text-blue-200 mb-4">Profesional</p>
@@ -1532,84 +1525,71 @@ const FisioProfile = () => {
               </div>
             </div>
 
-            {/* Desplegable de especializaciones */}
-            <div className="space-y-2">
-              <label className="block text-sm font-large text-gray-700 mb-4 mt-4">
-                Especializaciones
-              </label>
-              <div className="specializations-container">
-                <div className="selected-tags">
-                  {selectedSpecializations.map((spec) => (
-                    <div key={spec} className="tag">
-                      {spec}
-                      <span
-                        className="remove-tag"
-                        onClick={() =>
-                          setSelectedSpecializations((prev) =>
-                            prev.filter((s) => s !== spec)
-                          )
-                        }
-                      >
-                        ×
-                      </span>
-                    </div>
-                  ))}
-                </div>
+                        {/* Desplegable de especializaciones */}
+                        <div className="space-y-2">
+                            <label className="block text-sm font-large text-gray-700 mb-4 mt-4">Especializaciones</label>
+                            <div className="specializations-container">
+                                <div className="selected-tags">
+                                    {selectedSpecializations.map((spec) => (
+                                        <div key={spec} className="tag">
+                                            {spec}
+                                            <span
+                                                className="remove-tag"
+                                                onClick={() => setSelectedSpecializations(prev => prev.filter(s => s !== spec))}
+                                            >
+                                                ×
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
 
-                <div className="custom-dropdown">
-                  <div
-                    className="dropdown-header"
-                    onClick={() => setDropdownOpen(!dropdownOpen)}
-                  >
-                    {selectedSpecializations.length > 0
-                      ? `${selectedSpecializations.length} seleccionadas`
-                      : "Selecciona especializaciones"}
-                    <span className={`arrow ${dropdownOpen ? "open" : ""}`}>
-                      ↓
-                    </span>
-                  </div>
+                                <div className="custom-dropdown">
+                                    <div
+                                        className="dropdown-header"
+                                        onClick={() => setDropdownOpen(!dropdownOpen)}
+                                    >
+                                        {selectedSpecializations.length > 0
+                                            ? `${selectedSpecializations.length} seleccionadas`
+                                            : "Selecciona especializaciones"}
+                                        <span className={`arrow ${dropdownOpen ? "open" : ""}`}>↓</span>
+                                    </div>
 
-                  {dropdownOpen && (
-                    <div className="dropdown-options">
-                      <input
-                        type="text"
-                        placeholder="Buscar especialización..."
-                        className="search-input"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                      />
+                                    {dropdownOpen && (
+                                        <div className="dropdown-options">
+                                            <input
+                                                type="text"
+                                                placeholder="Buscar especialización..."
+                                                className="search-input"
+                                                value={searchQuery}
+                                                onChange={(e) => setSearchQuery(e.target.value)}
+                                            />
 
-                      {availableSpecializations
-                        .filter((spec) =>
-                          spec.toLowerCase().includes(searchQuery.toLowerCase())
-                        )
-                        .map((spec) => (
-                          <label key={spec} className="option">
-                            <input
-                              type="checkbox"
-                              checked={selectedSpecializations.includes(spec)}
-                              onChange={(e) => {
-                                if (e.target.checked) {
-                                  setSelectedSpecializations((prev) => [
-                                    ...prev,
-                                    spec,
-                                  ]);
-                                } else {
-                                  setSelectedSpecializations((prev) =>
-                                    prev.filter((s) => s !== spec)
-                                  );
-                                }
-                              }}
-                            />
-                            <span className="checkmark"></span>
-                            {spec}
-                          </label>
-                        ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
+                                            {availableSpecializations
+                                                .filter(spec =>
+                                                    spec.toLowerCase().includes(searchQuery.toLowerCase())
+                                                )
+                                                .map((spec) => (
+                                                    <label key={spec} className="option">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={selectedSpecializations.includes(spec)}
+                                                            onChange={(e) => {
+                                                                if (e.target.checked) {
+                                                                    setSelectedSpecializations(prev => [...prev, spec]);
+                                                                } else {
+                                                                    setSelectedSpecializations(prev => prev.filter(s => s !== spec));
+                                                                }
+                                                            }}
+                                                        />
+                                                        <span className="checkmark"></span>
+                                                        {spec}
+                                                    </label>
+                                                ))}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
 
             {/* Biografía */}
             <div className="space-y-2">
@@ -1645,49 +1625,45 @@ const FisioProfile = () => {
                 </GradientButton>
               </div>
 
-              {services.length === 0 ? (
-                <p className="text-gray-500 text-center">
-                  No hay servicios registrados
-                </p>
-              ) : (
-                <div className="space-y-3">
-                  {services.map((service, index) => (
-                    <div
-                      key={index}
-                      className="border rounded-md p-3 flex justify-between items-center"
-                    >
-                      <div>
-                        <h4 className="font-semibold">{service.titulo}</h4>
-                        <p className="text-sm text-gray-600">
-                          {service.descripcion}
-                        </p>
-                      </div>
-                      <div className="flex space-x-2">
-                        <GradientButton
-                          variant="edit"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleEditService(index);
-                          }}
-                        >
-                          <Edit className="w-4 h-4" />
-                        </GradientButton>
-                        <GradientButton
-                          variant="danger"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleDeleteService(index);
-                          }}
-                          className="text-red-500 hover:bg-red-100 p-2 rounded"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </GradientButton>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+                            {services.length === 0 ? (
+                                <p className="text-gray-500 text-center">No hay servicios registrados</p>
+                            ) : (
+                                <div className="space-y-3">
+                                    {services.map((service, index) => (
+                                        <div
+                                            key={index}
+                                            className="border rounded-md p-3 flex justify-between items-center"
+                                        >
+                                            <div>
+                                                <h4 className="font-semibold">{service.titulo}</h4>
+                                                <p className="text-sm text-gray-600">{service.descripcion}</p>
+                                            </div>
+                                            <div className="flex space-x-2">
+                                                <GradientButton
+                                                    variant="edit"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        handleEditService(index);
+                                                    }}
+                                                >
+                                                    <Edit className="w-4 h-4" />
+                                                </GradientButton>
+                                                <GradientButton
+                                                    variant="danger"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        handleDeleteService(index);
+                                                    }}
+                                                    className="text-red-500 hover:bg-red-100 p-2 rounded"
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </GradientButton>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
 
             <div>
               <GradientButton
