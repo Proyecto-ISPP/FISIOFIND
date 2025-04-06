@@ -17,33 +17,39 @@ jobs:
       - name: Get latest tag
         id: get-latest-tag
         run: |
-          latest_tag=$(git tag --sort=-v:refname | head -n 1)
+          # Obtener la última tag semántica válida
+          latest_tag=$(git tag --sort=-v:refname | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1)
           echo "Última tag encontrada: $latest_tag"
 
           if [[ -z "$latest_tag" ]]; then
-            major=1
+            major=0
             minor=0
             patch=0
+            log_range=""
           else
             IFS='.' read -r major minor patch <<< "$latest_tag"
+            log_range="$latest_tag..HEAD"
           fi
 
-          log_range="$latest_tag..HEAD"
-          commits=$(git log --pretty=format:"%s" $log_range)
+          feature_count=$(git log --grep="^feat:" --oneline $log_range | wc -l)
+          total_commits=$(git log --oneline $log_range | wc -l)
 
-          for commit in $commits; do
-            if [[ "$commit" =~ ^feat(\(.*\))?: ]]; then
-              minor=$((minor + 1))
-              patch=0
-            elif [[ "$commit" =~ ^(fix|docs?|chore|refactor|style|test|perf)(\(.*\))?: ]]; then
-              patch=$((patch + 1))
-            fi
-          done
+          # Aplicar lógica de versión:
+          if (( feature_count > 0 )); then
+            minor=$((minor + 1))
+            patch=0
+          elif (( total_commits > 0 )); then
+            patch=$((patch + 1))
+          else
+            echo "No hay cambios desde la última versión. Saliendo."
+            exit 0
+          fi
 
           new_tag="${major}.${minor}.${patch}"
           echo "NEW_TAG=$new_tag" >> $GITHUB_ENV
           echo "latest_tag=$latest_tag" >> $GITHUB_ENV
-          echo "Nueva tag a crear: $new_tag"
+          echo "🔖 Nueva tag a crear: $new_tag"
+
 
 
 
