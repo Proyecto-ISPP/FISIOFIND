@@ -50,7 +50,7 @@ def validate_image_file(value):
 
 class AppUser(AbstractUser):
     photo = models.ImageField(null=True, blank=True, verbose_name='Foto', upload_to='user_photos/', storage=FileSystemStorage(location=settings.PROFILE_PHOTOS_ROOT, base_url=settings.PROFILE_PHOTOS_URL))
-    dni = EncryptedCharField(max_length=9, unique=True, verbose_name='DNI')
+    dni = EncryptedCharField(max_length=255, null=True, unique=True, verbose_name='DNI')
     phone_number = models.CharField(max_length=9, verbose_name='Número de teléfono', null=True, blank=True)
     postal_code = models.CharField(max_length=5, verbose_name='Código postal')
     account_status = models.CharField(max_length=10, choices=ACCOUNT_STATUS_CHOICES, default='UNVERIFIED', verbose_name='Estado de la cuenta')
