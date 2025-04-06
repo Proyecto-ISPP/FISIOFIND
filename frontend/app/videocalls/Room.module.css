@@ -1751,3 +1751,7 @@
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 1000;
 }
+
+.inputError {
+  border: 1px solid red !important;
+}

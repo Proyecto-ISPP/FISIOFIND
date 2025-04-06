@@ -14,7 +14,7 @@ const QuestionnaireBuilder = ({ addQuestionnaire, editingQuestionnaire, onCancel
   const [optionsError, setOptionsError] = useState('');
 
   // Constante para el límite de caracteres
-  const CHARACTER_LIMIT = 255;
+  const CHARACTER_LIMIT = 75;
 
   useEffect(() => {
     setIsClient(true);
@@ -192,8 +192,39 @@ const QuestionnaireBuilder = ({ addQuestionnaire, editingQuestionnaire, onCancel
 
   const handleApiError = (error) => {
     console.error('API Error:', error);
-    if (error.response) {
-      alert(`Error: ${error.response.data.detail || 'Ocurrió un error'}`);
+    
+    if (error.response && error.response.data) {
+      // Para errores de validación
+      if (typeof error.response.data === 'object') {
+        // Revisar si hay errores específicos de campos
+        const fieldErrors = [];
+        
+        for (const field in error.response.data) {
+          if (Array.isArray(error.response.data[field])) {
+            // Agregar cada error de campo
+            error.response.data[field].forEach(msg => {
+              fieldErrors.push(`${field}: ${msg}`);
+            });
+          } else if (typeof error.response.data[field] === 'string') {
+            fieldErrors.push(`${field}: ${error.response.data[field]}`);
+          }
+        }
+        
+        // Si se encontraron errores específicos
+        if (fieldErrors.length > 0) {
+          alert(`Errores de validación:\n${fieldErrors.join('\n')}`);
+          return;
+        }
+        
+        // Si hay un mensaje de error general
+        if (error.response.data.detail) {
+          alert(`Error: ${error.response.data.detail}`);
+          return;
+        }
+      }
+      
+      // Si no se pudo extraer un mensaje específico
+      alert(`Error en la solicitud: ${JSON.stringify(error.response.data)}`);
     } else {
       alert('Error de conexión con el servidor');
     }
