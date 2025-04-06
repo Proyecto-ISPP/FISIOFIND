@@ -1317,38 +1317,45 @@ const FisioProfile = () => {
   }
   if (error) return <p>Error: {error}</p>;
 
-    return (
+  return (
+    <div
+      className="min-h-screen flex items-center justify-center px-6"
+      style={{ backgroundColor: "rgb(238, 251, 250)" }}
+    >
+      <div className="w-full max-w-5xl bg-white shadow-lg rounded-2xl overflow-hidden grid grid-cols-3">
+        {/* Barra lateral izquierda - Sección de perfil */}
         <div
-            className="min-h-screen flex items-center justify-center px-6"
-            style={{ backgroundColor: "rgb(238, 251, 250)" }}
+          className="col-span-1 text-white p-6 flex flex-col items-center"
+          style={{ backgroundColor: "#05668D" }}
         >
-            <div className="w-full max-w-5xl bg-white shadow-lg rounded-2xl overflow-hidden grid grid-cols-3">
-                {/* Barra lateral izquierda - Sección de perfil */}
-                <div className="col-span-1 text-white p-6 flex flex-col items-center" style={{ backgroundColor: "#05668D" }}>
-                    <div className="relative mb-4">
-                        <img
-                            src={getImageSrc()}
-                            alt="Perfil"
-                            className={`w-40 h-40 rounded-full object-cover border-4 ${profile.plan === 2 ? "border-yellow-400" : "border-white"}`}
-                        />
-                        <label
-                            htmlFor="file-upload"
-                            className="absolute bottom-0 right-0 bg-white text-blue-600 p-2 rounded-full cursor-pointer"
-                        >
-                            <Camera className="w-5 h-5" />
-                            <input
-                                id="file-upload"
-                                type="file"
-                                className="hidden"
-                                onChange={handleFileChange}
-                            />
-                        </label>
-                    </div>
-                    <label className="flex items-center gap-1">
-                        <StarIcon className="w-4 h-4 text-amber-500 fill-amber-500" />
-                        <span>Fisio GOLD</span>
-                        <StarIcon className="w-4 h-4 text-amber-500 fill-amber-500" />
-                    </label>
+          <div className="relative mb-4">
+            <img
+              src={getImageSrc()}
+              alt="Perfil"
+              className={`w-40 h-40 rounded-full object-cover border-4 ${
+                profile.plan === 2 ? "border-yellow-400" : "border-white"
+              }`}
+            />
+            <label
+              htmlFor="file-upload"
+              className="absolute bottom-0 right-0 bg-white text-blue-600 p-2 rounded-full cursor-pointer"
+            >
+              <Camera className="w-5 h-5" />
+              <input
+                id="file-upload"
+                type="file"
+                className="hidden"
+                onChange={handleFileChange}
+              />
+            </label>
+          </div>
+          {Number(profile.plan) === 2 && (
+            <label className="flex items-center gap-1">
+              <StarIcon className="w-4 h-4 text-amber-500 fill-amber-500" />
+              <span>Fisio GOLD</span>
+              <StarIcon className="w-4 h-4 text-amber-500 fill-amber-500" />
+            </label>
+          )}
 
           <h2 className="text-xl font-bold mb-2">{profile.user.username}</h2>
           <p className="text-blue-200 mb-4">Profesional</p>
@@ -1380,55 +1387,6 @@ const FisioProfile = () => {
                     <p className="font-semibold">Tu valoración:</p>
                     <div className={styles.stars}>
                       {renderStars(rating.punctuation)}
-<div
-            className="min-h-screen flex items-center justify-center px-6 py-12"
-            style={{ backgroundColor: "rgb(238, 251, 250)" }}
-        >
-            <div className="w-full max-w-5xl bg-white shadow-lg rounded-2xl overflow-hidden grid grid-cols-3">
-                {/* Barra lateral izquierda - Sección de perfil */}
-                <div className="col-span-1 text-white p-6 flex flex-col items-center" style={{ backgroundColor: "#0A7487" }}>
-                    <div className="relative mb-4">
-                        <img
-                            src={getImageSrc()}
-                            alt="Perfil"
-                            className={`w-40 h-40 rounded-full object-cover border-4 ${profile.plan === 2 ? "border-yellow-400" : "border-white"}`}
-                        />
-                        <label
-                            htmlFor="file-upload"
-                            className="absolute bottom-0 right-0 bg-white text-blue-600 p-2 rounded-full cursor-pointer"
-                        >
-                            <Camera className="w-5 h-5" />
-                            <input
-                                id="file-upload"
-                                type="file"
-                                className="hidden"
-                                onChange={handleFileChange}
-                            />
-                        </label>
-                    </div>
-                    <label className="flex items-center gap-1">
-                        <StarIcon className="w-4 h-4 text-amber-500 fill-amber-500" />
-                        <span>Fisio GOLD</span>
-                        <StarIcon className="w-4 h-4 text-amber-500 fill-amber-500" />
-                    </label>
-
-                    <h2 className="text-xl font-bold mb-2">{profile.user.username}</h2>
-                    <p className="text-blue-200 mb-4">Profesional</p>
-
-                    {/* Sección de horario */}
-                    <div className="w-full mt-4">
-                        <h3 className="text-lg font-semibold mb-2">Mi Horario</h3>
-                        <div className="text-blue-200"
-                            dangerouslySetInnerHTML={{ __html: getScheduleSummary() }}>
-                        </div>
-                        <br></br>
-                        <GradientButton
-                            variant="edit"
-                            className="px-6 py-2 font-medium rounded-xl flex items-center gap-2 mx-auto"
-                            onClick={() => setScheduleModalOpen(true)}
-                        >
-                            Editar Horario
-                        </GradientButton>
                     </div>
                     <p className="text-sm text-white">
                       {rating.opinion.split(" ")[0].length > 10
@@ -1597,199 +1555,58 @@ const FisioProfile = () => {
                     </div>
                   ))}
                 </div>
-                {/* Contenido derecho - Sección de formulario */}
-                <div className="col-span-2 p-8 space-y-6">
-                    {/* Formulario de actualización de perfil */}
-                    <form onSubmit={handleSubmit} className="space- y-4">
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <label className="block text-sm font-large text-gray-700 mb-0.5">Correo Electrónico</label>
-                                <input
-                                    type="email"
-                                    name="email"
-                                    value={profile.user.email}
-                                    onChange={handleChange}
-                                    className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
-                                />
-                                {formErrors.email && <span className="text-red-500 text-sm">{formErrors.email}</span>}
-                            </div>
-                            <div className="space-y-2">
-                                <label className="block text-sm font-large text-gray-700 mb-0.5">Teléfono</label>
-                                <input
-                                    type="text"
-                                    name="phone_number"
-                                    value={profile.user.phone_number}
-                                    onChange={handleChange}
-                                    className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
-                                />
-                                {formErrors.phone_number && <span className="text-red-500 text-sm">{formErrors.phone_number}</span>}
-                            </div>
-                        </div>
 
-                        {/* Desplegable de especializaciones */}
-                        <div className="space-y-2">
-                            <label className="block text-sm font-large text-gray-700 mb-4 mt-4">Especialidades</label>
-                            <div className="specializations-container">
-                                <div className="selected-tags">
-                                    {selectedSpecializations.map((spec) => (
-                                        <div key={spec} className="tag" style={{backgroundColor: '#41B8D5'}}>
-                                            {spec}
-                                            <span
-                                                className="remove-tag"
-                                                onClick={() => setSelectedSpecializations(prev => prev.filter(s => s !== spec))}
-                                                style={{
-                                                    color: '#ff5757',
-                                                    transition: 'color 0.2s ease',
-                                                }}
-                                                onMouseOver={(e) => e.currentTarget.style.color = '#ffffff'}
-                                                onMouseOut={(e) => e.currentTarget.style.color = '#ff5757'}
-                                            >
-                                                ×
-                                            </span>
-                                        </div>
-                                    ))}
-                                </div>
+                <div className="custom-dropdown">
+                  <div
+                    className="dropdown-header"
+                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                  >
+                    {selectedSpecializations.length > 0
+                      ? `${selectedSpecializations.length} seleccionadas`
+                      : "Selecciona especializaciones"}
+                    <span className={`arrow ${dropdownOpen ? "open" : ""}`}>
+                      ↓
+                    </span>
+                  </div>
 
-                                <div className="custom-dropdown">
-                                    <div
-                                        className="dropdown-header"
-                                        onClick={() => setDropdownOpen(!dropdownOpen)}
-                                        style={{ borderColor: '#41B8D5' }}
-                                    >
-                                        {selectedSpecializations.length > 0
-                                            ? `${selectedSpecializations.length} seleccionadas`
-                                            : "Selecciona especializaciones"}
-                                        <span className={`arrow ${dropdownOpen ? "open" : ""}`}>↓</span>
-                                    </div>
+                  {dropdownOpen && (
+                    <div className="dropdown-options">
+                      <input
+                        type="text"
+                        placeholder="Buscar especialización..."
+                        className="search-input"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                      />
 
-                                    {dropdownOpen && (
-                                        <div className="dropdown-options">
-                                            <input
-                                                type="text"
-                                                placeholder="Buscar especialización..."
-                                                className="search-input"
-                                                value={searchQuery}
-                                                onChange={(e) => setSearchQuery(e.target.value)}
-                                                style={{ borderColor: '#41B8D5' }}
-                                            />
-
-                                            {availableSpecializations
-                                                .filter(spec =>
-                                                    spec.toLowerCase().includes(searchQuery.toLowerCase())
-                                                )
-                                                .map((spec) => (
-                                                    <label key={spec} className="option">
-                                                        <input
-                                                            type="checkbox"
-                                                            checked={selectedSpecializations.includes(spec)}
-                                                            onChange={(e) => {
-                                                                if (e.target.checked) {
-                                                                    setSelectedSpecializations(prev => [...prev, spec]);
-                                                                } else {
-                                                                    setSelectedSpecializations(prev => prev.filter(s => s !== spec));
-                                                                }
-                                                            }}
-                                                            style={{ accentColor: '#41B8D5' }}
-                                                        />
-                                                        <span className="checkmark" style={{ borderColor: '#41B8D5', backgroundColor: selectedSpecializations.includes(spec) ? '#41B8D5' : 'transparent' }}></span>
-                                                        {spec}
-                                                    </label>
-                                                ))}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Biografía */}
-                        <div className="space-y-2">
-                            <label className="block text-sm font-large text-gray-700 mb-2 mt-4">Biografía</label>
-                            <textarea
-                                name="bio"
-                                value={profile.bio || ""}
-                                onChange={handleChange}
-                                rows={4}
-                                className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+                      {availableSpecializations
+                        .filter((spec) =>
+                          spec.toLowerCase().includes(searchQuery.toLowerCase())
+                        )
+                        .map((spec) => (
+                          <label key={spec} className="option">
+                            <input
+                              type="checkbox"
+                              checked={selectedSpecializations.includes(spec)}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setSelectedSpecializations((prev) => [
+                                    ...prev,
+                                    spec,
+                                  ]);
+                                } else {
+                                  setSelectedSpecializations((prev) =>
+                                    prev.filter((s) => s !== spec)
+                                  );
+                                }
+                              }}
                             />
-                            {formErrors.bio && <span className="text-red-500 text-sm">{formErrors.bio}</span>}
-                        </div>
-
-                        {/* Sección de servicios */}
-                        <div className="space-y-4">
-                            <div className="flex justify-between items-center mb-4 mt-4">
-                                <h3 className="text-lg font-semibold">Servicios</h3>
-                                <GradientButton
-                                    variant="create"
-                                    className="px-6 py-2 font-medium rounded-xl flex items-center gap-2 mx-auto"
-                                    onClick={(e) => {
-                                        e.preventDefault(); // Esto evita que se envíe el formulario
-                                        setEditingServiceIndex(null);
-                                        setShowServiceModal(true);
-                                    }}
-                                >
-                                    <Plus className="mr-2 w-4 h-4" /> Añadir Servicio
-                                </GradientButton>
-                            </div>
-
-                            {services.length === 0 ? (
-                                <p className="text-gray-500 text-center">No hay servicios registrados</p>
-                            ) : (
-                                <div className="space-y-3">
-                                    {services.map((service, index) => (
-                                        <div
-                                            key={index}
-                                            className="border rounded-md p-3 flex justify-between items-center"
-                                        >
-                                            <div>
-                                                <h4 className="font-semibold">{service.titulo}</h4>
-                                                <p className="text-sm text-gray-600">{service.descripcion}</p>
-                                            </div>
-                                            <div className="flex space-x-2">
-                                                <GradientButton
-                                                    variant="edit"
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        handleEditService(index);
-                                                    }}
-                                                >
-                                                    <Edit className="w-4 h-4" />
-                                                </GradientButton>
-                                                <GradientButton
-                                                    variant="danger"
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        handleDeleteService(index);
-                                                    }}
-                                                    className="text-red-500 hover:bg-red-100 p-2 rounded"
-                                                >
-                                                    <Trash2 className="w-4 h-4 text-white" />
-                                                </GradientButton>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-
-                        <div>
-                            <GradientButton
-                                variant="edit"
-                                className="mt-8 w-full py-4 px-6 bg-gradient-to-r from-[#1E5ACD] to-[#3a6fd8] text-white font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center"
-                            >
-                                <Save size={18} className="mr-2" />
-                                Actualizar Perfil
-                            </GradientButton>
-                            <Link href="/physio-management/video" passHref>
-                                <GradientButton
-                                    variant="edit"
-                                    className="w-full py-2 px-4 bg-gradient-to-r from-[#1E5ACD] to-[#3a6fd8] text-white font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center"
-                                >
-                                    <Film size={22} className="mr-2" />
-                                    Subir vídeo
-                                </GradientButton>
-                            </Link>
-                        </div>
-                    </form>
+                            <span className="checkmark"></span>
+                            {spec}
+                          </label>
+                        ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -1828,45 +1645,49 @@ const FisioProfile = () => {
                 </GradientButton>
               </div>
 
-                            {services.length === 0 ? (
-                                <p className="text-gray-500 text-center">No hay servicios registrados</p>
-                            ) : (
-                                <div className="space-y-3">
-                                    {services.map((service, index) => (
-                                        <div
-                                            key={index}
-                                            className="border rounded-md p-3 flex justify-between items-center"
-                                        >
-                                            <div>
-                                                <h4 className="font-semibold">{service.titulo}</h4>
-                                                <p className="text-sm text-gray-600">{service.descripcion}</p>
-                                            </div>
-                                            <div className="flex space-x-2">
-                                                <GradientButton
-                                                    variant="edit"
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        handleEditService(index);
-                                                    }}
-                                                >
-                                                    <Edit className="w-4 h-4" />
-                                                </GradientButton>
-                                                <GradientButton
-                                                    variant="danger"
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        handleDeleteService(index);
-                                                    }}
-                                                    className="text-red-500 hover:bg-red-100 p-2 rounded"
-                                                >
-                                                    <Trash2 className="w-4 h-4" />
-                                                </GradientButton>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
+              {services.length === 0 ? (
+                <p className="text-gray-500 text-center">
+                  No hay servicios registrados
+                </p>
+              ) : (
+                <div className="space-y-3">
+                  {services.map((service, index) => (
+                    <div
+                      key={index}
+                      className="border rounded-md p-3 flex justify-between items-center"
+                    >
+                      <div>
+                        <h4 className="font-semibold">{service.titulo}</h4>
+                        <p className="text-sm text-gray-600">
+                          {service.descripcion}
+                        </p>
+                      </div>
+                      <div className="flex space-x-2">
+                        <GradientButton
+                          variant="edit"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleEditService(index);
+                          }}
+                        >
+                          <Edit className="w-4 h-4" />
+                        </GradientButton>
+                        <GradientButton
+                          variant="danger"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleDeleteService(index);
+                          }}
+                          className="text-red-500 hover:bg-red-100 p-2 rounded"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </GradientButton>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
 
             <div>
               <GradientButton
@@ -1972,7 +1793,7 @@ const FisioProfile = () => {
         />
       )}
     </div>
-  )
-}
+  );
+};
 
 export default FisioProfile;
