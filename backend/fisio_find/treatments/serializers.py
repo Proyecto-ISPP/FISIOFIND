@@ -9,7 +9,7 @@ class TreatmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Treatment
         fields = ['id', 'physiotherapist', 'patient', 'start_time', 'end_time', 
-                 'homework', 'is_active', 'created_at', 'updated_at']
+                 'homework', 'is_active', 'created_at', 'updated_at', 'notifications_enabled']
         read_only_fields = ['id', 'created_at', 'updated_at']
     
     def validate(self, data):
@@ -45,7 +45,7 @@ class TreatmentDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Treatment
         fields = ['id', 'physiotherapist', 'physiotherapist_id', 'patient', 'patient_id', 'start_time', 'end_time', 
-                 'homework', 'is_active', 'created_at', 'updated_at', 'sessions']
+                 'homework', 'is_active', 'created_at', 'updated_at', 'sessions', 'notifications_enabled']
         read_only_fields = ['id', 'created_at', 'updated_at']
         
 class ExerciseSerializer(serializers.ModelSerializer):

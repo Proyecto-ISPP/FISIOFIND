@@ -40,6 +40,7 @@ interface Treatment {
   is_active: boolean;
   created_at?: string;
   updated_at?: string;
+  notifications_enabled: boolean;
 }
 
 const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
@@ -49,6 +50,7 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
   const [error, setError] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
@@ -99,13 +101,13 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
           },
         }
       );
-
       if (!response.ok) {
         throw new Error("Error al cargar el tratamiento");
       }
 
       const data = await response.json();
       setTreatment(data);
+      setNotificationsEnabled(data.notifications_enabled);
     } catch (err) {
       console.error("Error:", err);
       setError(
@@ -113,6 +115,36 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
       );
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleToggleNotifications = async () => {
+    const storedToken = localStorage.getItem("token");
+
+    try {
+      const response = await fetch(
+        `${getApiBaseUrl()}/api/treatments/${
+          treatment?.id
+        }/toggle-notifications/`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${storedToken}`,
+          },
+          body: JSON.stringify({
+            notifications_enabled: !notificationsEnabled,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        setNotificationsEnabled((prev) => !prev);
+      } else {
+        console.error("Error al actualizar las notificaciones");
+      }
+    } catch (error) {
+      console.error("Error al cambiar las notificaciones:", error);
     }
   };
 
@@ -153,7 +185,9 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
   }
 
   if (userRole && userRole !== "patient") {
-    return <RestrictedAccess message="Solo los pacientes pueden acceder a esta página" />;
+    return (
+      <RestrictedAccess message="Solo los pacientes pueden acceder a esta página" />
+    );
   }
 
   return (
@@ -183,7 +217,9 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
           <div
             className={`p-2 text-center text-white text-lg font-semibold ${treatment.is_active ? "bg-green-500" : "bg-gray-500"}`}
           >
-            {treatment.is_active ? "Tratamiento Activo" : "Tratamiento Histórico"}
+            {treatment.is_active
+              ? "Tratamiento Activo"
+              : "Tratamiento Histórico"}
           </div>
 
           <div className="p-6">
@@ -192,26 +228,64 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
             </h1>
 
             <div className="mb-8">
-              <h2 className="text-xl font-semibold mb-4">Información General</h2>
+              <h2 className="text-xl font-semibold mb-4">
+                Información General
+              </h2>
               <div className="bg-gray-50 p-4 rounded-lg">
                 <div className="mb-3 flex flex-col md:flex-row md:items-center">
-                  <span className="font-medium text-gray-700 mb-1 md:mb-0 md:mr-2">Fisioterapeuta:</span>
+                  <span className="font-medium text-gray-700 mb-1 md:mb-0 md:mr-2">
+                    Fisioterapeuta:
+                  </span>
                   <span>{getPhysiotherapistName(treatment)}</span>
                 </div>
                 <div className="mb-3 flex flex-col md:flex-row md:items-center">
-                  <span className="font-medium text-gray-700 mb-1 md:mb-0 md:mr-2">Fecha de inicio:</span>
+                  <span className="font-medium text-gray-700 mb-1 md:mb-0 md:mr-2">
+                    Fecha de inicio:
+                  </span>
                   <span>{formatDate(treatment.start_time)}</span>
                 </div>
                 <div className="mb-3 flex flex-col md:flex-row md:items-center">
-                  <span className="font-medium text-gray-700 mb-1 md:mb-0 md:mr-2">Fecha de finalización:</span>
+                  <span className="font-medium text-gray-700 mb-1 md:mb-0 md:mr-2">
+                    Fecha de finalización:
+                  </span>
                   <span>{formatDate(treatment.end_time)}</span>
                 </div>
                 <div className="flex flex-col md:flex-row md:items-center">
-                  <span className="font-medium text-gray-700 mb-1 md:mb-0 md:mr-2">Estado:</span>
-                  <span className={treatment.is_active ? "text-green-600" : "text-gray-600"}>
+                  <span className="font-medium text-gray-700 mb-1 md:mb-0 md:mr-2">
+                    Estado:
+                  </span>
+                  <span
+                    className={
+                      treatment.is_active ? "text-green-600" : "text-gray-600"
+                    }
+                  >
                     {treatment.is_active ? "Activo" : "Finalizado"}
                   </span>
                 </div>
+              </div>
+            </div>
+            <div className="mt-6 bg-gray-50 p-4 rounded-lg">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div>
+                  <p className="font-medium text-gray-700 text-sm sm:text-base">
+                    {notificationsEnabled
+                      ? "Recordatorios de ejercicio activados"
+                      : "Recordatorios de ejercicio desactivados"}
+                  </p>
+                  <p className="text-sm font-normal text-gray-500 mt-1">
+                    {notificationsEnabled
+                      ? "Recibirás recordatorios por email para no olvidarte de seguir tu tratamiento."
+                      : "Activa esta opción si deseas recibir recordatorios por email para no olvidarte de seguir tu tratamiento."}
+                  </p>
+                </div>
+                <label className="switch self-start sm:self-center">
+                  <input
+                    type="checkbox"
+                    checked={notificationsEnabled}
+                    onChange={handleToggleNotifications}
+                  />
+                  <span className="slider"></span>
+                </label>
               </div>
             </div>
 
