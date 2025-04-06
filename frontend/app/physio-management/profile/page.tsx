@@ -10,7 +10,7 @@ import Link from "next/link";
 import styles from '@/components/ratings.module.css';
 import Alert from "@/components/ui/Alert";
 import ConfirmModal from "@/components/ui/ConfirmModal";
-import SubscriptionSlider from "@/components/ui/SuscriptionSlider";
+import SubscriptionSlider from "@/components/ui/SubscriptionSlider";
 
 
 const getAuthToken = () => {

@@ -6,7 +6,7 @@ import { getApiBaseUrl } from "@/utils/api";
 import { Phone, Mail, MapPin, Calendar, FileText, Users, Camera, Save, Check, Lock, Film, Bell } from 'lucide-react';
 import { GradientButton } from "@/components/ui/gradient-button";
 import Link from "next/link";
-import SubscriptionSlider from "@/components/ui/SuscriptionSlider";
+import SubscriptionSlider from "@/components/ui/SubscriptionSlider";
 
 const BASE_URL = `${getApiBaseUrl()}`;
 
