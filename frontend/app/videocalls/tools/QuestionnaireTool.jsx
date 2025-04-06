@@ -12,7 +12,7 @@ import axios from 'axios';
 import { getApiBaseUrl } from '@/utils/api';
 
 // Constante para el límite de caracteres
-const CHARACTER_LIMIT = 255;
+const CHARACTER_LIMIT = 75;
 
 const questionTypes = [
   { value: 'string', label: 'Texto' },
@@ -311,23 +311,21 @@ const QuestionnaireTool = ({
   };
 
   const handleSaveQuestionnaire = async () => {
-    // Validar título
+    // Validación previa (se mantiene igual)
     const isTitleValid = validateTitle(formData.title);
     
-    // Validar que haya preguntas
     if (formData.questions.length === 0) {
       addChatMessage('Sistema', 'Debes agregar al menos una pregunta');
       return;
     }
     
-    // Validar todas las preguntas
     const areQuestionsValid = validateAllQuestions();
     
     if (!isTitleValid || !areQuestionsValid) {
       addChatMessage('Sistema', 'Por favor, corrige los errores antes de guardar');
       return;
     }
-
+  
     // Limpiar las opciones vacías en todas las preguntas
     const cleanedQuestions = formData.questions.map(q => {
       if (q.type === 'select') {
@@ -335,7 +333,7 @@ const QuestionnaireTool = ({
       }
       return q;
     });
-
+  
     const questionnaireData = {
       title: formData.title,
       json_schema: {
@@ -358,7 +356,7 @@ const QuestionnaireTool = ({
       },
       questions: cleanedQuestions
     };
-
+  
     try {
       let response;
       if (mode === 'edit') {
@@ -374,18 +372,41 @@ const QuestionnaireTool = ({
           { headers: { Authorization: `Bearer ${token}` } }
         );
       }
-
+  
       setQuestionnaires(prev => 
         mode === 'edit' 
           ? prev.map(q => q.id === editingQuestionnaire.id ? response.data : q)
           : [...prev, response.data]
       );
-
+  
       setMode('list');
       addChatMessage('Sistema', `Cuestionario ${mode === 'edit' ? 'actualizado' : 'creado'} correctamente`);
     } catch (error) {
       console.error('Error saving questionnaire:', error);
-      addChatMessage('Error', 'No se pudo guardar el cuestionario');
+      
+      // Manejo mejorado de errores
+      let errorMessage = 'No se pudo guardar el cuestionario';
+      
+      // Extraer mensaje de error específico de la respuesta del backend
+      if (error.response && error.response.data) {
+        if (error.response.data.detail) {
+          errorMessage = error.response.data.detail;
+        } else if (error.response.data.title) {
+          errorMessage = `Error en el título: ${error.response.data.title}`;
+          setTitleError(error.response.data.title);
+        } else if (error.response.data.questions) {
+          errorMessage = `Error en preguntas: ${error.response.data.questions}`;
+          // Podrías actualizar questionErrors aquí si tienes información sobre qué pregunta específica falló
+        } else if (typeof error.response.data === 'object') {
+          // Intentar extraer el primer mensaje de error disponible
+          const firstErrorKey = Object.keys(error.response.data)[0];
+          if (firstErrorKey) {
+            errorMessage = `${firstErrorKey}: ${error.response.data[firstErrorKey]}`;
+          }
+        }
+      }
+      
+      addChatMessage('Error', errorMessage);
     }
   };
 
