@@ -185,6 +185,8 @@ export default function Home() {
   return (
     <>
       <div className="container mx-auto px-4 py-8">
+      <br></br>
+      <br></br>
         <h1 className="text-2xl font-bold text-gray-800 mb-6">Mis Citas</h1>
         
         {isLoading ? (

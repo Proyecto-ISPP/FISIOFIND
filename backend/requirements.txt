@@ -65,3 +65,4 @@ zope.interface==7.2
 stripe==11.6.0
 django-celery-beat==2.7.0
 reportlab==4.3.1
+pytz==2025.2

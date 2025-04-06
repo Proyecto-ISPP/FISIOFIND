@@ -26,7 +26,8 @@ export interface QuestionElement {
 }
 
 export interface Questionary {
-  type: string;
+  tipo: string;
+  title: string;
   label: string;
   elements: QuestionElement[];
 }
