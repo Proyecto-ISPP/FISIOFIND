@@ -33,7 +33,8 @@ class Command(BaseCommand):
         for treatment in treatments:
             patient_user = treatment.patient.user
             sessions_today = treatment.sessions.filter(day_of_week__contains=today)
-            treatment_url = f"https://s3.fisiofind.com/patient-management/follow-up/{treatment.id}"
+            frontend_url = {settings.FRONTEND_URL}
+            treatment_url = f"{frontend_url}patient-management/follow-up/{treatment.id}"
 
             if not sessions_today.exists():
                 continue
@@ -49,7 +50,7 @@ class Command(BaseCommand):
                 <br>¡No olvides registrar tu progreso en la plataforma! 💪
                 <br><br>
                 <div style="text-align: center;">
-                    <a href="https://s3.fisiofind.com/"
+                    <a href="{frontend_url}"
                     style="display: inline-block; background-color: #00a896; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold;">
                         Ir a Fisio Find
                     </a>
@@ -68,6 +69,7 @@ class Command(BaseCommand):
 
     def send_encrypted_email(self, subject, message, recipient_email):
         logo_url = "https://fisiofind-landing-page.netlify.app/_astro/logo.1fTJ_rhB.png"
+        frontend_url = settings.FRONTEND_URL
 
         email_body = f"""
         <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 650px; margin: auto; padding: 24px; background-color: #ffffff; border-radius: 12px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);">
@@ -82,7 +84,7 @@ class Command(BaseCommand):
 
             <div style="margin-top: 40px; text-align: center; border-top: 1px solid #e0e0e0; padding-top: 16px; font-size: 14px; color: #777;">
                 <p style="margin: 4px 0;">📧 <a href="mailto:info@fisiofind.com" style="color: #0073e6; text-decoration: none;">info@fisiofind.com</a></p>
-                <p style="margin: 4px 0;">🌐 <a href="https://s3.fisiofind.app.com/" style="color: #0073e6; text-decoration: none;">fisiofind.app.com</a></p>
+                <p style="margin: 4px 0;">🌐 <a href="{frontend_url}" style="color: #0073e6; text-decoration: none;">fisiofind.app.com</a></p>
                 <p style="margin: 4px 0;">📸 <a href="https://www.instagram.com/fisiofindapp/" style="color: #0073e6; text-decoration: none;">@fisiofindapp</a></p>
                 <p style="margin-top: 16px; font-size: 12px; color: #aaa;">Este es un correo automático. Por favor, no respondas a este mensaje.<br>© 2025 Fisio Find</p>
             </div>
