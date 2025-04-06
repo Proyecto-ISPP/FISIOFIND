@@ -101,6 +101,61 @@ def create_rating(request):
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_last_finished_rating(request):
+    """
+    Permite a un paciente crear una valoración para su última cita finalizada,
+    siempre y cuando la cita se haya acabado el mismo día y hayan pasado menos de 7 días desde su finalización.
+    """
+    # Buscamos la última cita finalizada del paciente
+    last_appointment = Appointment.objects.filter(
+        patient=request.user.patient,
+        status="finished"
+    ).order_by("-end_time").first()
+
+    if not last_appointment:
+        return Response(
+            {"error": "No se encontró ninguna cita finalizada para este paciente."},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    # Verificar que la cita se completó hace menos de 7 días.
+    if timezone.now() - last_appointment.end_time > timedelta(days=7):
+        return Response(
+            {"error": "No se puede crear la valoración, han pasado más de 7 días desde el fin de la cita."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # Verificar que la cita se haya acabado el mismo día en que se realiza la petición
+    if last_appointment.end_time.date() != timezone.now().date():
+        return Response(
+            {"error": "Solo se puede crear la valoración si la cita finalizó el mismo día."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # Verificar que no exista ya una valoración para esta cita
+    if AppointmentRating.objects.filter(appointment=last_appointment, patient=request.user.patient).exists():
+        return Response(
+            {"error": "Ya has valorado esta cita."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    request.data['appointment'] = last_appointment.id
+
+    # Crear una nueva valoración
+    serializer = AppointmentRatingSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save(
+            patient=request.user.patient,
+            physiotherapist=last_appointment.physiotherapist,
+            appointment=last_appointment
+        )
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 @api_view(['POST', 'PUT'])
 @permission_classes([IsPatient])
 def create_or_update_rating(request, appointment_id):

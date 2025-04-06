@@ -124,6 +124,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
 
   const setRating = async (tempComment) => {
     if (!selectedEvent) return;
+    if (!isEditable(selectedEvent.end) ) return;
 
     // Determinar si estamos editando o creando
     const isEditing = selectedEventRating?.id != null; // Si ya existe un ID, estamos editando, si no, es creación.
@@ -479,7 +480,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
                       onRatingChange={handleChangeRating}
                     />
                   </div>
-                  {selectedEvent.status === "finished" && (
+                  {selectedEvent.status === "finished" && isEditable(selectedEvent.end) && (
                     <div className="flex items-center mt-4 text-teal-50 justify-end">
                       <svg
                         height={"20px"}

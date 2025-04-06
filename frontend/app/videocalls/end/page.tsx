@@ -4,8 +4,8 @@ import React from 'react';
 const EndCallPage = () => {
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', textAlign: 'center' }}>
-            <h1>Cita finalizada</h1>
-            <RatingForm appointmentId={1}/>
+            <h1 className='text-4xl font-extrabold mb-40 absolute top-32'>Cita finalizada</h1>
+            <RatingForm/>
         </div>
     );
 };

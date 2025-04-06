@@ -1,30 +1,50 @@
 "use client";
 
 import { getApiBaseUrl } from "@/utils/api";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BsStar, BsStarHalf, BsStarFill } from "react-icons/bs";
 import StarRating from "./StarRating";
+import styles from "@/components/ratings.module.css";
+import { GradientButton } from "./gradient-button";
 
-interface ModalRatingProps {
-  appointmentId: number; // Replace 'string' with the appropriate type if needed
-}
-
-const ModalRating = ({ appointmentId }: ModalRatingProps) => {
-  const [modalVisible, setModalVisible] = useState(false);
-  const [input, setInput] = useState({ comment: "", rating: 0 });
+const ModalRating = () => {
+  const [input, setInput] = useState({ comment: "", rating: -1 });
   const [isLoading, setIsLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  //   useEffect(() => {
-  //     if (submitted) {
-  //       const timer = setTimeout(() => {
-  //         window.location.href = "/";
-  //       }, 2000);
-  //       return () => clearTimeout(timer);
-  //     }
-  //   }, [submitted]);
+  useEffect(() => {
+    if (submitted) {
+      const timer = setTimeout(() => {
+        window.location.href = "/";
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [submitted]);
+
+  // const renderInteractiveStars = () => {
+  //   const stars = [];
+  //   for (let i = 1; i <= 5; i++) {
+  //     stars.push(
+  //       <svg
+  //         key={i}
+  //         fill={i <= input.rating ? "currentColor" : "none"}
+  //         stroke={i <= input.rating ? "none" : "currentColor"}
+  //         viewBox="0 0 20 20"
+  //         xmlns="http://www.w3.org/2000/svg"
+  //         className={styles.interactiveStar}
+  //         width="24"
+  //         height="24"
+  //         onClick={() => setInput({...input, rating: i})}
+  //       >
+  //         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+  //       </svg>
+  //     );
+  //   }
+  //   return stars;
+  // };
 
   const submitHandler = async () => {
+    if(input.rating < 0 ) return;
     setIsLoading(true);
     try {
       const token = localStorage.getItem("token");
@@ -32,18 +52,20 @@ const ModalRating = ({ appointmentId }: ModalRatingProps) => {
         throw new Error("No se ha encontrado el token de autenticación");
       }
 
-      const response = await fetch(`${getApiBaseUrl()}/api/ratings/`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          appointment: appointmentId,
-          score: input.rating,
-          comment: input.comment,
-        }),
-      });
+      const response = await fetch(
+        `${getApiBaseUrl()}/api/appointment_ratings/last_finished/create/`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            score: input.rating,
+            comment: input.comment,
+          }),
+        }
+      );
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || "Error al enviar la valoración");
@@ -57,17 +79,48 @@ const ModalRating = ({ appointmentId }: ModalRatingProps) => {
     }
   };
 
-  const closeModal = () => {
-    setModalVisible(false);
-    setInput({ comment: "", rating: 0 });
-    setSubmitted(false);
-  };
-
   return (
     <>
-      <button onClick={() => setModalVisible(true)}>Dejar valoración</button>
+        <div className="sm:w-96 max-lg:w-80 mb-8 p-6 bg-white rounded-lg shadow-lg">
+          <h2 className="mb-3 font-bold">Valora esta cita</h2>
+          {submitted && (
+            <p className={styles.errorMessage}>
+              ¡Muchas gracias por tu opinión!
+              <br />
+              Serás redirigido a la página principal.
+            </p>
+          )}
+          {!submitted && (
+            <>
+              <div className={styles.starsContainer}>
+                <StarRating
+                  size={30}
+                  rating={input.rating}
+                  setRating={(val) => setInput({ ...input, rating: val })}
+                />
+              </div>
+              <textarea
+                className={styles.opinionInput}
+                // style={{marginBottom: '0.75rem'}}
+                placeholder="Deja un comentario (opcional)..."
+                value={input.comment}
+                onChange={(e) =>
+                  setInput({ ...input, comment: e.target.value })
+                }
+              />
+              <div className={styles.formButtons} style={{justifyContent: 'space-between'}}>
+                <GradientButton variant="grey" onClick={() => window.location.href = "/"}>
+                  Volver al inicio
+                </GradientButton>
+                <GradientButton variant="create" onClick={submitHandler}>
+                  Enviar valoración
+                </GradientButton>
+              </div>
+            </>
+          )}
+        </div>
 
-      {modalVisible && (
+      {/* {modalVisible && (
         <div
           onClick={() => closeModal()}
           style={{
@@ -200,7 +253,7 @@ const ModalRating = ({ appointmentId }: ModalRatingProps) => {
             )}
           </div>
         </div>
-      )}
+      )} */}
     </>
   );
 };

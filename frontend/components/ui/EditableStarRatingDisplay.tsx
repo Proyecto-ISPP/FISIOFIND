@@ -27,16 +27,23 @@ const EditableStarRatingDisplay = ({
     <div
       onMouseEnter={() => editable && setHovered(true)}
       onMouseLeave={() => editable && setHovered(false)}
-      style={{ display: "inline-block" }}
+      style={{
+        display: "inline-block",
+        transition: "transform 0.1s ease, opacity 0.1s ease",
+        transform: hovered ? "scale(1.05)" : "scale(1)",
+        opacity: hovered ? 0.95 : 1,
+      }}
     >
       {hovered ? (
-        <StarRating
-          rating={rating}
-          setRating={onRatingChange}
-          size={size}
-        />
+        <StarRating rating={rating} setRating={onRatingChange} size={size} />
       ) : (
-        <StarRatingDisplay editable={editable} rating={rating} max={max} size={size} loading={loading} />
+        <StarRatingDisplay
+          editable={editable}
+          rating={rating}
+          max={max}
+          size={size}
+          loading={loading}
+        />
       )}
     </div>
   );
