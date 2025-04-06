@@ -79,18 +79,18 @@ class QuestionnaireDetailView(APIView):
             data = request.data.copy()
             
             # Validación de longitud del título
-            if 'title' in data and len(data['title']) > 255:
+            if 'title' in data and len(data['title']) > 76:
                 return Response(
-                    {'detail': 'El título no puede exceder los 255 caracteres'},
+                    {'detail': 'El título no puede exceder los 75 caracteres'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
             
             # Validación de longitud de preguntas
             if 'questions' in data:
                 for question in data['questions']:
-                    if len(str(question)) > 255:
+                    if len(str(question)) > 75:
                         return Response(
-                            {'detail': 'Cada pregunta no puede exceder los 255 caracteres'},
+                            {'detail': 'Cada pregunta no puede exceder los 75 caracteres'},
                             status=status.HTTP_400_BAD_REQUEST
                         )
 
@@ -137,9 +137,9 @@ class QuestionCreateView(APIView):
             question_data = request.data
             
             # Validar que la pregunta no exceda los 255 caracteres
-            if len(str(question_data)) > 255:
+            if len(str(question_data)) > 75:
                 return Response(
-                    {'detail': 'Cada pregunta no puede exceder los 255 caracteres'},
+                    {'detail': 'Cada pregunta no puede exceder los 75 caracteres'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
             

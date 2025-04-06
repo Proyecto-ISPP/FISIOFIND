@@ -11,16 +11,21 @@ class QuestionnaireSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         # Validar el título
-        if 'title' in data and len(data['title']) > 255:
-            raise serializers.ValidationError({"title": "El título no puede exceder los 255 caracteres."})
+        if 'title' in data and len(data['title']) > 76:
+            raise serializers.ValidationError({"title": "El título no puede exceder los 75 caracteres."})
 
         # Validar las preguntas si están presentes
         if 'questions' in data:
             for question in data['questions']:
-                if len(str(question)) > 255:
+                label = question.get('label', '')  # Obtiene el texto de la pregunta
+                print(f"Pregunta: {label} (Longitud: {len(label)})")  # Depuración
+
+                if len(label) > 75:
                     raise serializers.ValidationError(
-                        {"questions": "Cada pregunta no puede exceder los 255 caracteres."}
+                        {"questions": "Cada pregunta no puede exceder los 75 caracteres."}
                     )
+
+
 
         # Validar los esquemas JSON
         try:
