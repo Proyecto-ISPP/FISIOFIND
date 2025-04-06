@@ -222,6 +222,7 @@ const SearchPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-teal-50 to-blue-50 py-12">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="h-24"></div>
       {/* Header with decorative elements */}
       <div className="relative mb-12">
         <div className="absolute -top-24 -left-24 w-64 h-64 bg-teal-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
