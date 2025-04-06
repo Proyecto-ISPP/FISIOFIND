@@ -12,6 +12,7 @@ GENDER_CHOICES = [
     ('M', 'Male'),
     ('F', 'Female'),
     ('O', 'Other'),
+    ('P', 'Prefer not to say'),
 ]
 
 AUTONOMIC_COMMUNITY_CHOICES = [
@@ -38,7 +39,7 @@ AUTONOMIC_COMMUNITY_CHOICES = [
 class AppUser(AbstractUser):
     photo = models.ImageField(null=True, blank=True, upload_to='profile_photos/')
     dni = models.CharField(max_length=9, unique=True)
-    phone_number = models.CharField(max_length=9)
+    phone_number = models.CharField(max_length=9, null=True, blank=True)
     postal_code = models.CharField(max_length=5)
     account_status = models.CharField(max_length=10, choices=ACCOUNT_STATUS_CHOICES, default='UNVERIFIED')
 
