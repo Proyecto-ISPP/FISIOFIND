@@ -93,8 +93,7 @@ classoption: "table"
 | 20/02/2025   | v1.3      | Guadalupe Ridruejo Pineda | Firmas de los primeros usuarios piloto                                |
 | 26/02/2025   | v1.4      | Guadalupe Ridruejo Pineda | Últimas firmas de usuarios piloto                                     |
 | 10/03/2025   | v1.5      | Antonio Macías Ferrera    | Correcciones finales para la entrega del #SPRINT 1                    |
-| 04/04/2025   | v1.6      | Antonio Macías Ferrera    | Adacuación para la entrega del #SPRINT 3. Adición de nuevos UP (fisioterapeutas)              |
-
+| 04/04/2025   | v1.6      | Antonio Macías Ferrera    | Adecuación para la entrega del #SPRINT 3. Adición de nuevos UP (fisioterapeutas)              |
 
 <br>
 
