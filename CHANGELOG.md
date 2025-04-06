@@ -1,11 +1,11 @@
-## 🚀 Changelog - 2.90.1
+## 🚀 Changelog - 2.90.2
 
 ### ✨ Features (0)
 
-### 🐛 Fixes (1)
-- fix: prueba nueva (@Julen Redondo)
+### 🐛 Fixes (0)
+
 ### 📖 Documentation (0)
 
-### 🌀 Other Changes (0)
-
+### 🌀 Other Changes (1)
+- doc: prueba (@Julen Redondo)
 ### 🔗 Pull Requests
