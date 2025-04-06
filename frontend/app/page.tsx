@@ -10,6 +10,7 @@ import TopRatings from "@/components/ratings";
 import { HeroHighlight, Highlight } from "@/components/ui/hero-highlight";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { DemoWindow } from "@/components/demo-window";
+import { PhysioCallToAction } from "@/components/ui/physio-cta";
 
 const Home = () => {
   const router = useRouter();
@@ -345,7 +346,7 @@ const Home = () => {
 
       {/* Authentication Section: solo se muestra si NO está autenticado */}
       {!isAuthenticated && (
-        <section className="py-16 bg-gray-50">
+        <section className="py-16 bg-[rgb(238, 251, 250)]">
           <div className="max-w-screen-xl mx-auto px-4">
             <h2 className="text-4xl font-bold text-[#253240] mb-12 text-center">
               Únete a Fisio Find
@@ -375,7 +376,9 @@ const Home = () => {
                 </GradientButton>
               </div>
 
-              <div className="bg-[#1E5ACD] p-6 rounded-lg text-white text-center mt-12">
+              <PhysioCallToAction />
+
+              {/* <div className="bg-[#1E5ACD] p-6 rounded-lg text-white text-center mt-12">
                 <p className="font-bold text-lg mb-4">¿Eres fisioterapeuta?</p>
                 <button
                   className="px-6 py-2 bg-white text-[#1E5ACD] rounded-lg font-semibold hover:bg-gray-100 transition-all"
@@ -388,7 +391,7 @@ const Home = () => {
                 >
                   Para más información, accede aquí
                 </button>
-              </div>
+              </div> */}
             </div>
           </div>
         </section>
