@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { getApiBaseUrl } from "@/utils/api";
 import Image from "next/image";
 
@@ -13,6 +12,36 @@ interface Exercise {
   body_region: string;
   exercise_type: string;
   physiotherapist: number;
+}
+
+interface Series {
+  id: number;
+  series_number: number;
+  repetitions: number;
+  weight: number | null;
+  time: string | null;
+  distance: number | null;
+}
+
+interface SessionInfo {
+  id: number;
+  name: string;
+  day_of_week: string[];
+}
+
+interface TreatmentInfo {
+  id: number;
+  patient_name: string;
+  start_time: string;
+  end_time: string;
+  is_active: boolean;
+}
+
+interface ExerciseUsage {
+  exercise_session_id: number;
+  session: SessionInfo;
+  treatment: TreatmentInfo;
+  series: Series[];
 }
 
 // Map for body region images
@@ -32,7 +61,7 @@ const bodyRegionImages: Record<string, string> = {
   CALVES: "/static/images/body-regions/gemelos.png",
   ANKLE_FOOT: "/static/images/body-regions/pie_tobillo.png",
   UPPER_BODY: "/static/images/body-regions/tre_superior.png",
-  LOWER_BODY: "/static/static/images/body-regions/tren_inferior.png",
+  LOWER_BODY: "/static/images/body-regions/tren_inferior.png",
   FULL_BODY: "/static/images/body-regions/full_body.png",
 };
 
@@ -42,7 +71,7 @@ const exerciseTypeImages: Record<string, string> = {
   MOBILITY: "/static/images/exercise-types/movilidad.png",
   STRETCHING: "/static/images/exercise-types/estiramiento.png",
   BALANCE: "/static/images/exercise-types/equilibrio.png",
-  PROPRIOCEPTION: "/static/images/exercise-types/propriocepcion.png",
+  PROPRIOCEPTION: "/static/images/exercise-types/propiocepcion.png",
   COORDINATION: "/static/images/exercise-types/coordinacion.png",
   BREATHING: "/static/images/exercise-types/respiracion.png",
   RELAXATION: "/static/images/exercise-types/respiracion.png",
@@ -85,8 +114,7 @@ const exerciseTypeNames: Record<string, string> = {
   "FUNCTIONAL": "Ejercicio Funcional",
 };
 
-const ExercisesPage = ({ params }: { params: { id: string } }) => {
-  const router = useRouter();
+const ExercisesPage = () => {
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -94,6 +122,83 @@ const ExercisesPage = ({ params }: { params: { id: string } }) => {
   const [isSearching, setIsSearching] = useState(false);
   const [selectedBodyRegion, setSelectedBodyRegion] = useState<string | null>(null);
   const [selectedExerciseType, setSelectedExerciseType] = useState<string | null>(null);
+  const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(
+    null
+  );
+  const [exerciseUsage, setExerciseUsage] = useState<ExerciseUsage[]>([]);
+  const [loadingUsage, setLoadingUsage] = useState(false);
+
+  const fetchExerciseUsage = async (exerciseId: number) => {
+    try {
+      setLoadingUsage(true);
+
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setError("No se ha encontrado el token de autenticación");
+        setLoadingUsage(false);
+        return;
+      }
+
+      const response = await fetch(
+        `${getApiBaseUrl()}/api/treatments/exercises/${exerciseId}/usage/`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setExerciseUsage(data);
+    } catch (error) {
+      console.error("Error fetching exercise usage:", error);
+      setError(
+        "Error al cargar el uso del ejercicio. Por favor, inténtalo de nuevo."
+      );
+    } finally {
+      setLoadingUsage(false);
+    }
+  };
+
+  const handleViewDetails = (exercise: Exercise) => {
+    if (selectedExercise && selectedExercise.id === exercise.id) {
+      // If clicking on the same exercise, close the details
+      setSelectedExercise(null);
+      setExerciseUsage([]);
+    } else {
+      // Otherwise, show details for the selected exercise
+      setSelectedExercise(exercise);
+      fetchExerciseUsage(exercise.id);
+    }
+  };
+
+  const formatDayOfWeek = (days: string[]) => {
+    const dayMap: Record<string, string> = {
+      Monday: "Lunes",
+      Tuesday: "Martes",
+      Wednesday: "Miércoles",
+      Thursday: "Jueves",
+      Friday: "Viernes",
+      Saturday: "Sábado",
+      Sunday: "Domingo",
+    };
+
+    return days.map((day) => dayMap[day] || day).join(", ");
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("es-ES", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
 
   // Fetch all exercises
   const fetchExercises = async () => {
@@ -208,64 +313,96 @@ const ExercisesPage = ({ params }: { params: { id: string } }) => {
       <h1 className="text-2xl font-bold mb-6">Biblioteca de Ejercicios</h1>
 
       {/* Search and Filter Section */}
-      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+      <div className="bg-white rounded-xl shadow-md p-6 mb-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
           {/* Search Form */}
           <form onSubmit={handleSearch} className="flex-1">
-            <div className="relative">
+            <div className="relative flex items-center mt-4">
               <input
                 type="text"
                 placeholder="Buscar ejercicios por título..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg pr-10"
+                className="w-full p-3 border border-gray-300 rounded-xl pr-12 focus:ring-gray-200 focus:outline-none"
               />
               <button
                 type="submit"
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                className="mb-8 absolute right-2 text-gray-100 hover:text-gray-100 transition-colors rounded-xl"
                 disabled={isSearching}
               >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
               </button>
             </div>
           </form>
 
           {/* Filter Dropdowns */}
-          <div className="flex flex-col sm:flex-row gap-2">
-            {/* Body Region Filter */}
-            <select
-              value={selectedBodyRegion || ""}
-              onChange={(e) => setSelectedBodyRegion(e.target.value || null)}
-              className="p-3 border border-gray-300 rounded-lg"
-            >
-              <option value="">Todas las regiones</option>
-              {Object.entries(bodyRegionNames).map(([key, name]) => (
-                <option key={key} value={key}>
-                  {name}
-                </option>
-              ))}
-            </select>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-4 flex-grow">
+              {/* Body Region Filter */}
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Región Corporal
+                </label>
+                <select
+                  value={selectedBodyRegion || ""}
+                  onChange={(e) =>
+                    setSelectedBodyRegion(e.target.value || null)
+                  }
+                  className="w-full px-4 py-2 text-base border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-200 focus:border-transparent rounded-xl bg-white shadow-sm"
+                >
+                  <option value="">Todas las regiones</option>
+                  {Object.entries(bodyRegionNames).map(([key, name]) => (
+                    <option key={key} value={key}>
+                      {name}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            {/* Exercise Type Filter */}
-            <select
-              value={selectedExerciseType || ""}
-              onChange={(e) => setSelectedExerciseType(e.target.value || null)}
-              className="p-3 border border-gray-300 rounded-lg"
-            >
-              <option value="">Todos los tipos</option>
-              {Object.entries(exerciseTypeNames).map(([key, name]) => (
-                <option key={key} value={key}>
-                  {name}
-                </option>
-              ))}
-            </select>
+              {/* Exercise Type Filter */}
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Tipo de Ejercicio
+                </label>
+                <select
+                  value={selectedExerciseType || ""}
+                  onChange={(e) =>
+                    setSelectedExerciseType(e.target.value || null)
+                  }
+                  className="w-full px-4 py-2 text-base border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-200 focus:border-transparent rounded-xl bg-white shadow-sm"
+                >
+                  <option value="">Todos los tipos</option>
+                  {Object.entries(exerciseTypeNames).map(([key, name]) => (
+                    <option key={key} value={key}>
+                      {name}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            {/* Reset Filters Button */}
-            <button
-              onClick={resetFilters}
-              className="p-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
-            >
-              Limpiar filtros
-            </button>
+              {/* Reset Filters Button */}
+              <div className="flex items-end">
+                <button
+                  onClick={resetFilters}
+                  className="w-full mb-3 sm:w-auto px-6 py-2 text-base font-medium text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors duration-200 rounded-xl shadow-sm"
+                >
+                  Limpiar filtros
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -295,67 +432,208 @@ const ExercisesPage = ({ params }: { params: { id: string } }) => {
           )}
         </div>
       ) : (
+        // Replace the exercise card rendering section with this updated version
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredExercises.map((exercise) => (
             <div
               key={exercise.id}
-              className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+              className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow flex flex-col h-full"
             >
-              <div className="p-4">
-                <h2 className="text-xl font-semibold mb-2">{exercise.title}</h2>
-                
-                {/* Exercise Details */}
-                <div className="mb-4">
-                  {exercise.description && (
-                    <p className="text-gray-600 mb-2">{exercise.description}</p>
-                  )}
+              {selectedExercise?.id === exercise.id ? (
+                // Detailed view when exercise is selected - same card size
+                <div className="flex flex-col h-full">
+                  <div className="p-4 flex-grow">
+                    <div className="flex justify-between items-start mb-4">
+                      <h2 className="text-xl font-semibold">Uso del ejercicio</h2>
+                      <button
+                        onClick={() => setSelectedExercise(null)}
+                        className="text-gray-500 hover:text-gray-700"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M6 18L18 6M6 6l12 12"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+
+                    {loadingUsage ? (
+                      <div className="flex justify-center items-center py-8">
+                        <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-blue-500"></div>
+                      </div>
+                    ) : exerciseUsage.length === 0 ? (
+                      <div className="bg-gray-50 rounded-lg p-3 text-center mb-3">
+                        <p className="text-gray-500 text-sm">
+                          Este ejercicio no está asignado a ninguna sesión.
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="space-y-3 overflow-y-auto max-h-64 pr-1">
+                        {exerciseUsage.map((usage) => (
+                          <div
+                            key={usage.exercise_session_id}
+                            className="bg-gray-50 rounded-lg p-3 text-sm"
+                          >
+                            <div className="flex justify-between items-start gap-2 mb-2">
+                              <div>
+                                <p className="font-medium">{usage.session.name}</p>
+                                <p className="text-xs text-gray-500">
+                                  {formatDayOfWeek(usage.session.day_of_week)}
+                                </p>
+                              </div>
+                              <span
+                                className={`px-2 py-0.5 text-xs rounded-full ${
+                                  usage.treatment.is_active
+                                    ? "bg-green-100 text-green-800"
+                                    : "bg-gray-100 text-gray-800"
+                                }`}
+                              >
+                                {usage.treatment.is_active ? "Activo" : "Inactivo"}
+                              </span>
+                            </div>
+
+                            <p className="text-xs mb-1">
+                              <span className="font-bold">Paciente:</span>{" "}
+                              {usage.treatment.patient_name}
+                            </p>
+                            <p className="text-xs mb-2">
+                              <span className="font-bold">Tratamiento:</span>{" "}
+                              {formatDate(usage.treatment.start_time)} -{" "}
+                              {formatDate(usage.treatment.end_time)}
+                            </p>
+
+                            {usage.series.length > 0 && (
+                              <div>
+                                <p className="text-xs font-bold mb-1">{usage.series.length} Series:</p>
+                                <div className="overflow-x-auto">
+                                  <table className="w-full text-xs">
+                                    <thead>
+                                      <tr className="bg-gray-50">
+                                        <th className="px-2 py-1 text-left">Rep.</th>
+                                        <th className="px-2 py-1 text-left">Peso</th>
+                                        <th className="px-2 py-1 text-left">Tiempo</th>
+                                        <th className="px-2 py-1 text-left">Dist.</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      {usage.series.slice(0, 4).map((series) => (
+                                        <tr key={series.id} className="border-b border-gray-100">
+                                          <td className="px-2 py-1">{series.repetitions}</td>
+                                          <td className="px-2 py-1">{series.weight ? `${series.weight} kg` : '-'}</td>
+                                          <td className="px-2 py-1">{series.time ? `${parseInt(series.time)} seg` : '-'}</td>
+                                          <td className="px-2 py-1">{series.distance ? `${series.distance} m` : '-'}</td>
+                                        </tr>
+                                      ))}
+                                      {usage.series.length > 4 && (
+                                        <tr>
+                                          <td colSpan={5} className="px-2 py-1 text-center text-gray-500">
+                                            +{usage.series.length - 4} más
+                                          </td>
+                                        </tr>
+                                      )}
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="bg-gray-50 px-4 py-3 border-t border-gray-100 mt-auto">
+                    <button
+                      onClick={() => setSelectedExercise(null)}
+                      className="w-full py-2 bg-[#05668d] text-gray-200 rounded-xl hover:bg-[#045a7c] transition-colors"
+                    >
+                      Ver ejercicio
+                    </button>
+                  </div>
                 </div>
-                
-                {/* Images and Categories */}
-                <div className="flex flex-col gap-4">
-                  {/* Body Region */}
-                  <div className="flex items-center gap-3">
-                    <div className="w-16 h-16 relative flex-shrink-0 bg-gray-100 rounded-md overflow-hidden">
+              ) : (
+                // Default view - same card size as detailed view
+                <div className="flex flex-col h-full">
+                  {/* Images Section */}
+                  <div className="grid grid-cols-2 gap-2 p-4">
+                    <div className="relative h-40 bg-gray-100 rounded-xl overflow-hidden">
                       <Image
-                        src={bodyRegionImages[exercise.body_region] || "/images/placeholder.png"}
-                        alt={bodyRegionNames[exercise.body_region] || exercise.body_region}
+                        src={
+                          bodyRegionImages[exercise.body_region] ||
+                          "/images/placeholder.png"
+                        }
+                        alt={
+                          bodyRegionNames[exercise.body_region] ||
+                          exercise.body_region
+                        }
                         fill
                         className="object-cover"
                       />
+                      <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-2 text-sm">
+                        <p className="font-medium">
+                          {bodyRegionNames[exercise.body_region] ||
+                            exercise.body_region}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Región corporal</p>
-                      <p className="font-medium">{bodyRegionNames[exercise.body_region] || exercise.body_region}</p>
-                    </div>
-                  </div>
-                  
-                  {/* Exercise Type */}
-                  <div className="flex items-center gap-3">
-                    <div className="w-16 h-16 relative flex-shrink-0 bg-gray-100 rounded-md overflow-hidden">
+
+                    <div className="relative h-40 bg-gray-100 rounded-xl overflow-hidden">
                       <Image
-                        src={exerciseTypeImages[exercise.exercise_type] || "/images/placeholder.png"}
-                        alt={exerciseTypeNames[exercise.exercise_type] || exercise.exercise_type}
+                        src={
+                          exerciseTypeImages[exercise.exercise_type] ||
+                          "/images/placeholder.png"
+                        }
+                        alt={
+                          exerciseTypeNames[exercise.exercise_type] ||
+                          exercise.exercise_type
+                        }
                         fill
                         className="object-cover"
                       />
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Tipo de ejercicio</p>
-                      <p className="font-medium">{exerciseTypeNames[exercise.exercise_type] || exercise.exercise_type}</p>
+                      <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-2 text-sm">
+                        <p className="font-medium">
+                          {exerciseTypeNames[exercise.exercise_type] ||
+                            exercise.exercise_type}
+                        </p>
+                      </div>
                     </div>
                   </div>
+
+                  <div className="p-4 flex-grow">
+                    <h2 className="text-xl font-semibold mb-2">
+                      {exercise.title}
+                    </h2>
+
+                    {/* Exercise Details */}
+                    <div className="mb-4 overflow-y-auto max-h-24">
+                      {exercise.description && (
+                        <p className="text-gray-600 text-sm">
+                          {exercise.description}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="bg-gray-50 px-4 py-3 border-t border-gray-100 mt-auto">
+                    <button
+                      onClick={() => handleViewDetails(exercise)}
+                      className="w-full py-2 bg-[#6bc9be] text-white rounded-xl hover:bg-[#5ab9ae] transition-colors"
+                    >
+                      Ver detalles
+                    </button>
+                  </div>
                 </div>
-              </div>
-              
-              {/* Action Buttons */}
-              <div className="bg-gray-50 px-4 py-3 border-t border-gray-100">
-                <button
-                  onClick={() => router.push(`/physio-management/${params.id}/exercises/${exercise.id}`)}
-                  className="w-full py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
-                >
-                  Ver detalles
-                </button>
-              </div>
+              )}
             </div>
           ))}
         </div>
