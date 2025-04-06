@@ -269,8 +269,6 @@ else:
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 #Stripe payment
 STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
@@ -285,6 +283,13 @@ DIGITALOCEAN_ENDPOINT_URL = f"https://{DIGITALOCEAN_SPACE_NAME}.{DIGITALOCEAN_RE
 # Configuración de almacenamiento en DigitalOcean Spaces
 DEFAULT_FILE_STORAGE = "backend.custom_storages.DigitalOceanMediaStorage"
 MEDIA_URL = f"{DIGITALOCEAN_ENDPOINT_URL}/"
+
+PROFILE_PHOTOS_URL = '/media/'
+PROFILE_PHOTOS_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Create profile photos directory if it doesn't exist
+if not os.path.exists(PROFILE_PHOTOS_ROOT):
+    os.makedirs(PROFILE_PHOTOS_ROOT)
 
 
 # Aumentar límite de tamaño de archivos subidos
