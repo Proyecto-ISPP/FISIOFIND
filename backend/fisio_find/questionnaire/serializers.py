@@ -25,10 +25,23 @@ class QuestionnaireSerializer(serializers.ModelSerializer):
         # Validar los esquemas JSON
         try:
             if 'json_schema' in data:
-                json.dumps(data['json_schema'])
+                if isinstance(data['json_schema'], dict):
+                    json.dumps(data['json_schema'])  # asegurar que se puede serializar
+                else:
+                    parsed = json.loads(data['json_schema']) if isinstance(data['json_schema'], str) else json.loads(json.dumps(data['json_schema']))
+                    if not isinstance(parsed, dict):
+                        raise ValueError("json_schema debe representar un objeto JSON (dict)")
+                    data['json_schema'] = parsed
+
             if 'ui_schema' in data:
-                json.dumps(data['ui_schema'])
-        except ValueError as e:
+                if isinstance(data['ui_schema'], dict):
+                    json.dumps(data['ui_schema'])  # asegurar que se puede serializar
+                else:
+                    parsed = json.loads(data['ui_schema']) if isinstance(data['ui_schema'], str) else json.loads(json.dumps(data['ui_schema']))
+                    if not isinstance(parsed, dict):
+                        raise ValueError("ui_schema debe representar un objeto JSON (dict)")
+                    data['ui_schema'] = parsed
+        except (ValueError, TypeError, json.JSONDecodeError) as e:
             raise serializers.ValidationError(f"Error al procesar los esquemas JSON: {e}")
         return data
 
