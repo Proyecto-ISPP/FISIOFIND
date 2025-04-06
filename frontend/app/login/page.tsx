@@ -6,6 +6,7 @@ import axios from "axios";
 import Image from "next/image";
 import { getApiBaseUrl } from "@/utils/api";
 import { Eye, EyeOff } from "lucide-react";
+import Alert from '@/components/ui/Alert';
 
 function LoginPacienteForm() {
   const router = useRouter();
@@ -15,6 +16,32 @@ function LoginPacienteForm() {
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [alert, setAlert] = useState<{
+    show: boolean;
+    type: "success" | "error" | "info" | "warning";
+    message: string;
+}>({
+    show: false,
+    type: "info",
+    message: ""
+});
+
+const showAlert = (type: "success" | "error" | "info" | "warning", message: string) => {
+    setAlert({
+        show: true,
+        type,
+        message
+    });
+    // Auto-dismiss after 5 seconds
+    setTimeout(() => {
+        setAlert({
+            show: false,
+            type: "info",
+            message: ""
+        });
+    }, 5000);
+};
+
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -25,36 +52,42 @@ function LoginPacienteForm() {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setMessage("");
-    setIsSubmitting(true);
-
+    
     try {
-      const response = await axios.post(
-        `${getApiBaseUrl()}/api/app_user/login/`,
-        formData,
-        { headers: { "Content-Type": "application/json" } }
-      );
+        const response = await axios.post(`${getApiBaseUrl()}/api/app_user/login/`, {
+            username: formData.username,  // Changed from username to formData.username
+            password: formData.password,  // Changed from password to formData.password
+        });
 
-      if (response.status === 200) {
-        localStorage.setItem("token", response.data.access);
-        setMessage("Inicio de sesión exitoso");
-        setTimeout(() => {
-          router.push(redirectUrl);
-        }, 500);
-      }
-    } catch (error: any) {
-      setMessage(
-        error.response?.data?.error || "Las credenciales no son válidas"
-      );
-      console.error("Error al iniciar sesión:", error);
-    } finally {
-      setIsSubmitting(false);
+        if (response.data.access) {
+            localStorage.setItem('token', response.data.access);
+            showAlert("success", "¡Inicio de sesión exitoso!");
+            
+            // Wait for 1 second before redirecting to allow the alert to be seen
+            setTimeout(() => {
+                router.push(redirectUrl);
+            }, 1000);
+        }
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            showAlert("error", "Error en el inicio de sesión. Por favor, verifica tus credenciales.");
+        } else {
+            showAlert("error", "Error al conectar con el servidor. Por favor, inténtalo de nuevo más tarde.");
+        }
     }
-  };
+};
 
   return (
+    <div>
+            {alert.show && (
+                <Alert
+                    type={alert.type}
+                    message={alert.message}
+                    onClose={() => setAlert({ ...alert, show: false })}
+                />
+            )}
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white dark:from-neutral-900 dark:to-black py-8">
       <div className="max-w-5xl mx-auto px-4">
         <div className="text-center mb-8">
@@ -180,6 +213,7 @@ function LoginPacienteForm() {
         </div>
       </div>
     </div>
+  </div>
   );
 }
 

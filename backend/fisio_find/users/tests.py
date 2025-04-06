@@ -1,25 +1,20 @@
 from rest_framework.test import APITestCase, APIRequestFactory, APIClient
 from django.test import TestCase
-from rest_framework import status
 from django.urls import reverse
-from users.validacionFisios import validar_colegiacion
 from django.core.files.uploadedfile import SimpleUploadedFile
 from io import BytesIO
 from PIL import Image
-from users.serializers import (PatientRegisterSerializer,PatientSerializer, 
-                               PhysioRegisterSerializer, AppUserSerializer, 
-                               Specialization, PhysiotherapistSpecialization,
-                               PhysioUpdateSerializer, VideoSerializer)
+from users.serializers import (PatientRegisterSerializer, PatientSerializer,
+                               PhysioRegisterSerializer, AppUserSerializer,
+                               PhysioUpdateSerializer)
 from users.models import AppUser, Patient, Physiotherapist, Pricing
 from datetime import date, timedelta
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, MagicMock, Mock
 import json
 from django.core.exceptions import ValidationError
-from users.models import AppUser, Physiotherapist, Patient, Pricing, Video
 from datetime import datetime
 from rest_framework import serializers
-import boto3
-import uuid
+import stripe
 
 
 def get_fake_image(name="photo.jpg"):
@@ -28,6 +23,7 @@ def get_fake_image(name="photo.jpg"):
     image.save(buffer, format="JPEG")
     buffer.seek(0)
     return SimpleUploadedFile(name=name, content=buffer.read(), content_type="image/jpeg")
+
 
 class AppUserRequiredFieldsTests(APITestCase):
 
@@ -356,9 +352,9 @@ class PatientRegisterSerializerTests(APITestCase):
         serializer = PatientRegisterSerializer(data=data)
         self.assertFalse(serializer.is_valid())
         self.assertIn("dni", serializer.errors)
-    
+
     # --------------- GENDER --------------
-    
+
     def test_invalid_gender_value(self):
         data = self.get_base_data()
         data["gender"] = "X"  # Valor no válido
@@ -462,7 +458,7 @@ class PatientSerializerTests(APITestCase):
             data = self.get_valid_data()
             data["user"].pop(field)
             serializer = PatientSerializer(instance=self.patient, data=data, context={'request': self.request})
-            print(field,serializer.is_valid())
+            print(field, serializer.is_valid())
             self.assertFalse(serializer.is_valid())
             self.assertIn(field, serializer.errors.get("user", serializer.errors))
 
@@ -720,7 +716,7 @@ class PhysioUpdateSerializerTests(APITestCase):
         self.assertIn("services", serializer.errors)
 
     def test_update_specializations(self):
-        #Specialization.objects.create(name="Traumatología")
+        # Specialization.objects.create(name="Traumatología")
         data = {
             "specializations": ["Deportiva", "Traumatología"]
         }
@@ -754,6 +750,7 @@ class PhysioUpdateSerializerTests(APITestCase):
         self.assertTrue(serializer.is_valid(), serializer.errors)
         physio = serializer.save()
         self.assertTrue(physio.user.photo.name.endswith("profile.jpg"))
+
 
 class PatientProfileViewTests(APITestCase):
 
@@ -804,6 +801,7 @@ class PatientProfileViewTests(APITestCase):
         self.assertEqual(response.status_code, 400)
         self.assertIn("birth_date", response.data)
 
+
 class CustomLoginViewTests(APITestCase):
 
     def setUp(self):
@@ -841,6 +839,7 @@ class CustomLoginViewTests(APITestCase):
         self.assertEqual(response.status_code, 400)
         self.assertIn("username", response.data)
         self.assertIn("password", response.data)
+
 
 class LogoutViewTests(APITestCase):
 
@@ -1002,6 +1001,7 @@ class ReturnUserViewTests(APITestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 401)
 
+
 class ValidatePhysioRegistrationTests(APITestCase):
 
     def setUp(self):
@@ -1080,10 +1080,11 @@ class ValidatePhysioRegistrationTests(APITestCase):
         self.assertEqual(response.status_code, 400)
         self.assertIn("birth_date", response.data)
 
+
 class PhysioRegisterViewTests(APITestCase):
 
     def setUp(self):
-        self.url = reverse("physio_register") 
+        self.url = reverse("physio_register")
         self.plan, _ = Pricing.objects.get_or_create(
             name='blue',
             defaults={'price': 10, 'video_limit': 5}
@@ -1168,8 +1169,6 @@ class PhysioRegisterViewTests(APITestCase):
         self.assertEqual(response.status_code, 400)
         self.assertIn("postal_code", response.data)
 
-from unittest.mock import patch, Mock
-import stripe
 
 class ProcessPaymentViewTests(APITestCase):
 
@@ -1276,7 +1275,9 @@ class PhysioUpdateViewTests(APITestCase):
                     "id": 1,
                     "title": "Primera consulta",
                     "price": 30,
-                    "description": "Evaluaremos tu estado físico, hablaremos sobre tus molestias y realizaremos pruebas para diseñar un plan de tratamiento personalizado que se adapte a tus necesidades y estilo de vida.",
+                    "description": "Evaluaremos tu estado físico, hablaremos sobre tus molestias y realizaremos pruebas "
+                                   "para diseñar un plan de tratamiento personalizado que se adapte a tus necesidades y "
+                                   "estilo de vida.",
                     "duration": 45,
                     "tipo": "PRIMERA_CONSULTA",
                     "custom_questionnaire": {
@@ -1287,8 +1288,10 @@ class PhysioUpdateViewTests(APITestCase):
                                 {"type": "Number", "label": "Peso (kg)", "scope": "#/properties/peso"},
                                 {"type": "Number", "label": "Altura (cm)", "scope": "#/properties/altura"},
                                 {"type": "Number", "label": "Edad", "scope": "#/properties/edad"},
-                                {"type": "Control", "label": "Nivel de actividad física", "scope": "#/properties/actividad_fisica"},
-                                {"type": "Control", "label": "Motivo de la consulta", "scope": "#/properties/motivo_consulta"},
+                                {"type": "Control", "label": "Nivel de actividad física",
+                                         "scope": "#/properties/actividad_fisica"},
+                                {"type": "Control", "label": "Motivo de la consulta",
+                                         "scope": "#/properties/motivo_consulta"},
                                 {"type": "Control", "label": "¿Qué te duele?", "scope": "#/properties/q1"},
                                 {"type": "Control", "label": "¿Cómo describirías el dolor?", "scope": "#/properties/q2"}
                             ]
@@ -1386,6 +1389,7 @@ class PhysioUpdateViewTests(APITestCase):
                 response.status_code, 400,
             )
             self.assertIn("error", response.data)
+
     def test_services_as_json_string(self):
         data = {
             "services": json.dumps({
@@ -1404,8 +1408,10 @@ class PhysioUpdateViewTests(APITestCase):
                                 {"type": "Number", "label": "Peso (kg)", "scope": "#/properties/peso"},
                                 {"type": "Number", "label": "Altura (cm)", "scope": "#/properties/altura"},
                                 {"type": "Number", "label": "Edad", "scope": "#/properties/edad"},
-                                {"type": "Control", "label": "Nivel de actividad física", "scope": "#/properties/actividad_fisica"},
-                                {"type": "Control", "label": "Motivo de la consulta", "scope": "#/properties/motivo_consulta"},
+                                {"type": "Control", "label": "Nivel de actividad física",
+                                         "scope": "#/properties/actividad_fisica"},
+                                {"type": "Control", "label": "Motivo de la consulta",
+                                         "scope": "#/properties/motivo_consulta"},
                                 {"type": "Control", "label": "¿Qué te duele?", "scope": "#/properties/q1"},
                                 {"type": "Control", "label": "¿Cómo describirías el dolor?", "scope": "#/properties/q2"}
                             ]
@@ -1445,12 +1451,12 @@ class PhysioUpdateViewTests(APITestCase):
 
     def test_services_invalid_type(self):
         data = {
-            "services": 12345 
+            "services": 12345
         }
         response = self.client.put(self.url, data, format="json")
         self.assertEqual(response.status_code, 400)
         self.assertIn("services", response.data)
-    
+
     def test_missing_required_custom_elements(self):
         elements = [  # Solo uno de los necesarios
             {'type': 'Number', 'label': 'Peso (kg)', 'scope': '#/properties/peso'}
@@ -1479,7 +1485,6 @@ class PhysioUpdateViewTests(APITestCase):
         response = self.client.put(self.url, data, format="json")
         self.assertEqual(response.status_code, 400)
         self.assertIn("error", response.data)
-
 
     def test_missing_ui_schema_in_questionnaire(self):
         service = {
@@ -1526,7 +1531,6 @@ class PhysioUpdateViewTests(APITestCase):
         response = self.client.put(self.url, data, format="json")
         self.assertEqual(response.status_code, 400)
         self.assertIn("error", response.data)
-
 
     def test_invalid_tipo_value(self):
         service = {
@@ -1739,7 +1743,6 @@ class PhysioUpdateViewTests(APITestCase):
         self.assertIn("error", response.data)
 
 
-
 class PhysioCreateServiceViewTests(APITestCase):
 
     def setUp(self):
@@ -1785,7 +1788,8 @@ class PhysioCreateServiceViewTests(APITestCase):
                         {"type": "Number", "label": "Peso (kg)", "scope": "#/properties/peso"},
                         {"type": "Number", "label": "Altura (cm)", "scope": "#/properties/altura"},
                         {"type": "Number", "label": "Edad", "scope": "#/properties/edad"},
-                        {"type": "Control", "label": "Nivel de actividad física", "scope": "#/properties/actividad_fisica"},
+                        {"type": "Control", "label": "Nivel de actividad física",
+                                 "scope": "#/properties/actividad_fisica"},
                         {"type": "Control", "label": "Motivo de la consulta", "scope": "#/properties/motivo_consulta"},
                         {"type": "Control", "label": "¿Qué te duele?", "scope": "#/properties/q1"},
                         {"type": "Control", "label": "¿Cómo describirías el dolor?", "scope": "#/properties/q2"}
@@ -1979,6 +1983,7 @@ class PhysioCreateServiceViewTests(APITestCase):
         response = self.client.post(self.url, invalid, format="json")
         self.assertEqual(response.status_code, 400)
 
+
 class PhysioUpdateSpecificServiceTests(APITestCase):
 
     def setUp(self):
@@ -2031,7 +2036,8 @@ class PhysioUpdateSpecificServiceTests(APITestCase):
                         {"type": "Number", "label": "Peso (kg)", "scope": "#/properties/peso"},
                         {"type": "Number", "label": "Altura (cm)", "scope": "#/properties/altura"},
                         {"type": "Number", "label": "Edad", "scope": "#/properties/edad"},
-                        {"type": "Control", "label": "Nivel de actividad física", "scope": "#/properties/actividad_fisica"},
+                        {"type": "Control", "label": "Nivel de actividad física",
+                                 "scope": "#/properties/actividad_fisica"},
                         {"type": "Control", "label": "Motivo de la consulta", "scope": "#/properties/motivo_consulta"},
                         {"type": "Control", "label": "¿Qué te duele?", "scope": "#/properties/q1"},
                         {"type": "Control", "label": "¿Cómo describirías el dolor?", "scope": "#/properties/q2"}
@@ -2253,6 +2259,7 @@ class PhysioDeleteServiceTests(APITestCase):
         response = self.client.delete(self.url(1))
         self.assertIn(response.status_code, [401, 403])
 
+
 class PatientRegisterViewTests(APITestCase):
 
     def setUp(self):
@@ -2389,7 +2396,7 @@ class ValidatorTests(APITestCase):
         nombre_completo = "Mª DEL MAR GÁLVEZ CLEMENTE"
         num_colegiado = "20"
         self.assertTrue(validar_colegiacion(nombre_completo,num_colegiado, comunidad_autonoma))
-        
+
     def test_ANDALUCIA_valid_4(self):
         comunidad_autonoma = "ANDALUCIA"
         nombre_completo = "ESTEFANÍA RAMA MORENO"
@@ -2401,7 +2408,7 @@ class ValidatorTests(APITestCase):
         nombre_completo = "ALFONSO REINA MARTÍNEZ"
         num_colegiado = "13092"
         self.assertFalse(validar_colegiacion(nombre_completo,num_colegiado, comunidad_autonoma))
-        
+
     def test_ANDALUCIA_INvalid_2(self):
         comunidad_autonoma = "ANDALUCIA"
         nombre_completo = "PABLO CARTAS MARTÍNEZ"
@@ -2501,14 +2508,14 @@ class ValidatorTests(APITestCase):
         nombre_completo = "Carlotta Elisabeth Gelabert Doran"
         num_colegiado = "1233"
         self.assertFalse(validar_colegiacion(nombre_completo,num_colegiado, comunidad_autonoma))
-        
+
     # TESTS CANARIAS
     def test_CANARIAS_valid_1(self):
         comunidad_autonoma = "CANARIAS"
         nombre_completo = "ANTONIO JESUS FERNANDEZ VILAR"
         num_colegiado = "7"
         self.assertTrue(validar_colegiacion(nombre_completo,num_colegiado, comunidad_autonoma))
-        
+
     def test_CANARIAS_valid_2(self):
         comunidad_autonoma = "CANARIAS"
         nombre_completo = "UTE ROSS"
@@ -2650,7 +2657,7 @@ class ValidatorTests(APITestCase):
         nombre_completo = "JUAN MANUEL ACOSTA RODRÍGUEZ"
         num_colegiado = "277"
         self.assertFalse(validar_colegiacion(nombre_completo,num_colegiado, comunidad_autonoma))
-        
+
     # TESTS NAVARRA
     def test_NAVARRA_valid_1(self):
         comunidad_autonoma = "NAVARRA"
@@ -2689,7 +2696,7 @@ class ValidatorTests(APITestCase):
         nombre_completo = "VICENTA FORTUNY ALMUDÉVER"
         num_colegiado = "4"
         self.assertFalse(validar_colegiacion(nombre_completo,num_colegiado, comunidad_autonoma))
-"""
+
 
 class VideoModelTests(TestCase):
     def setUp(self):
@@ -2736,7 +2743,6 @@ class VideoModelTests(TestCase):
 
     # --- Pruebas de campos y relaciones ---
     def test_video_creation(self):
-        """Verifica que un video se crea correctamente con los campos básicos."""
         self.assertEqual(self.video.title, "Video de prueba")
         self.assertEqual(self.video.description, "Descripción del video")
         self.assertEqual(self.video.file_key, "videos/test_video.mp4")
@@ -2744,7 +2750,6 @@ class VideoModelTests(TestCase):
         self.assertIsInstance(self.video.uploaded_at, datetime)
 
     def test_file_key_unique_constraint(self):
-        """Verifica que no se puedan crear dos videos con el mismo file_key."""
         with self.assertRaises(Exception):  # Puede ser IntegrityError o ValidationError según la DB
             Video.objects.create(
                 physiotherapist=self.physio,
@@ -2753,17 +2758,14 @@ class VideoModelTests(TestCase):
             )
 
     def test_many_to_many_patients(self):
-        """Verifica que se puedan asociar pacientes a un video."""
         self.video.patients.add(self.patient)
         self.assertIn(self.patient, self.video.patients.all())
         self.assertIn(self.video, self.patient.videos.all())
 
     def test_blank_patients(self):
-        """Verifica que el campo patients puede estar vacío."""
         self.assertEqual(self.video.patients.count(), 0)  # Por defecto está vacío
 
     def test_blank_description(self):
-        """Verifica que description puede ser blank o null."""
         video = Video.objects.create(
             physiotherapist=self.physio,
             title="Sin descripción",
@@ -2772,19 +2774,16 @@ class VideoModelTests(TestCase):
         self.assertIsNone(video.description)
 
     def test_on_delete_cascade(self):
-        """Verifica que eliminar un fisioterapeuta elimina sus videos."""
         video_id = self.video.id
         self.physio.delete()
         self.assertFalse(Video.objects.filter(id=video_id).exists())
 
     # --- Pruebas de métodos ---
     def test_str_method(self):
-        """Verifica que __str__ devuelve el título del video."""
         self.assertEqual(str(self.video), "Video de prueba")
 
     @patch('boto3.client')
     def test_delete_from_storage_success(self, mock_boto_client):
-        """Verifica que delete_from_storage elimina el archivo de S3."""
         mock_s3 = MagicMock()
         mock_boto_client.return_value = mock_s3
         self.video.delete_from_storage()
@@ -2795,7 +2794,6 @@ class VideoModelTests(TestCase):
 
     @patch('boto3.client')
     def test_delete_from_storage_failure(self, mock_boto_client):
-        """Verifica que delete_from_storage maneja excepciones correctamente."""
         mock_s3 = MagicMock()
         mock_s3.delete_object.side_effect = Exception("Error de S3")
         mock_boto_client.return_value = mock_s3
@@ -2804,13 +2802,11 @@ class VideoModelTests(TestCase):
             mock_print.assert_called_once_with("Error al eliminar el archivo de Spaces: Error de S3")
 
     def test_file_url_property(self):
-        """Verifica que file_url genera la URL correcta."""
         expected_url = "https://fisiofind-repo.fra1.digitaloceanspaces.com/videos/test_video.mp4"
         self.assertEqual(self.video.file_url, expected_url)
 
     # --- Pruebas adicionales ---
     def test_max_length_title(self):
-        """Verifica que el título no exceda los 255 caracteres."""
         long_title = "a" * 256
         with self.assertRaises(ValidationError):
             video = Video(
@@ -2821,7 +2817,6 @@ class VideoModelTests(TestCase):
             video.full_clean()  # Lanza ValidationError si excede max_length
 
     def test_max_length_file_key(self):
-        """Verifica que file_key no exceda los 500 caracteres."""
         long_key = "a" * 501
         with self.assertRaises(ValidationError):
             video = Video(
@@ -2863,7 +2858,6 @@ class VideoSerializerTests(APITestCase):
         )
 
     def get_valid_data(self):
-        """Datos válidos base para las pruebas."""
         video_file = SimpleUploadedFile("test.mp4", b"file_content", content_type="video/mp4")
         return {
             "title": "Test Video",
@@ -2874,7 +2868,6 @@ class VideoSerializerTests(APITestCase):
 
     # --- Pruebas de campos y serialización ---
     def test_read_only_file_key(self):
-        """Verifica que file_key no se pueda modificar."""
         data = self.get_valid_data()
         data["file_key"] = "videos/hack.mp4"  # Intento de sobrescribir
         serializer = VideoSerializer(data=data, context={"request": self.request})
@@ -2883,20 +2876,17 @@ class VideoSerializerTests(APITestCase):
         self.assertNotEqual(video.file_key, "videos/hack.mp4")  # Debe ignorar el valor enviado
 
     def test_file_url_serialization(self):
-        """Verifica que file_url se serializa correctamente."""
         serializer = VideoSerializer(instance=self.video)
         expected_url = f"https://fisiofind-repo.fra1.digitaloceanspaces.com/videos/1/initial.mp4"  # Ajusta según settings
         self.assertEqual(serializer.data["file_url"], expected_url)
 
     # --- Pruebas de validación ---
     def test_validate_file_valid(self):
-        """Verifica que un archivo .mp4 pasa la validación."""
         data = self.get_valid_data()
         serializer = VideoSerializer(data=data, context={"request": self.request})
         self.assertTrue(serializer.is_valid(), serializer.errors)
 
     def test_validate_file_invalid_extension(self):
-        """Verifica que un archivo no .mp4 falla la validación."""
         invalid_file = SimpleUploadedFile("test.jpg", b"file_content", content_type="image/jpeg")
         data = self.get_valid_data()
         data["file"] = invalid_file
@@ -2908,7 +2898,6 @@ class VideoSerializerTests(APITestCase):
     # --- Pruebas de creación ---
     @patch('boto3.client')
     def test_create_success(self, mock_boto_client):
-        """Verifica que se crea un video correctamente."""
         mock_s3 = MagicMock()
         mock_boto_client.return_value = mock_s3
         data = self.get_valid_data()
@@ -2922,7 +2911,6 @@ class VideoSerializerTests(APITestCase):
 
     @patch('boto3.client')
     def test_create_upload_failure(self, mock_boto_client):
-        """Verifica que falla si la subida a S3 falla."""
         mock_s3 = MagicMock()
         mock_s3.upload_fileobj.side_effect = Exception("Error de red")
         mock_boto_client.return_value = mock_s3
@@ -2936,7 +2924,6 @@ class VideoSerializerTests(APITestCase):
     # --- Pruebas de actualización ---
     @patch('boto3.client')
     def test_update_metadata_only(self, mock_boto_client):
-        """Verifica que se pueden actualizar título y descripción sin cambiar el archivo."""
         data = {"title": "Nuevo título", "description": "Nueva descripción"}
         serializer = VideoSerializer(instance=self.video, data=data, context={"request": self.request}, partial=True)
         self.assertTrue(serializer.is_valid(), serializer.errors)
@@ -2948,7 +2935,6 @@ class VideoSerializerTests(APITestCase):
 
     @patch('boto3.client')
     def test_update_with_new_file(self, mock_boto_client):
-        """Verifica que se actualiza el archivo correctamente."""
         mock_s3 = MagicMock()
         mock_boto_client.return_value = mock_s3
         new_file = SimpleUploadedFile("new.mp4", b"new_content", content_type="video/mp4")
@@ -2966,7 +2952,6 @@ class VideoSerializerTests(APITestCase):
 
     @patch('boto3.client')
     def test_update_delete_failure(self, mock_boto_client):
-        """Verifica que falla si no se puede eliminar el archivo anterior."""
         mock_s3 = MagicMock()
         mock_s3.delete_object.side_effect = Exception("Error al borrar")
         mock_boto_client.return_value = mock_s3
@@ -2980,7 +2965,6 @@ class VideoSerializerTests(APITestCase):
 
     # --- Pruebas de casos límite ---
     def test_create_without_patients(self):
-        """Verifica que se puede crear un video sin pacientes."""
         data = self.get_valid_data()
         del data["patients"]
         with patch('boto3.client') as mock_boto_client:
@@ -2992,9 +2976,9 @@ class VideoSerializerTests(APITestCase):
             self.assertEqual(video.patients.count(), 0)
 
     def test_invalid_patient_id(self):
-        """Verifica que falla si se pasa un ID de paciente inexistente."""
         data = self.get_valid_data()
         data["patients"] = [999]  # ID inexistente
         serializer = VideoSerializer(data=data, context={"request": self.request})
         self.assertFalse(serializer.is_valid())
         self.assertIn("patients", serializer.errors)
+"""

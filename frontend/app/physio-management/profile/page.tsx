@@ -6,9 +6,11 @@ import { Camera, Plus, Trash2, Edit, Save, StarIcon, Film } from 'lucide-react';
 import ScheduleCalendar from "@/components/ui/ScheduleCalendar";
 import { getApiBaseUrl } from "@/utils/api";
 import { GradientButton } from "@/components/ui/gradient-button";
-import Link from "next/link"; 
+import Link from "next/link";
+import styles from '@/components/ratings.module.css';
 import Alert from "@/components/ui/Alert";
 import ConfirmModal from "@/components/ui/ConfirmModal";
+
 
 const getAuthToken = () => {
     return localStorage.getItem("token"); // Obtiene el token JWT
@@ -125,6 +127,13 @@ const FisioProfile = () => {
         serviceIndex: null
     });
 
+    const [hasRated, setHasRated] = useState<boolean>(false);
+    const [rating, setRating] = useState<{ id: number; punctuation: number; opinion: string } | null>(null);
+    const [showRatingForm, setShowRatingForm] = useState<boolean>(false);
+    const [newRating, setNewRating] = useState<{ punctuation: number; opinion: string }>({ punctuation: 5, opinion: "" });
+
+    const [confirmRatingDelete, setConfirmRatingDelete] = useState<boolean>(false);
+
     useEffect(() => {
         setIsClient(true);
     }, []);
@@ -142,11 +151,37 @@ const FisioProfile = () => {
 
     useEffect(() => {
         fetchFisioProfile();
+        checkIfPhysioHasRated();
         return () => {
             if (profile.user.photo && profile.user.photo.startsWith('blob:')) {
                 URL.revokeObjectURL(profile.user.photo);
             }
         };
+    }, [token, isClient]);
+
+    useEffect(() => {
+        const fetchRating = async () => {
+            if (!token) return;
+
+            try {
+                const response = await axios.get(`${getApiBaseUrl()}/api/ratings/my-rating/`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+
+                if (response.data) {
+                    setHasRated(true);
+                    setRating(response.data);
+                } else {
+                    setHasRated(false);
+                }
+            } catch (error) {
+                console.error("Error fetching rating:", error);
+            }
+        };
+
+        if (isClient && token) {
+            fetchRating();
+        }
     }, [token, isClient]);
 
     const fetchFisioProfile = async () => {
@@ -348,8 +383,110 @@ const FisioProfile = () => {
         }
     };
 
+    const handleSubmitRating = async () => {
+        try {
+            if (!newRating.opinion.trim()) {
+                showAlert("error", "Por favor, proporciona una opinión.");
+                return;
+            }
 
+            if (newRating.opinion.trim().length > 140) {
+                showAlert("error", "La opinión no puede exceder los 140 caracteres.");
+                return;
+            }
 
+            const payload = {
+                punctuation: newRating.punctuation,
+                opinion: newRating.opinion,
+                physiotherapist: profile.user.user_id,
+            };
+
+            if (hasRated && rating) {
+                await axios.put(`${getApiBaseUrl()}/api/ratings/update/${rating.id}/`, payload, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+            } else {
+                await axios.post(`${getApiBaseUrl()}/api/ratings/create/`, payload, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+            }
+
+            setShowRatingForm(false);
+            setHasRated(true);
+        
+            if (newRating.punctuation >= 3) {
+                showAlert("success", "¡Gracias por valorar nuestra app!");
+            } else {
+                showAlert("success", "Valoración enviada correctamente.");
+            }
+                        
+            // Reload the page after successful submission
+            window.location.reload();
+        } catch (error) {
+            console.error("Error submitting rating:", error);
+            if (axios.isAxiosError(error) && error.response) {
+                showAlert("error", `Error: ${JSON.stringify(error.response.data)}`);
+            } else {
+                showAlert("error", "Error al enviar la valoración. Por favor, inténtalo de nuevo más tarde.");
+            }
+        }
+    };
+
+    const handleDeleteRating = async () => {
+        if (!rating) return;
+        setConfirmRatingDelete(true);
+    };
+
+    const handleConfirmRatingDelete = async () => {
+        try {
+            await axios.delete(`${getApiBaseUrl()}/api/ratings/delete/${rating.id}/`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            showAlert("success", "Valoración eliminada correctamente.");
+            setHasRated(false);
+            setRating(null);
+            fetchFisioProfile();
+        } catch (error) {
+            console.error("Error deleting rating:", error);
+            if (axios.isAxiosError(error) && error.response) {
+                showAlert("error", `Error: ${JSON.stringify(error.response.data)}`);
+            } else {
+                showAlert("error", "Error al eliminar la valoración. Por favor, inténtalo de nuevo más tarde.");
+            }
+        } finally {
+            setConfirmRatingDelete(false);
+        }
+    };
+
+    const checkIfPhysioHasRated = async () => {
+      const token = getAuthToken();
+      if (!token) {
+        setHasRated(false);
+        return;
+      }
+
+      try {
+        const response = await axios.get(`${getApiBaseUrl()}/api/ratings/has-rated/`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.data && response.data.has_rated) {
+          setHasRated(true);
+        } else {
+          setHasRated(false);
+        }
+      } catch (err) {
+        setHasRated(false);
+        if (axios.isAxiosError(err) && err.response) {
+            showAlert("error", `Error: ${JSON.stringify(err.response.data)}`);
+        } else {
+            showAlert("error", "Error al comprobar si ya has valorado la aplicación.");
+        }
+      }
+    };
+    
 
     const getScheduleSummary = () => {
         const daysOfWeek = {
@@ -1003,6 +1140,26 @@ const FisioProfile = () => {
     };
 
 
+    const renderStars = (punctuation: number) => {
+        const stars = [];
+        for (let i = 0; i < 5; i++) {
+          stars.push(
+            <svg 
+              key={i} 
+              className={styles.star}
+              fill={i < punctuation ? "currentColor" : "none"} 
+              stroke={i < punctuation ? "none" : "currentColor"}
+              viewBox="0 0 20 20" 
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+            >
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+            </svg>
+          );
+        }
+        return stars;
+      };
 
     if (loading) {
         return (
@@ -1070,6 +1227,97 @@ const FisioProfile = () => {
                         >
                             Editar Horario
                         </GradientButton>
+                    </div>
+
+                    {/* Sección de valoración */}
+                    <div className="space-y-4 mt-8">
+                        <h3 className="text-lg font-semibold">Tu valoración de la App</h3>
+                        {hasRated && rating ? (
+                        <div className="border rounded-2xl p-4">
+                            <div className="flex justify-between items-center">
+                                <div>
+                                    <p className="font-semibold">Tu valoración:</p>
+                                    <div className={styles.stars}>
+                                        {renderStars(rating.punctuation)}
+                                    </div>
+                                    <p className="text-sm text-white">
+                                        {rating.opinion.split(' ')[0].length > 10
+                                            ? rating.opinion.slice(0, 10).concat("...")
+                                            : rating.opinion.split(' ').slice(0, 5).join(' ').concat("...")}
+                                    </p>
+                                </div>
+                                <div className="flex space-x-2">
+                                    <GradientButton
+                                        variant="edit"
+                                        onClick={() => {
+                                            setNewRating({ punctuation: rating.punctuation, opinion: rating.opinion });
+                                            setShowRatingForm(true);
+                                        }}
+                                    >
+                                        <Edit className="w-4 h-4" />
+                                    </GradientButton>
+                                    <GradientButton
+                                        variant="danger"
+                                        onClick={handleDeleteRating}
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                    </GradientButton>
+                                </div>
+                            </div>
+                        </div>
+                        ) : (
+                        <div className={styles.rateButtonContainer}>
+                          <GradientButton 
+                            onClick={() => setShowRatingForm(true)}
+                            className="my-4 mx-2"
+                          >
+                             <span className="mx-2">¿Te gusta nuestra app? ¡Valóranos!</span>
+                          </GradientButton>
+                        </div>
+                        )}
+
+                        {showRatingForm && (
+                            <div className="border rounded-2xl p-4">
+                                <h4 className="font-semibold mb-2">{hasRated ? "Editar valoración" : "Nueva valoración"}</h4>
+                                <div className="flex items-center mb-2">
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                        <svg
+                                            key={star}
+                                            onClick={() => setNewRating((prev) => ({ ...prev, punctuation: star }))}
+                                            className={`w-6 h-6 cursor-pointer ${star <= newRating.punctuation ? "text-[#22C55E]" : "text-gray-300"}`}
+                                            fill="currentColor"
+                                            viewBox="0 0 20 20"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                        </svg>
+                                    ))}
+                                </div>
+                                <textarea
+                                    className={`w-full border rounded-md p-2 text-gray-800`}
+                                    placeholder="Escribe tu opinión..."
+                                    value={newRating.opinion}
+                                    onChange={(e) => setNewRating((prev) => ({ ...prev, opinion: e.target.value }))}
+                                />
+                                <div className="flex justify-end space-x-2 mt-2">
+                                    <GradientButton
+                                        variant="grey"
+                                        onClick={() => setShowRatingForm(false)}
+                                    >
+                                        Cancelar
+                                    </GradientButton>
+                                    <GradientButton
+                                        variant="edit"
+                                        onClick={async () => {
+                                            await handleSubmitRating();
+                                            fetchFisioProfile(); // Refresh the page data after submitting the form
+                                        }}
+                                    >
+                                        Guardar
+                                    </GradientButton>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -1237,27 +1485,28 @@ const FisioProfile = () => {
                                 </div>
                             )}
                         </div>
-                        <div>
 
-                        <GradientButton
-                            variant="edit"
-                            className="mt-8 w-full py-4 px-6 bg-gradient-to-r from-[#1E5ACD] to-[#3a6fd8] text-white font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center"
-                        >
-                            <Save size={18} className="mr-2" />
-                            Actualizar Perfil
-                        </GradientButton>
-                        <Link href="/physio-management/video" passHref>
+                        <div>
                             <GradientButton
                                 variant="edit"
-                                className="w-full py-2 px-4 bg-gradient-to-r from-[#1E5ACD] to-[#3a6fd8] text-white font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center"
+                                className="mt-8 w-full py-4 px-6 bg-gradient-to-r from-[#1E5ACD] to-[#3a6fd8] text-white font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center"
                             >
-                                <Film size={22} className="mr-2" />
-                                Subir vídeo
+                                <Save size={18} className="mr-2" />
+                                Actualizar Perfil
                             </GradientButton>
-                        </Link>
+                            <Link href="/physio-management/video" passHref>
+                                <GradientButton
+                                    variant="edit"
+                                    className="w-full py-2 px-4 bg-gradient-to-r from-[#1E5ACD] to-[#3a6fd8] text-white font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center"
+                                >
+                                    <Film size={22} className="mr-2" />
+                                    Subir vídeo
+                                </GradientButton>
+                            </Link>
                         </div>
                     </form>
                 </div>
+
 
                 {/* Modal para añadir/editar servicios */}
                 {showServiceModal && (
@@ -1314,11 +1563,18 @@ const FisioProfile = () => {
                     </div>
                 )}
             </div>
+
             <ConfirmModal
             isOpen={confirmModal.isOpen}
             message="¿Estás seguro de que deseas eliminar este servicio?"
             onConfirm={handleConfirmDelete}
             onCancel={() => setConfirmModal({ isOpen: false, serviceIndex: null })}
+            />
+            <ConfirmModal
+                isOpen={confirmRatingDelete}
+                message="¿Estás seguro de que deseas eliminar tu valoración de la app?"
+                onConfirm={handleConfirmRatingDelete}
+                onCancel={() => setConfirmRatingDelete(false)}
             />
             {alert.show && (
             <Alert
@@ -1327,8 +1583,9 @@ const FisioProfile = () => {
                 onClose={() => setAlert({ ...alert, show: false })}
                 duration={5000}
             />
-        )}
-        </div>
+            )}
+
+      </div>
     );
 };
 

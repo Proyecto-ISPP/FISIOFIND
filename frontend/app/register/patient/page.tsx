@@ -6,6 +6,7 @@ import axios from "axios";
 import Image from "next/image";
 import { getApiBaseUrl } from "@/utils/api";
 import { Eye, EyeOff, Info } from "lucide-react";
+import Alert from '@/components/ui/Alert';
 
 interface FormData {
   username: string;
@@ -15,7 +16,7 @@ interface FormData {
   first_name: string;
   last_name: string;
   dni: string;
-  phone_number: string;
+  phone_number?: string;
   postal_code: string;
   gender: string;
   birth_date: string;
@@ -26,7 +27,7 @@ const GENDER_OPTIONS = [
   { value: "M", label: "Masculino" },
   { value: "F", label: "Femenino" },
   { value: "O", label: "Otro" },
-  { value: "ND", label: "Prefiero no decirlo" },
+  { value: "P", label: "Prefiero no decirlo" },
 ];
 
 // Componente reutilizable para los campos del formulario
@@ -152,6 +153,30 @@ const PatientRegistrationForm = () => {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const [alert, setAlert] = useState<{
+    show: boolean;
+    type: "success" | "error" | "info" | "warning";
+    message: string;
+  }>({
+    show: false,
+    type: "info",
+    message: ""
+  });
+
+  const showAlert = (type: "success" | "error" | "info" | "warning", message: string) => {
+    setAlert({
+      show: true,
+      type,
+      message
+    });
+    setTimeout(() => {
+      setAlert({
+        show: false,
+        type: "info",
+        message: ""
+      });
+    }, 5000);
+  };
 
   React.useEffect(() => {
     setIsClient(true);
@@ -222,10 +247,10 @@ const PatientRegistrationForm = () => {
         newErrors.dni = "Formato de DNI no válido";
         isValid = false;
       }
-      if (!formData.phone_number.trim()) {
-        newErrors.phone_number = "El teléfono es obligatorio";
-        isValid = false;
-      } else if (!/^\d{9}$/.test(formData.phone_number)) {
+      if (
+        formData.phone_number.trim() !== "" &&
+        !/^\d{9}$/.test(formData.phone_number)
+      ) {
         newErrors.phone_number = "Número de teléfono no válido";
         isValid = false;
       }
@@ -260,59 +285,49 @@ const PatientRegistrationForm = () => {
     setCurrentStep((prev) => prev - 1);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setErrors({});
-
+  
+    // Create a new object with only the fields the server expects
+    const requestData = { ...formData };
+    
+    // Remove phone_number if it's empty
+    if (!requestData.phone_number.trim()) {
+      delete requestData.phone_number;
+    }
+    
+    // Remove confirm_password since the server doesn't expect it
+    delete requestData.confirm_password;
+  
     try {
       const response = await axios.post(
         `${getApiBaseUrl()}/api/app_user/patient/register/`,
-        formData,
+        requestData,
         { headers: { "Content-Type": "application/json" } }
       );
+
       if (response.status === 201) {
+        showAlert("success", "¡Registro exitoso! Iniciando sesión...");
+        
+        // Auto login after registration
         const loginResponse = await axios.post(
           `${getApiBaseUrl()}/api/app_user/login/`,
-          {
-            username: formData.username,
-            password: formData.password,
-          },
+          { username: formData.username, password: formData.password },
           { headers: { "Content-Type": "application/json" } }
         );
+
         if (loginResponse.status === 200) {
-          if (isClient) {
-            localStorage.setItem("token", loginResponse.data.access);
+          localStorage.setItem("token", loginResponse.data.access);
+          setTimeout(() => {
             router.push("/");
-          } else {
-            console.error("Error al iniciar sesión", loginResponse.data);
-          }
-        } else {
-          console.error("Error al registrar usuario", response.data);
-          setErrors(response.data);
+          }, 1000);
         }
       }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const responseData = error.response?.data;
-        if (responseData) {
-          console.log("Error en el registro", responseData);
-          setErrors(responseData);
-
-          // Verificar si hay errores en campos del paso 1 y redirigir a ese paso
-          if (currentStep > 1) {
-            const step1Fields = ["username", "email", "password"];
-            const hasStep1Error = step1Fields.some(
-              (field) => responseData[field]
-            );
-            if (hasStep1Error) {
-              setCurrentStep(1);
-            }
-          }
-        }
-      } else {
-        console.error("Error inesperado:", error);
-        setErrors({ general: "Ocurrió un error inesperado" });
+    } catch (error: any) {
+      if (axios.isAxiosError(error) && error.response) {
+        showAlert("error", "Error en el registro. Por favor, verifica tus datos.");
+        setErrors(error.response.data);
       }
     } finally {
       setIsSubmitting(false);
@@ -320,6 +335,14 @@ const PatientRegistrationForm = () => {
   };
 
   return (
+    <div>
+      {alert.show && (
+        <Alert
+          type={alert.type}
+          message={alert.message}
+          onClose={() => setAlert({ ...alert, show: false })}
+        />
+      )}
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white dark:from-neutral-900 dark:to-black py-8">
       <div className="max-w-5xl mx-auto px-4">
         <div className="text-center mb-8">
@@ -459,7 +482,8 @@ const PatientRegistrationForm = () => {
                     name="phone_number"
                     label="Número de teléfono"
                     type="tel"
-                    value={formData.phone_number}
+                    required={false}
+                    value={formData.phone_number || ""}
                     onChange={handleChange}
                     error={errors.phone_number}
                   />
@@ -555,6 +579,7 @@ const PatientRegistrationForm = () => {
         </div>
       </div>
     </div>
+  </div>
   );
 };
 

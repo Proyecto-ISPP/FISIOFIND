@@ -1,22 +1,18 @@
 from collections import defaultdict
-from datetime import datetime, timedelta
-from rest_framework import generics
+from datetime import datetime, timedelta, timezone
 from rest_framework.filters import SearchFilter, OrderingFilter
 from appointment.models import Appointment, Physiotherapist, Patient
 from appointment.serializers import AppointmentSerializer
 from rest_framework.permissions import IsAuthenticated
 from payment.views import cancel_payment_patient, cancel_payment_pyshio, create_payment_setup
 from users.permissions import IsPhysiotherapist, IsPatient, IsPhysioOrPatient
-from users.permissions import IsAdmin
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 from django.core.exceptions import ValidationError
-from rest_framework.views import APIView
 from django.utils.timezone import make_aware, is_aware
 from django.utils.dateparse import parse_datetime
-from datetime import datetime, timezone, timedelta
 from appointment.emailUtils import send_appointment_email
 from django.core import signing
 from django.core.signing import BadSignature, SignatureExpired
@@ -33,6 +29,7 @@ class StandardResultsSetPagination(PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 100
 
+
 def update_schedule(data):
     if isinstance(data, Appointment):
         physio_id = data.physiotherapist.id
@@ -40,11 +37,11 @@ def update_schedule(data):
         physio_id = data.get('physiotherapist')
     if not physio_id:
         return Response({"error": "Debes proporcionar un ID de fisioterapeuta"}, status=status.HTTP_400_BAD_REQUEST)
-    
+
     physiotherapist = Physiotherapist.objects.get(id=physio_id)
     if not physiotherapist:
         return Response({"error": "Fisioterapeuta no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-    
+
     current_schedule = physiotherapist.schedule
     if not current_schedule:
         return Response({"error": "No se ha definido un horario para este fisioterapeuta"}, status=status.HTTP_404_NOT_FOUND)
@@ -70,7 +67,7 @@ def update_schedule(data):
 @permission_classes([IsAuthenticated, IsPatient])
 def create_appointment_patient(request):
     patient = request.user.patient
-    
+
     weekly_days = {
         "monday": "lunes",
         "tuesday": "martes",
@@ -89,21 +86,21 @@ def create_appointment_patient(request):
         physiotherapist = Physiotherapist.objects.get(id=data['physiotherapist'])
     except Physiotherapist.DoesNotExist:
         return Response({"error": "Fisioterapeuta no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-    
+
     schedule = physiotherapist.schedule
     weekly_schedule = schedule.get('weekly_schedule', {})
     exceptions = schedule.get('exceptions', {})
-    
+
     selected_service = data.get('service',{})
     if selected_service == None or selected_service == {}:
         return Response({"error": "Debes de seleccionar un servicio"}, status=status.HTTP_400_BAD_REQUEST)
-    
+
     physio_services = physiotherapist.services
     try:
         selected_service = validate_service_with_questionary(selected_service, physio_services)
     except Exception:
         return Response({"error": "Debes de enviar un cuestionario válido"}, status=status.HTTP_400_BAD_REQUEST)
-    
+
     # Parsear fechas de la solicitud
     start_time = parse_datetime(data['start_time'])
     if not is_aware(start_time):
@@ -156,7 +153,6 @@ def create_appointment_patient(request):
             patient=appointment.patient,
             appointment=appointment
         )
-        
 
         return Response({'appointment_data': serializer.data, 'payment_data': payment_data}, status=status.HTTP_201_CREATED)
 
@@ -189,7 +185,7 @@ def create_appointment_physio(request):
             patient=appointment.patient,
             appointment=appointment
         )
-       
+
         return Response(AppointmentSerializer(appointment).data, status=status.HTTP_201_CREATED)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -269,131 +265,147 @@ def get_physio_schedule_by_id(request, pk):
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated, IsPhysiotherapist])
 def edit_weekly_schedule(request):
-    # Obtener el Physiotherapist asociado al usuario autenticado
-    physiotherapist = request.user.physio
+    try:
+        # Obtener el Physiotherapist asociado al usuario autenticado
+        physiotherapist = request.user.physio
 
-    # Obtener el schedule existente
-    current_schedule = physiotherapist.schedule or {
-        "weekly_schedule": {"monday": [], "tuesday": [], "wednesday": [], "thursday": [], "friday": [], "saturday": [], "sunday": []},
-        "exceptions": {},
-        "appointments": []
-    }
-
-    # Obtener los datos del cuerpo de la solicitud
-    data = request.data['schedule']
-
-    # Validar la estructura del weekly_schedule
-    if not isinstance(data, dict) or 'weekly_schedule' not in data:
-        return Response({"error": "Debe enviar un objeto JSON con el campo 'weekly_schedule'."}, status=status.HTTP_400_BAD_REQUEST)
-
-    weekly_schedule = data['weekly_schedule']
-    if not isinstance(weekly_schedule, dict):
-        return Response({"error": "weekly_schedule debe ser un diccionario."}, status=status.HTTP_400_BAD_REQUEST)
-    valid_days = ['monday', 'tuesday', 'wednesday',
-                    'thursday', 'friday', 'saturday', 'sunday']
-    for day, schedules in weekly_schedule.items():
-        if day.lower() not in valid_days:
-            return Response({"error": f"{day} no es un día válido. Usa: {', '.join(valid_days)}."}, status=status.HTTP_400_BAD_REQUEST)
-        if not isinstance(schedules, list):
-            return Response({"error": f"Los horarios para {day} deben ser una lista."}, status=status.HTTP_400_BAD_REQUEST)
-        for schedule in schedules:
-            if not isinstance(schedule, dict) or 'start' not in schedule or 'end' not in schedule:
-                return Response({"error": f"El horario {schedule} no es válido. Debe ser un objeto con 'start' y 'end'."}, status=status.HTTP_400_BAD_REQUEST)
-            start, end = schedule['start'], schedule['end']
-            if not _is_valid_time(start) or not _is_valid_time(end):
-                return Response({"error": f"Los horarios {start} o {end} no son válidos. Usa formato 'HH:MM'."}, status=status.HTTP_400_BAD_REQUEST)
-            if not _is_valid_time_range(start, end):
-                return Response({"error": f"El rango {start}-{end} no es válido. La hora de inicio debe ser anterior a la de fin."}, status=status.HTTP_400_BAD_REQUEST)
-            
-    # Actualizar solo el weekly_schedule en el schedule existente
-    current_schedule['weekly_schedule'] = weekly_schedule
-
-
-    # Validar la estructura de exceptions
-    if not isinstance(data, dict) or 'exceptions' not in data:
-        return Response({"error": "Debe enviar un objeto JSON con el campo 'exceptions'."}, status=status.HTTP_400_BAD_REQUEST)
-
-    exceptions = data['exceptions']
-    if not isinstance(exceptions, dict):
-        return Response({"error": "exceptions debe ser un diccionario."}, status=status.HTTP_400_BAD_REQUEST)
-
-    weekday_map = {
-        0: "monday",
-        1: "tuesday",
-        2: "wednesday",
-        3: "thursday",
-        4: "friday",
-        5: "saturday",
-        6: "sunday"
-    }
-
-    for date_str, blocks in exceptions.items():
-        try:
-            date_obj = datetime.strptime(date_str, "%Y-%m-%d")
-        except ValueError:
-            return Response({"error": f"La fecha {date_str} no tiene el formato válido YYYY-MM-DD."}, status=status.HTTP_400_BAD_REQUEST)
-        
-        if not isinstance(blocks, list):
-            return Response({"error": f"Los bloques para la fecha {date_str} deben ser una lista."}, status=status.HTTP_400_BAD_REQUEST)
-
-        weekday_name = weekday_map[date_obj.weekday()]
-        weekday_blocks = weekly_schedule.get(weekday_name, [])
-
-        for block in blocks:
-            if not isinstance(block, dict) or 'start' not in block or 'end' not in block:
-                return Response({"error": f"El bloque {block} en la fecha {date_str} no es válido. Debe ser un objeto con 'start' y 'end'."}, status=status.HTTP_400_BAD_REQUEST)
-
-            start, end = block['start'], block['end']
-            if not _is_valid_time(start) or not _is_valid_time(end):
-                return Response({"error": f"Los horarios {start} o {end} en la fecha {date_str} no son válidos. Usa formato 'HH:MM'."}, status=status.HTTP_400_BAD_REQUEST)
-
-            if not _is_valid_time_range(start, end):
-                return Response({"error": f"El rango {start}-{end} en la fecha {date_str} no es válido. La hora de inicio debe ser anterior a la de fin."}, status=status.HTTP_400_BAD_REQUEST)
-
-            # Obtener la fecha actual sin hora
-            today = dt.date.today()
-
-            # Filtrar excepciones pasadas
-            exceptions = {
-                date_str: blocks
-                for date_str, blocks in exceptions.items()
-                if datetime.strptime(date_str, "%Y-%m-%d").date() >= today and len(blocks) > 0
-            }
-
-            # Validar que hay un bloque del weekly_schedule ese día que cubre ese rango
-            exception_start = datetime.strptime(start, "%H:%M").time()
-            exception_end = datetime.strptime(end, "%H:%M").time()
-
-            matches_schedule = any(
-                datetime.strptime(wb['start'], "%H:%M").time() <= exception_start and
-                datetime.strptime(wb['end'], "%H:%M").time() >= exception_end
-                for wb in weekday_blocks
-            )
-
-            if not matches_schedule:
-                return Response({"error": f"La excepción del {date_str} ({start}-{end}) no coincide con ningún horario habitual del día {weekday_name}."}, status=status.HTTP_400_BAD_REQUEST)
-
-    # Actualizar solo las exceptions en el schedule existente
-    current_schedule['exceptions'] = exceptions
-
-
-    # Obtener las citas actualizadas
-    appointments = Appointment.objects.filter(
-        physiotherapist=physiotherapist)
-    current_schedule['appointments'] = [
-        {
-            "start_time": appointment.start_time.strftime('%Y-%m-%dT%H:%M:%S'),
-            "end_time": appointment.end_time.strftime('%Y-%m-%dT%H:%M:%S'),
-            "status": appointment.status
+        # Obtener el schedule existente
+        current_schedule = physiotherapist.schedule or {
+            "weekly_schedule": {"monday": [], "tuesday": [], "wednesday": [], "thursday": [], "friday": [], "saturday": [], "sunday": []},
+            "exceptions": {},
+            "appointments": []
         }
-        for appointment in appointments
-    ]
 
-    # Guardar el schedule actualizado
-    physiotherapist.schedule = current_schedule
-    physiotherapist.save()
+        # Obtener los datos del cuerpo de la solicitud
+        data = request.data['schedule']
 
-    return Response({"message": "Horario semanal actualizado con éxito", "schedule": physiotherapist.schedule}, status=status.HTTP_200_OK)
+        # Validar la estructura del weekly_schedule
+        if not isinstance(data, dict) or 'weekly_schedule' not in data:
+            raise ValidationError(
+                "Debe enviar un objeto JSON con el campo 'weekly_schedule'.")
+
+        weekly_schedule = data['weekly_schedule']
+        if not isinstance(weekly_schedule, dict):
+            raise ValidationError("weekly_schedule debe ser un diccionario.")
+        valid_days = ['monday', 'tuesday', 'wednesday',
+                      'thursday', 'friday', 'saturday', 'sunday']
+        for day, schedules in weekly_schedule.items():
+            if day.lower() not in valid_days:
+                raise ValidationError(
+                    f"{day} no es un día válido. Usa: {', '.join(valid_days)}.")
+            if not isinstance(schedules, list):
+                raise ValidationError(
+                    f"Los horarios para {day} deben ser una lista.")
+            for schedule in schedules:
+                if not isinstance(schedule, dict) or 'start' not in schedule or 'end' not in schedule:
+                    raise ValidationError(
+                        f"El horario {schedule} no es válido. Debe ser un objeto con 'start' y 'end'.")
+                start, end = schedule['start'], schedule['end']
+                if not _is_valid_time(start) or not _is_valid_time(end):
+                    raise ValidationError(
+                        f"Los horarios {start} o {end} no son válidos. Usa formato 'HH:MM'.")
+                if not _is_valid_time_range(start, end):
+                    raise ValidationError(
+                        f"El rango {start}-{end} no es válido. La hora de inicio debe ser anterior a la de fin.")
+
+        # Actualizar solo el weekly_schedule en el schedule existente
+        current_schedule['weekly_schedule'] = weekly_schedule
+
+        # Validar la estructura de exceptions
+        if not isinstance(data, dict) or 'exceptions' not in data:
+            raise ValidationError(
+                "Debe enviar un objeto JSON con el campo 'exceptions'.")
+
+        exceptions = data['exceptions']
+        if not isinstance(exceptions, dict):
+            raise ValidationError("exceptions debe ser un diccionario.")
+
+        weekday_map = {
+            0: "monday",
+            1: "tuesday",
+            2: "wednesday",
+            3: "thursday",
+            4: "friday",
+            5: "saturday",
+            6: "sunday"
+        }
+
+        for date_str, blocks in exceptions.items():
+            try:
+                date_obj = datetime.strptime(date_str, "%Y-%m-%d")
+            except ValueError:
+                raise ValidationError(f"La fecha {date_str} no tiene el formato válido YYYY-MM-DD.")
+
+            if not isinstance(blocks, list):
+                raise ValidationError(f"Los bloques para la fecha {date_str} deben ser una lista.")
+
+            weekday_name = weekday_map[date_obj.weekday()]
+            weekday_blocks = weekly_schedule.get(weekday_name, [])
+
+            for block in blocks:
+                if not isinstance(block, dict) or 'start' not in block or 'end' not in block:
+                    raise ValidationError(
+                        f"El bloque {block} en la fecha {date_str} no es válido. Debe ser un objeto con 'start' y 'end'.")
+
+                start, end = block['start'], block['end']
+                if not _is_valid_time(start) or not _is_valid_time(end):
+                    raise ValidationError(
+                        f"Los horarios {start} o {end} en la fecha {date_str} no son válidos. Usa formato 'HH:MM'.")
+
+                if not _is_valid_time_range(start, end):
+                    raise ValidationError(
+                        f"El rango {start}-{end} en la fecha {date_str} no es válido. La hora de inicio debe ser anterior a la de fin.")
+
+                # Obtener la fecha actual sin hora
+                today = dt.date.today()
+
+                # Filtrar excepciones pasadas
+                exceptions = {
+                    date_str: blocks
+                    for date_str, blocks in exceptions.items()
+                    if datetime.strptime(date_str, "%Y-%m-%d").date() >= today and len(blocks) > 0
+                }
+
+                # Validar que hay un bloque del weekly_schedule ese día que cubre ese rango
+                exception_start = datetime.strptime(start, "%H:%M").time()
+                exception_end = datetime.strptime(end, "%H:%M").time()
+
+                matches_schedule = any(
+                    datetime.strptime(wb['start'], "%H:%M").time() <= exception_start and
+                    datetime.strptime(wb['end'], "%H:%M").time() >= exception_end
+                    for wb in weekday_blocks
+                )
+
+                if not matches_schedule:
+                    raise ValidationError(
+                        f"La excepción del {date_str} ({start}-{end}) no coincide con ningún horario habitual del día {weekday_name}."
+                    )
+
+        # Actualizar solo las exceptions en el schedule existente
+        current_schedule['exceptions'] = exceptions
+
+
+        # Obtener las citas actualizadas
+        appointments = Appointment.objects.filter(
+            physiotherapist=physiotherapist)
+        current_schedule['appointments'] = [
+            {
+                "start_time": appointment.start_time.strftime('%Y-%m-%dT%H:%M:%S'),
+                "end_time": appointment.end_time.strftime('%Y-%m-%dT%H:%M:%S'),
+                "status": appointment.status
+            }
+            for appointment in appointments
+        ]
+
+        # Guardar el schedule actualizado
+        physiotherapist.schedule = current_schedule
+        physiotherapist.save()
+
+        return Response({"message": "Horario semanal actualizado con éxito", "schedule": physiotherapist.schedule}, status=status.HTTP_200_OK)
+    except ValidationError as ve:
+        return Response({"error": str(ve)}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({"error": "Bad request"}, status=status.HTTP_400_BAD_REQUEST)
 
 # funciones auxiliares para la validacion para schedule
 
@@ -465,10 +477,10 @@ def update_appointment(request, appointment_id):
             slot_end = slot["end"]
             if slot_start == appointment_start_time and date == appointment.start_time.strftime("%Y-%m-%d"):
                 return Response({"error": f"No puedes agregar la fecha actual de la cita ({appointment_start_time}) en 'alternatives'"}, status=status.HTTP_400_BAD_REQUEST)
-            
+
             if slot_start >= slot_end:
                 return Response({"error": f"En {date}, la hora de inicio debe ser menor que la de fin"}, status=status.HTTP_400_BAD_REQUEST)
-            
+
             for physio_appointment in physio_appointments:
                 if date == physio_appointment["start_time"].split("T")[0]:
                     if physio_appointment["end_time"].split("T")[1][:5] > slot_start >= physio_appointment["start_time"].split("T")[1][:5] or physio_appointment["start_time"].split("T")[1][:5] < slot_end <= physio_appointment["end_time"].split("T")[1][:5]:
@@ -494,10 +506,6 @@ def update_appointment(request, appointment_id):
 
     if serializer.is_valid():
         serializer.save()
-        # if serializer.data['alternatives']:
-            # send_appointment_email(appointment.id, 'modified')
-        # elif serializer.data['status'] == "confirmed":
-            # send_appointment_email(appointment.id, 'modified-accepted')
         update_schedule(data)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -516,7 +524,7 @@ def accept_alternative(request, appointment_id):
     alternatives = appointment.alternatives
     if alternatives == "":
         return Response({"error": "No puedes aceptar una alternativa si la cita no tiene alternativas"}, status=status.HTTP_400_BAD_REQUEST)
-    
+
     # Verificar que el usuario autenticado sea el paciente correspondiente
     if user.patient != appointment.patient:
         return Response({"error": "No autorizado para aceptar una alternativa de esta cita"}, status=status.HTTP_403_FORBIDDEN)
@@ -525,7 +533,7 @@ def accept_alternative(request, appointment_id):
 
     if not selected_start_date or not selected_end_date:
         return Response({"error": "Debes proporcionar un 'start_time' y un 'end_time' válidos"}, status=status.HTTP_400_BAD_REQUEST)
-    
+
     # Extraer la fecha y la hora de las fechas
     selected_date = selected_start_date.split('T')[0]  # Ejemplo: "2025-04-07"
     selected_start_time = selected_start_date.split('T')[1][:5]  # Ejemplo: "10:00"
@@ -558,6 +566,7 @@ def accept_alternative(request, appointment_id):
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated, IsPhysiotherapist])
 def confirm_appointment(request, appointment_id):
@@ -583,7 +592,7 @@ def confirm_appointment(request, appointment_id):
     appointment.status = "confirmed"
     appointment.save()
     # send_appointment_email(appointment.id, 'confirmed')
-    
+
     # Serializar la cita actualizada
     serializer = AppointmentSerializer(appointment)
 
@@ -739,6 +748,7 @@ def get_appointment_by_id(request, appointmentId):
     except Exception as e:
         return Response({"error": "Bad request"}, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def confirm_appointment_using_token(request, token):
@@ -767,8 +777,8 @@ def confirm_appointment_using_token(request, token):
     appointment.save()
     send_appointment_email(appointment.id, 'confirmed')
 
-
     return Response({"message": "¡Cita aceptada con éxito!"}, status=status.HTTP_200_OK)
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated, IsPhysiotherapist])
@@ -782,14 +792,14 @@ def list_finished_appointments_physio(request):
             {'detail': 'Debe ser fisioterapeuta para ver las citas'}, 
             status=status.HTTP_403_FORBIDDEN
         )
-    
+
     # Filtrar por estado finalizado
     status_filter = request.query_params.get('status', 'finished')
-    
+
     appointments = Appointment.objects.filter(
         physiotherapist=physiotherapist,
         status=status_filter
     ).order_by('-end_time')
-    
+
     serializer = AppointmentSerializer(appointments, many=True)
     return Response(serializer.data)
