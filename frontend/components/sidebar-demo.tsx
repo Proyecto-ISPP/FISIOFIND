@@ -16,7 +16,6 @@ import { usePathname } from "next/navigation";
 import axios from "axios";
 import { getApiBaseUrl } from "@/utils/api";
 import { AnimatePresence, motion } from "framer-motion";
-import { cn } from "@/lib/utils";
 import Link from "next/link";
 
 export function SidebarDemo() {
@@ -145,8 +144,8 @@ export function SidebarDemo() {
   };
 
   return (
-    <Sidebar open={open} setOpen={setOpen}>
-      {/* Mobile Menu Button - Only visible on mobile when menu is closed */}
+    <Sidebar open={open} setOpen={isPinned ? () => {} : setOpen}>
+    {/* Mobile Menu Button - Only visible on mobile when menu is closed */}
       <div className="md:hidden fixed top-4 left-4 z-50">
         {!isMobileMenuOpen && (
           <button 
@@ -158,7 +157,7 @@ export function SidebarDemo() {
         )}
       </div>
       
-      {/* Mobile Sidebar - Top bar overlay */}
+      {/* Mobile Sidebar */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
@@ -221,7 +220,7 @@ export function SidebarDemo() {
         )}
       </AnimatePresence>
       
-      {/* Desktop Sidebar - Keep original functionality */}
+      {/* Desktop Sidebar */}
       <SidebarBody className="flex flex-col h-full justify-between py-8 hidden md:flex">
         <div className="flex flex-col flex-1 overflow-y-auto scrollbar-hide overflow-x-hidden">
           <div className="mb-8">{open ? <Logo /> : <LogoIcon />}</div>
@@ -236,6 +235,25 @@ export function SidebarDemo() {
             }
           </div>
         </div>
+        
+        {/* Pin Sidebar Toggle - Only visible when sidebar is open */}
+        {open && (
+          <div className="mt-auto mb-4 px-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-600 font-medium">Fijar menú</span>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input 
+                  type="checkbox" 
+                  checked={isPinned} 
+                  onChange={handlePinToggle} 
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-500"></div>
+              </label>
+            </div>
+          </div>
+        )}
+        
         {isAuthenticated && (
           <div className="pt-2 pb-1 mt-auto cursor-pointer" onClick={handleLogout}>
             <SidebarLink
