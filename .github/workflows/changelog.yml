@@ -19,43 +19,51 @@ jobs:
         run: |
           # Obtener la última tag semántica válida
           latest_tag=$(git tag --sort=-v:refname | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1)
+          echo "Última tag encontrada: $latest_tag"
 
           if [[ -z "$latest_tag" ]]; then
-            # Si no hay tag, usar 0.0.0
             major=0
             minor=0
             patch=0
-            log_range=""
+            log_range="HEAD"
           else
-            # Separar la última tag en major, minor y patch
             IFS='.' read -r major minor patch <<< "$latest_tag"
             log_range="$latest_tag..HEAD"
           fi
 
-          echo "Última tag encontrada: $latest_tag"
-          
-          # Contar commits de tipo 'feat:' para el incremento de 'minor'
           feature_count=$(git log --grep="^feat:" --oneline $log_range | wc -l)
+          total_commits=$(git log --oneline $log_range | wc -l)
 
-          # Contar commits de tipo 'fix:', 'docs:', y otros para el incremento de 'patch'
-          non_feature_commits=$(git log --grep="^(fix|docs|other)" --oneline $log_range | wc -l)
-
-          # Incrementar el 'minor' por la cantidad de feats
-          minor=$((minor + feature_count))
-
-          # Si hay un feat después de un patch, reiniciar el patch a 0
+          # Aplicar lógica de versión:
           if (( feature_count > 0 )); then
-            patch=0  # Reiniciar el patch al haber feats
+            minor=$((minor + 1))
+            patch=0
+          elif (( total_commits > 0 )); then
+            patch=$((patch + 1))
           else
-            patch=$((patch + non_feature_commits))  # Incrementar el patch por otros cambios
+            echo "No hay cambios desde la última versión. Saliendo."
+            exit 0
           fi
-
-          # Mostrar el nuevo cálculo
-          echo "Nueva versión: $major.$minor.$patch"
 
           new_tag="${major}.${minor}.${patch}"
           echo "NEW_TAG=$new_tag" >> $GITHUB_ENV
           echo "latest_tag=$latest_tag" >> $GITHUB_ENV
+          echo "🔖 Nueva tag a crear: $new_tag"
+
+      - name: Check if tag exists and create new tag
+        run: |
+          # Verificar si la nueva tag ya existe
+          if git rev-parse "refs/tags/$NEW_TAG" >/dev/null 2>&1; then
+            echo "La tag $NEW_TAG ya existe. Buscando la siguiente versión disponible..."
+            
+            # Si ya existe, incrementamos el patch hasta encontrar una tag no existente
+            while git rev-parse "refs/tags/${major}.${minor}.$((patch+1))" >/dev/null 2>&1; do
+              patch=$((patch+1))
+            done
+
+            NEW_TAG="${major}.${minor}.${patch}"
+            echo "Nueva tag disponible: $NEW_TAG"
+          fi
 
       - name: Generate changelog
         id: generate-changelog
