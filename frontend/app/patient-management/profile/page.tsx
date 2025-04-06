@@ -3,21 +3,10 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { getApiBaseUrl } from "@/utils/api";
-import {
-  Phone,
-  Mail,
-  MapPin,
-  Calendar,
-  FileText,
-  Users,
-  Camera,
-  Save,
-  Check,
-  Lock,
-  Film,
-} from "lucide-react";
+import { Phone, Mail, MapPin, Calendar, FileText, Users, Camera, Save, Check, Lock, Film, Bell } from 'lucide-react';
 import { GradientButton } from "@/components/ui/gradient-button";
 import Link from "next/link";
+import SubscriptionSlider from "@/components/ui/SuscriptionSlider";
 
 const BASE_URL = `${getApiBaseUrl()}`;
 
@@ -519,7 +508,7 @@ const PatientProfile = () => {
                     </p>
                   )}
                 </div>
-
+                
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Código Postal
@@ -774,6 +763,23 @@ const PatientProfile = () => {
                     Ver vídeos
                   </GradientButton>
                 </Link>
+              </div>
+              <div className="border-t border-gray-200 pt-5 mt-5">
+                <div className="mb-2">
+                  <div className="flex items-center mb-3 gap-2">
+                    <Bell size={16} className="text-gray-500 mr-1" />{" "}
+                    {/* Changed to gray */}
+                    <h3 className="text-base font-semibold text-gray-800">
+                      Preferencias de Notificaciones
+                    </h3>
+                  </div>
+                  <p className="text text-gray-600 mb-3">
+                    {" "}
+                    Configura si deseas recibir notificaciones sobre tus citas y
+                    actualizaciones.
+                  </p>
+                  <SubscriptionSlider />
+                </div>
               </div>
             </form>
           </div>

@@ -1,5 +1,6 @@
 from django.urls import path, re_path
 from .views import *
+from .subscription_views import *
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -23,6 +24,9 @@ urlpatterns = [
 
     path('account/delete/request/', request_account_deletion, name='request_account_deletion'),
     path('account/delete/confirm/<str:token>/', confirm_account_deletion, name='confirm_account_deletion'),
+    path('subscription/status/', get_subscription_status, name='get_subscription_status'),
+    path('subscription/update/', update_subscription, name='update_subscription'),
+
 
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
