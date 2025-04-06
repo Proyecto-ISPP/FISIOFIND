@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import RestrictedAccess from "@/components/RestrictedAccess";
 import { getApiBaseUrl } from "@/utils/api";
-import { Film } from "lucide-react";
+import { Film, ArrowLeft } from "lucide-react";
 
 interface User {
   username: string;
@@ -160,22 +160,9 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
     <div className="container mx-auto px-4 py-8">
       <button
         onClick={handleGoBack}
-        className="mb-6 flex items-center text-blue-600 hover:text-blue-800"
+        className="mb-6 flex items-center text-blue-600 hover:text-blue-800 transition-colors duration-200 font-medium"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-5 w-5 mr-1"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M15 19l-7-7 7-7"
-          />
-        </svg>
+        <ArrowLeft className="mr-2" size={20} />
         Volver a mis tratamientos
       </button>
 

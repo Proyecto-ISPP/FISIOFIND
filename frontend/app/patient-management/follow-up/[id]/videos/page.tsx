@@ -3,8 +3,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { getApiBaseUrl } from "@/utils/api";
-import { Play, AlertCircle, X, Loader2 } from 'lucide-react';
-import { useParams } from "next/navigation";
+import { Play, AlertCircle, X, Loader2, ArrowLeft } from 'lucide-react';
+import { useParams, useRouter } from "next/navigation";
+import Alert from "@/components/ui/Alert";
 
 const getAuthToken = () => {
   return localStorage.getItem("token");
@@ -13,6 +14,7 @@ const getAuthToken = () => {
 const Pacientes = () => {
   const params = useParams();
   const id = params?.id as string;
+  const router = useRouter();
   const [videos, setVideos] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [message, setMessage] = useState<string>("");
@@ -21,6 +23,26 @@ const Pacientes = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isAuthChecking, setIsAuthChecking] = useState<boolean>(true);
 
+
+  const [alert, setAlert] = useState<{
+    show: boolean;
+    type: "success" | "error" | "info" | "warning";
+    message: string;
+  }>({
+    show: false,
+    type: "info",
+    message: ""
+  });
+  
+  const showAlert = (type: "success" | "error" | "info" | "warning", message: string) => {
+    setAlert({
+      show: true,
+      type,
+      message
+    });
+  };
+
+  
   // Check authentication and role
   useEffect(() => {
     const checkAuthAndRole = async () => {
@@ -88,7 +110,7 @@ const Pacientes = () => {
           setMessage(" No se encontraron videos.");
         }
       } catch (error) {
-        setMessage(" Error al obtener los videos.");
+        showAlert("error", "Error al obtener los videos.");
       } finally {
         setLoading(false); // Al finalizar la carga de videos, cambia el estado
       }
@@ -148,6 +170,15 @@ const Pacientes = () => {
 
       <div className="bg-white w-full max-w-4xl rounded-3xl shadow-xl p-10 transition-all duration-300"
            style={{ boxShadow: "0 20px 60px rgba(0, 0, 0, 0.08)" }}>
+        
+        {/* Back to Treatment Button */}
+        <button
+          onClick={() => router.push(`/patient-management/follow-up/${id}`)}
+          className="mb-6 flex items-center text-blue-600 hover:text-blue-800 transition-colors duration-200 font-medium"
+        >
+          <ArrowLeft className="mr-2" size={20} />
+          Volver al tratamiento
+        </button>
 
         <div className="text-center mb-9">
           <h1 className="text-3xl font-bold mb-2"
@@ -235,10 +266,10 @@ const Pacientes = () => {
           <div className="relative max-w-4xl w-full p-4">
             <button 
               onClick={() => setVideoUrl(null)}
-              className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-all duration-200 flex items-center"
+              className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-all duration-200 flex items-center rounded-full p-2 shadow-lg"
             >
-              <X size={24} className="mr-2" />
-              Cerrar
+              <X size={24} />
+              <span className="ml-1 mr-1">Cerrar</span>
             </button>
             <video 
               controls 

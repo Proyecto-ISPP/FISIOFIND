@@ -21,7 +21,7 @@ const PhysioVideo = () => {
   const [editTitle, setEditTitle] = useState<string>("");  // Título del video a editar
   const [editDescription, setEditDescription] = useState<string>("");  // Descripción del video a editar
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  // Add alert state
+
   const [alert, setAlert] = useState<{
     show: boolean;
     type: "success" | "error" | "info" | "warning";
