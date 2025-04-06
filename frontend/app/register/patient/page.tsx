@@ -16,7 +16,7 @@ interface FormData {
   first_name: string;
   last_name: string;
   dni: string;
-  phone_number: string;
+  phone_number?: string;
   postal_code: string;
   gender: string;
   birth_date: string;
@@ -27,7 +27,7 @@ const GENDER_OPTIONS = [
   { value: "M", label: "Masculino" },
   { value: "F", label: "Femenino" },
   { value: "O", label: "Otro" },
-  { value: "ND", label: "Prefiero no decirlo" },
+  { value: "P", label: "Prefiero no decirlo" },
 ];
 
 // Componente reutilizable para los campos del formulario

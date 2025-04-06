@@ -12,6 +12,7 @@ GENDER_CHOICES = [
     ('M', 'Male'),
     ('F', 'Female'),
     ('O', 'Other'),
+    ('P', 'Prefer not to say'),
 ]
 
 AUTONOMIC_COMMUNITY_CHOICES = [
