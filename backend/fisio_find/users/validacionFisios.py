@@ -44,6 +44,8 @@ class SeleniumScraper:
             options.add_argument("--disable-gpu")
             options.add_argument("--window-size=1920x1080")
             options.add_argument("--disable-dev-shm-usage")
+            options.add_argument("--disable-blink-features=AutomationControlled")
+            options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36")
             options.binary_location = "/usr/bin/chromium-browser"
             chromedriver_path = "/usr/bin/chromedriver"
             self.driver = webdriver.Chrome(
