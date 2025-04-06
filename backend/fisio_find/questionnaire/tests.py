@@ -145,7 +145,7 @@ class QuestionnaireViewTests(APITestCase):
 
     def test_update_questionnaire_invalid_question(self):
         url = reverse('questionnaire_detail', args=[self.questionnaire.id])
-        long_label = '¿' + 'a' * 256 + '?'
+        long_label = '¿' + 'a' * 76 + '?'
         data = {
             'questions': [{"type": "string", "label": long_label, "options": []}]
         }
@@ -255,7 +255,7 @@ class QuestionnaireViewTests(APITestCase):
 
     def test_create_questionnaire_title_too_long(self):
         url = reverse('create_questionnaire')
-        long_title = 'T' * 256
+        long_title = 'T' * 76
         data = {
             "title": long_title,
             "json_schema": {"type": "object", "properties": {}},
