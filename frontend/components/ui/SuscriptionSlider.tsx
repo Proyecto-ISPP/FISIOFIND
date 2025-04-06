@@ -6,7 +6,6 @@ import { useState, useEffect } from "react";
 function SubscriptionSlider() {
   const [isSubscribed, setIsSubscribed] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
-  console.log("isSubscribed", isSubscribed);
 
   useEffect(() => {
     axios(`${getApiBaseUrl()}/api/app_user/subscription/status/`, {

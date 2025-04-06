@@ -218,6 +218,7 @@ def send_email(subject, message, recipient_email):
     """
     Envía un correo electrónico con el asunto y el mensaje proporcionados.
     """
+    unsubscribe_link = get_unsubscribe_link(recipient_email)
     # URL del logo
     image_url = "https://fisiofind-landing-page.netlify.app/_astro/logo.1fTJ_rhB.png"
 
@@ -243,6 +244,9 @@ def send_email(subject, message, recipient_email):
                 🌐 <a style="color: #0073e6; text-decoration: none;" href="https://fisiofind.app.com/">fisiofind.app.com</a> <br>
                 📷 <a style="color: #0073e6; text-decoration: none;" href="https://www.instagram.com/fisiofindapp/">@fisiofindapp</a>
             </p>
+             <p style="margin: 5px 0; font-size: 12px; color: #777;">
+                Si ya no deseas recibir estos correos, <a href="{unsubscribe_link}" style="color: #0073e6; text-decoration: none;">haz clic aquí para darte de baja</a>.
+            </p>
         </div>
     </div>
     """
@@ -265,3 +269,8 @@ def send_email(subject, message, recipient_email):
 
     response = requests.post(url, json=data, headers=headers)
     return response
+
+def get_unsubscribe_link(recipient_email):
+    # Genera un token único basado en el email (o, si lo tienes, en el ID de usuario)
+    token = signing.dumps({'email': recipient_email})
+    return f"{settings.FRONTEND_URL}/unsubscribe?token={token}"

@@ -145,7 +145,7 @@ def create_appointment_patient(request):
         update_schedule(data)
         if isinstance(payment_data, Response):
             return payment_data
-        # send_appointment_email(appointment.id, 'booked')
+        send_appointment_email(appointment.id, 'booked')
 
         # Crear videollamada
         Room.objects.create(
@@ -591,7 +591,7 @@ def confirm_appointment(request, appointment_id):
     # Cambiar el estado a "confirmed"
     appointment.status = "confirmed"
     appointment.save()
-    # send_appointment_email(appointment.id, 'confirmed')
+    send_appointment_email(appointment.id, 'confirmed')
 
     # Serializar la cita actualizada
     serializer = AppointmentSerializer(appointment)
