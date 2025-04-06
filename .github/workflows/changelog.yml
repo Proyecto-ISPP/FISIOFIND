@@ -12,7 +12,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Necesario para obtener todas las tags
+          fetch-depth: 0  
 
       - name: Get version based on feat/fix commits
         id: get-version
@@ -50,7 +50,7 @@ jobs:
           echo "🔖 Nueva tag a crear: $new_tag"
           echo "NEW_TAG=$new_tag" >> $GITHUB_ENV
           echo "latest_tag=$latest_tag" >> $GITHUB_ENV
-          
+
       - name: Generate changelog
         id: generate-changelog
         run: |
