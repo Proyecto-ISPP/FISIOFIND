@@ -12,12 +12,12 @@ urlpatterns = [
     #Patients
     path('patient/', views.create_appointment_patient, name="create_appointment_patient"),
     path('patient/list/', views.list_appointments_patient),
-    #Physiotherapists
+    # Physiotherapists
     path('physio/', views.create_appointment_physio),
     path('physio/list/', views.list_appointments_physio),
     path('physio/list/finished/', views.list_finished_appointments_physio, name='list_finished_appointments_physio'),
 
-    #Update and delete
+    # Update and delete
     path('update/<int:appointment_id>/', views.update_appointment, name='update_appointment'),
     path('delete/<int:appointment_id>/', views.delete_appointment, name='delete_appointment'),
     path('update/<int:appointment_id>/confirm/', views.confirm_appointment, name='confirm_appointment'),

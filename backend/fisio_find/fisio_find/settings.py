@@ -79,6 +79,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'channels',
     'videocall',
+    'ratings',
 ]
 
 # DJANGO REST FRAMEWORK
@@ -98,6 +99,7 @@ INSTALLED_APPS += [
     'treatments',
     'gestion_survey',
     'payment',
+    'files',
 ]
 
 INSTALLED_APPS += ['corsheaders', 'django_extensions', 'django_filters']
@@ -105,19 +107,16 @@ INSTALLED_APPS += ['corsheaders', 'django_extensions', 'django_filters']
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'corsheaders.middleware.CorsMiddleware',  # Move this up
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # Remove the duplicate corsheaders.middleware.CorsMiddleware from here
     'django.middleware.common.CommonMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
-# Add additional CORS settings
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_METHODS = [
     'DELETE',
@@ -230,15 +229,15 @@ DATABASES = {
 # Configuración del servicio de correos
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = os.getenv('EMAIL_HOST')
-EMAIL_PORT = int(os.getenv('EMAIL_PORT'))
-EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', 'False') == 'True'
-EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'False') == 'True'
+EMAIL_PORT = os.getenv('EMAIL_PORT') 
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS')
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER)
 API_KEY = os.getenv('API_KEY')
 ENCRYPTION_KEY = os.getenv('ENCRYPTION_KEY')
 API_MAIL_URL = os.getenv('API_MAIL_URL')
+FRONTEND_URL = os.getenv('FRONTEND_URL')
 
 
 AUTH_USER_MODEL = 'users.AppUser'
