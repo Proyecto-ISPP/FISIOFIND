@@ -79,6 +79,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'channels',
     'videocall',
+    'ratings',
 ]
 
 # DJANGO REST FRAMEWORK
@@ -99,6 +100,7 @@ INSTALLED_APPS += [
     'treatments',
     'gestion_survey',
     'payment',
+    'files',
 ]
 
 INSTALLED_APPS += ['corsheaders', 'django_extensions', 'django_filters']
@@ -106,19 +108,16 @@ INSTALLED_APPS += ['corsheaders', 'django_extensions', 'django_filters']
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'corsheaders.middleware.CorsMiddleware',  # Move this up
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # Remove the duplicate corsheaders.middleware.CorsMiddleware from here
     'django.middleware.common.CommonMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
-# Add additional CORS settings
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_METHODS = [
     'DELETE',
@@ -236,6 +235,10 @@ EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS')
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER)
+API_KEY = os.getenv('API_KEY')
+ENCRYPTION_KEY = os.getenv('ENCRYPTION_KEY')
+API_MAIL_URL = os.getenv('API_MAIL_URL')
+FRONTEND_URL = os.getenv('FRONTEND_URL')
 
 
 AUTH_USER_MODEL = 'users.AppUser'
@@ -274,9 +277,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
 
-
-
-
 DIGITALOCEAN_ACCESS_KEY_ID = "DO801T22Y6LWLUV2R4RE"
 DIGITALOCEAN_SECRET_ACCESS_KEY = "hHkSrRsu61YP+BqQP3GL+GtGeqDfzPVpn8sMaLDVkVY"
 DIGITALOCEAN_SPACE_NAME = "fisiofind-repo"
@@ -292,3 +292,10 @@ MEDIA_URL = f"{DIGITALOCEAN_ENDPOINT_URL}/"
 DATA_UPLOAD_MAX_MEMORY_SIZE = 524288000  # 500MB
 FILE_UPLOAD_MAX_MEMORY_SIZE = 524288000  # 500MB
 
+SALT_KEY = [
+    "!(m!c,nlwymN^;DaRi4~LW4c^n]K227*=!S/",
+    "Yi^_w32W&8(Ev@pl5BJvFFe{}]R}zSgQ9n~T",
+    "~x7}<:29'gF4Z6ozJ-~@nn£`TrjB`Hg|N]IJ",
+    "£U9fRHk`_]NeP2q86.£BT}SP>J-b^dC/h6!O",
+    "RRL7*cJo£5&34#KN(w~>Z>)}$:zD/H6!uH~r"
+]

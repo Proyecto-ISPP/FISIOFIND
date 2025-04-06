@@ -1,6 +1,6 @@
 ---
 title: "DESGLOSE DE LOS COSTES"                           # CHANGE IF NEEDED
-subtitle: "FISIO FIND - Grupo 6 - #SPRINT 1"
+subtitle: "FISIO FIND - Grupo 6 - #SPRINT 3"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]
 date: "19/02/2025"                                        # CHANGE IF NEEDED
 subject: "ISPP"
@@ -49,7 +49,12 @@ classoption: "table"
     - [**Comparativa**](#comparativa)
     - [**Análisis**](#análisis)
   - [**6.2. SPRINT 2**](#62-sprint-2)
-  - [6.3. SPRINT 3](#63-sprint-3)
+    - [**Costes estimados**](#costes-estimados-1)
+    - [**Gastos reales**](#gastos-reales-1)
+    - [**Comparativa**](#comparativa-1)
+    - [**Análisis**](#análisis-1)
+  - [**6.3. SPRINT 3**](#63-sprint-3)
+    - [**Costes estimados**](#costes-estimados-2)
 - [**7. ESTIMACIÓN DE RETORNO DE INVERSIÓN (ROI)**](#7-estimación-de-retorno-de-inversión-roi)
 - [**8. ESTIMACIONES Y EJEMPLO DE CÁLCULO**](#8-estimaciones-y-ejemplo-de-cálculo)
   - [**8.1. Escenario Optimista**](#81-escenario-optimista)
@@ -73,7 +78,7 @@ classoption: "table"
 
 - **Número de Grupo:** Grupo 6
 
-- **Entregable:** #SPRINT 1
+- **Entregable:** #SPRINT 3
 
 - **Miembros del grupo:** Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes.
 
@@ -81,7 +86,7 @@ classoption: "table"
 
 - **Fecha de Creación:** 19/02/2025  
 
-- **Versión:** v1.4
+- **Versión:** v1.5
 
 <br>
 
@@ -96,6 +101,7 @@ classoption: "table"
 | 24/02/2025    | v1.2    | Antonio Macías Ferrera                      | Modificación del documento para añadir desglose detallado de costes de acuerdo con el *feedback* de la clase del pasado 21/02. |
 | 10/03/2025    | v1.3    | Ramón Gavira Sánchez, Pablo Fernández Pérez | Se actualiza el documento de costes de acuerdo a lo solicitado en el #SPRINT 1 y las condiciones de fallo. |
 | 11/03/2025    | v1.4    | Antonio Macías Ferrera                      | Correcciones menores de formato. |
+| 03/04/2025    | v1.5    | Antonio Macías Ferrera                      | Actualización del documento acorde a los gastos a mitad de Sprint 3. |
 
 
 
@@ -402,11 +408,139 @@ El coste real del Sprint 1 ha sido superior al estimado, principalmente por un m
 
 ## **6.2. SPRINT 2**
 
-[Pendiente de completar a fecha de finalización del Sprint 2]
+Nos encontramos en la segunda fase de desarrollo, lo que implica una continuidad en los gastos de personal y fijos. A continuación, se detallan los costes estimados y reales del Sprint 2.
 
-## 6.3. SPRINT 3
+### **Costes estimados**
 
-[Pendiente de completar a fecha de finalización del Sprint 3]
+**Horas estimadas:**
+
+A fecha de 15/04/2025, las horas estimadas para el Sprint 2 son **64 horas**, lo que supone el 70% de marzo y el 50% de abril.
+
+**Coste personal** = 64 × [(5 × 30,82) + (1 × 37,25) + (11 × 27)]
+
+**Coste total (con contingencia)** = Coste personal × 1.10
+
+**Cálculo detallado:**
+
+| Concepto                | Cantidad | Tarifa €/hora | Total €/hora |
+|-------------------------|----------|---------------|--------------|
+| Analistas               | 5        | 30,82         | 154,10       |
+| Project Manager         | 1        | 37,25         | 37,25        |
+| Desarrolladores         | 11       | 27,00         | 297,00       |
+
+- **Total por hora:** 488,35 €/hora       
+- **Horas estimadas:**  64 horas  
+- **Coste personal:**  31.254,40 €  
+- **Coste con contingencia (10%):**  34.379,84 €    
+
+**Costes adicionales:**
+
+- Reserva de Hardware (440 €/mes)
+- Licencias y Herramientas (360,68 €/mes)
+- Marketing (500 €/mes)
+
+**Resumen del Sprint 2:**
+| Concepto                | Total (€) |
+|-------------------------|-----------|
+| Coste personal  | 34.379,84 |
+| Coste de Hardware | 440 |
+| Licencias y Herramientas | 360,68 |
+| Marketing | 500 |
+| **Total** | 35.680,52 |
+
+### **Gastos reales**
+
+**Horas trabajadas:**
+
+Según el seguimiento en **Clockify**, el equipo ha trabajado **72 horas** en promedio por persona.
+
+**Coste personal** = 72 × [(5 × 30,82) + (1 × 37,25) + (11 × 27)]
+
+**Coste total (con contingencia)** = Coste personal × 1.10
+
+**Cálculo detallado:**
+| Concepto                | Cantidad | Tarifa €/hora | Total €/hora |
+|-------------------------|----------|---------------|--------------|
+| Analistas               | 5        | 30,82         | 154,10       |
+| Project Manager         | 1        | 37,25         | 37,25        |
+| Desarrolladores         | 11       | 27,00         | 297,00       |
+
+- **Total por hora:** 488,35 €/hora       
+- **Horas trabajadas:**  72 horas  
+- **Coste personal:**  35.161,20 €  
+- **Coste con contingencia (10%):**  38.677,32 €  
+
+**Costes adicionales:**
+- Reserva de Hardware (440 €/mes)
+- Licencias y Herramientas (360,68 €/mes)
+- Marketing (500 €/mes)
+
+**Resumen del Sprint 2:**
+| Concepto                | Total (€) |
+|-------------------------|-----------|
+| Coste personal  | 38.677,32 |
+| Coste de Hardware | 440 |
+| Licencias y Herramientas | 360,68 |
+| Marketing | 500 |
+| **Total** | 39.978 € |
+
+### **Comparativa**
+| Concepto                | Estimado (€) | Real (€) | Diferencia (€) |
+|-------------------------|--------------|----------|----------------|
+| Coste personal         | 34.379,84    | 38.677,32| 4.297,48       |
+| Coste de Hardware      | 440          | 440      | 0              |
+| Licencias y Herramientas | 360,68     | 360,68   | 0              |
+| Marketing              | 500          | 500      | 0              |
+| **Total**              | 35.680,52    | 39.978   | 4.297,48       |
+
+### **Análisis**
+El coste real del Sprint 2 ha sido superior al estimado, con una diferencia de 4.297,48 €, lo que representa un aumento del 12,05%. Esto se debe a la ampliación de funcionalidades que no estaban contempladas en la planificación inicial, lo que aumentó la carga de trabajo.
+
+---
+
+## **6.3. SPRINT 3**
+
+Nos encontramos en la tercera fase de desarrollo, manteniendo los costes recurrentes.
+
+### **Costes estimados**
+
+**Horas estimadas:**
+
+A fecha de 20/05/2025, las horas estimadas para el Sprint 3 son **60 horas**.
+
+**Coste personal** = 60 × [(5 × 30,82) + (1 × 37,25) + (11 × 27)]
+
+**Coste total (con contingencia)** = Coste personal × 1.10
+
+**Cálculo detallado:**
+
+| Concepto                | Cantidad | Tarifa €/hora | Total €/hora |
+|-------------------------|----------|---------------|--------------|
+| Analistas               | 5        | 30,82         | 154,10       |
+| Project Manager         | 1        | 37,25         | 37,25        |
+| Desarrolladores         | 11       | 27,00         | 297,00       |
+
+- **Total por hora:** 488,35 €/hora       
+- **Horas estimadas:**  60 horas  
+- **Coste personal:**  29.301 €  
+- **Coste con contingencia (10%):**  32.231,10 €    
+
+**Costes adicionales:**
+- Reserva de Hardware (440 €/mes)
+- Licencias y Herramientas (360,68 €/mes)
+- Marketing (500 €/mes)
+
+**Resumen del Sprint 3:**
+| Concepto                | Total (€) |
+|-------------------------|-----------|
+| Coste personal  | 32.231,10 |
+| Coste de Hardware | 440 |
+| Licencias y Herramientas | 360,68 |
+| Marketing | 500 |
+| **Total** | 33.531,78 |
+
+
+<br>
 
 
 
