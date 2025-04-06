@@ -1,11 +1,11 @@
-## 🚀 Changelog - 2.84.0
+## 🚀 Changelog - 3.4.0
 
-### ✨ Features (1)
-- feat: prueba (@Julen Redondo)
+### ✨ Features (0)
+
 ### 🐛 Fixes (0)
 
 ### 📖 Documentation (0)
 
 ### 🌀 Other Changes (1)
-- Merge branch 'fix/changelog.yml' of https://github.com/Proyecto-ISPP/FISIOFIND into fix/changelog.yml (@Julen Redondo)
+- Update .github/workflows/changelog.yml (@Guadalupe Ridruejo Pineda)
 ### 🔗 Pull Requests

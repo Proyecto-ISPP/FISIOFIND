@@ -90,7 +90,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add CHANGELOG.md
-          git commit -m "docs: actualizacion CHANGELOG para $NEW_TAG"
+          git commit -m "docs: actualización CHANGELOG para $NEW_TAG"
           git push
 
       - name: Create new tag
