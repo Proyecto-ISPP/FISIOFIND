@@ -5,19 +5,25 @@ from users.models import AppUser, Physiotherapist, Pricing
 from questionnaire.models import Questionnaire
 
 class QuestionnaireViewTests(APITestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.plan_blue, _ = Pricing.objects.get_or_create(name='blue', defaults={'price': 10, 'video_limit': 5})
-        cls.plan_gold, _ = Pricing.objects.get_or_create(name='Gold', defaults={'price': 99, 'video_limit': 20})
+    def setUp(self):
+        self.plan_blue, _ = Pricing.objects.get_or_create(name='blue', defaults={'price': 10, 'video_limit': 5})
+        self.plan_gold, _ = Pricing.objects.get_or_create(name='Gold', defaults={'price': 99, 'video_limit': 20})
 
-        cls.user = AppUser.objects.create_user(
+        self.user = AppUser.objects.create_user(
             username="example", dni='12345678A',
             email='ana@example.com', password='pass',
             first_name='Ana', last_name='López', postal_code='28001', photo=''
         )
-        cls.physio = Physiotherapist.objects.create(
-            user=cls.user,
-            plan=cls.plan_blue,
+        
+        self.user_no_physio = AppUser.objects.create_user(
+            username="example2", dni='44825747N',
+            email='ana2@example.com', password='pass2',
+            first_name='Ana2', last_name='López2', postal_code='28002', photo=''
+        )
+
+        self.physio = Physiotherapist.objects.create(
+            user=self.user,
+            plan=self.plan_blue,
             birth_date='1980-01-01',
             rating_avg=4.5,
             schedule={
@@ -36,14 +42,32 @@ class QuestionnaireViewTests(APITestCase):
             gender='F',
             autonomic_community='MADRID'
         )
-        cls.client.force_authenticate(user=cls.user)
-
-        cls.questionnaire = Questionnaire.objects.create(
-            physiotherapist=cls.physio,
+        self.client.force_authenticate(user=self.user)
+        self.questionnaire = Questionnaire.objects.create(
+            physiotherapist=self.physio,
             title="Test Q",
-            json_schema={},
-            ui_schema={},
-            questions=["¿Cómo te sientes hoy?"]
+            json_schema={
+                "type": "object",
+                "properties": {
+                    "q1": {"type": "string"},
+                    "q2": {"type": "number"},
+                    "q3": {"enum": ["opcion1", "opcion2", "opcion3"], "type": "string"}
+                }
+            },
+            ui_schema={
+                "type": "Group",
+                "label": "Titulo 1aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "elements": [
+                    {"type": "Control", "label": "¿Arriba o abajo?", "scope": "#/properties/q1"},
+                    {"type": "Control", "label": "pregunta con numero", "scope": "#/properties/q2"},
+                    {"type": "Control", "label": "pregunta con seleccion", "scope": "#/properties/q3"}
+                ]
+            },
+            questions=[
+                {"type": "string", "label": "¿Arriba o abajo?", "options": []},
+                {"type": "number", "label": "pregunta con numero", "options": []},
+                {"type": "select", "label": "pregunta con seleccion", "options": ["opcion1", "opcion2", "opcion3"]}
+            ]
         )
 
     def test_list_questionnaires(self):
@@ -52,17 +76,37 @@ class QuestionnaireViewTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
 
-    def test_create_questionnaire(self):
+    def test_create_full_questionnaire(self):
         url = reverse('create_questionnaire')
         data = {
-            'title': 'Nuevo Q',
-            'json_schema': {},
-            'ui_schema': {},
-            'questions': ['¿Tienes dolor?']
+            "title": "Cuestionario de prueba",
+            "json_schema": {
+                "type": "object",
+                "properties": {
+                    "q1": {"type": "string"},
+                    "q2": {"type": "number"},
+                    "q3": {"enum": ["opcion1", "opcion2", "opcion3"], "type": "string"}
+                }
+            },
+            "ui_schema": {
+                "type": "Group",
+                "label": "Titulo 1aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "elements": [
+                    {"type": "Control", "label": "¿Arriba o abajo?", "scope": "#/properties/q1"},
+                    {"type": "Control", "label": "pregunta con numero", "scope": "#/properties/q2"},
+                    {"type": "Control", "label": "pregunta con seleccion", "scope": "#/properties/q3"}
+                ]
+            },
+            "questions": [
+                {"type": "string", "label": "¿Arriba o abajo?", "options": []},
+                {"type": "number", "label": "pregunta con numero", "options": []},
+                {"type": "select", "label": "pregunta con seleccion", "options": ["opcion1", "opcion2", "opcion3"]}
+            ]
         }
-        response = self.client.post(url, data, format='json')
+        response = self.client.post(url, data=data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Questionnaire.objects.count(), 2)
+        self.assertEqual(response.data['title'], data['title'])
 
     def test_detail_questionnaire(self):
         url = reverse('questionnaire_detail', args=[self.questionnaire.id])
@@ -80,7 +124,10 @@ class QuestionnaireViewTests(APITestCase):
 
     def test_update_questionnaire_invalid_question(self):
         url = reverse('questionnaire_detail', args=[self.questionnaire.id])
-        data = {'questions': ['¿' + 'm' * 255 + '?']}
+        long_label = '¿' + 'a' * 256 + '?'
+        data = {
+            'questions': [{"type": "string", "label": long_label, "options": []}]
+        }
         response = self.client.put(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -92,20 +139,77 @@ class QuestionnaireViewTests(APITestCase):
 
     def test_create_question(self):
         url = reverse('create_question', args=[self.questionnaire.id])
-        data = '¿Tienes fiebre?'
-        response = self.client.post(url, data=data, content_type='application/json')
+        question_data = {
+            "type": "select",
+            "label": "¿Tienes fiebre?",
+            "options": ["Sí", "No"]
+        }
+        response = self.client.post(url, data=question_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.questionnaire.refresh_from_db()
-        self.assertIn('¿Tienes fiebre?', self.questionnaire.questions)
+        self.assertIn(question_data, self.questionnaire.questions)
 
     def test_create_question_too_long(self):
         url = reverse('create_question', args=[self.questionnaire.id])
-        long_question = '¿' + 'a' * 256 + '?'
-        response = self.client.post(url, data=long_question, content_type='application/json')
+        long_question = {
+            "type": "string",
+            "label": "¿" + "a" * 256 + "?",
+            "options": []
+        }
+        response = self.client.post(url, data=long_question, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_unauthorized_access(self):
         self.client.force_authenticate(user=None)
         url = reverse('questionnaire_list')
         response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_unauthenticated_list_questionnaires(self):
+        self.client.force_authenticate(user=None)
+        url = reverse('questionnaire_list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_unauthenticated_create_questionnaire(self):
+        self.client.force_authenticate(user=None)
+        url = reverse('create_questionnaire')
+        response = self.client.post(url, data={}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_unauthenticated_detail_questionnaire(self):
+        self.client.force_authenticate(user=None)
+        url = reverse('questionnaire_detail', args=[self.questionnaire.id])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_unauthenticated_create_question(self):
+        self.client.force_authenticate(user=None)
+        url = reverse('create_question', args=[self.questionnaire.id])
+        response = self.client.post(url, data={}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+    def test_non_physio_list_questionnaires(self):
+        self.client.force_authenticate(user=self.user_no_physio)
+        url = reverse('questionnaire_list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_non_physio_create_questionnaire(self):
+        self.client.force_authenticate(user=self.user_no_physio)
+        url = reverse('create_questionnaire')
+        response = self.client.post(url, data={}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_non_physio_detail_questionnaire(self):
+        self.client.force_authenticate(user=self.user_no_physio)
+        url = reverse('questionnaire_detail', args=[self.questionnaire.id])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_non_physio_create_question(self):
+        self.client.force_authenticate(user=self.user_no_physio)
+        url = reverse('create_question', args=[self.questionnaire.id])
+        response = self.client.post(url, data={}, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
