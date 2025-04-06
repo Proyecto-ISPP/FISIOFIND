@@ -1458,7 +1458,7 @@ const FisioProfile = () => {
                                             variant="create"
                                             className="px-3 py-2 font-medium rounded-xl flex items-center gap-2"
                                         >
-                                            <BicepsFlexed className="w-4 h-4" /> Gestionar Ejercicios
+                                            <BicepsFlexed className="w-4 h-4" /> Biblioteca de Ejercicios
                                         </GradientButton>
                                     </Link>
                                 </div>
