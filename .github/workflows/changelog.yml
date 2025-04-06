@@ -29,24 +29,22 @@ jobs:
           fi
 
           log_range="$latest_tag..HEAD"
+          commits=$(git log --pretty=format:"%s" $log_range)
 
-          feature_count=$(git log --grep="^feat:" --oneline $log_range | wc -l)
-          total_commits=$(git log --oneline $log_range | wc -l)
-
-          if (( feature_count > 0 )); then
-            minor=$((minor + 1))
-            patch=0
-          elif (( total_commits > 0 )); then
-            patch=$((patch + 1))
-          else
-            echo "No hay cambios desde la última versión. Saliendo."
-            exit 0
-          fi
+          for commit in $commits; do
+            if [[ "$commit" =~ ^feat(\(.*\))?: ]]; then
+              minor=$((minor + 1))
+              patch=0
+            elif [[ "$commit" =~ ^(fix|docs?|chore|refactor|style|test|perf)(\(.*\))?: ]]; then
+              patch=$((patch + 1))
+            fi
+          done
 
           new_tag="${major}.${minor}.${patch}"
           echo "NEW_TAG=$new_tag" >> $GITHUB_ENV
           echo "latest_tag=$latest_tag" >> $GITHUB_ENV
           echo "Nueva tag a crear: $new_tag"
+
 
 
       - name: Generate changelog
