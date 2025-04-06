@@ -45,7 +45,7 @@ export default function ConfirmAppointmentPage() {
           setMessage(data.message);
           setMessageColor("text-green-500");
           setTimeout(() => {
-            window.location.href = "/";
+            router.push("/");
           }, 2000);
         }
       } catch (error) {
