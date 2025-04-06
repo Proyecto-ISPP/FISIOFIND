@@ -96,7 +96,7 @@ const Home = () => {
                   <span>Encuentra el fisio que más se adapta a tí </span>
                 </button>
             </div>
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-3 md:space-x-3 pl-10 md:pl-0">
               <button 
                 className="text-[#05668D] hover:text-[#05AC9C] px-3 py-2 font-medium"
                 onClick={() => router.push("/login")}
