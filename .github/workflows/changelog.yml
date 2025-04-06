@@ -46,6 +46,10 @@ jobs:
 
           patch=$((patch + non_feat_commits))
 
+          # Si hay un commit de tipo fix, aumentar el patch
+          fix_count=$(git log --grep="^fix:" --oneline | wc -l)
+          patch=$((patch + fix_count))
+
           new_tag="${major}.${minor}.${patch}"
           echo "🔖 Nueva tag a crear: $new_tag"
           echo "NEW_TAG=$new_tag" >> $GITHUB_ENV
