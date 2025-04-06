@@ -33,21 +33,16 @@
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
 }
 
+.image {
+  margin-right: 1rem;
+  display: flex;
+  align-items: center;
+}
+
 .header {
   display: flex;
   align-items: center;
-  gap: 1rem;
-}
-
-.image {
-  height: 4rem;
-  width: 4rem;
-  border-radius: 9999px;
-  overflow: hidden;
-  background-color: royalblue;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  margin-bottom: 1rem;
 }
 
 .profileImage {
