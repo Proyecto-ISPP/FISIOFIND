@@ -41,6 +41,7 @@ class AppUser(AbstractUser):
     phone_number = models.CharField(max_length=9)
     postal_code = models.CharField(max_length=5)
     account_status = models.CharField(max_length=10, choices=ACCOUNT_STATUS_CHOICES, default='ACTIVE')
+    is_subscribed = models.BooleanField(default=True)
     
     def __str__(self):
         return f"{self.username} - {self.email}"

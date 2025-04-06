@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import *
+from .subscription_views import *
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -25,7 +26,8 @@ urlpatterns = [
     path('videos/update-video/<int:video_id>/', update_video, name='update_video'),
 
     path('services/<int:physio_id>/', physio_get_services_view, name='physio_get_xservices'),
-    
+    path('subscription/status/', get_subscription_status, name='get_subscription_status'),
+    path('subscription/update/', update_subscription, name='update_subscription'),
 
 
 ]
