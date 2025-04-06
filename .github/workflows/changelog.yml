@@ -14,45 +14,43 @@ jobs:
         with:
           fetch-depth: 0  # Necesario para obtener todas las tags
 
-      - name: Get latest tag
-        id: get-latest-tag
+      - name: Get version based on feat/fix commits
+        id: get-version
         run: |
           # Obtener la última tag semántica válida
           latest_tag=$(git tag --sort=-v:refname | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1)
-          echo "Última tag encontrada: $latest_tag"
 
           if [[ -z "$latest_tag" ]]; then
+            # Si no hay tag, usar 0.0.0
             major=0
             minor=0
             patch=0
-            log_range=""
           else
+            # Separar la última tag en major, minor y patch
             IFS='.' read -r major minor patch <<< "$latest_tag"
-            log_range="$latest_tag..HEAD"
           fi
 
-          feature_count=$(git log --grep="^feat:" --oneline $log_range | wc -l)
-          total_commits=$(git log --oneline $log_range | wc -l)
+          # Contar feats (acumulativos)
+          feature_count=$(git log --grep="^feat:" --oneline | wc -l)
+          minor=$((minor + feature_count))
 
-          # Aplicar lógica de versión:
-          if (( feature_count > 0 )); then
-            minor=$((minor + 1))
-            patch=0
-          elif (( total_commits > 0 )); then
-            patch=$((patch + 1))
+          # Contar commits no feat (para incrementar el patch)
+          last_feat_commit=$(git log --grep="^feat:" --pretty=format:"%H" | head -n 1)
+          if [[ -n "$last_feat_commit" ]]; then
+            # Contar commits que no sean feat: después del último feat
+            non_feat_commits=$(git log "${last_feat_commit}..HEAD" --invert-grep --grep="^feat:" --oneline | wc -l)
           else
-            echo "No hay cambios desde la última versión. Saliendo."
-            exit 0
+            # Si no hay ningún feat, contar todos los commits no feat:
+            non_feat_commits=$(git log --invert-grep --grep="^feat:" --oneline | wc -l)
           fi
+
+          patch=$((patch + non_feat_commits))
 
           new_tag="${major}.${minor}.${patch}"
+          echo "🔖 Nueva tag a crear: $new_tag"
           echo "NEW_TAG=$new_tag" >> $GITHUB_ENV
           echo "latest_tag=$latest_tag" >> $GITHUB_ENV
-          echo "🔖 Nueva tag a crear: $new_tag"
-
-
-
-
+          
       - name: Generate changelog
         id: generate-changelog
         run: |
