@@ -210,8 +210,7 @@ class PatientRegisterSerializer(serializers.ModelSerializer):
 
         if not validate_dni_structure(data['dni']):
             validation_errors["dni"] = "El DNI debe tener 8 números seguidos de una letra válida."
-
-        if validate_dni_match_letter(data['dni']):
+        elif validate_dni_match_letter(data['dni']):
             validation_errors["dni"] = "La letra del DNI no coincide con el número."
 
         if 'phone_number' in data and data['phone_number'] and telefono_no_mide_9(data['phone_number']):
@@ -324,8 +323,9 @@ class PhysioRegisterSerializer(serializers.ModelSerializer):
         validation_errors = dict()
         if not validate_dni_structure(data['dni']):
             validation_errors["dni"] = "El DNI debe tener 8 números seguidos de una letra válida."
-        if validate_dni_match_letter(data['dni']):
+        elif validate_dni_match_letter(data['dni']):
             validation_errors["dni"] = "La letra del DNI no coincide con el número."
+
         if 'phone_number' in data and data['phone_number'] and telefono_no_mide_9(data['phone_number']):
             validation_errors["phone_number"] = "El número de teléfono debe tener 9 caracteres."
         if codigo_postal_no_mide_5(data['postal_code']):
@@ -457,8 +457,7 @@ class PhysioUpdateSerializer(serializers.ModelSerializer):
         if 'dni' in data:
             if not validate_dni_structure(data['dni']):
                 validation_errors["dni"] = "El DNI debe tener 8 números seguidos de una letra válida."
-
-            if validate_dni_match_letter(data['dni']):
+            elif validate_dni_match_letter(data['dni']):
                 validation_errors["dni"] = "La letra del DNI no coincide con el número."
 
         if 'phone_number' in data and telefono_no_mide_9(data['phone_number']):

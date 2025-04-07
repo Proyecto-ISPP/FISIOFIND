@@ -11,4 +11,3 @@
 ### 🌀 Other Changes (2)
 - Merge branch 'fix/changelog.yml' of https://github.com/Proyecto-ISPP/FISIOFIND into fix/changelog.yml (@Julen Redondo)
 - Merge remote-tracking branch 'origin' into fix/changelog.yml (@Julen Redondo)
-### 🔗 Pull Requests
