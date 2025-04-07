@@ -249,9 +249,7 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
                     resultado = soup.find("tbody", class_="row-hover").tr
                     if resultado:
                         datos = [td.text.strip() for td in resultado.find_all("td")]
-                        while len(numero) < 3:
-                            numero = "0" + numero
-                        valid = numero == datos[0].replace("39/", "")
+                        valid = numero == datos[0]
                         logging.info("Validación en Cantabria %s", "exitosa" if valid else "fallida")
                         return valid
                     else:
@@ -356,17 +354,12 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
             case "la rioja":
                 url = "https://www.coflarioja.org/ciudadanos/listado-de-fisioterapeutas/buscar-colegiados"
                 try:
-                    while len(numero) < 4:
-                        numero = "0" + numero
                     xpath = '//*[@id="busqueda-colegiados-search-input"]/div/input'
-                    soup = scraper.obtener_colegiado(numero, url, xpath)
+                    soup = scraper.obtener_colegiado(quitar_tildes(nombre), url, xpath)
                     resultado = soup.find("tbody").tr
                     if resultado:
                         datos = [td.text.strip() for td in resultado.find_all("td")]
-                        cadena = quitar_tildes(f"{datos[1]} {datos[2]}".upper())
-                        if "Mª" in cadena:
-                            cadena = cadena.replace("Mª", "MARIA")
-                        valid = cadena == quitar_tildes(nombre)
+                        valid = numero == datos[0]
                         logging.info("Validación en La Rioja %s", "exitosa" if valid else "fallida")
                         return valid
                     else:
