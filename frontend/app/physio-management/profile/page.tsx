@@ -1344,10 +1344,11 @@ const FisioProfile = () => {
           <div className="relative mb-4">
             <img
               src={getImageSrc()}
-              alt="Foto de perfil"
-              className="rounded-full w-32 h-32 object-cover"
+              alt="Perfil"
+              className={`w-40 h-40 rounded-full object-cover border-4 ${
+                profile.plan === 2 ? "border-yellow-400" : "border-white"
+              }`}
             />
-
             <label
               htmlFor="file-upload"
               className="absolute bottom-0 right-0 bg-white text-blue-600 p-2 rounded-full cursor-pointer"
@@ -1361,11 +1362,13 @@ const FisioProfile = () => {
               />
             </label>
           </div>
-          <label className="flex items-center gap-1">
-            <StarIcon className="w-4 h-4 text-amber-500 fill-amber-500" />
-            <span>Fisio GOLD</span>
-            <StarIcon className="w-4 h-4 text-amber-500 fill-amber-500" />
-          </label>
+          {Number(profile.plan) === 2 && (
+            <label className="flex items-center gap-1">
+              <StarIcon className="w-4 h-4 text-amber-500 fill-amber-500" />
+              <span>Fisio GOLD</span>
+              <StarIcon className="w-4 h-4 text-amber-500 fill-amber-500" />
+            </label>
+          )}
 
           <h2 className="text-xl font-bold mb-2">{profile.user.username}</h2>
           <p className="text-blue-200 mb-4">Profesional</p>

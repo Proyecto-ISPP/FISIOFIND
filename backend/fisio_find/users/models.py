@@ -49,7 +49,7 @@ def validate_image_file(value):
         raise ValidationError('Solo imágenes en formato JPG, JPEG o PNG son permitidos')
 
 class AppUser(AbstractUser):
-    photo = models.ImageField(null=True, blank=True, upload_to='profile_photos/')
+    photo = models.ImageField(null=True, blank=True, verbose_name='Foto', upload_to='user_photos/', storage=FileSystemStorage(location=settings.PROFILE_PHOTOS_ROOT, base_url=settings.PROFILE_PHOTOS_URL))
     dni = models.CharField(max_length=255, null=True, unique=True)
     phone_number = models.CharField(max_length=9, null=True, blank=True)
     postal_code = models.CharField(max_length=5)
