@@ -21,7 +21,6 @@ import Alert from "@/components/ui/Alert";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 import PhysioterapistRating from "@/components/ui/PhysioterapistRating";
 
-
 const getAuthToken = () => {
   return localStorage.getItem("token"); // Obtiene el token JWT
 };
@@ -160,7 +159,7 @@ const FisioProfile = () => {
     useState<boolean>(false);
 
   const [id, setId] = useState<number | null>(null);
-    const [physioterapistId, setPhysioterapistId] = useState(null);
+  const [physioterapistId, setPhysioterapistId] = useState(null);
 
   useEffect(() => {
     setIsClient(true);
@@ -235,7 +234,7 @@ const FisioProfile = () => {
         console.log("response", response.data);
 
         setId(response.data.physio.id);
-                setPhysioterapistId(response.data.physio.id);
+        setPhysioterapistId(response.data.physio.id);
         setProfile({
           user: {
             dni: response.data.physio.user_data.dni,
@@ -1376,9 +1375,9 @@ const FisioProfile = () => {
           <h2 className="text-xl font-bold mb-2">{profile.user.username}</h2>
           <p className="text-blue-200 mb-4">Profesional</p>
 
-                    {/* Sección de valoración general*/}
+          {/* Sección de valoración general*/}
 
-                    <PhysioterapistRating physioterapistId={physioterapistId}/>
+          <PhysioterapistRating physioterapistId={physioterapistId} />
 
           {/* Sección de horario */}
           <div className="w-full mt-4">
