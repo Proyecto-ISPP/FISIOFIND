@@ -17,12 +17,9 @@ from .permissions import (
     IsPatient,
     IsPhysiotherapist,
 )
-from .emailUtils import send_registration_confirmation_email  
+from .emailUtils import send_registration_confirmation_email, send_account_deletion_email
 from django.core import signing
-
 from users.util import check_service_json
-from .emailUtils import send_account_deletion_email
-from django.core import signing
 
 
 class PatientProfileView(generics.RetrieveAPIView):
@@ -107,62 +104,6 @@ def verify_user_and_update_status(user_id):
             "status": "error"
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def verify_registration(request, token):
-    """
-    Vista para verificar el token de registro y actualizar el estado del usuario.
-    Esta vista recibe una solicitud GET con el token en la URL y devuelve una respuesta JSON.
-    """
-    try:
-        data = signing.loads(token, salt='registration-confirm', max_age=86400)
-        user_id = data['user_id']
-        response = verify_user_and_update_status(user_id)
-        return response
-
-    except signing.SignatureExpired:
-        return Response({
-            "error": "El enlace de confirmación ha expirado. Por favor, solicita un nuevo enlace.",
-            "status": "error"
-        }, status=status.HTTP_400_BAD_REQUEST)
-
-    except signing.BadSignature:
-        return Response({
-            "error": "Enlace de confirmación inválido. Por favor, verifica el enlace o solicita uno nuevo.",
-            "status": "error"
-        }, status=status.HTTP_400_BAD_REQUEST)
-
-    except Exception as e:
-        return Response({
-            "error": "Ocurrió un error al procesar tu solicitud. Inténtalo de nuevo más tarde.",
-            "status": "error"
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-def verify_user_and_update_status(user_id):
-    """
-    Función para cambiar el estado del usuario a verified y devolver una Response.
-    """
-    try:
-        user = AppUser.objects.get(id=user_id)  
-        user.account_status = 'ACTIVE'
-        user.save()
-        return Response({
-            "message": "Usuario verificado exitosamente.",
-            "status": "success"
-        }, status=status.HTTP_200_OK)
-    except Patient.DoesNotExist:
-        return Response({
-            "error": f"No se encontró el usuario con ID {user_id}.",
-            "status": "error"
-        }, status=status.HTTP_404_NOT_FOUND)
-    except Exception as e:
-        return Response({
-            "error": "Ocurrió un error al verificar el usuario.",
-            "status": "error"
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def verify_registration(request, token):
