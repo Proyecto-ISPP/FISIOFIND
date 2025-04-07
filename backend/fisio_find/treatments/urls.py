@@ -1,11 +1,11 @@
 from django.urls import path
 from .views import (
-    ExerciseLogEvolutionView, SessionTestCreateOrUpdateView, SessionTestDeleteView, SessionTestResponseListView, SessionTestResponseView, SessionTestRetrieveView, TreatmentCreateView, PhysiotherapistTreatmentListView, PatientTreatmentListView, TreatmentDetailView,
+    ExerciseLogEvolutionView, SessionTestCreateOrUpdateView, SessionTestDeleteView, SessionTestResponseListView, SessionTestResponseView, SessionTestRetrieveView, ToggleTreatmentNotificationsView, TreatmentCreateView, PhysiotherapistTreatmentListView, PatientTreatmentListView, TreatmentDetailView,
     SessionCreateView, SessionListView, SessionDetailView,
     ExerciseCreateView, ExerciseListView, ExerciseDetailView, ExerciseSearchView, ExerciseByAreaView,
     AssignExerciseToSessionView, UnassignExerciseFromSessionView, ExerciseListBySessionView,
     SeriesCreateView, SeriesDetailView, SeriesListByExerciseSessionView, SeriesDeleteView,
-    ExerciseLogCreateView, ExerciseLogListView, ExerciseLogDetailView
+    ExerciseLogCreateView, ExerciseLogListView, ExerciseLogDetailView, ExerciseUsageView
 )
 
 urlpatterns = [
@@ -19,6 +19,7 @@ urlpatterns = [
     path('<int:treatment_id>/sessions/create/', SessionCreateView.as_view(), name='create_session'),
     path('<int:treatment_id>/sessions/', SessionListView.as_view(), name='session_list'),
     path('<int:treatment_id>/evolution/', ExerciseLogEvolutionView.as_view(), name='treatment_evolution'),
+    path('<int:pk>/toggle-notifications/', ToggleTreatmentNotificationsView.as_view(), name='toggle_treatment_notifications'),
     path('sessions/<int:session_id>/', SessionDetailView.as_view(), name='session_detail'),
     path('sessions/<int:session_id>/test/', SessionTestCreateOrUpdateView.as_view(), name='create_update_test'),
     path('sessions/<int:session_id>/test/view/', SessionTestRetrieveView.as_view(), name='view_test'),
@@ -48,4 +49,7 @@ urlpatterns = [
     path('exercise-logs/create/', ExerciseLogCreateView.as_view(), name='create_exercise_log'),
     path('exercise-sessions/<int:exercise_session_id>/logs/', ExerciseLogListView.as_view(), name='exercise_log_list'),
     path('exercise-logs/<int:pk>/', ExerciseLogDetailView.as_view(), name='exercise_log_detail'),
+    
+    # Uso de ejercicios
+    path('exercises/<int:exercise_id>/usage/', ExerciseUsageView.as_view(), name='exercise_usage'),
 ]

@@ -208,6 +208,31 @@ class TreatmentDetailView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
             
+class ToggleTreatmentNotificationsView(APIView):
+    """
+    Vista para que el paciente o fisioterapeuta activen/desactiven los recordatorios de ejercicios.
+    """
+    permission_classes = [IsPatient]
+
+    def patch(self, request, pk):
+        try:
+            treatment = Treatment.objects.get(pk=pk)
+
+            user = request.user
+            if treatment.physiotherapist.user != user and treatment.patient.user != user:
+                return Response({'detail': 'No tienes permiso para modificar este tratamiento'}, status=403)
+
+            notifications_enabled = request.data.get('notifications_enabled')
+            if notifications_enabled is None:
+                return Response({'detail': 'Se requiere el valor "notifications_enabled"'}, status=400)
+
+            treatment.notifications_enabled = bool(notifications_enabled)
+            treatment.save()
+            return Response({'notifications_enabled': treatment.notifications_enabled}, status=200)
+
+        except Treatment.DoesNotExist:
+            return Response({'detail': 'Tratamiento no encontrado'}, status=404)
+            
 class SessionCreateView(APIView):
     """
     Vista para que un fisioterapeuta pueda crear distintas sesiones de entrenamiento dentro de un tratamiento.
@@ -768,6 +793,62 @@ class ExerciseByAreaView(APIView):
         ]
 
         return Response(response_data, status=status.HTTP_200_OK)
+
+# Add this new view to retrieve sessions and treatments for an exercise
+class ExerciseUsageView(APIView):
+    """
+    Vista para obtener las sesiones y tratamientos donde se usa un ejercicio específico.
+    """
+    permission_classes = [IsPhysiotherapist]
+    
+    def get(self, request, exercise_id):
+        try:
+            # Verify the exercise exists and belongs to the requesting physiotherapist
+            exercise = Exercise.objects.get(id=exercise_id)
+            if exercise.physiotherapist.user != request.user:
+                return Response(
+                    {'detail': 'No tiene permiso para ver este ejercicio'},
+                    status=status.HTTP_403_FORBIDDEN
+                )
+                
+            # Get all exercise sessions for this exercise
+            exercise_sessions = ExerciseSession.objects.filter(exercise=exercise)
+            
+            # Prepare the result data
+            usage_data = []
+            
+            for es in exercise_sessions:
+                session = es.session
+                treatment = session.treatment
+                
+                # Get series information for this exercise in this session
+                series_list = Series.objects.filter(exercise_session=es)
+                series_data = SeriesSerializer(series_list, many=True).data
+                
+                usage_data.append({
+                    'exercise_session_id': es.id,
+                    'session': {
+                        'id': session.id,
+                        'name': session.name or f"Sesión {session.id}",
+                        'day_of_week': session.day_of_week
+                    },
+                    'treatment': {
+                        'id': treatment.id,
+                        'patient_name': f"{treatment.patient.user.first_name} {treatment.patient.user.last_name}",
+                        'start_time': treatment.start_time,
+                        'end_time': treatment.end_time,
+                        'is_active': treatment.is_active
+                    },
+                    'series': series_data
+                })
+                
+            return Response(usage_data)
+            
+        except Exercise.DoesNotExist:
+            return Response(
+                {'detail': 'No se ha encontrado el ejercicio'},
+                status=status.HTTP_404_NOT_FOUND
+            )
     
 class AssignExerciseToSessionView(APIView):
     """

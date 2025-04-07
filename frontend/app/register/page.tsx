@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
@@ -8,6 +8,13 @@ import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
 export default function RegisterPage() {
   const router = useRouter();
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+  
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      router.replace("/restricted-access");
+    }
+  }, [router]);
 
   const handleRoleSelection = (role: "patient" | "physio") => {
     router.push(`/register/${role}`);

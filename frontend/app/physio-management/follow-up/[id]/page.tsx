@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Line } from "react-chartjs-2";
 import Alert from "@/components/ui/Alert";
+
 import {
   Chart,
   LineElement,
@@ -75,15 +76,9 @@ interface EvolutionDataByMetric {
   };
 }
 
-interface SessionEvolutionData {
-  session_id: number;
-  session_name: string;
-  exercises: ExerciseEvolutionData[];
-}
-
 const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
   const unwrappedParams = use(params as any);
-  const { id, sessionId } = unwrappedParams as {
+  const { id } = unwrappedParams as {
     id: string;
     sessionId: string;
   };
@@ -148,7 +143,7 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
         }
 
         // For each series in the exercise
-        for (const [seriesKey, dateValues] of Object.entries(
+        for (const [, dateValues] of Object.entries(
           seriesData as Record<string, any>
         )) {
           // Process date values for this series
@@ -603,6 +598,14 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
             className="bg-[#6bc9be] hover:bg-[#5ab8ad] text-white font-semibold py-2 px-4 rounded-xl inline-flex items-center"
           >
             Gestionar Sesiones
+          </button>
+          <button
+            onClick={() =>
+              router.push(`/physio-management/follow-up/${id}/videos`)
+            }
+            className="bg-[#6bc9be] hover:bg-[#5ab8ad] text-white font-semibold py-2 px-4 rounded-xl inline-flex items-center"
+          >
+            Gestionar Videos
           </button>
           <button
             onClick={handleEditToggle}

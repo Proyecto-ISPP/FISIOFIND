@@ -1,6 +1,6 @@
 ---
 title: "ACUERDO CON USUARIOS PILOTO"                      # CHANGE IF NEEDED
-subtitle: "FISIO FIND - Grupo 6 - #SPRINT 1"
+subtitle: "FISIO FIND - Grupo 6 - #SPRINT 3"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]
 date: "10/02/2025"                                        # CHANGE IF NEEDED
 subject: "ISPP"
@@ -58,7 +58,7 @@ classoption: "table"
 
 - **Número de Grupo:** Grupo 6
 
-- **Entregable:** #SPRINT 1
+- **Entregable:** #SPRINT 3
 
 - **Miembros del grupo:** Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes.
 
@@ -66,8 +66,7 @@ classoption: "table"
 
 - **Fecha de Creación:** 10/02/2025  
 
-- **Versión:** v1.5
-
+- **Versión:** v1.6
 <br>
 
 <!-- \newpage -->
@@ -87,7 +86,7 @@ classoption: "table"
 |  20/02/2025  | v1.3     | Guadalupe Ridruejo Pineda | Firmas de los primeros usuarios piloto                                     |
 |  26/02/2025  | v1.4     | Guadalupe Ridruejo Pineda | Últimas firmas de usuarios piloto                                          |
 |  10/03/2025  | v1.5     | Antonio Macías Ferrera    | Gestión de las comunicaciones y la evaluación de usuarios alumnos de ISPP  |
-
+| 04/04/2025   | v1.6      | Antonio Macías Ferrera    | Adecuación para la entrega del #SPRINT 3. Adición de nuevos UP (fisioterapeutas)              |
 <br>
 
 <!-- \newpage -->
@@ -351,6 +350,16 @@ El período de pruebas se extenderá, como muy pronto, desde el comienzo de la p
 | **Teléfono (opcional)**                   |                                        |
 |                                           |                                        |
 | **Firma del Usuario Piloto**              | MGS                                    |
+
+
+| **Nombre y Apellidos del Usuario Piloto** | Alejandro Pedrido Galván               |
+| ----------------------------------------- | -------------------------------------- |
+| **Tipo de Usuario Piloto**                | **Externo [ X ]** **Alumno ISPP [  ]** |
+| **Correo Electrónico**                    | alexpg1992@gmail.com                   |
+| **Rol de prueba**                         | Fisioterapeuta                         |
+| **Teléfono (opcional)**                   |                                        |
+|                                           |                                        |
+| **Firma del Usuario Piloto**              | APG                                    |
 
 
 | **Nombre y Apellidos del Usuario Piloto** | Pedro Pablo Gallego Mendoza            |

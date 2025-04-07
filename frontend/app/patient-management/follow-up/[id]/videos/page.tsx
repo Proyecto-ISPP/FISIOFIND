@@ -1,23 +1,48 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { getApiBaseUrl } from "@/utils/api";
-import { Loader2, Play, AlertCircle, X } from 'lucide-react';
+import { Play, AlertCircle, X, Loader2, ArrowLeft } from 'lucide-react';
+import { useParams, useRouter } from "next/navigation";
+import Alert from "@/components/ui/Alert";
 
 const getAuthToken = () => {
-  return localStorage.getItem("token"); // Obtiene el token JWT
+  return localStorage.getItem("token");
 };
 
-const PatientVideos = () => {
-  const [videos, setVideos] = useState([]);
-  const [loading, setLoading] = useState(true); // Cargando inicialmente
-  const [message, setMessage] = useState("");
-  const [videoUrl, setVideoUrl] = useState("");
-  const [isVideoLoading, setIsVideoLoading] = useState(false); // Para controlar el modal de carga del video
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isAuthChecking, setIsAuthChecking] = useState(true);
+const Pacientes = () => {
+  const params = useParams();
+  const id = params?.id as string;
+  const router = useRouter();
+  const [videos, setVideos] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [message, setMessage] = useState<string>("");
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [isVideoLoading, setIsVideoLoading] = useState<boolean>(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isAuthChecking, setIsAuthChecking] = useState<boolean>(true);
 
+
+  const [alert, setAlert] = useState<{
+    show: boolean;
+    type: "success" | "error" | "info" | "warning";
+    message: string;
+  }>({
+    show: false,
+    type: "info",
+    message: ""
+  });
+  
+  const showAlert = (type: "success" | "error" | "info" | "warning", message: string) => {
+    setAlert({
+      show: true,
+      type,
+      message
+    });
+  };
+
+  
   // Check authentication and role
   useEffect(() => {
     const checkAuthAndRole = async () => {
@@ -45,7 +70,6 @@ const PatientVideos = () => {
           window.location.href = "/not-found";
         }
       } catch (error) {
-        console.error("Error checking user role:", error);
         if (error.response?.status === 401) {
           // Token expired or invalid
           localStorage.removeItem("token");
@@ -68,14 +92,13 @@ const PatientVideos = () => {
     const fetchVideos = async () => {
       const storedToken = getAuthToken();
       if (!storedToken) {
-        console.error("❌ No hay token disponible.");
         setMessage("Error: No hay token de autenticación.");
         setLoading(false);
         return;
       }
 
       try {
-        const response = await axios.get(`${getApiBaseUrl()}/api/app_user/videos/list-my-videos/`, {
+        const response = await axios.get(`${getApiBaseUrl()}/api/cloud/videos/list-videos/`, {
           headers: {
             Authorization: `Bearer ${storedToken}`,
           },
@@ -84,11 +107,10 @@ const PatientVideos = () => {
         if (response.data && Array.isArray(response.data)) {
           setVideos(response.data);
         } else {
-          setMessage("❌ No se encontraron videos.");
+          setMessage(" No se encontraron videos.");
         }
       } catch (error) {
-        console.error("⚠️ Error al obtener los videos:", error);
-        setMessage("❌ Error al obtener los videos.");
+        showAlert("error", "Error al obtener los videos.");
       } finally {
         setLoading(false); // Al finalizar la carga de videos, cambia el estado
       }
@@ -97,10 +119,9 @@ const PatientVideos = () => {
     fetchVideos();
   }, [isAuthenticated, isAuthChecking]);
 
-  const handleVideoClick = async (videoId) => {
+  const handleVideoClick = async (videoId: string) => {
     const storedToken = getAuthToken();
     if (!storedToken) {
-      console.error("❌ No hay token disponible.");
       setMessage("Error: No hay token de autenticación.");
       return;
     }
@@ -108,7 +129,7 @@ const PatientVideos = () => {
     setIsVideoLoading(true); // Mostrar el modal de "Cargando video"
 
     try {
-      const response = await axios.get(`${getApiBaseUrl()}/api/app_user/videos/stream-video/${videoId}/`, {
+      const response = await axios.get(`${getApiBaseUrl()}/api/cloud/videos/stream-video/${videoId}/`, {
         headers: {
           Authorization: `Bearer ${storedToken}`,
         },
@@ -119,8 +140,7 @@ const PatientVideos = () => {
       setVideoUrl(videoUrl); // Establecer la URL del video
 
     } catch (error) {
-      console.error("⚠️ Error al obtener el video:", error);
-      setMessage("❌ Error al obtener el video.");
+      setMessage(" Error al obtener el video.");
       setTimeout(() => setMessage(""), 5000);
     } finally {
       setIsVideoLoading(false); // Ocultar el modal de "Cargando video" cuando el video esté listo
@@ -147,10 +167,19 @@ const PatientVideos = () => {
   return (
     <div className="min-h-screen flex items-center justify-center p-5" 
          style={{ background: "rgb(238, 251, 250)" }}>
-      
+
       <div className="bg-white w-full max-w-4xl rounded-3xl shadow-xl p-10 transition-all duration-300"
            style={{ boxShadow: "0 20px 60px rgba(0, 0, 0, 0.08)" }}>
         
+        {/* Back to Treatment Button */}
+        <button
+          onClick={() => router.push(`/patient-management/follow-up/${id}`)}
+          className="mb-6 flex items-center text-blue-600 hover:text-blue-800 transition-colors duration-200 font-medium"
+        >
+          <ArrowLeft className="mr-2" size={20} />
+          Volver al tratamiento
+        </button>
+
         <div className="text-center mb-9">
           <h1 className="text-3xl font-bold mb-2"
               style={{ 
@@ -158,20 +187,20 @@ const PatientVideos = () => {
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent"
               }}>
-            Mis Videos
+            Videos del Tratamiento
           </h1>
           <p className="text-gray-600">
-            Videos compartidos por tu fisioterapeuta
+            Lista de videos relacionados con tu tratamiento
           </p>
         </div>
-        
+
         {/* Loading State */}
         {loading && (
           <div className="flex justify-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#1E5ACD]"></div>
           </div>
         )}
-        
+
         {/* Error Message */}
         {message && (
           <div
@@ -181,14 +210,14 @@ const PatientVideos = () => {
             <span>{message}</span>
           </div>
         )}
-        
+
         {/* No Videos Available */}
         {videos.length === 0 && !loading && (
           <div className="text-center py-8 bg-gray-50 rounded-2xl border-2 border-gray-200">
             <p className="text-gray-500">No tienes videos disponibles.</p>
           </div>
         )}
-        
+
         {/* Video List */}
         {videos.length > 0 && !loading && (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -217,7 +246,7 @@ const PatientVideos = () => {
           </div>
         )}
       </div>
-      
+
       {/* Video Loading Modal */}
       {isVideoLoading && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 backdrop-blur-sm">
@@ -230,17 +259,17 @@ const PatientVideos = () => {
           </div>
         </div>
       )}
-      
+
       {/* Video Player */}
       {videoUrl && (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 backdrop-blur-sm">
           <div className="relative max-w-4xl w-full p-4">
             <button 
               onClick={() => setVideoUrl(null)}
-              className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-all duration-200 flex items-center"
+              className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-all duration-200 flex items-center rounded-full p-2 shadow-lg"
             >
-              <X size={24} className="mr-2" />
-              Cerrar
+              <X size={24} />
+              <span className="ml-1 mr-1">Cerrar</span>
             </button>
             <video 
               controls 
@@ -257,4 +286,4 @@ const PatientVideos = () => {
   );
 };
 
-export default PatientVideos;
+export default Pacientes;
