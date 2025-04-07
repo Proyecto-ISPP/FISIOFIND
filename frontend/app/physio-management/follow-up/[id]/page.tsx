@@ -144,7 +144,7 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
 
         // For each series in the exercise
         for (const [, dateValues] of Object.entries(
-          seriesData as Record<string, any>
+          seriesData as Record<string, { date: string; value: number; metric: string }[]>
         )) {
           // Process date values for this series
           for (const entry of dateValues as Array<{
@@ -572,279 +572,399 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {alertMessage && (
-        <div className="mb-6">
-          <Alert
-            type={alertType}
-            message={alertMessage}
-            onClose={() => setAlertMessage(null)}
-          />
-        </div>
-      )}
-      <div className="flex justify-between items-center mb-6">
-        <button
-          onClick={handleGoBack}
-          className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-xl inline-flex items-center"
-        >
-          ← Volver
-        </button>
-        <h1 className="text-2xl font-bold">Detalles del Tratamiento</h1>
-        <div className="flex space-x-2">
-          <button
-            onClick={() =>
-              router.push(`/physio-management/follow-up/${id}/sessions`)
-            }
-            className="bg-[#6bc9be] hover:bg-[#5ab8ad] text-white font-semibold py-2 px-4 rounded-xl inline-flex items-center"
-          >
-            Gestionar Sesiones
-          </button>
-          <button
-            onClick={() =>
-              router.push(`/physio-management/follow-up/${id}/videos`)
-            }
-            className="bg-[#6bc9be] hover:bg-[#5ab8ad] text-white font-semibold py-2 px-4 rounded-xl inline-flex items-center"
-          >
-            Gestionar Videos
-          </button>
-          <button
-            onClick={handleEditToggle}
-            className="bg-[#05668d] hover:bg-[#045272] text-white font-semibold py-2 px-4 rounded-xl inline-flex items-center"
-          >
-            {isEditing ? "Cancelar" : "Editar"}
-          </button>
-        </div>
-      </div>
+    <div
+      className="min-h-screen w-full"
+      style={{ backgroundColor: "rgb(238, 251, 250)" }}
+    >
+      <div className="container mx-auto px-4 py-8">
+        {alertMessage && (
+          <div className="mb-6">
+            <Alert
+              type={alertType}
+              message={alertMessage}
+              onClose={() => setAlertMessage(null)}
+            />
+          </div>
+        )}
 
-      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-3xl font-bold">{patientName}</h1>
-          <div className="flex items-center space-x-3">
-            <span
-              className={`px-3 py-1 rounded-full text-white ${
-                treatment.is_active ? "bg-green-500" : "bg-gray-500"
-              }`}
+        <div className="flex justify-between items-center mb-6">
+          <button
+            onClick={handleGoBack}
+            className="bg-white hover:bg-gray-100 text-[#05668D] font-semibold py-2 px-4 rounded-xl inline-flex items-center shadow-md transition-all duration-300"
+          >
+            ← Volver
+          </button>
+          <h1 className="text-3xl font-bold text-[#05668D]">
+            Detalles del Tratamiento
+          </h1>
+          <div className="flex space-x-2">
+            <button
+              onClick={() =>
+                router.push(`/physio-management/follow-up/${id}/sessions`)
+              }
+              className="bg-gradient-to-r from-[#6BC9BE] to-[#05668D] hover:opacity-90 text-white font-semibold py-2 px-4 rounded-xl inline-flex items-center shadow-md transition-all duration-300 border-r border-white/20"
             >
-              {treatment.is_active ? "Activo" : "Inactivo"}
-            </span>
+              Gestionar Sesiones
+            </button>
+            <button
+              onClick={() =>
+                router.push(`/physio-management/follow-up/${id}/videos`)
+              }
+              className="bg-gradient-to-r from-[#05668D] to-[#6BC9BE] hover:opacity-90 text-white font-semibold py-2 px-4 rounded-xl inline-flex items-center shadow-md transition-all duration-300"
+            >
+              Gestionar Videos
+            </button>
+            <button
+              onClick={handleEditToggle}
+              className="bg-white hover:bg-gray-100 text-[#05668D] border border-[#05668D] font-semibold py-2 px-4 rounded-xl inline-flex items-center shadow-md transition-all duration-300"
+            >
+              {isEditing ? "Cancelar" : "Editar"}
+            </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <div>
-            <h2 className="text-xl font-semibold mb-2">
-              Información del tratamiento
+        <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-3xl font-bold text-[#05668D]">{patientName}</h1>
+            <div className="flex items-center space-x-3">
+              <span
+                className={`px-4 py-1.5 rounded-full text-white font-medium ${
+                  treatment.is_active
+                    ? "bg-gradient-to-r from-green-400 to-green-600"
+                    : "bg-gradient-to-r from-gray-400 to-gray-600"
+                }`}
+              >
+                {treatment.is_active ? "Activo" : "Inactivo"}
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
+            <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-md p-6">
+              <h2 className="text-xl font-semibold mb-4 text-[#05668D]">
+                Información del tratamiento
+              </h2>
+
+              {isEditing ? (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de inicio
+                    </label>
+                    <input
+                      type="date"
+                      name="start_time"
+                      value={formatDateForInput(
+                        editedTreatment.start_time || treatment.start_time
+                      )}
+                      onChange={handleDateChange}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de fin
+                    </label>
+                    <input
+                      type="date"
+                      name="end_time"
+                      value={formatDateForInput(
+                        editedTreatment.end_time || treatment.end_time
+                      )}
+                      onChange={handleDateChange}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300"
+                    />
+                  </div>
+
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="is_active"
+                      name="is_active"
+                      checked={
+                        editedTreatment.is_active !== undefined
+                          ? editedTreatment.is_active
+                          : treatment.is_active
+                      }
+                      onChange={(e) =>
+                        setEditedTreatment({
+                          ...editedTreatment,
+                          is_active: e.target.checked,
+                        })
+                      }
+                      className="h-5 w-5 text-[#05668D] focus:ring-[#41B8D5] border-gray-300 rounded"
+                    />
+                    <label
+                      htmlFor="is_active"
+                      className="ml-2 block text-sm text-gray-900"
+                    >
+                      Tratamiento activo
+                    </label>
+                  </div>
+
+                  {saveError && (
+                    <div className="text-red-600 text-sm mt-2">{saveError}</div>
+                  )}
+
+                  <div className="flex justify-end">
+                    <button
+                      onClick={handleSaveChanges}
+                      disabled={isSaving}
+                      className="px-4 py-2 bg-gradient-to-r from-[#6BC9BE] to-[#05668D] text-white rounded-xl hover:opacity-90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isSaving ? "Guardando..." : "Guardar cambios"}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center border-b border-gray-100 pb-2">
+                    <span className="font-medium text-gray-600">Inicio:</span>
+                    <span className="text-[#05668D]">
+                      {new Date(treatment.start_time).toLocaleDateString(
+                        "es-ES"
+                      )}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center border-b border-gray-100 pb-2">
+                    <span className="font-medium text-gray-600">Fin:</span>
+                    <span className="text-[#05668D]">
+                      {new Date(treatment.end_time).toLocaleDateString("es-ES")}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium text-gray-600">Estado:</span>
+                    <span
+                      className={
+                        treatment.is_active
+                          ? "text-[#05AC9C] font-medium"
+                          : "text-gray-500 font-medium"
+                      }
+                    >
+                      {treatment.is_active ? "Activo" : "Inactivo"}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-md p-6">
+              <h2 className="text-xl font-semibold mb-4 text-[#05668D]">
+                Información del paciente
+              </h2>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center border-b border-gray-100 pb-2">
+                  <span className="font-medium text-gray-600">Nombre:</span>
+                  <span className="text-[#05668D]">{patientName}</span>
+                </div>
+                <div className="flex justify-between items-center border-b border-gray-100 pb-2">
+                  <span className="font-medium text-gray-600">Email:</span>
+                  <span className="text-[#05668D]">{patientEmail}</span>
+                </div>
+                <div className="flex justify-between items-center border-b border-gray-100 pb-2">
+                  <span className="font-medium text-gray-600">Género:</span>
+                  <span className="text-[#05668D]">{patientGender}</span>
+                </div>
+                <div className="flex justify-between items-center border-b border-gray-100 pb-2">
+                  <span className="font-medium text-gray-600">Edad:</span>
+                  <span className="text-[#05668D]">
+                    {calculateAge(patientData?.birth_date)}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="font-medium text-gray-600">
+                    Última cita:
+                  </span>
+                  <span className="text-[#05668D]">
+                    {formatLastAppointment()}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-6 mb-8">
+          <div className="bg-white rounded-2xl shadow-lg p-6">
+            <h2 className="text-2xl font-semibold mb-6 text-[#05668D]">
+              Evolución del Paciente
             </h2>
 
-            {isEditing ? (
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Fecha de inicio
-                  </label>
-                  <input
-                    type="date"
-                    name="start_time"
-                    value={formatDateForInput(
-                      editedTreatment.start_time || treatment.start_time
-                    )}
-                    onChange={handleDateChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            {evolutionLoading ? (
+              <div className="flex justify-center items-center h-64">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#41B8D5]"></div>
+              </div>
+            ) : evolutionError ? (
+              <div className="text-center text-red-500 py-8 bg-red-50 rounded-xl">
+                {evolutionError}
+              </div>
+            ) : evolutionData.length === 0 ? (
+              <div className="text-center text-gray-500 py-12 bg-gray-50 rounded-xl">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-16 w-16 mx-auto text-gray-400 mb-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
                   />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Fecha de fin
-                  </label>
-                  <input
-                    type="date"
-                    name="end_time"
-                    value={formatDateForInput(
-                      editedTreatment.end_time || treatment.end_time
-                    )}
-                    onChange={handleDateChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="is_active"
-                    name="is_active"
-                    checked={
-                      editedTreatment.is_active !== undefined
-                        ? editedTreatment.is_active
-                        : treatment.is_active
-                    }
-                    onChange={(e) =>
-                      setEditedTreatment({
-                        ...editedTreatment,
-                        is_active: e.target.checked,
-                      })
-                    }
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-                  <label
-                    htmlFor="is_active"
-                    className="ml-2 block text-sm text-gray-900"
-                  >
-                    Tratamiento activo
-                  </label>
-                </div>
-
-                {saveError && (
-                  <div className="text-red-600 text-sm mt-2">{saveError}</div>
-                )}
-
-                <div className="flex justify-end">
-                  <button
-                    onClick={handleSaveChanges}
-                    disabled={isSaving}
-                    className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isSaving ? "Guardando..." : "Guardar cambios"}
-                  </button>
-                </div>
+                </svg>
+                <p className="text-lg">
+                  No hay datos de evolución disponibles para este tratamiento.
+                </p>
               </div>
             ) : (
-              <>
-                <p>
-                  <span className="font-medium">Inicio:</span>{" "}
-                  {new Date(treatment.start_time).toLocaleDateString("es-ES")}
-                </p>
-                <p>
-                  <span className="font-medium">Fin:</span>{" "}
-                  {new Date(treatment.end_time).toLocaleDateString("es-ES")}
-                </p>
-              </>
+              <div>
+                {/* Exercise navigation */}
+                <div className="bg-gradient-to-br from-[#f8fdfc] to-[#edf8f7] rounded-xl shadow-md p-4 mb-6">
+                  <div className="flex justify-between items-center">
+                    <button
+                      onClick={prevExercise}
+                      disabled={activeExerciseIndex === 0}
+                      className="px-4 py-2 bg-white rounded-xl shadow-sm hover:bg-gray-50 transition-all duration-300 border border-transparent hover:border-[#6BC9BE] disabled:border-gray-200 disabled:hover:border-gray-200 disabled:opacity-50 disabled:hover:bg-white"
+                    >
+                      ← Ejercicio anterior
+                    </button>
+
+                    <h4 className="text-lg font-medium text-[#05668D]">
+                      {evolutionData[activeExerciseIndex]?.exercise_name ||
+                        "Ejercicio"}{" "}
+                      ({activeExerciseIndex + 1} de {evolutionData.length})
+                      {" - "}
+                      {getMetricLabel(
+                        evolutionData[activeExerciseIndex]?.metric_type || ""
+                      )}
+                    </h4>
+
+                    <button
+                      onClick={nextExercise}
+                      disabled={activeExerciseIndex >= evolutionData.length - 1}
+                      className="px-4 py-2 bg-white rounded-xl shadow-sm disabled:opacity-50 hover:bg-gray-50 transition-all duration-300"
+                    >
+                      Siguiente ejercicio →
+                    </button>
+                  </div>
+                </div>
+
+                {/* Chart */}
+                <div className="bg-white rounded-xl shadow-md p-6 h-80">
+                  <Line
+                    data={chartData}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      scales: {
+                        y: {
+                          beginAtZero: true,
+                          title: {
+                            display: true,
+                            text: getMetricLabel(
+                              evolutionData[activeExerciseIndex]?.metric_type ||
+                                ""
+                            ),
+                            font: {
+                              weight: "bold",
+                            },
+                          },
+                          grid: {
+                            color: "rgba(0, 0, 0, 0.05)",
+                          },
+                        },
+                        x: {
+                          title: {
+                            display: true,
+                            text: "Fecha",
+                            font: {
+                              weight: "bold",
+                            },
+                          },
+                          grid: {
+                            color: "rgba(0, 0, 0, 0.05)",
+                          },
+                        },
+                      },
+                      plugins: {
+                        legend: {
+                          labels: {
+                            font: {
+                              size: 14,
+                            },
+                          },
+                        },
+                        tooltip: {
+                          backgroundColor: "rgba(0, 0, 0, 0.7)",
+                          padding: 10,
+                          cornerRadius: 6,
+                          titleFont: {
+                            size: 14,
+                          },
+                          bodyFont: {
+                            size: 14,
+                          },
+                        },
+                      },
+                    }}
+                  />
+                </div>
+              </div>
             )}
           </div>
+        </div>
 
-          <div>
-            <h2 className="text-xl font-semibold mb-2">
-              Información del paciente
-            </h2>
-            <p>
-              <span className="font-medium">Nombre:</span> {patientName}
-            </p>
-            <p>
-              <span className="font-medium">Email:</span> {patientEmail}
-            </p>
-            <p>
-              <span className="font-medium">Género:</span> {patientGender}
-            </p>
-            <p>
-              <span className="font-medium">Edad:</span>{" "}
-              {calculateAge(patientData?.birth_date)}
-            </p>
-            <p>
-              <span className="font-medium">Última cita:</span>{" "}
-              {formatLastAppointment()}
-            </p>
+        {!isEditing && (
+          <div className="flex justify-end space-x-4 mb-8">
+            {treatment.is_active ? (
+              <button
+                className="px-6 py-3 bg-gradient-to-r from-red-400 to-red-600 text-white font-medium rounded-xl hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-red-300 focus:ring-offset-2 transition-all duration-300 shadow-md flex items-center space-x-2"
+                onClick={() => handleStatusChange(false)}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 mr-2"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                Marcar como Inactivo
+              </button>
+            ) : (
+              <button
+                className="px-6 py-3 bg-gradient-to-r from-[#6BC9BE] to-[#05668D] text-white font-medium rounded-xl hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#6BC9BE] focus:ring-offset-2 transition-all duration-300 shadow-md flex items-center space-x-2"
+                onClick={() => handleStatusChange(true)}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 mr-2"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                Reactivar Tratamiento
+              </button>
+            )}
           </div>
-        </div>
+        )}
       </div>
-
-      <div className="grid grid-cols-1 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4">Evolución del Paciente</h2>
-
-          {evolutionLoading ? (
-            <div className="flex justify-center items-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-            </div>
-          ) : evolutionError ? (
-            <div className="text-center text-red-500 py-8">
-              {evolutionError}
-            </div>
-          ) : evolutionData.length === 0 ? (
-            <div className="text-center text-gray-500 py-8">
-              No hay datos de evolución disponibles para este tratamiento.
-            </div>
-          ) : (
-            <div>
-              {/* Exercise navigation */}
-              <div className="flex justify-between items-center mb-4">
-                <button
-                  onClick={prevExercise}
-                  disabled={activeExerciseIndex === 0}
-                  className="px-3 py-1 bg-gray-200 rounded-xl disabled:opacity-50"
-                >
-                  ← Ejercicio anterior
-                </button>
-
-                <h4 className="text-md font-medium">
-                  {evolutionData[activeExerciseIndex]?.exercise_name ||
-                    "Ejercicio"}{" "}
-                  ({activeExerciseIndex + 1} de {evolutionData.length}){" - "}
-                  {getMetricLabel(
-                    evolutionData[activeExerciseIndex]?.metric_type || ""
-                  )}
-                </h4>
-
-                <button
-                  onClick={nextExercise}
-                  disabled={activeExerciseIndex >= evolutionData.length - 1}
-                  className="px-3 py-1 bg-gray-200 rounded-xl disabled:opacity-50"
-                >
-                  Siguiente ejercicio →
-                </button>
-              </div>
-
-              {/* Chart */}
-              <div className="h-64 mt-4">
-                <Line
-                  data={chartData}
-                  options={{
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                      y: {
-                        beginAtZero: true,
-                        title: {
-                          display: true,
-                          text: getMetricLabel(
-                            evolutionData[activeExerciseIndex]?.metric_type ||
-                              ""
-                          ),
-                        },
-                      },
-                      x: {
-                        title: {
-                          display: true,
-                          text: "Fecha",
-                        },
-                      },
-                    },
-                  }}
-                />
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {!isEditing && (
-        <div className="mt-6 flex justify-end space-x-4">
-          {treatment.is_active ? (
-            <button
-              className="mb-4 mt-4 px-6 py-3 bg-red-400 text-white font-medium rounded-xl hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-300 focus:ring-offset-2 transition-colors duration-200 flex items-center space-x-2"
-              onClick={() => handleStatusChange(false)}
-            >
-              Marcar como Inactivo
-            </button>
-          ) : (
-            <button
-              className="mb-8 mt-8 px-6 py-3 bg-[#6bc9be] text-white font-medium rounded-xl hover:bg-[#5ab8ad] focus:outline-none focus:ring-2 focus:ring-[#6bc9be] focus:ring-offset-2 transition-colors duration-200 flex items-center space-x-2"
-              onClick={() => handleStatusChange(true)}
-            >
-              Reactivar Tratamiento
-            </button>
-          )}
-        </div>
-      )}
     </div>
   );
 };

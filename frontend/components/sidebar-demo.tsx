@@ -208,7 +208,7 @@ export function SidebarDemo() {
                   <div key={`mobile-public-${idx}`} className="w-full">
                     <Link
                       href={link.href}
-                      className="flex flex-col items-center gap-2 py-3 px-2 rounded-lg hover:bg-neutral-200 transition-all duration-200 w-full"
+                      className="flex flex-col items-center gap-2 py-3 px-2 rounded-xl hover:bg-neutral-200 transition-all duration-200 w-full"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       <div className="flex items-center justify-center">
@@ -226,7 +226,7 @@ export function SidebarDemo() {
                     <div key={`mobile-private-${idx}`} className="w-full">
                       <Link
                         href={link.href}
-                        className="flex flex-col items-center gap-2 py-3 px-2 rounded-lg hover:bg-neutral-200 transition-all duration-200 w-full"
+                        className="flex flex-col items-center gap-2 py-3 px-2 rounded-xl hover:bg-neutral-200 transition-all duration-200 w-full"
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         <div className="flex items-center justify-center">
