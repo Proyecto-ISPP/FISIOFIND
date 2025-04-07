@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import Image from "next/image";
@@ -133,6 +133,14 @@ const FormField = ({
 
 const PatientRegistrationForm = () => {
   const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      router.replace("/restricted-access");
+    }
+  }, [router]);
+
   // Utilizamos dos pasos:
   // Paso 1: Información de Cuenta (username, email, password)
   // Paso 2: Información Personal (first_name, last_name, dni, phone_number, birth_date, gender, postal_code)
