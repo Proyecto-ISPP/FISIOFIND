@@ -148,7 +148,7 @@ const SearchPage = () => {
     }
   };
 
-  const maxIndex = Math.max(0, displayResults.length - cardsPerPage);
+  const maxIndex = Math.max(0, displayResults.length - 2);
 
   const calculateTranslateX = () => {
     if (displayResults.length <= cardsPerPage) return 0;
@@ -573,7 +573,7 @@ const SearchPage = () => {
                         onTouchEnd={handleDragEnd}
                       >
                         <div
-                          className="flex transition-transform duration-500 ease-[cubic-bezier(0.2, 0.1, 0.2, 1)] gap-4"
+                          className="flex transition-transform duration-500 ease-[cubic-bezier(0.2, 0.1, 0.2, 1)] gap-8"
                           style={{
                             transform: `translateX(-${calculateTranslateX()}%)`,
                             paddingLeft: '4px',
@@ -601,7 +601,7 @@ const SearchPage = () => {
                                     <div className="relative w-full aspect-[4/3] overflow-hidden">
                                       <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                                       <Image
-                                        src={physio.image || "/static/fisioterapeuta_sample.webp"}
+                                        src={physio.image?.startsWith("http") ? physio.image : "/static/fisioterapeuta_sample.webp"}
                                         alt={physio.name}
                                         fill
                                         className="object-cover transform group-hover:scale-110 transition-transform duration-700 ease-out"
