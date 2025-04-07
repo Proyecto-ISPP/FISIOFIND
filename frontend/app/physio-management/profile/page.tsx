@@ -1374,7 +1374,7 @@ const FisioProfile = () => {
 
           {/* Sección de valoración general*/}
 
-          <PhysioterapistRating physioterapistId={physioterapistId} />
+          {id && <PhysioterapistRating physioterapistId={id} />}
 
           {/* Sección de horario */}
           <div className="w-full mt-4">
