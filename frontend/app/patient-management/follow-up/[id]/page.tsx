@@ -176,6 +176,10 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
     router.push(`/patient-management/follow-up/${params.id}/videos`);
   };
 
+  const handleViewFiles = () => {
+    router.push(`/patient-management/follow-up/${params.id}/files`);
+  };
+
   const handleGoBack = () => {
     router.push("/patient-management/follow-up");
   };
@@ -320,7 +324,7 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
                 Ver Videos
               </button>
               <button
-                onClick={handleViewVideos
+                onClick={handleViewFiles
                 }
                 className="bg-[#6bc9be] hover:bg-[#5ab8ad] text-white font-semibold py-2 px-4 rounded-xl inline-flex items-center"
               >

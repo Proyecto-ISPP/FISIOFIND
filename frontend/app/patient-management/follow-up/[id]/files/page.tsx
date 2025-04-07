@@ -300,7 +300,8 @@ const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
           }}>
             Archivos del Tratamiento
           </h1>
-          <p className="text-gray-600">Administra los archivos de tu tratamiento</p>
+          <p className="text-gray-600">Administra los archivos de tu tratamiento.</p>
+          <p className="text-gray-600">Recuerda que puedes adjuntar imágenes y archivos pdf.</p>
         </div>
   
         <div className="mb-8">

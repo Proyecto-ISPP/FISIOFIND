@@ -5,21 +5,37 @@ import uuid
 from rest_framework import serializers
 from .models import PatientFile, Video
 import logging
-
+from mimetypes import guess_type
 
 class PatientFileSerializer(serializers.ModelSerializer):
     files = serializers.ListField(
-        child=serializers.FileField(),  # Para manejar múltiples archivos
+        child=serializers.FileField(),
         write_only=True
     )
     file_urls = serializers.SerializerMethodField()
+    file_types = serializers.SerializerMethodField()
 
     class Meta:
         model = PatientFile
-        fields = ["id", "title", "description", "uploaded_at", "file_key", "file_urls", "files"]
+        fields = ["id", "title", "description", "uploaded_at", "file_key", "file_urls", "files", "file_types"]
         extra_kwargs = {
             "file_key": {"read_only": True},  # La clave del archivo es solo de lectura
         }
+
+    def get_file_types(self, obj):
+        """Devuelve los tipos MIME de cada archivo basado en la extensión."""
+        if not obj.file_key:
+            return []
+
+        file_keys = obj.file_key.split(",")
+        mime_types = []
+
+        for key in file_keys:
+            url = key.split("/")[-1]
+            mime_type, _ = guess_type(url)
+            mime_types.append(mime_type or "application/octet-stream")  # default
+
+        return mime_types
 
     def validate_files(self, files):
         """Valida que todos los archivos tengan una extensión permitida."""
@@ -81,6 +97,11 @@ class PatientFileSerializer(serializers.ModelSerializer):
                     ExtraArgs={"ACL": "private"},
                 )
                 file_keys.append(file_key)  # Agregar el archivo a la lista de claves
+
+                # Detectar el tipo de archivo y asignarlo al campo file_type
+                mime_type = file.content_type or guess_type(file.name)[0]
+                treatment_file.file_type = mime_type or "application/octet-stream"
+
             except Exception as e:
                 logger = logging.getLogger(__name__)
                 logger.error(f"Error al subir archivo: {str(e)}")
@@ -105,7 +126,6 @@ class PatientFileSerializer(serializers.ModelSerializer):
     def get_file_urls(self, obj):
         """Devuelve la URL completa del archivo."""
         return f"{settings.DIGITALOCEAN_ENDPOINT_URL}/{obj.file_key}"
-
 
 class VideoSerializer(serializers.ModelSerializer):
     file = serializers.FileField(write_only=True)  # Para recibir el archivo en el request

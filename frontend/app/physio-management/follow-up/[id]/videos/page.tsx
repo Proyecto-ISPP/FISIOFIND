@@ -165,6 +165,7 @@ const PhysioVideo = () => {
   };
 
   const handleEdit = (video) => {
+    showAlert("warning", "Desliza hacia abajo para editar el video")
     setEditingVideo(video.id);
     setEditTitle(video.title);
     setEditDescription(video.description);
@@ -172,7 +173,6 @@ const PhysioVideo = () => {
 
   const handleUpdate = async (event) => {
     event.preventDefault(); // Esto evita el refresco de la página
-    
     if (!editTitle.trim()) {
       showAlert("error", "El título no puede estar vacío.");
       return;

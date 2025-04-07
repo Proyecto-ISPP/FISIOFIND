@@ -615,7 +615,7 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
           </button>
           <button
             onClick={() =>
-              router.push(`/physio-management/follow-up/${id}/videos`)
+              router.push(`/physio-management/follow-up/${id}/files`)
             }
             className="bg-[#6bc9be] hover:bg-[#5ab8ad] text-white font-semibold py-2 px-4 rounded-xl inline-flex items-center"
           >

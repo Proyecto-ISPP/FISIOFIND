@@ -8,7 +8,7 @@ import boto3
 from rest_framework import status
 from users.permissions import IsPatient, IsPhysioOrPatient, IsPhysiotherapist
 from .models import PatientFile, Video
-
+from mimetypes import guess_type
 
 @api_view(['POST'])
 @permission_classes([IsPatient])
@@ -21,7 +21,6 @@ def create_file(request):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # Aquí asumo que Treatment es el nombre del modelo y tiene una relación con el paciente
     try:
         treatment = Treatment.objects.get(id=treatment_id)
     except Treatment.DoesNotExist:
@@ -30,24 +29,31 @@ def create_file(request):
             status=status.HTTP_404_NOT_FOUND
         )
 
-    # Verificar si el paciente asociado al tratamiento es el mismo que el que hace la solicitud
     if treatment.patient != request.user.patient:
         return Response(
             {"message": "No tienes permiso para crear archivos para este tratamiento"},
             status=status.HTTP_403_FORBIDDEN
         )
+
     mutable_data = request.data.copy()
+    uploaded_file = request.FILES.get('file')
+
+    if uploaded_file:
+        mime_type = uploaded_file.content_type or guess_type(uploaded_file.name)[0]
+        mutable_data['file_type'] = mime_type or "application/octet-stream"
+
     serializer = PatientFileSerializer(data=mutable_data, context={'request': request})
 
     if serializer.is_valid():
         file = serializer.save()
         return Response(
             {
-                "mesaage": "Archivo creado correctamente",
+                "message": "Archivo creado correctamente",
                 "file": PatientFileSerializer(file).data
             },
             status=status.HTTP_201_CREATED
         )
+
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
