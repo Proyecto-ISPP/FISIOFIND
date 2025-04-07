@@ -1657,12 +1657,24 @@
 }
 
 .responseHeader {
-  padding: 15px;
-  border-bottom: 1px solid #e0e0e0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #f8f9fa;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.titleContainer {
+  flex: 1;
+  min-width: 0;
+  margin-right: 10px;
+}
+
+.truncateTitle {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
 }
 
 .responseHeader h3 {
@@ -1673,7 +1685,8 @@
 
 .headerActions {
   display: flex;
-  gap: 10px;
+  flex-shrink: 0;
+  gap: 8px;
 }
 
 .actionIconButton {
@@ -1754,4 +1767,225 @@
 
 .inputError {
   border: 1px solid red !important;
+}
+
+/* Estilos para los campos de formulario */
+.inputField {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 4px;
+}
+
+.selectField {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 4px;
+}
+
+/* Estilos para errores */
+.inputError {
+  border: 1px solid red !important;
+}
+
+/* Estilos para los mensajes de error */
+.errorMessage {
+  color: red;
+  font-size: 12px;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.errorIcon {
+  margin-right: 4px;
+}
+
+/* Para el contador de caracteres */
+.charCounter {
+  font-size: 12px;
+  text-align: right;
+  margin-top: 2px;
+}
+
+.charCounterWarning {
+  color: orange;
+}
+
+.charCounterNormal {
+  color: gray;
+}
+
+/* Mensajes de aviso y error en la herramienta */
+.emptyMessage {
+  padding: 10px;
+  color: #555;
+  text-align: center;
+  font-style: italic;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  margin: 10px 0;
+}
+
+.systemMessage {
+  padding: 8px 12px;
+  background-color: #f0f4ff;
+  border-left: 3px solid #3e64ff;
+  margin: 8px 0;
+  border-radius: 0 4px 4px 0;
+}
+
+.errorSystemMessage {
+  padding: 8px 12px;
+  background-color: #fff0f0;
+  border-left: 3px solid #ff3e3e;
+  margin: 8px 0;
+  border-radius: 0 4px 4px 0;
+}
+
+/* Estilo para la lista de cuestionarios */
+.questionnaireList {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+/* Estilo para cada ítem de cuestionario */
+.questionnaireItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  background-color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid #eaeaea;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.questionnaireItem:hover {
+  background-color: #fafafa;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.questionnaireItem.selected {
+  background-color: #e7f5ff;
+  border-left: 4px solid #339af0;
+}
+
+/* Estilo para el título del cuestionario como botón real */
+.questionnaireTitle {
+  flex: 1;
+  background-color: #4263eb;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(66, 99, 235, 0.3);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+/* Efecto hover para el título */
+.questionnaireItem:hover .questionnaireTitle {
+  background-color: #3b5bdb;
+  box-shadow: 0 3px 6px rgba(66, 99, 235, 0.4);
+}
+
+/* Efecto activo (cuando se hace clic) */
+.questionnaireItem:active .questionnaireTitle {
+  background-color: #364fc7;
+  transform: translateY(1px);
+  box-shadow: 0 1px 2px rgba(66, 99, 235, 0.4);
+}
+
+/* Meta información (número de preguntas) con mejor contraste */
+.questionnaireMeta {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.85);
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.questionnaireMeta span {
+  display: flex;
+  align-items: center;
+}
+
+/* Añadir un pequeño ícono visual antes del número de preguntas */
+.questionnaireMeta span::before {
+  content: "•";
+  margin-right: 4px;
+  font-size: 1.2rem;
+}
+
+/* Acciones (botones de editar y eliminar) */
+.questionnaireActions {
+  display: flex;
+  gap: 8px;
+  margin-left: 12px;
+}
+
+/* Estilo para los botones de iconos */
+.iconButton {
+  background: none;
+  border: none;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #6c757d;
+  transition: all 0.2s ease;
+  background-color: #f1f3f5;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.iconButton:hover {
+  background-color: #e9ecef;
+  color: #495057;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.iconButton:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Botón de editar específico */
+.iconButton[title="Editar"]:hover {
+  color: #228be6;
+  background-color: #e7f5ff;
+}
+
+/* Botón de eliminar específico */
+.iconButton[title="Eliminar"]:hover {
+  color: #fa5252;
+  background-color: #fff5f5;
+}
+
+/* Mensaje cuando no hay cuestionarios */
+.emptyMessage {
+  padding: 24px;
+  text-align: center;
+  color: #868e96;
+  font-style: italic;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px dashed #dee2e6;
+  margin: 10px 0;
 }
