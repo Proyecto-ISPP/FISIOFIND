@@ -1,7 +1,7 @@
-import Image from "next/image";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { getApiBaseUrl } from "@/utils/api";
 
 interface Physiotherapist {
   id: string;
@@ -11,7 +11,7 @@ interface Physiotherapist {
   rating: number;
   price: number;
   postalCode: string;
-  image?: string;
+  photo?: string;
 }
 
 interface PhysiotherapistModalProps {
@@ -48,6 +48,13 @@ const PhysiotherapistModal = ({ physio, isOpen, onClose, renderStars }: Physioth
 
   if (!isVisible || !physio) return null;
 
+  const getPhysioPhotoUrl = (physio: Physiotherapist | undefined) => {
+    if (physio?.photo) {
+      return `${physio.photo}`;
+    }
+    return "/static/fisioterapeuta_sample.webp";
+  };
+
   return (
     <div 
       className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity duration-300 ${
@@ -72,12 +79,11 @@ const PhysiotherapistModal = ({ physio, isOpen, onClose, renderStars }: Physioth
         {/* Contenido del modal con transiciones mejoradas */}
         <div className="flex flex-col items-center">
           <div className="relative w-32 h-32 mb-4 overflow-hidden rounded-full ring-4 ring-[#65C2C9]/20 transition-transform duration-300 hover:scale-105">
-            <Image
-              src={physio.image?.startsWith("http") ? physio.image : "/static/fisioterapeuta_sample.webp"}
-              alt={physio.name}
-              fill
-              className="object-cover"
-            />
+              <img
+                src={getPhysioPhotoUrl(physio)}
+                alt={"Physiotherapist's photo"}
+                className="object-cover"
+              />
           </div>
 
           <h3 className="text-xl font-bold text-gray-800 mb-2">{physio.name}</h3>

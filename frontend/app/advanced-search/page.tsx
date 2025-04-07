@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import axios from "axios";
 import { getApiBaseUrl } from "@/utils/api";
 import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
@@ -51,6 +50,13 @@ const SearchPage = () => {
   const [dragOffset, setDragOffset] = useState(0);
   const [previewPhysio, setPreviewPhysio] = useState(-1); // Estado para el índice del fisioterapeuta en vista previa
   const [previewPhysioData, setPreviewPhysioData] = useState<Physiotherapist | null>(null); // Estado para los datos del fisioterapeuta en vista previa
+
+  const getPhysioPhotoUrl = (physio: Physiotherapist | undefined) => {
+    if (physio?.image) {
+      return `${physio.image}`;
+    }
+    return "/static/fisioterapeuta_sample.webp";
+  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -600,13 +606,12 @@ const SearchPage = () => {
                                   <CardBody className="group bg-white rounded-xl shadow-lg border border-gray-100 hover:shadow-2xl hover:border-indigo-100 transition-all duration-300 overflow-hidden flex flex-col h-full">
                                     <div className="relative w-full aspect-[4/3] overflow-hidden">
                                       <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                                      <Image
-                                        src={physio.image?.startsWith("http") ? physio.image : "/static/fisioterapeuta_sample.webp"}
-                                        alt={physio.name}
-                                        fill
-                                        className="object-cover transform group-hover:scale-110 transition-transform duration-700 ease-out"
-                                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                                      />
+                                        <img
+                                          src={getPhysioPhotoUrl(physio)}
+                                          alt={"Physiotherapist's photo"}
+                                          className="object-cover transform group-hover:scale-110 transition-transform duration-700 ease-out"
+                                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                        />
                                     </div>
 
                                     <div className="p-4 flex flex-col flex-grow">
