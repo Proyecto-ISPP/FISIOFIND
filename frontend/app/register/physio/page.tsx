@@ -687,6 +687,7 @@ const PhysioSignUpForm = () => {
                           value={formData.birth_date}
                           onChange={handleChange}
                           max={getMaxBirthDate()}
+                          min={"1900-01-01"}
                         />
                         {errors.birth_date && <span className="error">{errors.birth_date}</span>}
                       </div>
