@@ -96,6 +96,7 @@ INSTALLED_APPS += [
     'appointment',
     'terms',
     'guest_session',
+    'questionnaire',
     'treatments',
     'gestion_survey',
     'payment',
@@ -270,15 +271,10 @@ else:
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 #Stripe payment
 STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
-
-
-
 
 DIGITALOCEAN_ACCESS_KEY_ID = "DO801T22Y6LWLUV2R4RE"
 DIGITALOCEAN_SECRET_ACCESS_KEY = "hHkSrRsu61YP+BqQP3GL+GtGeqDfzPVpn8sMaLDVkVY"
@@ -290,8 +286,22 @@ DIGITALOCEAN_ENDPOINT_URL = f"https://{DIGITALOCEAN_SPACE_NAME}.{DIGITALOCEAN_RE
 DEFAULT_FILE_STORAGE = "backend.custom_storages.DigitalOceanMediaStorage"
 MEDIA_URL = f"{DIGITALOCEAN_ENDPOINT_URL}/"
 
+PROFILE_PHOTOS_URL = '/media/'
+PROFILE_PHOTOS_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Create profile photos directory if it doesn't exist
+if not os.path.exists(PROFILE_PHOTOS_ROOT):
+    os.makedirs(PROFILE_PHOTOS_ROOT)
+
 
 # Aumentar límite de tamaño de archivos subidos
 DATA_UPLOAD_MAX_MEMORY_SIZE = 524288000  # 500MB
 FILE_UPLOAD_MAX_MEMORY_SIZE = 524288000  # 500MB
 
+SALT_KEY = [
+    "!(m!c,nlwymN^;DaRi4~LW4c^n]K227*=!S/",
+    "Yi^_w32W&8(Ev@pl5BJvFFe{}]R}zSgQ9n~T",
+    "~x7}<:29'gF4Z6ozJ-~@nn£`TrjB`Hg|N]IJ",
+    "£U9fRHk`_]NeP2q86.£BT}SP>J-b^dC/h6!O",
+    "RRL7*cJo£5&34#KN(w~>Z>)}$:zD/H6!uH~r"
+]
