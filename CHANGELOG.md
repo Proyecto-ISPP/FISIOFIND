@@ -1,9 +1,9 @@
-## 🚀 Changelog - 4.0.0
+## 🚀 Changelog - 5.0.0
 
 ### ✨ Features (0)
 
 ### 🐛 Fixes (1)
-- fix: arreglo en extremadura (@Benjamín Maureira Flores)
+- fix: arreglo en la rioja y cantabria (@Benjamín Maureira Flores)
 ### 📖 Documentation (0)
 
 ### 🌀 Other Changes (1)
