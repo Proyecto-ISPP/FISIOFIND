@@ -13,12 +13,15 @@ import {
   Camera,
   Save,
   Check,
+  Plus,
   Lock,
   Film,
   Trash2
 } from "lucide-react";
 import { GradientButton } from "@/components/ui/gradient-button";
 import Link from "next/link";
+import Alert from "@/components/ui/Alert";
+import UpdatePasswordModal from "@/components/user-update-password-modal";
 const BASE_URL = `${getApiBaseUrl()}`;
 
 const getAuthToken = () => localStorage.getItem("token");
@@ -40,6 +43,7 @@ const PatientProfile = () => {
     birth_date: "",
   });
 
+  const [showUpdatePasswordModal, setShowUpdatePasswordModal] = useState(false)
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState("");
@@ -75,11 +79,65 @@ const PatientProfile = () => {
     }
   };
 
+  const [alert, setAlert] = useState<{
+    show: boolean;
+    type: "success" | "error" | "info" | "warning";
+    message: string;
+  }>({
+    show: false,
+    type: "info",
+    message: "",
+  });
+
   useEffect(() => {
     setIsClient(true);
     const storedToken = getAuthToken();
     setToken(storedToken);
   }, []);
+
+  const showAlert = (
+    type: "success" | "error" | "info" | "warning",
+    message: string
+  ) => {
+    setAlert({
+      show: true,
+      type,
+      message,
+    });
+  };
+
+  const changePasswordSendToApi = async (
+    oldPassword: string,
+    newPassword: string,
+  ): Promise<number | null> => {
+    try {
+      // Preparar el servicio en el formato que espera el backend
+      const passwordsForBackend = {
+        old_password: oldPassword,
+        new_password: newPassword,
+      };
+
+      const response = await axios.post(
+        `${getApiBaseUrl()}/api/app_user/change_password/`,
+        passwordsForBackend,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setShowUpdatePasswordModal(false)
+      showAlert("success", "Contraseña actualizada correctamente");
+      return response.data;
+    } catch (error: unknown) {
+      console.log("Error al añadir cambiar la contraseña:", error);
+      if (axios.isAxiosError(error) && error.response) {
+        console.log("Respuesta de error del backend:", error.response.data);
+        if (error.response.data.detail) {
+          showAlert("error", `${error.response.data.detail}`);
+        }
+      } else {
+        showAlert("error", "Error al cambiar contraseña.");
+      }
+      return null;
+    }
+  };
 
   useEffect(() => {
     if (isClient && token) {
@@ -420,6 +478,14 @@ const PatientProfile = () => {
       className="min-h-screen flex items-center justify-center p-5"
       style={{ backgroundColor: "rgb(238, 251, 250)" }}
     >
+      {alert.show && (
+        <Alert
+          type={alert.type}
+          message={alert.message}
+          onClose={() => setAlert({ ...alert, show: false })}
+          duration={5000}
+        />
+      )}
       <div
         className="bg-white w-full max-w-3xl rounded-3xl shadow-xl overflow-hidden"
         style={{ boxShadow: "0 20px 60px rgba(0, 0, 0, 0.08)" }}
@@ -658,6 +724,16 @@ const PatientProfile = () => {
                     className="w-full pl-10 pr-3 py-3 border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
                   />
                 </div>
+                <GradientButton
+                    variant="create"
+                    className="px-3 py-2 font-medium rounded-xl flex items-center gap-2"
+                    onClick={(e) => {
+                      e.preventDefault(); // Esto evita que se envíe el formulario
+                      setShowUpdatePasswordModal(true);
+                    }}
+                  >
+                    <Plus className="w-4 h-4" /> Actualizar contraseña
+                  </GradientButton>
                 {errors.password && (
                   <p className="mt-1 text-sm text-red-600">{errors.password}</p>
                 )}
@@ -790,6 +866,15 @@ const PatientProfile = () => {
                 </Link>
               </div>
             </form>
+            {showUpdatePasswordModal && (
+          <UpdatePasswordModal
+            onClose={() => {
+              setShowUpdatePasswordModal(false);
+            }}
+            onSave={changePasswordSendToApi}
+            showAlert={showAlert}
+          />
+        )}
           </div>
         </div>
       </div>
