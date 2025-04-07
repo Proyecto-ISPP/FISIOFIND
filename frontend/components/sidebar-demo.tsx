@@ -302,7 +302,7 @@ export function SidebarDemo() {
 
 const Logo = () => {
   return (
-    <a
+    <Link
       href="/"
       className="font-normal flex items-center justify-center text-sm text-[#253240] py-1 relative z-300 w-full"
     >
@@ -311,13 +311,13 @@ const Logo = () => {
         alt="Logo"
         className="h-16 w-auto flex-shrink-0"
       />
-    </a>
+    </Link>
   );
 };
 
 export const LogoIcon = () => {
   return (
-    <a
+    <Link
       href="/"
       className="font-normal flex justify-center items-center text-base text-[#253240] py-2 relative z-300 w-full"
     >
@@ -328,6 +328,6 @@ export const LogoIcon = () => {
           className="h-12 w-auto flex-shrink-0 object-contain"
         />
       </div>
-    </a>
+    </Link>
   );
 };
