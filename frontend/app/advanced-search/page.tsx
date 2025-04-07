@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import axios from "axios";
 import { getApiBaseUrl } from "@/utils/api";
 import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
@@ -10,7 +9,7 @@ import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { GradientButton } from "@/components/ui/gradient-button";
 import RestoreFilters from "@/components/ui/restore-filters";
-
+import PhysiotherapistModal from "@/components/ui/PhysiotherapistModal";
 
 interface Physiotherapist {
   id: string;
@@ -49,6 +48,16 @@ const SearchPage = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [dragStartX, setDragStartX] = useState(0);
   const [dragOffset, setDragOffset] = useState(0);
+  const [previewPhysio, setPreviewPhysio] = useState(-1); // Estado para el índice del fisioterapeuta en vista previa
+  const [previewPhysioData, setPreviewPhysioData] = useState<Physiotherapist | null>(null); // Estado para los datos del fisioterapeuta en vista previa
+
+  const getPhysioPhotoUrl = (physio: Physiotherapist | undefined) => {
+    if (physio?.image) {
+      // Asegúrate de que la URL sea absoluta
+      return `${physio.image}`;
+    }
+    return "/static/fisioterapeuta_sample.webp"; // Imagen por defecto
+  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -94,7 +103,6 @@ const SearchPage = () => {
       if (isTrackpad || isMouseScrollWithShift) {
         e.preventDefault();
 
-        // Controlar velocidad del scroll — solo mover si el desplazamiento es suficientemente grande
         const threshold = 30; // sensibilidad
         if (e.deltaX > threshold || (e.shiftKey && e.deltaY > threshold)) {
           nextSlide();
@@ -147,23 +155,16 @@ const SearchPage = () => {
     }
   };
 
-  const maxIndex = Math.max(0, displayResults.length - cardsPerPage);
+  const maxIndex = Math.max(0, displayResults.length - 2);
 
   const calculateTranslateX = () => {
     if (displayResults.length <= cardsPerPage) return 0;
 
-    // Consideramos tanto el ancho de la carta como el espacio entre ellas
-    // El ancho base de cada carta en porcentaje
     const baseCardWidth = 100 / cardsPerPage;
+    const adjustmentFactor = 0.40;
 
-    // Factor de ajuste para compensar los gaps y paddings
-    // Puedes ajustar este valor según sea necesario (0.05 = 5% adicional)
-    const adjustmentFactor = 0.05;
-
-    // Ancho total por carta incluyendo el ajuste
     const cardWidth = baseCardWidth * (1 + adjustmentFactor);
 
-    // Calculamos el translate
     const translate = activeIndex * cardWidth;
 
     return translate + (isDragging ? dragOffset / 10 : 0);
@@ -512,8 +513,6 @@ const SearchPage = () => {
                           Profesionales disponibles según tus preferencias
                         </p>
                       </div>
-
-                      {/* Sort options could go here */}
                     </div>
 
                     {results.length === 0 && suggested.length > 0 && (
@@ -535,16 +534,13 @@ const SearchPage = () => {
 
                     {/* Carousel Container */}
                     <div className="relative overflow-hidden rounded-2xl bg-white shadow-lg p-4 border border-gray-100">
-                      {/* Drag indicator */}
                       {isDragging && (
                         <div className="absolute inset-0 z-10 bg-gradient-to-r from-teal-500/20 via-transparent to-blue-500/20 pointer-events-none" />
                       )}
 
-                      {/* Side gradients */}
                       <div className="absolute left-0 top-0 h-full w-24 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
                       <div className="absolute right-0 top-0 h-full w-24 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
 
-                      {/* Navigation buttons - enhanced */}
                       {displayResults.length > cardsPerPage && (
                         <>
                           <button
@@ -572,7 +568,6 @@ const SearchPage = () => {
                         </>
                       )}
 
-                      {/* Contenedor del carrusel */}
                       <div
                         className="px-22 overflow-hidden cursor-grab select-none"
                         ref={scrollRef}
@@ -585,11 +580,11 @@ const SearchPage = () => {
                         onTouchEnd={handleDragEnd}
                       >
                         <div
-                          className="flex transition-transform duration-500 ease-[cubic-bezier(0.2, 0.1, 0.2, 1)] gap-4"
+                          className="flex transition-transform duration-500 ease-[cubic-bezier(0.2, 0.1, 0.2, 1)] gap-8"
                           style={{
                             transform: `translateX(-${calculateTranslateX()}%)`,
                             paddingLeft: '4px',
-                            paddingRight: `${100 - (100 / cardsPerPage)}%` // Espacio adicional al final
+                            paddingRight: `${100 - (100 / cardsPerPage)}%`
                           }}
                         >
                           <AnimatePresence>
@@ -603,69 +598,80 @@ const SearchPage = () => {
                                 className={`flex-shrink-0 p-4 ${displayResults.length === 1 ? "mx-auto" : ""}`}
                                 style={{
                                   width: `${100 / cardsPerPage}%`,
-                                  paddingLeft: '185px', 
+                                  paddingLeft: '185px',
                                   paddingRight: '185px',
                                   boxSizing: 'border-box'
                                 }}
                               >
                                 <CardContainer className="h-full">
                                   <CardBody className="group bg-white rounded-xl shadow-lg border border-gray-100 hover:shadow-2xl hover:border-indigo-100 transition-all duration-300 overflow-hidden flex flex-col h-full">
-                                    <div className="relative w-full aspect-[4/3] overflow-hidden">
-                                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                                      <Image
-                                        src={physio.image || "/static/fisioterapeuta_sample.webp"}
-                                        alt={physio.name}
-                                        fill
-                                        className="object-cover transform group-hover:scale-110 transition-transform duration-700 ease-out"
-                                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                                      />
-                                    </div>
-
-                                    <div className="p-4 flex flex-col flex-grow">
-                                      <CardItem
-                                        translateZ="20"
-                                        className="text-s font-bold text-[#334155] group-hover:text-[#4F46E5] transition-colors"
-                                      >
-                                        {physio.name}
-                                      </CardItem>
-
-                                      <CardItem
-                                        translateZ="30"
-                                        className="text-xs text-gray-600 mt-1 line-clamp-1"
-                                      >
-                                        {physio.specializations}
-                                      </CardItem>
-
-                                      <CardItem translateZ="40" className="mt-2">
-                                        {renderStars(physio.rating || 4.5)}
-                                      </CardItem>
-
-                                      <div className="flex justify-between items-center mt-auto pt-3">
-                                        <CardItem
-                                          translateZ="20"
-                                          className="text-[#4F46E5] font-semibold"
-                                        >
-                                          {physio.price ? `${physio.price}€` : ""}
-                                        </CardItem>
-
-                                        <CardItem
-                                          translateZ="20"
-                                          className="text-xs text-gray-500"
-                                        >
-                                          {physio.postalCode
-                                            ? `CP: ${physio.postalCode}`
-                                            : ""}
-                                        </CardItem>
+                                    {/* Botón para la información de la carta, sin raya azul */}
+                                    <button
+                                      onClick={() => {
+                                        setPreviewPhysioData(physio);
+                                        setPreviewPhysio(i);
+                                      }}
+                                      className="flex-grow focus:outline-none" // Quitamos focus:ring-2 focus:ring-teal-500
+                                    >
+                                      <div className="relative w-full aspect-[4/3] overflow-hidden">
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                        <img
+                                          src={getPhysioPhotoUrl(physio)}
+                                          alt={"Physiotherapist's photo"}
+                                          className="object-cover transform group-hover:scale-110 transition-transform duration-700 ease-out"
+                                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                        />
                                       </div>
 
-                                      <CardItem translateZ="50" className="mt-3 w-full">
+                                      <div className="p-4 flex flex-col flex-grow">
+                                        <CardItem
+                                          translateZ="20"
+                                          className="text-s font-bold text-[#334155] group-hover:text-[#4F46E5] transition-colors"
+                                        >
+                                          {physio.name}
+                                        </CardItem>
+
+                                        <CardItem
+                                          translateZ="30"
+                                          className="text-xs text-gray-600 mt-1 line-clamp-1"
+                                        >
+                                          {physio.specializations}
+                                        </CardItem>
+
+                                        <CardItem translateZ="40" className="mt-2">
+                                          {renderStars(physio.rating || 4.5)}
+                                        </CardItem>
+
+                                        <CardItem
+                                          translateZ="30"
+                                          className="text-xs text-gray-600 mt-1 line-clamp-1"
+                                        >
+                                          {physio.postalCode ? `CP: ${physio.postalCode}` : ""}
+                                        </CardItem>
+
+                                        {/* Mostrar precio medio solo si no hay filtro de precio máximo */}
+                                        {!filters.maxPrice.trim() && physio.price && (
+                                          <div className="flex justify-between items-center mt-auto pt-3">
+                                            <CardItem
+                                              translateZ="20"
+                                              className="text-sm text-gray-600"
+                                            >
+                                              Precio medio: <span className="font-semibold text-[#4F46E5]">{physio.price}€</span>
+                                            </CardItem>
+                                          </div>
+                                        )}
+                                      </div>
+                                    </button>
+
+                                    {/* Botón para "Reservar cita" */}
+                                    <div className="p-4 pt-0">
+                                      <CardItem translateZ="50" className="w-full">
                                         <button
-                                          onClick={() =>
-                                            router.push(
-                                              `/appointments/create/${physio.id}`
-                                            )
-                                          }
-                                          className="w-full py-2 bg-gradient-to-r from-[#65C2C9] to-[#65C2C9] hover:from-[#05918F] hover:to-[#05918F] text-white rounded-full font-medium shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1"
+                                          onClick={() => {
+                                            setPreviewPhysioData(physio);
+                                            setPreviewPhysio(i);
+                                          }}
+                                          className="w-full py-2 bg-gradient-to-r from-[#65C2C9] to-[#65C2C9] hover:from-[#05918F] hover:to-[#05918F] text-white rounded-full font-medium shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-teal-500"
                                         >
                                           Reservar cita
                                         </button>
@@ -680,7 +686,6 @@ const SearchPage = () => {
                       </div>
                     </div>
 
-                    {/* Pagination indicators improved */}
                     {displayResults.length > cardsPerPage && (
                       <div className="flex justify-center mt-8 space-x-2">
                         {Array.from({ length: maxIndex + 1 }).map((_, idx) => (
@@ -703,6 +708,15 @@ const SearchPage = () => {
           </section>
         )}
       </div>
+      <PhysiotherapistModal
+        physio={previewPhysioData}
+        isOpen={previewPhysio !== -1}
+        onClose={() => {
+          setPreviewPhysio(-1);
+          setPreviewPhysioData(null);
+        }}
+        renderStars={renderStars} // Pasamos la función renderStars como prop
+      />
     </div>
   );
 };
