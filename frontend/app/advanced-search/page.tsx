@@ -53,9 +53,10 @@ const SearchPage = () => {
 
   const getPhysioPhotoUrl = (physio: Physiotherapist | undefined) => {
     if (physio?.image) {
+      // Asegúrate de que la URL sea absoluta
       return `${physio.image}`;
     }
-    return "/static/fisioterapeuta_sample.webp";
+    return "/static/fisioterapeuta_sample.webp"; // Imagen por defecto
   };
 
   useEffect(() => {
@@ -160,7 +161,7 @@ const SearchPage = () => {
     if (displayResults.length <= cardsPerPage) return 0;
 
     const baseCardWidth = 100 / cardsPerPage;
-    const adjustmentFactor = 0.05;
+    const adjustmentFactor = 0.40;
 
     const cardWidth = baseCardWidth * (1 + adjustmentFactor);
 
@@ -604,63 +605,73 @@ const SearchPage = () => {
                               >
                                 <CardContainer className="h-full">
                                   <CardBody className="group bg-white rounded-xl shadow-lg border border-gray-100 hover:shadow-2xl hover:border-indigo-100 transition-all duration-300 overflow-hidden flex flex-col h-full">
-                                    <div className="relative w-full aspect-[4/3] overflow-hidden">
-                                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                    {/* Botón para la información de la carta, sin raya azul */}
+                                    <button
+                                      onClick={() => {
+                                        setPreviewPhysioData(physio);
+                                        setPreviewPhysio(i);
+                                      }}
+                                      className="flex-grow focus:outline-none" // Quitamos focus:ring-2 focus:ring-teal-500
+                                    >
+                                      <div className="relative w-full aspect-[4/3] overflow-hidden">
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                                         <img
                                           src={getPhysioPhotoUrl(physio)}
                                           alt={"Physiotherapist's photo"}
                                           className="object-cover transform group-hover:scale-110 transition-transform duration-700 ease-out"
                                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                                         />
-                                    </div>
+                                      </div>
 
-                                    <div className="p-4 flex flex-col flex-grow">
-                                      <CardItem
-                                        translateZ="20"
-                                        className="text-s font-bold text-[#334155] group-hover:text-[#4F46E5] transition-colors"
-                                      >
-                                        {physio.name}
-                                      </CardItem>
+                                      <div className="p-4 flex flex-col flex-grow">
+                                        <CardItem
+                                          translateZ="20"
+                                          className="text-s font-bold text-[#334155] group-hover:text-[#4F46E5] transition-colors"
+                                        >
+                                          {physio.name}
+                                        </CardItem>
 
-                                      <CardItem
-                                        translateZ="30"
-                                        className="text-xs text-gray-600 mt-1 line-clamp-1"
-                                      >
-                                        {physio.specializations}
-                                      </CardItem>
-
-                                      <CardItem translateZ="40" className="mt-2">
-                                        {renderStars(physio.rating || 4.5)}
-                                      </CardItem>
-
-                                      <CardItem
+                                        <CardItem
                                           translateZ="30"
                                           className="text-xs text-gray-600 mt-1 line-clamp-1"
                                         >
-                                          {physio.postalCode
-                                            ? `CP: ${physio.postalCode}`
-                                            : ""}
+                                          {physio.specializations}
                                         </CardItem>
 
-                                      {/* Mostrar precio medio solo si no hay filtro de precio máximo */}
-                                      {!filters.maxPrice.trim() && physio.price && (
-                                        <div className="flex justify-between items-center mt-auto pt-3">
-                                          <CardItem
-                                            translateZ="20"
-                                            className="text-sm text-gray-600"
-                                          >
-                                            Precio medio: <span className="font-semibold text-[#4F46E5]">{physio.price}€</span>
-                                          </CardItem>
-                                        </div>
-                                      )}
+                                        <CardItem translateZ="40" className="mt-2">
+                                          {renderStars(physio.rating || 4.5)}
+                                        </CardItem>
 
-                                      <CardItem translateZ="50" className="mt-3 w-full">
+                                        <CardItem
+                                          translateZ="30"
+                                          className="text-xs text-gray-600 mt-1 line-clamp-1"
+                                        >
+                                          {physio.postalCode ? `CP: ${physio.postalCode}` : ""}
+                                        </CardItem>
+
+                                        {/* Mostrar precio medio solo si no hay filtro de precio máximo */}
+                                        {!filters.maxPrice.trim() && physio.price && (
+                                          <div className="flex justify-between items-center mt-auto pt-3">
+                                            <CardItem
+                                              translateZ="20"
+                                              className="text-sm text-gray-600"
+                                            >
+                                              Precio medio: <span className="font-semibold text-[#4F46E5]">{physio.price}€</span>
+                                            </CardItem>
+                                          </div>
+                                        )}
+                                      </div>
+                                    </button>
+
+                                    {/* Botón para "Reservar cita" */}
+                                    <div className="p-4 pt-0">
+                                      <CardItem translateZ="50" className="w-full">
                                         <button
                                           onClick={() => {
                                             setPreviewPhysioData(physio);
                                             setPreviewPhysio(i);
                                           }}
-                                          className="w-full py-2 bg-gradient-to-r from-[#65C2C9] to-[#65C2C9] hover:from-[#05918F] hover:to-[#05918F] text-white rounded-full font-medium shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1"
+                                          className="w-full py-2 bg-gradient-to-r from-[#65C2C9] to-[#65C2C9] hover:from-[#05918F] hover:to-[#05918F] text-white rounded-full font-medium shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-teal-500"
                                         >
                                           Reservar cita
                                         </button>

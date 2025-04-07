@@ -9,6 +9,8 @@ from users.models import Physiotherapist
 from users.models import Specialization
 from rest_framework.decorators import api_view, permission_classes
 import random
+from django.conf import settings
+import os
 
 
 class SearchPhysiotherapistView(APIView):
@@ -221,22 +223,32 @@ def advanced_search(request):
     # Serialización con precio medio
     def serialize(physios):
         results = []
+        # Base URL del servidor (ajústala según tu configuración)
+        base_url = request.build_absolute_uri('/')[:-1]  # e.g., http://localhost:8000
+        
         for physio in physios:
             specializations = physio.specializations.all()
             specialization_names = [s.name for s in specializations]
 
-            # Calcular precio medio para mostrar
+            # Calcular precio medio
             avg_price = get_average_price(physio.services)
 
-            # Manejar el campo image
-            image_data = None
+            # Manejar el campo image como URL completa
+            image_url = None
             if physio.user.photo:
                 if isinstance(physio.user.photo, str):
-                    image_data = physio.user.photo  # Asumir que es una URL
-                elif hasattr(physio.user.photo, 'read'):  # Es un archivo
-                    image_data = base64.b64encode(physio.user.photo.read()).decode('utf-8')
-                else:  # Datos binarios crudos
-                    image_data = base64.b64encode(physio.user.photo).decode('utf-8')
+                    # Si es una ruta relativa, construir la URL completa
+                    image_url = f"{base_url}{settings.MEDIA_URL}{physio.user.photo}"
+                elif hasattr(physio.user.photo, 'url'):
+                    # Si es un campo FileField, usar su URL
+                    image_url = f"{base_url}{physio.user.photo.url}"
+                elif hasattr(physio.user.photo, 'read'):
+                    # Si es un archivo, opcionalmente podrías seguir usando base64
+                    # Pero para consistencia, asumimos que está guardado en media/
+                    image_url = None  # O manejar esto de otra forma si es necesario
+                else:
+                    # Datos binarios crudos (menos común)
+                    image_url = None
 
             results.append({
                 'id': physio.id,
@@ -245,8 +257,8 @@ def advanced_search(request):
                 'gender': physio.gender,
                 'postalCode': physio.user.postal_code,
                 'rating': physio.rating_avg,
-                'price': avg_price,  # Precio medio para mostrar
-                'image': image_data,
+                'price': avg_price,
+                'image': image_url,  # Ahora siempre es una URL completa o None
             })
         return results
 

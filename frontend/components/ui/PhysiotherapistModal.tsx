@@ -11,7 +11,7 @@ interface Physiotherapist {
   rating: number;
   price: number;
   postalCode: string;
-  photo?: string;
+  image?: string;
 }
 
 interface PhysiotherapistModalProps {
@@ -49,10 +49,11 @@ const PhysiotherapistModal = ({ physio, isOpen, onClose, renderStars }: Physioth
   if (!isVisible || !physio) return null;
 
   const getPhysioPhotoUrl = (physio: Physiotherapist | undefined) => {
-    if (physio?.photo) {
-      return `${physio.photo}`;
+    if (physio?.image) {
+      
+      return `${physio.image}`;
     }
-    return "/static/fisioterapeuta_sample.webp";
+    return "/static/fisioterapeuta_sample.webp"; 
   };
 
   return (
