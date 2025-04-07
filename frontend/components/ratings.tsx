@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import Image from 'next/image';
 import styles from './ratings.module.css';
 import { getApiBaseUrl } from "@/utils/api";
 import { useRouter } from "next/navigation";
@@ -11,7 +10,7 @@ import Alert from "@/components/ui/Alert";
 
 
 interface PhysiotherapistDetails {
-  id: number;  // ID is included in your serializer
+  id: number;
   full_name: string;
   photo: string;
 }

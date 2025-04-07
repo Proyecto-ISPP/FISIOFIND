@@ -157,6 +157,17 @@ const ConfirmationModal = ({ isOpen, onClose, email, onConfirm }: { isOpen: bool
 
 const PatientRegistrationForm = () => {
   const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      router.replace("/restricted-access");
+    }
+  }, [router]);
+
+  // Utilizamos dos pasos:
+  // Paso 1: Información de Cuenta (username, email, password)
+  // Paso 2: Información Personal (first_name, last_name, dni, phone_number, birth_date, gender, postal_code)
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<FormData>({
     username: "",
@@ -310,13 +321,15 @@ const PatientRegistrationForm = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-  
+    // Create a new object with only the fields the server expects
     const requestData = { ...formData };
+    // Remove phone_number if it's empty
     if (!requestData.phone_number.trim()) {
       delete requestData.phone_number;
     }
+    // Remove confirm_password since the server doesn't expect it
     delete requestData.confirm_password;
-  
+
     try {
       const response = await axios.post(
         `${getApiBaseUrl()}/api/app_user/patient/register/`,
@@ -325,9 +338,8 @@ const PatientRegistrationForm = () => {
       );
 
       if (response.status === 201) {
-        showAlert("success", "¡Registro exitoso! Por favor, verifica tu correo.");
-        setShowModal(true); // Mostrar el modal
-
+        showAlert("success", "¡Registro exitoso! Iniciando sesión...");
+        
         // Auto login after registration
         const loginResponse = await axios.post(
           `${getApiBaseUrl()}/api/app_user/login/`,
@@ -349,14 +361,6 @@ const PatientRegistrationForm = () => {
       setIsSubmitting(false);
     }
   };
-
-  // Función para redirigir a la pantalla de inicio
-  const handleConfirm = () => {
-    if (isLoggedIn) {
-      router.push("/"); // Redirige a la pantalla de inicio solo si el usuario está logueado
-    }
-  };
-
   return (
     <div>
       {alert.show && (
@@ -366,58 +370,51 @@ const PatientRegistrationForm = () => {
           onClose={() => setAlert({ ...alert, show: false })}
         />
       )}
-      <ConfirmationModal 
-        isOpen={showModal} 
-        onClose={() => setShowModal(false)} 
-        email={formData.email} 
-        onConfirm={handleConfirm} // Pasa la función de redirección
-      />
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white dark:from-neutral-900 dark:to-black py-8">
-        <div className="max-w-5xl mx-auto px-4">
-          <div className="text-center mb-8">
-            <Image
-              src="/static/fisio_find_logo.webp"
-              alt="Fisio Find Logo"
-              width={120}
-              height={120}
-              className="mx-auto mb-4"
-            />
-            <h1 className="text-3xl font-bold text-[#1E5ACD]">
-              Registro de Paciente
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-2">
-              Completa el formulario para encontrar fisioterapeutas cerca de ti
-            </p>
-          </div>
-
-          <div className="bg-white dark:bg-black rounded-xl shadow-xl overflow-hidden">
-            <div className="px-6 pt-6">
-              <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center w-full">
-                  <div
-                    className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 1
-                        ? "bg-[#1E5ACD] text-white"
-                        : "bg-gray-200 text-gray-600"
-                      }`}
-                  >
-                    1
-                  </div>
-                  <div
-                    className={`h-1 flex-1 mx-2 ${currentStep >= 2 ? "bg-[#1E5ACD]" : "bg-gray-200"
-                      }`}
-                  ></div>
-                  <div
-                    className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 2
-                        ? "bg-[#1E5ACD] text-white"
-                        : "bg-gray-200 text-gray-600"
-                      }`}
-                  >
-                    2
-                  </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white dark:from-neutral-900 dark:to-black py-8">
+      <div className="max-w-5xl mx-auto px-4">
+        <div className="text-center mb-8">
+          <Image
+            src="/static/fisio_find_logo.webp"
+            alt="Fisio Find Logo"
+            width={120}
+            height={120}
+            className="mx-auto mb-4"
+          />
+          <h1 className="text-3xl font-bold text-[#1E5ACD]">
+            Registro de Paciente
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">
+            Completa el formulario para encontrar fisioterapeutas cerca de ti
+          </p>
+        </div>
+        <div className="bg-white dark:bg-black rounded-xl shadow-xl overflow-hidden">
+          {/* Progress Steps */}
+          <div className="px-6 pt-6">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center w-full">
+                <div
+                  className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 1
+                      ? "bg-[#1E5ACD] text-white"
+                      : "bg-gray-200 text-gray-600"
+                    }`}
+                >
+                  1
+                </div>
+                <div
+                  className={`h-1 flex-1 mx-2 ${currentStep >= 2 ? "bg-[#1E5ACD]" : "bg-gray-200"
+                    }`}
+                ></div>
+                <div
+                  className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 2
+                      ? "bg-[#1E5ACD] text-white"
+                      : "bg-gray-200 text-gray-600"
+                    }`}
+                >
+                  2
                 </div>
               </div>
             </div>
-
+          </div>
             <form onSubmit={handleSubmit} className="p-6">
               {currentStep === 1 && (
                 <div className="space-y-4">
@@ -477,72 +474,70 @@ const PatientRegistrationForm = () => {
                   </div>
                 </div>
               )}
-
-              {currentStep === 2 && (
-                <div className="space-y-4">
-                  <h2 className="text-xl font-semibold mb-4">
-                    Información Personal
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <FormField
-                      name="first_name"
-                      label="Nombre"
-                      value={formData.first_name}
-                      onChange={handleChange}
-                      error={errors.first_name}
-                    />
-                    <FormField
-                      name="last_name"
-                      label="Apellidos"
-                      value={formData.last_name}
-                      onChange={handleChange}
-                      error={errors.last_name}
-                    />
-                    <FormField
-                      name="dni"
-                      label="DNI"
-                      value={formData.dni}
-                      onChange={handleChange}
-                      error={errors.dni}
-                      info="Necesitamos tu DNI para verificar tu identidad."
-                    />
-                    <FormField
-                      name="phone_number"
-                      label="Número de teléfono"
-                      type="tel"
-                      required={false}
-                      value={formData.phone_number || ""}
-                      onChange={handleChange}
-                      error={errors.phone_number}
-                    />
-                    <FormField
-                      name="birth_date"
-                      label="Fecha de nacimiento"
-                      type="date"
-                      value={formData.birth_date}
-                      onChange={handleChange}
-                      error={errors.birth_date}
-                    />
-                    <FormField
-                      name="gender"
-                      label="Género"
-                      type="select"
-                      options={GENDER_OPTIONS}
-                      value={formData.gender}
-                      onChange={handleChange}
-                      error={errors.gender}
-                    />
-                    <FormField
-                      name="postal_code"
-                      label="Código Postal"
-                      value={formData.postal_code}
-                      onChange={handleChange}
-                      error={errors.postal_code}
-                    />
-                  </div>
+            {currentStep === 2 && (
+              <div className="space-y-4">
+                <h2 className="text-xl font-semibold mb-4">
+                  Información Personal
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <FormField
+                    name="first_name"
+                    label="Nombre"
+                    value={formData.first_name}
+                    onChange={handleChange}
+                    error={errors.first_name}
+                  />
+                  <FormField
+                    name="last_name"
+                    label="Apellidos"
+                    value={formData.last_name}
+                    onChange={handleChange}
+                    error={errors.last_name}
+                  />
+                  <FormField
+                    name="dni"
+                    label="DNI"
+                    value={formData.dni}
+                    onChange={handleChange}
+                    error={errors.dni}
+                    info="Necesitamos tu DNI para verificar tu identidad." 
+                  />
+                  <FormField
+                    name="phone_number"
+                    label="Número de teléfono"
+                    type="tel"
+                    required={false}
+                    value={formData.phone_number || ""}
+                    onChange={handleChange}
+                    error={errors.phone_number}
+                  />
+                  <FormField
+                    name="birth_date"
+                    label="Fecha de nacimiento"
+                    type="date"
+                    value={formData.birth_date}
+                    onChange={handleChange}
+                    error={errors.birth_date}
+                  />
+                  <FormField
+                    name="gender"
+                    label="Género"
+                    type="select"
+                    options={GENDER_OPTIONS}
+                    value={formData.gender}
+                    onChange={handleChange}
+                    error={errors.gender}
+                  />
+                  <FormField
+                    name="postal_code"
+                    label="Código Postal"
+                    value={formData.postal_code}
+                    onChange={handleChange}
+                    error={errors.postal_code}
+                  />
                 </div>
-              )}
-
+              </div>
+            )}
               <div className="flex justify-between mt-8">
                 {currentStep > 1 && (
                   <button
@@ -553,7 +548,6 @@ const PatientRegistrationForm = () => {
                     Anterior
                   </button>
                 )}
-
                 {currentStep < 2 ? (
                   <button
                     type="button"
@@ -574,7 +568,6 @@ const PatientRegistrationForm = () => {
               </div>
             </form>
           </div>
-
           <div className="text-center mt-6">
             <p className="text-gray-600 dark:text-gray-400">
               ¿Ya tienes una cuenta?{" "}

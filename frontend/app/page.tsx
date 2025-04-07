@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,13 +9,13 @@ import { CookieConsent } from "@/components/CookieConsent";
 import TopRatings from "@/components/ratings";
 import { HeroHighlight, Highlight } from "@/components/ui/hero-highlight";
 import { GradientButton } from "@/components/ui/gradient-button";
-import { DemoWindow } from "@/components/demo-window";
 import { PhysioCallToAction } from "@/components/ui/physio-cta";
+import { DemoWindow } from "@/components/demo-window";
+
 
 const Home = () => {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isPhysioModalOpen, setIsPhysioModalOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const [token, setToken] = useState<string | null>(null);
   const [showDraftModal, setShowDraftModal] = useState(false);
@@ -26,16 +26,15 @@ const Home = () => {
     setIsClient(true);
   }, []);
 
-  // Solo comprueba la existencia del token en localStorage
   useEffect(() => {
     if (isClient) {
       const storedToken = localStorage.getItem("token");
       setToken(storedToken);
-      setIsAuthenticated(!!token);
+      setIsAuthenticated(!!storedToken);
     }
-  }, [isClient, token]);
+  }, [isClient]);
 
-  // Efecto para cargar el borrador unificado
+
   useEffect(() => {
     const storedDraft = sessionStorage.getItem("appointmentDraft");
     if (storedDraft) {
@@ -45,85 +44,33 @@ const Home = () => {
     }
   }, []);
 
-  // Retomar borrador
-  const handleResumeDraft = () => {
+  const handleResumeDraft = useCallback(() => {
     if (draftData) {
-      // Cargamos el appointmentData en el context
       dispatch({ type: "LOAD_DRAFT", payload: draftData.appointmentData });
       setShowDraftModal(false);
 
-      // Redirigimos a la URL guardada (por ejemplo, Wizard)
       if (draftData.returnUrl) {
         router.push(draftData.returnUrl);
       }
     }
-  };
+  }, [draftData, dispatch, router]);
 
-  // Descartar borrador
-  const handleDiscardDraft = () => {
+  const handleDiscardDraft = useCallback(() => {
     sessionStorage.removeItem("appointmentDraft");
     dispatch({ type: "DESELECT_SERVICE" });
-    setDraftModal(false);
-  };
-
-  const setDraftModal = (value: boolean) => {
-    setShowDraftModal(value);
-  };
+    setShowDraftModal(false);
+  }, [dispatch]);
 
   return (
     <div
       className="min-h-screen w-full z=90"
       style={{ backgroundColor: "rgb(238, 251, 250)" }}
     >
-      {/* Add CookieConsent component */}
       <CookieConsent />
 
-      {/* Header */}
-      {/* {!isAuthenticated && (
-        <header className="bg-[rgb(238, 251, 250)] shadow-md py-4">
-          <div className="max-w-screen-xl mx-auto px-4 flex justify-between items-center">
-            <div className="hidden md:flex items-center space-x-2">
-              <button
-                type="button"
-                className="flex items-center space-x-3 bg-[#41B8D5] hover:bg-[#5ab3a8] text-white font-bold py-2 px-6 rounded-full shadow transition-all"
-                onClick={() => router.push("/advanced-search")}
-              >
-                <Image src="/static/search.svg" alt="Search Icon" width={24} height={24} />
-                <span>Encuentra el fisio que más se adapta a tí </span>
-              </button>
-            </div>
-            <div className="flex items-center space-x-3 md:space-x-3 pl-10 md:pl-0">
-              <button
-                className="text-[#05668D] hover:text-[#05AC9C] px-3 py-2 font-medium"
-                onClick={() => router.push("/login")}
-              >
-                Iniciar sesión
-              </button>
-              <button
-                className="bg-[#41B8D5] hover:bg-[#05AC9C] text-white px-4 py-2 rounded-full font-medium"
-                onClick={() => router.push("/register")}
-              >
-                Regístrate
-              </button>
-              <button
-                className="border border-[#1E5ACD] text-[#1E5ACD] hover:bg-[#1E5ACD] hover:text-white px-4 py-2 rounded-full font-medium"
-                onClick={() =>
-                  window.open(
-                    "https://fisiofind-landing-page.netlify.app/",
-                    "_blank"
-                  )
-                }
-              >
-                ¿Eres fisio?
-              </button>
-            </div>
-          </div>
-        </header>
-      )} */}
       {!isAuthenticated && (
         <header className="bg-[rgb(238, 251, 250)] shadow-md py-4">
           <div className="max-w-screen-xl mx-auto px-4 flex justify-end items-center">
-            {/* Botones alineados a la derecha */}
             <div className="flex items-center space-x-3 md:space-x-3">
               <button
                 className="text-[#05668D] hover:text-[#05AC9C] px-3 py-2 font-medium"
@@ -171,13 +118,6 @@ const Home = () => {
               <GradientButton
                 onClick={() => router.push("/advanced-search")}
                 className="mt-6 border-none text-white font-inherit text-[17px] py-[0.6em] px-[1.5em] rounded-[20px] bg-gradient-to-r from-[#0400ff] to-[#4ce3f7] bg-[length:100%_auto] hover:bg-[length:200%_auto] hover:bg-right-center flex items-center justify-center animate-[pulse512_1.5s_infinite]"
-                style={{
-                  "@keyframes pulse512": {
-                    "0%": { boxShadow: "0 0 0 0 #05bada66" },
-                    "70%": { boxShadow: "0 0 0 10px rgb(218 103 68 / 0%)" },
-                    "100%": { boxShadow: "0 0 0 0 rgb(218 103 68 / 0%)" },
-                  },
-                }}
               >
                 <span>Encuentra a tu fisioterapeuta ideal  </span>
                 <svg
@@ -209,6 +149,7 @@ const Home = () => {
                     alt="Floating Image 3"
                     width={400}
                     height={400}
+                    loading="lazy"
                   />
                 </div>
                 <div
@@ -220,6 +161,7 @@ const Home = () => {
                     alt="Floating Image 1"
                     width={150}
                     height={150}
+                    loading="lazy"
                   />
                 </div>
                 <div
@@ -231,6 +173,7 @@ const Home = () => {
                     alt="Floating Image 3"
                     width={180}
                     height={180}
+                    loading="lazy"
                   />
                 </div>
                 <div
@@ -242,6 +185,7 @@ const Home = () => {
                     alt="Floating Image 3"
                     width={300}
                     height={300}
+                    loading="lazy"
                   />
                 </div>
               </div>
@@ -252,6 +196,7 @@ const Home = () => {
                 width={500}
                 height={400}
                 className="filter blur-[2px]"
+                loading="lazy"
               />
             </div>
           </div>
@@ -264,7 +209,7 @@ const Home = () => {
             viewBox="0 0 1440 120"
             fill="rgb(238, 251, 250)"
             preserveAspectRatio="none"
-            className="block w-full h-[120px]" // Added explicit height
+            className="block w-full h-[120px]"
           >
             <path d="M0,32L80,48C160,64,320,96,480,96C640,96,800,64,960,48C1120,32,1280,32,1360,32L1440,32L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
           </svg>
@@ -274,7 +219,6 @@ const Home = () => {
       {/* How it works Section */}
       <section className="pt-16 pb-16 bg-[rgb(238, 251, 250)] relative -mt-1">
         {" "}
-        {/* Added relative and negative margin */}
         <div className="max-w-screen-xl mx-auto px-4">
           <h2 className="text-4xl font-bold text-[#253240] mb-12 text-center">
             ¿Cómo funciona Fisio Find?
@@ -366,7 +310,7 @@ const Home = () => {
         <DemoWindow />
       </section>
 
-      {/* Authentication Section: solo se muestra si NO está autenticado */}
+      {/* Authentication Section */}
       {!isAuthenticated && (
         <section className="py-16 bg-[rgb(238, 251, 250)]">
           <div className="max-w-screen-xl mx-auto px-4">
@@ -400,20 +344,7 @@ const Home = () => {
 
               <PhysioCallToAction />
 
-              {/* <div className="bg-[#1E5ACD] p-6 rounded-lg text-white text-center mt-12">
-                <p className="font-bold text-lg mb-4">¿Eres fisioterapeuta?</p>
-                <button
-                  className="px-6 py-2 bg-white text-[#1E5ACD] rounded-lg font-semibold hover:bg-gray-100 transition-all"
-                  onClick={() =>
-                    window.open(
-                      "https://fisiofind-landing-page.netlify.app/",
-                      "_blank"
-                    )
-                  }
-                >
-                  Para más información, accede aquí
-                </button>
-              </div> */}
+
             </div>
           </div>
         </section>
@@ -431,7 +362,6 @@ const Home = () => {
 
       {/* Footer */}
       <footer className="bg-gradient-to-br from-[#05668D] to-[#6BC9BE] text-white py-16 relative">
-        {/* Wave Divider at top of footer */}
         <div className="absolute top-0 left-0 right-0 transform rotate-180">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -445,7 +375,6 @@ const Home = () => {
         </div>
 
         <div className="container mx-auto px-6 pt-8 relative z-10">
-          {/* Logo and name */}
           <div className="flex justify-center mb-8">
             <div className="flex items-center">
               <Image
@@ -460,17 +389,16 @@ const Home = () => {
           </div>
         </div>
 
-        {/* Main footer content - three equal columns with consistent spacing */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-x-12 gap-y-10 max-w-6xl mx-auto">
-          {/* Column 1 */}
+
           <div className="flex flex-col items-center">
             <h3 className="text-xl font-bold mb-4 relative">
               <span className="relative z-10">Sobre Fisio Find</span>
               <span className="absolute left-1/2 -translate-x-1/2 bottom-0 w-12 h-1 bg-[#41B8D5] rounded-full"></span>
             </h3>
-            <p className="text-center max-w-xs mx-auto">
-              Una plataforma innovadora diseñada para conectar pacientes con los
-              mejores fisioterapeutas especializados en todo España.
+            <p className="text-center max-w-xs mx-auto ml-4">
+                Una plataforma innovadora diseñada para conectar pacientes con los
+                mejores fisioterapeutas especializados en todo España.
             </p>
             <div className="flex space-x-4 mt-6">
               <a
@@ -524,7 +452,6 @@ const Home = () => {
             </div>
           </div>
 
-          {/* Column 2 - Middle column */}
           <div className="flex flex-col items-center">
             <h3 className="text-xl font-bold mb-4 relative">
               <span className="relative z-10">Enlaces Útiles</span>
@@ -626,7 +553,6 @@ const Home = () => {
             </ul>
           </div>
 
-          {/* Column 3 */}
           <div className="flex flex-col items-center">
             <h3 className="text-xl font-bold mb-4 relative">
               <span className="relative z-10">Contacto</span>
@@ -701,8 +627,7 @@ const Home = () => {
           </div>
         </div>
 
-        {/* Copyright */}
-        <div className="text-center pt-8 border-t border-white border-opacity-20">
+        <div className="text-center pt-8">
           <div className="flex flex-wrap justify-center gap">
             <p>© 2025 Fisio Find. Bajo licencia MIT</p>
           </div>
