@@ -103,7 +103,6 @@ def advanced_search(request):
         filters &= Q(specializations__name__iexact=specialization)
 
     if gender and gender != 'indifferent':
-        # Fix gender mapping
         gender_map = {'male': 'M', 'female': 'F'}
         gender_code = gender_map.get(gender, '')
         if gender_code:
@@ -118,38 +117,54 @@ def advanced_search(request):
     # Obtener los fisioterapeutas con los filtros básicos
     physiotherapists = Physiotherapist.objects.filter(filters).distinct()
 
-    # Filtro por precio máximo
+    # Función auxiliar para calcular el precio medio (solo para serialización)
+    def get_average_price(services):
+        if not services:
+            return None
+        if isinstance(services, str):
+            try:
+                services = json.loads(services)
+            except json.JSONDecodeError:
+                return None
+
+        prices = []
+        for service_key, service_data in services.items():
+            if isinstance(service_data, dict) and 'price' in service_data:
+                try:
+                    price = float(service_data['price'])
+                    prices.append(price)
+                except (ValueError, TypeError):
+                    continue
+        return sum(prices) / len(prices) if prices else None
+
+    # Función auxiliar para verificar si hay algún servicio menor o igual a max_price
+    def has_service_below_price(services, max_price_value):
+        if not services:
+            return False
+        if isinstance(services, str):
+            try:
+                services = json.loads(services)
+            except json.JSONDecodeError:
+                return False
+
+        for service_key, service_data in services.items():
+            if isinstance(service_data, dict) and 'price' in service_data:
+                try:
+                    price = float(service_data['price'])
+                    if price <= max_price_value:
+                        return True
+                except (ValueError, TypeError):
+                    continue
+        return False
+
+    # Filtro por precio máximo (al menos un servicio menor o igual a max_price)
     if max_price:
         try:
             max_price_value = float(max_price)
-            # Handle potential None or invalid services
-            filtered_physios = []
-            for physio in physiotherapists:
-                services = physio.services or {}
-                if isinstance(services, str):
-                    try:
-                        services = json.loads(services)
-                    except json.JSONDecodeError:
-                        services = {}
-
-                if not services:
-                    continue
-
-                # Check if any service price is less than or equal to max_price
-                has_affordable_service = False
-                for service_key, service_data in services.items():
-                    if isinstance(service_data, dict) and 'price' in service_data:
-                        try:
-                            price = float(service_data['price'])
-                            if price <= max_price_value:
-                                has_affordable_service = True
-                                break
-                        except (ValueError, TypeError):
-                            continue
-
-                if has_affordable_service:
-                    filtered_physios.append(physio)
-
+            filtered_physios = [
+                physio for physio in physiotherapists
+                if has_service_below_price(physio.services, max_price_value)
+            ]
             physiotherapists = filtered_physios
         except (ValueError, TypeError):
             pass  # Ignora si max_price no es válido
@@ -169,14 +184,13 @@ def advanced_search(request):
                 weekly_schedule = get_weekly_schedule(physio.schedule)
                 if has_availability_any_day(weekly_schedule, req_start_min, req_end_min):
                     filtered_physios.append(physio)
-            except Exception as e:
-                # Skip this physiotherapist if there's an error processing their schedule
+            except Exception:
                 continue
-
         physiotherapists = filtered_physios
 
     exact_matches = weighted_shuffle(physiotherapists)[:12]
 
+    # Lógica para sugerencias
     suggested_matches = []
     if not exact_matches and specialization:
         similar = Physiotherapist.objects.filter(
@@ -188,10 +202,7 @@ def advanced_search(request):
                 max_price_value = float(max_price)
                 similar = [
                     physio for physio in similar
-                    if any(
-                        float(service.get('price', float('inf'))) <= max_price_value
-                        for service in physio.services.values()
-                    )
+                    if has_service_below_price(physio.services, max_price_value)
                 ]
             except (ValueError, TypeError):
                 pass
@@ -207,11 +218,15 @@ def advanced_search(request):
             ]
         suggested_matches = weighted_shuffle(similar)[:12]
 
+    # Serialización con precio medio
     def serialize(physios):
         results = []
         for physio in physios:
             specializations = physio.specializations.all()
             specialization_names = [s.name for s in specializations]
+
+            # Calcular precio medio para mostrar
+            avg_price = get_average_price(physio.services)
 
             # Manejar el campo image
             image_data = None
@@ -230,6 +245,7 @@ def advanced_search(request):
                 'gender': physio.gender,
                 'postalCode': physio.user.postal_code,
                 'rating': physio.rating_avg,
+                'price': avg_price,  # Precio medio para mostrar
                 'image': image_data,
             })
         return results
@@ -238,7 +254,6 @@ def advanced_search(request):
         'exactMatches': serialize(exact_matches),
         'suggestedMatches': serialize(suggested_matches)
     }, status=status.HTTP_200_OK)
-
 
 def weighted_shuffle(physios):
     golds = [p for p in physios if is_gold_physio(p)]

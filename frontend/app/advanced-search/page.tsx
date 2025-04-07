@@ -10,7 +10,7 @@ import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { GradientButton } from "@/components/ui/gradient-button";
 import RestoreFilters from "@/components/ui/restore-filters";
-
+import PhysiotherapistModal from "@/components/ui/PhysiotherapistModal";
 
 interface Physiotherapist {
   id: string;
@@ -49,6 +49,8 @@ const SearchPage = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [dragStartX, setDragStartX] = useState(0);
   const [dragOffset, setDragOffset] = useState(0);
+  const [previewPhysio, setPreviewPhysio] = useState(-1); // Estado para el índice del fisioterapeuta en vista previa
+  const [previewPhysioData, setPreviewPhysioData] = useState<Physiotherapist | null>(null); // Estado para los datos del fisioterapeuta en vista previa
 
   useEffect(() => {
     const handleResize = () => {
@@ -94,7 +96,6 @@ const SearchPage = () => {
       if (isTrackpad || isMouseScrollWithShift) {
         e.preventDefault();
 
-        // Controlar velocidad del scroll — solo mover si el desplazamiento es suficientemente grande
         const threshold = 30; // sensibilidad
         if (e.deltaX > threshold || (e.shiftKey && e.deltaY > threshold)) {
           nextSlide();
@@ -152,18 +153,11 @@ const SearchPage = () => {
   const calculateTranslateX = () => {
     if (displayResults.length <= cardsPerPage) return 0;
 
-    // Consideramos tanto el ancho de la carta como el espacio entre ellas
-    // El ancho base de cada carta en porcentaje
     const baseCardWidth = 100 / cardsPerPage;
-
-    // Factor de ajuste para compensar los gaps y paddings
-    // Puedes ajustar este valor según sea necesario (0.05 = 5% adicional)
     const adjustmentFactor = 0.05;
 
-    // Ancho total por carta incluyendo el ajuste
     const cardWidth = baseCardWidth * (1 + adjustmentFactor);
 
-    // Calculamos el translate
     const translate = activeIndex * cardWidth;
 
     return translate + (isDragging ? dragOffset / 10 : 0);
@@ -512,8 +506,6 @@ const SearchPage = () => {
                           Profesionales disponibles según tus preferencias
                         </p>
                       </div>
-
-                      {/* Sort options could go here */}
                     </div>
 
                     {results.length === 0 && suggested.length > 0 && (
@@ -535,16 +527,13 @@ const SearchPage = () => {
 
                     {/* Carousel Container */}
                     <div className="relative overflow-hidden rounded-2xl bg-white shadow-lg p-4 border border-gray-100">
-                      {/* Drag indicator */}
                       {isDragging && (
                         <div className="absolute inset-0 z-10 bg-gradient-to-r from-teal-500/20 via-transparent to-blue-500/20 pointer-events-none" />
                       )}
 
-                      {/* Side gradients */}
                       <div className="absolute left-0 top-0 h-full w-24 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
                       <div className="absolute right-0 top-0 h-full w-24 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
 
-                      {/* Navigation buttons - enhanced */}
                       {displayResults.length > cardsPerPage && (
                         <>
                           <button
@@ -572,7 +561,6 @@ const SearchPage = () => {
                         </>
                       )}
 
-                      {/* Contenedor del carrusel */}
                       <div
                         className="px-22 overflow-hidden cursor-grab select-none"
                         ref={scrollRef}
@@ -589,7 +577,7 @@ const SearchPage = () => {
                           style={{
                             transform: `translateX(-${calculateTranslateX()}%)`,
                             paddingLeft: '4px',
-                            paddingRight: `${100 - (100 / cardsPerPage)}%` // Espacio adicional al final
+                            paddingRight: `${100 - (100 / cardsPerPage)}%`
                           }}
                         >
                           <AnimatePresence>
@@ -603,7 +591,7 @@ const SearchPage = () => {
                                 className={`flex-shrink-0 p-4 ${displayResults.length === 1 ? "mx-auto" : ""}`}
                                 style={{
                                   width: `${100 / cardsPerPage}%`,
-                                  paddingLeft: '185px', 
+                                  paddingLeft: '185px',
                                   paddingRight: '185px',
                                   boxSizing: 'border-box'
                                 }}
@@ -640,31 +628,33 @@ const SearchPage = () => {
                                         {renderStars(physio.rating || 4.5)}
                                       </CardItem>
 
-                                      <div className="flex justify-between items-center mt-auto pt-3">
-                                        <CardItem
-                                          translateZ="20"
-                                          className="text-[#4F46E5] font-semibold"
-                                        >
-                                          {physio.price ? `${physio.price}€` : ""}
-                                        </CardItem>
-
-                                        <CardItem
-                                          translateZ="20"
-                                          className="text-xs text-gray-500"
+                                      <CardItem
+                                          translateZ="30"
+                                          className="text-xs text-gray-600 mt-1 line-clamp-1"
                                         >
                                           {physio.postalCode
                                             ? `CP: ${physio.postalCode}`
                                             : ""}
                                         </CardItem>
-                                      </div>
+
+                                      {/* Mostrar precio medio solo si no hay filtro de precio máximo */}
+                                      {!filters.maxPrice.trim() && physio.price && (
+                                        <div className="flex justify-between items-center mt-auto pt-3">
+                                          <CardItem
+                                            translateZ="20"
+                                            className="text-sm text-gray-600"
+                                          >
+                                            Precio medio: <span className="font-semibold text-[#4F46E5]">{physio.price}€</span>
+                                          </CardItem>
+                                        </div>
+                                      )}
 
                                       <CardItem translateZ="50" className="mt-3 w-full">
                                         <button
-                                          onClick={() =>
-                                            router.push(
-                                              `/appointments/create/${physio.id}`
-                                            )
-                                          }
+                                          onClick={() => {
+                                            setPreviewPhysioData(physio);
+                                            setPreviewPhysio(i);
+                                          }}
                                           className="w-full py-2 bg-gradient-to-r from-[#65C2C9] to-[#65C2C9] hover:from-[#05918F] hover:to-[#05918F] text-white rounded-full font-medium shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1"
                                         >
                                           Reservar cita
@@ -680,7 +670,6 @@ const SearchPage = () => {
                       </div>
                     </div>
 
-                    {/* Pagination indicators improved */}
                     {displayResults.length > cardsPerPage && (
                       <div className="flex justify-center mt-8 space-x-2">
                         {Array.from({ length: maxIndex + 1 }).map((_, idx) => (
@@ -703,6 +692,15 @@ const SearchPage = () => {
           </section>
         )}
       </div>
+      <PhysiotherapistModal
+        physio={previewPhysioData}
+        isOpen={previewPhysio !== -1}
+        onClose={() => {
+          setPreviewPhysio(-1);
+          setPreviewPhysioData(null);
+        }}
+        renderStars={renderStars} // Pasamos la función renderStars como prop
+      />
     </div>
   );
 };
