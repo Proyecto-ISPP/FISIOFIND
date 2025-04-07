@@ -11,6 +11,7 @@ urlpatterns = [
     path('physio/register/', physio_register_view, name='physio_register'),
     re_path(r'^register/verified/(?P<token>.*)/$', verify_registration, name='verify_registration'),
     path('physio/validate/', validate_physio_registration, name='validate_physio_registration'),
+    path('physio/verify-identity/', verify_physio_id, name='verify_physio_id'),
     path('physio/payment/', process_payment, name='process_payment'),
     path('physio/update/', physio_update_view, name='physio_update'),
     path('physio/add-service/', physio_create_service_view, name='physio_create_service'),

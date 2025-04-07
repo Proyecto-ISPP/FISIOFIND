@@ -35,7 +35,7 @@ const VerifyEmailPage = () => {
 
           // Redirige al login después de 3 segundos
           setTimeout(() => {
-            router.push("/login");
+            router.push("/");
           }, 3000);
         }
       } catch (error) {
