@@ -7,6 +7,7 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 
 from appointment.models import Appointment
+from .emailUtils import send_rating_email
 from .models import AppointmentRating
 from .serializers import AppointmentRatingSerializer
 from rest_framework.permissions import IsAuthenticated
@@ -76,7 +77,9 @@ def create_rating(request):
     appointment_id = request.data.get("appointment")
 
     # Verificar si la cita existe y pertenece al usuario autenticado
-    appointment = get_object_or_404(Appointment, id=appointment_id, patient=request.user.patient)
+    appointment = get_object_or_404(
+        Appointment, id=appointment_id, patient=request.user.patient
+    )
     # Solo se puede valorar si la cita está terminada
     if appointment.status != "finished":
         return Response(
@@ -108,6 +111,7 @@ def create_rating(request):
             physiotherapist=appointment.physiotherapist,
             appointment=appointment,
         )
+        send_rating_email(serializer.instance)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -224,6 +228,7 @@ def create_or_update_rating(request, appointment_id):
                 physiotherapist=appointment.physiotherapist,
                 appointment=appointment,
             )
+            send_rating_email(serializer.instance)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -240,6 +245,7 @@ def create_or_update_rating(request, appointment_id):
                 AppointmentRatingSerializer(rating).data, status=status.HTTP_200_OK
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(["POST"])
 @permission_classes([IsPhysiotherapist])
