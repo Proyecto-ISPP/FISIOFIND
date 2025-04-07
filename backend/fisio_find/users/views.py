@@ -229,8 +229,9 @@ def verify_physio_id(request):
                 status=status.HTTP_400_BAD_REQUEST
             )
     except Exception as e:
+        logging.error(f"Error en la conexión con Persona: {str(e)}")
         return Response(
-            {"error": f"Error en la conexión con Persona: {str(e)}"},
+            {"error": "Error en la conexión con Persona."},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
