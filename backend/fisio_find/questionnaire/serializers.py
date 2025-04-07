@@ -47,7 +47,12 @@ class QuestionnaireSerializer(serializers.ModelSerializer):
                         raise ValueError("ui_schema debe representar un objeto JSON (dict)")
                     data['ui_schema'] = parsed
         except (ValueError, TypeError, json.JSONDecodeError) as e:
-            raise serializers.ValidationError(f"Error al procesar los esquemas JSON: {e}")
+            # Log the detailed exception message
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Error al procesar los esquemas JSON: {e}")
+            # Raise a generic ValidationError
+            raise serializers.ValidationError("Error al procesar los esquemas JSON.")
         return data
 
 class QuestionnaireDetailsView(serializers.ModelSerializer):
