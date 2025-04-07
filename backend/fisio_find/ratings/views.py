@@ -20,9 +20,15 @@ class RatingListView(generics.ListAPIView):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, IsPhysiotherapist])
 def create_rating(request):
-    # Log the incoming data for debugging
-    print("Incoming rating data:", request.data)
+    physio = request.user.physio
 
+    # Verifica si ya existe una valoración para este fisioterapeuta
+    if Rating.objects.filter(physiotherapist=physio).exists():
+        return Response(
+            {"detail": "Ya has creado una valoración."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
     # Ensure the physiotherapist field is set to the logged-in user
     data = request.data.copy()
     data['physiotherapist'] = request.user.physio.id
