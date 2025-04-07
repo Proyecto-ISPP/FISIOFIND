@@ -470,7 +470,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
                   </div>
                 )}
               </div>
-              {selectedEvent.status == "finished" && (
+              {selectedEvent.status == "finished"  && currentRole === "patient" && (
                 <div>
                   <div className="flex items-center mt-4 text-teal-50">
                     <EditableStarRatingDisplay
@@ -480,7 +480,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
                       onRatingChange={handleChangeRating}
                     />
                   </div>
-                  {selectedEvent.status === "finished" && isEditable(selectedEvent.end) && (
+                  {selectedEvent.status === "finished"  && currentRole === "patient" && isEditable(selectedEvent.end) && (
                     <div className="flex items-center mt-4 text-teal-50 justify-end">
                       <svg
                         height={"20px"}
@@ -561,7 +561,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
 
         {/* Content - Con scroll */}
         <div ref={modalContentRef} className="p-6 overflow-y-auto flex-grow">
-          {isEditingComment ? (
+          {(isEditingComment && currentRole === "patient") ? (
             <div>
               <h3 className="text-sm font-medium text-gray-500 mb-4">
                 Incluye un comentario a tu valoración (Opcional)
