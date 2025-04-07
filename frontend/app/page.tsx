@@ -702,7 +702,7 @@ const Home = () => {
         </div>
 
         {/* Copyright */}
-        <div className="text-center pt-8 border-t border-white border-opacity-20">
+        <div className="text-center pt-8">
           <div className="flex flex-wrap justify-center gap">
             <p>© 2025 Fisio Find. Bajo licencia MIT</p>
           </div>
