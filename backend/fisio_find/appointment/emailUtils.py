@@ -9,6 +9,7 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from django.conf import settings
 import requests
+from users.models import AppUser
 import cryptography.hazmat.primitives.padding as padding
 
 logger = logging.getLogger(__name__)
@@ -18,14 +19,16 @@ def encrypt_data(data):
     # Convertir la clave hexadecimal a bytes (32 bytes = 256 bits)
     key = bytes.fromhex(settings.ENCRYPTION_KEY)  # La clave de cifrado
 
-    iv = os.urandom(16)  # Valor inicial aleatorio para el cifrado (16 bytes para AES)
+    # Valor inicial aleatorio para el cifrado (16 bytes para AES)
+    iv = os.urandom(16)
 
     # Asegurarse de que la longitud de los datos sea múltiplo de 16 (padding PKCS7)
     padder = padding.PKCS7(128).padder()  # 128 bits = 16 bytes
     padded_data = padder.update(data.encode()) + padder.finalize()
 
     # Crear el cifrador
-    cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
+    cipher = Cipher(algorithms.AES(key), modes.CBC(iv),
+                    backend=default_backend())
     encryptor = cipher.encryptor()
 
     # Cifrar los datos
@@ -35,9 +38,11 @@ def encrypt_data(data):
     encrypted_data_with_iv = iv + encrypted_data
 
     # Convertir a base64 para enviar como texto
-    encrypted_data_b64 = base64.b64encode(encrypted_data_with_iv).decode('utf-8')
+    encrypted_data_b64 = base64.b64encode(
+        encrypted_data_with_iv).decode('utf-8')
 
     return encrypted_data_b64
+
 
 def is_deliverable_email(email):
     """
@@ -59,7 +64,9 @@ def send_appointment_email(appointment_id, action_type, role=None):
     """
     try:
         appointment = Appointment.objects.get(id=appointment_id)
-
+        patient_user = AppUser.objects.get(id=appointment.patient.user.id)
+        physio_user = AppUser.objects.get(
+            id=appointment.physiotherapist.user.id)
         patient_name = appointment.patient.user.first_name
         physio_name = appointment.physiotherapist.user.first_name
         physio_surname = appointment.physiotherapist.user.last_name
@@ -79,120 +86,129 @@ def send_appointment_email(appointment_id, action_type, role=None):
 
         if action_type == "booked":
             # Notificación al fisioterapeuta
-            subject_physio = "📅 Nueva Cita Agendada – Pendiente de Aceptación"
-            message_physio = f"""
-                Hola <strong>{physio_name}</strong>,<br><br>
-                El paciente <strong>{patient_name}</strong> ha solicitado una cita para el <strong>{appointment_date}</strong>.
-                <br><br>Puedes aceptar o cancelar la cita haciendo clic en el siguiente botón:
-                <br><br>
-                <a href="{link}" style="display: inline-block; background-color: #00a896; color: white; text-align: center; padding: 10px 20px; border-radius: 5px; text-decoration: none;">
-                    Confirmar Cita
-                </a>
-                <br><br>Si necesitas modificar o cancelar la cita, accede a la plataforma.
-            """
-            send_email(subject_physio, message_physio, physio_email)
+            if physio_user.is_subscribed:
+                subject_physio = "📅 Nueva Cita Agendada – Pendiente de Aceptación"
+                message_physio = f"""
+                    Hola <strong>{physio_name}</strong>,<br><br>
+                    El paciente <strong>{patient_name}</strong> ha solicitado una cita para el <strong>{appointment_date}</strong>.
+                    <br><br>Puedes aceptar o cancelar la cita haciendo clic en el siguiente botón:
+                    <br><br>
+                    <a href="{link}" style="display: inline-block; background-color: #00a896; color: white; text-align: center; padding: 10px 20px; border-radius: 5px; text-decoration: none;">
+                        Confirmar Cita
+                    </a>
+                    <br><br>Si necesitas modificar o cancelar la cita, accede a la plataforma.
+                """
+                send_email(subject_physio, message_physio, physio_email)
 
             # Notificación al paciente
-            subject_patient = "📅 Solicitud de Reserva Recibida – Pendiente de Confirmación"
-            message_patient = f"""
-                Hola <strong>{patient_name}</strong>,<br><br>
-                Tu solicitud de reserva para el <strong>{appointment_date}</strong> con <strong>{physio_name} {physio_surname}</strong> se ha realizado correctamente.
-                <br><br>Ahora está pendiente de ser confirmada por el fisioterapeuta. Recibirás una notificación una vez que se confirme.
-            """
-            send_email(subject_patient, message_patient, patient_email)
+            if patient_user.is_subscribed:
+                subject_patient = "📅 Solicitud de Reserva Recibida – Pendiente de Confirmación"
+                message_patient = f"""
+                    Hola <strong>{patient_name}</strong>,<br><br>
+                    Tu solicitud de reserva para el <strong>{appointment_date}</strong> con <strong>{physio_name} {physio_surname}</strong> se ha realizado correctamente.
+                    <br><br>Ahora está pendiente de ser confirmada por el fisioterapeuta. Recibirás una notificación una vez que se confirme.
+                """
+                send_email(subject_patient, message_patient, patient_email)
 
         elif action_type == "confirmed":
-            subject = "✅ Tu Cita ha sido Confirmada"
-            message = f"""
-                Hola <strong>{patient_name}</strong>,<br><br>
-                Tu cita con el fisioterapeuta <strong>{physio_name} {physio_surname}</strong> ha sido confirmada para el <strong>{appointment_date}</strong>.<br><br>Si tienes dudas, no dudes en contactarnos.
-            """
-            recipient_email = patient_email
-
-        elif action_type == "canceled":
-            if role == "patient":  # Si es el paciente quien cancela
-                subject = "❌ Cita Cancelada por el Paciente"
-                message = f"""
-                    Hola <strong>{physio_name}</strong>,<br><br>
-                    El paciente <strong>{patient_name}</strong> ha cancelado su cita programada para el <strong>{appointment_date}</strong>.
-                    <br><br>Por favor, revisa tu disponibilidad para reagendar si es necesario.
-                """
-                recipient_email = physio_email
-            elif role == "physio":  # Si es el fisioterapeuta quien cancela
-                subject = "❌ Cita Cancelada por el Fisioterapeuta"
+            if patient_user.is_subscribed:
+                subject = "✅ Tu Cita ha sido Confirmada"
                 message = f"""
                     Hola <strong>{patient_name}</strong>,<br><br>
-                    Lamentamos informarte que el fisioterapeuta <strong>{physio_name} {physio_surname}</strong> ha cancelado la cita programada para el <strong>{appointment_date}</strong>.
-                    <br><br>Si deseas, puedes agendar una nueva cita en la plataforma.
+                    Tu cita con el fisioterapeuta <strong>{physio_name} {physio_surname}</strong> ha sido confirmada para el <strong>{appointment_date}</strong>.<br><br>Si tienes dudas, no dudes en contactarnos.
                 """
                 recipient_email = patient_email
 
-        elif action_type == "modified":
-            subject = "🔄 Modificación en tu Cita"
-
-            # Construimos la lista de alternativas en HTML
-            alternatives_html = ""
-
-            for date, slots in appointment.alternatives.items():
-                alternatives_html += f"<h4>📅 {date}</h4>"
-                for slot in slots:
-                    start = slot["start"]
-                    end = slot["end"]
-                    start_time = f"{date} {start}"
-                    end_time = f"{date} {end}"
-                    # Construimos el enlace con los parámetros start_time y end_time
-                    token = signing.dumps({'appointment_id': appointment.id, 'patient_user_id': appointment.patient.user.id})
-                    link = f"{frontend_domain}/confirm-alternative/{token}?start_time={start_time}&end_time={end_time}"
-                    alternatives_html += f"""
-                        <div style="border:1px solid #ddd; padding:10px; border-radius:8px; margin:10px 0; text-align: center;">
-                            ⏰ <strong>{start} - {end}</strong>  
-                            <br><br> 
-                            <a href="{link}" 
-                            style="display:inline-block; padding:10px 15px; background-color:#1E5AAD; color:white; text-decoration:none; border-radius:5px;">
-                                Confirmar este horario
-                            </a>
-                        </div>
+        elif action_type == "canceled":
+            if role == "patient":
+                if physio_user.is_subscribed:  # Si es el paciente quien cancela
+                    subject = "❌ Cita Cancelada por el Paciente"
+                    message = f"""
+                        Hola <strong>{physio_name}</strong>,<br><br>
+                        El paciente <strong>{patient_name}</strong> ha cancelado su cita programada para el <strong>{appointment_date}</strong>.
+                        <br><br>Por favor, revisa tu disponibilidad para reagendar si es necesario.
                     """
+                    recipient_email = physio_email
+            elif role == "physio":  # Si es el fisioterapeuta quien cancela
+                if patient_user.is_subscribed:
+                    subject = "❌ Cita Cancelada por el Fisioterapeuta"
+                    message = f"""
+                        Hola <strong>{patient_name}</strong>,<br><br>
+                        Lamentamos informarte que el fisioterapeuta <strong>{physio_name} {physio_surname}</strong> ha cancelado la cita programada para el <strong>{appointment_date}</strong>.
+                        <br><br>Si deseas, puedes agendar una nueva cita en la plataforma.
+                    """
+                    recipient_email = patient_email
 
-            message = f"""
-                <p>Hola <strong>{patient_name}</strong>,</p>
-                <p>Tu cita con el fisioterapeuta <strong>{physio_name} {physio_surname}</strong> ha sido modificada.</p>
-                <p>Te ofrecemos las siguientes opciones de reprogramación:</p>
-                {alternatives_html}
-                <p>Por favor, accede a la plataforma para confirmar o proponer otro horario.</p>
-                <br>
-                <div style="text-align: center;">
-                    <a href="{frontend_domain}/mis-citas" 
-                    style="display:inline-block; padding:10px 15px; background-color:#00a896; color:white; text-decoration:none; border-radius:5px;">
-                        Ir a la plataforma
-                    </a>
-                </div>
-            """
-            recipient_email = patient_email
+        elif action_type == "modified":
+            if patient_user.is_subscribed:
+                subject = "🔄 Modificación en tu Cita"
+
+                # Construimos la lista de alternativas en HTML
+                alternatives_html = ""
+
+                for date, slots in appointment.alternatives.items():
+                    alternatives_html += f"<h4>📅 {date}</h4>"
+                    for slot in slots:
+                        start = slot["start"]
+                        end = slot["end"]
+                        start_time = f"{date} {start}"
+                        end_time = f"{date} {end}"
+                        # Construimos el enlace con los parámetros start_time y end_time
+                        token = signing.dumps(
+                            {'appointment_id': appointment.id, 'patient_user_id': appointment.patient.user.id})
+                        link = f"{frontend_domain}/confirm-alternative/{token}?start_time={start_time}&end_time={end_time}"
+                        alternatives_html += f"""
+                            <div style="border:1px solid #ddd; padding:10px; border-radius:8px; margin:10px 0; text-align: center;">
+                                ⏰ <strong>{start} - {end}</strong>  
+                                <br><br> 
+                                <a href="{link}" 
+                                style="display:inline-block; padding:10px 15px; background-color:#1E5AAD; color:white; text-decoration:none; border-radius:5px;">
+                                    Confirmar este horario
+                                </a>
+                            </div>
+                        """
+
+                message = f"""
+                    <p>Hola <strong>{patient_name}</strong>,</p>
+                    <p>Tu cita con el fisioterapeuta <strong>{physio_name} {physio_surname}</strong> ha sido modificada.</p>
+                    <p>Te ofrecemos las siguientes opciones de reprogramación:</p>
+                    {alternatives_html}
+                    <p>Por favor, accede a la plataforma para confirmar o proponer otro horario.</p>
+                    <br>
+                    <div style="text-align: center;">
+                        <a href="{frontend_domain}/mis-citas" 
+                        style="display:inline-block; padding:10px 15px; background-color:#00a896; color:white; text-decoration:none; border-radius:5px;">
+                            Ir a la plataforma
+                        </a>
+                    </div>
+                """
+                recipient_email = patient_email
 
         elif action_type == "modified-accepted":
             # Notificación al fisioterapeuta
-            subject_physio = "✅ Cita Reprogramada y Aceptada"
-            message_physio = f"""
-                Hola <strong>{physio_name}</strong>,<br><br>
-                El paciente <strong>{patient_name}</strong> ha aceptado la propuesta de reprogramación.
-                <br><br>La hora final seleccionada es el <strong>{appointment_date}</strong>.
-                <br><br>La cita ha sido reprogramada exitosamente.
-            """
-            send_email(subject_physio, message_physio, physio_email)
+            if physio_user.is_subscribed:
+                subject_physio = "✅ Cita Reprogramada y Aceptada"
+                message_physio = f"""
+                    Hola <strong>{physio_name}</strong>,<br><br>
+                    El paciente <strong>{patient_name}</strong> ha aceptado la propuesta de reprogramación.
+                    <br><br>La hora final seleccionada es el <strong>{appointment_date}</strong>.
+                    <br><br>La cita ha sido reprogramada exitosamente.
+                """
+                send_email(subject_physio, message_physio, physio_email)
 
             # Notificación al paciente
-            subject_patient = "✅ Confirmación de Cita Reprogramada"
-            message_patient = f"""
-                Hola <strong>{patient_name}</strong>,<br><br>
-                Has aceptado la propuesta de cita del fisioterapeuta <strong>{physio_name} {physio_surname}</strong>.
-                <br><br>La cita ha sido confirmada para el <strong>{appointment_date}</strong>.
-                <br><br>Gracias por confiar en nosotros.
-            """
-            send_email(subject_patient, message_patient, patient_email)
+            if patient_user.is_subscribed:
+                subject_patient = "✅ Confirmación de Cita Reprogramada"
+                message_patient = f"""
+                    Hola <strong>{patient_name}</strong>,<br><br>
+                    Has aceptado la propuesta de cita del fisioterapeuta <strong>{physio_name} {physio_surname}</strong>.
+                    <br><br>La cita ha sido confirmada para el <strong>{appointment_date}</strong>.
+                    <br><br>Gracias por confiar en nosotros.
+                """
+                send_email(subject_patient, message_patient, patient_email)
 
-        if recipient_email:
-            send_email(subject, message, recipient_email)
+        # if recipient_email:
+        #     send_email(subject, message, recipient_email)
 
     except Appointment.DoesNotExist:
         print("Error: Cita no encontrada")
@@ -202,6 +218,7 @@ def send_email(subject, message, recipient_email):
     """
     Envía un correo electrónico con el asunto y el mensaje proporcionados.
     """
+    unsubscribe_link = get_unsubscribe_link(recipient_email)
     # URL del logo
     image_url = "https://fisiofind-landing-page.netlify.app/_astro/logo.1fTJ_rhB.png"
 
@@ -227,10 +244,13 @@ def send_email(subject, message, recipient_email):
                 🌐 <a style="color: #0073e6; text-decoration: none;" href="https://fisiofind.app.com/">fisiofind.app.com</a> <br>
                 📷 <a style="color: #0073e6; text-decoration: none;" href="https://www.instagram.com/fisiofindapp/">@fisiofindapp</a>
             </p>
+             <p style="margin: 5px 0; font-size: 12px; color: #777;">
+                Si ya no deseas recibir estos correos, <a href="{unsubscribe_link}" style="color: #0073e6; text-decoration: none;">haz clic aquí para darte de baja</a>.
+            </p>
         </div>
     </div>
     """
-    
+
     encrypted_subject = encrypt_data(subject)
     encrypted_recipient = encrypt_data(recipient_email)
     encrypted_body = encrypt_data(email_body)
@@ -247,16 +267,10 @@ def send_email(subject, message, recipient_email):
         "encrypted_body": encrypted_body
     }
 
-    
-    # email = EmailMessage(
-    #     subject=subject,
-    #     body=email_body,
-    #     from_email="noreply-citas@fisiofind.com",
-    #     to=[recipient_email],
-    # )
-    # email.content_subtype = "html"  # Especificar que el contenido es HTML
-    # email.send()
-
-
     response = requests.post(url, json=data, headers=headers)
     return response
+
+def get_unsubscribe_link(recipient_email):
+    # Genera un token único basado en el email (o, si lo tienes, en el ID de usuario)
+    token = signing.dumps({'email': recipient_email})
+    return f"{settings.FRONTEND_URL}/unsubscribe?token={token}"

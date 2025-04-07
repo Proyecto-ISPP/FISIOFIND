@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import Image from "next/image";
@@ -83,7 +83,7 @@ const StarIcon = ({ className }: { className?: string }) => (
 );
 
 // Componente reutilizable para los campos del formulario
-interface FormFieldProps {
+interface FormFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   name: string;
   label: string;
   type?: string;
@@ -105,6 +105,7 @@ const FormField = ({
   onChange,
   error,
   info,
+  ...rest
 }: FormFieldProps) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -276,8 +277,16 @@ const StripePaymentForm = ({ amount, onPaymentSuccess }: StripePaymentFormProps)
 };
 
 const PhysioSignUpForm = () => {
+  
   const router = useRouter();
-  // currentStep: 1→2→3→4→5→6
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      router.replace("/restricted-access");
+    }
+  }, [router]);
+  
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [formData, setFormData] = useState<FormData>({
     username: "",
@@ -467,7 +476,7 @@ const PhysioSignUpForm = () => {
         formData,
         { headers: { "Content-Type": "application/json" } }
       );
-      
+
       if (response.status === 201) {
         showAlert("success", "¡Registro exitoso! Iniciando sesión...");
         // Auto login
@@ -476,7 +485,7 @@ const PhysioSignUpForm = () => {
           { username: formData.username, password: formData.password },
           { headers: { "Content-Type": "application/json" } }
         );
-        
+
         if (loginResponse.status === 200) {
           if (isClient) {
             localStorage.setItem("token", loginResponse.data.access);
@@ -511,6 +520,12 @@ const PhysioSignUpForm = () => {
     await registerPhysio();
   };
 
+  const getMaxBirthDate = () => {
+    const today = new Date();
+    today.setFullYear(today.getFullYear() - 18);
+    return today.toISOString().split('T')[0]; // formato YYYY-MM-DD
+  };
+
   return (
     <div>
       {alert.show && (
@@ -520,460 +535,465 @@ const PhysioSignUpForm = () => {
           onClose={() => setAlert({ ...alert, show: false })}
         />
       )}
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white dark:from-neutral-900 dark:to-black py-8">
-      <div className="max-w-5xl mx-auto px-4">
-        <div className="text-center mb-8">
-          <Image
-            src="/static/fisio_find_logo.webp"
-            alt="Fisio Find Logo"
-            width={120}
-            height={120}
-            className="mx-auto mb-4"
-          />
-          <h1 className="text-3xl font-bold text-[#1E5ACD]">Registro de Fisioterapeuta</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">
-            Completa el formulario para comenzar a ofrecer tus servicios
-          </p>
-        </div>
-
-        <div className="bg-white dark:bg-black rounded-xl shadow-xl overflow-hidden">
-          {/* Progress Steps - 6 pasos */}
-          <div className="px-6 pt-6">
-            <div className="flex items-center w-full mb-8">
-              {/* Paso 1 */}
-              <div className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 1 ? "bg-[#1E5ACD] text-white" : "bg-gray-200 text-gray-600"}`}>
-                1
-              </div>
-              <div className={`h-1 flex-1 mx-2 ${currentStep >= 2 ? "bg-[#1E5ACD]" : "bg-gray-200"}`}></div>
-              {/* Paso 2 */}
-              <div className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 2 ? "bg-[#1E5ACD] text-white" : "bg-gray-200 text-gray-600"}`}>
-                2
-              </div>
-              <div className={`h-1 flex-1 mx-2 ${currentStep >= 3 ? "bg-[#1E5ACD]" : "bg-gray-200"}`}></div>
-              {/* Paso 3 */}
-              <div className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 3 ? "bg-[#1E5ACD] text-white" : "bg-gray-200 text-gray-600"}`}>
-                3
-              </div>
-              <div className={`h-1 flex-1 mx-2 ${currentStep >= 4 ? "bg-[#1E5ACD]" : "bg-gray-200"}`}></div>
-              {/* Paso 4 */}
-              <div className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 4 ? "bg-[#1E5ACD] text-white" : "bg-gray-200 text-gray-600"}`}>
-                4
-              </div>
-              <div className={`h-1 flex-1 mx-2 ${currentStep >= 5 ? "bg-[#1E5ACD]" : "bg-gray-200"}`}></div>
-              {/* Paso 5 */}
-              <div className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 5 ? "bg-[#1E5ACD] text-white" : "bg-gray-200 text-gray-600"}`}>
-                5
-              </div>
-              <div className={`h-1 flex-1 mx-2 ${currentStep >= 6 ? "bg-[#1E5ACD]" : "bg-gray-200"}`}></div>
-              {/* Paso 6 */}
-              <div className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 6 ? "bg-[#1E5ACD] text-white" : "bg-gray-200 text-gray-600"}`}>
-                6
-              </div>
-            </div>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white dark:from-neutral-900 dark:to-black py-8">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="text-center mb-8">
+            <Image
+              src="/static/fisio_find_logo.webp"
+              alt="Fisio Find Logo"
+              width={120}
+              height={120}
+              className="mx-auto mb-4"
+            />
+            <h1 className="text-3xl font-bold text-[#1E5ACD]">Registro de Fisioterapeuta</h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-2">
+              Completa el formulario para comenzar a ofrecer tus servicios
+            </p>
           </div>
 
-          {/* Formulario pasos 1 a 4 */}
-          {currentStep < 5 && (
-            <form onSubmit={handleSubmit} className="p-6">
-              {currentStep === 1 && (
-                <div className="space-y-4">
-                  <h2 className="text-xl font-semibold mb-4">Información de Cuenta</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="md:col-span-2">
-                      <FormField
-                        name="username"
-                        label="Nombre de usuario"
-                        value={formData.username}
-                        onChange={handleChange}
-                        error={errors.username}
-                      />
-                    </div>
-                    <FormField
-                      name="email"
-                      label="Email"
-                      type="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      error={errors.email}
-                    />
-                    <FormField
-                      name="password"
-                      label="Contraseña"
-                      type="password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      error={errors.password}
-                    />
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:col-span-2">
-                      <div>
+          <div className="bg-white dark:bg-black rounded-xl shadow-xl overflow-hidden">
+            {/* Progress Steps - 6 pasos */}
+            <div className="px-6 pt-6">
+              <div className="flex items-center w-full mb-8">
+                {/* Paso 1 */}
+                <div className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 1 ? "bg-[#1E5ACD] text-white" : "bg-gray-200 text-gray-600"}`}>
+                  1
+                </div>
+                <div className={`h-1 flex-1 mx-2 ${currentStep >= 2 ? "bg-[#1E5ACD]" : "bg-gray-200"}`}></div>
+                {/* Paso 2 */}
+                <div className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 2 ? "bg-[#1E5ACD] text-white" : "bg-gray-200 text-gray-600"}`}>
+                  2
+                </div>
+                <div className={`h-1 flex-1 mx-2 ${currentStep >= 3 ? "bg-[#1E5ACD]" : "bg-gray-200"}`}></div>
+                {/* Paso 3 */}
+                <div className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 3 ? "bg-[#1E5ACD] text-white" : "bg-gray-200 text-gray-600"}`}>
+                  3
+                </div>
+                <div className={`h-1 flex-1 mx-2 ${currentStep >= 4 ? "bg-[#1E5ACD]" : "bg-gray-200"}`}></div>
+                {/* Paso 4 */}
+                <div className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 4 ? "bg-[#1E5ACD] text-white" : "bg-gray-200 text-gray-600"}`}>
+                  4
+                </div>
+                <div className={`h-1 flex-1 mx-2 ${currentStep >= 5 ? "bg-[#1E5ACD]" : "bg-gray-200"}`}></div>
+                {/* Paso 5 */}
+                <div className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 5 ? "bg-[#1E5ACD] text-white" : "bg-gray-200 text-gray-600"}`}>
+                  5
+                </div>
+                <div className={`h-1 flex-1 mx-2 ${currentStep >= 6 ? "bg-[#1E5ACD]" : "bg-gray-200"}`}></div>
+                {/* Paso 6 */}
+                <div className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 6 ? "bg-[#1E5ACD] text-white" : "bg-gray-200 text-gray-600"}`}>
+                  6
+                </div>
+              </div>
+            </div>
+
+            {/* Formulario pasos 1 a 4 */}
+            {currentStep < 5 && (
+              <form onSubmit={handleSubmit} className="p-6">
+                {currentStep === 1 && (
+                  <div className="space-y-4">
+                    <h2 className="text-xl font-semibold mb-4">Información de Cuenta</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="md:col-span-2">
                         <FormField
-                          name="confirm_password"
-                          label="Confirmar contraseña"
-                          type="password"
-                          value={formData.confirm_password}
+                          name="username"
+                          label="Nombre de usuario"
+                          value={formData.username}
                           onChange={handleChange}
-                          error={errors.confirm_password}
+                          error={errors.username}
                         />
                       </div>
-                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex flex-col justify-center h-full">
-                        <h3 className="text-sm font-medium text-blue-800 mb-2 flex items-center">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                          Requisitos de contraseña
-                        </h3>
-                        <ul className="text-xs text-blue-700 space-y-1 ml-7 list-disc">
-                          <li>Mínimo 8 caracteres</li>
-                          <li>No debe ser similar a tu información personal</li>
-                          <li>No debe ser una contraseña común</li>
-                          <li>No puede ser únicamente numérica</li>
-                        </ul>
+                      <FormField
+                        name="email"
+                        label="Email"
+                        type="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        error={errors.email}
+                      />
+                      <FormField
+                        name="password"
+                        label="Contraseña"
+                        type="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        error={errors.password}
+                      />
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:col-span-2">
+                        <div>
+                          <FormField
+                            name="confirm_password"
+                            label="Confirmar contraseña"
+                            type="password"
+                            value={formData.confirm_password}
+                            onChange={handleChange}
+                            error={errors.confirm_password}
+                          />
+                        </div>
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex flex-col justify-center h-full">
+                          <h3 className="text-sm font-medium text-blue-800 mb-2 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Requisitos de contraseña
+                          </h3>
+                          <ul className="text-xs text-blue-700 space-y-1 ml-7 list-disc">
+                            <li>Mínimo 8 caracteres</li>
+                            <li>No debe ser similar a tu información personal</li>
+                            <li>No debe ser una contraseña común</li>
+                            <li>No puede ser únicamente numérica</li>
+                          </ul>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              {currentStep === 2 && (
-                <div className="space-y-4">
-                  <h2 className="text-xl font-semibold mb-4">Información Personal</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <FormField
-                      name="first_name"
-                      label="Nombre"
-                      value={formData.first_name}
-                      onChange={handleChange}
-                      error={errors.first_name}
-                    />
-                    <FormField
-                      name="last_name"
-                      label="Apellidos"
-                      value={formData.last_name}
-                      onChange={handleChange}
-                      error={errors.last_name}
-                    />
-                    <FormField
-                      name="dni"
-                      label="DNI"
-                      value={formData.dni}
-                      onChange={handleChange}
-                      error={errors.dni}
-                      info="Necesitamos tu DNI para verificar tu identidad."
-                    />
-                    <FormField
-                      name="phone_number"
-                      label="Número de teléfono"
-                      type="tel"
-                      value={formData.phone_number}
-                      onChange={handleChange}
-                      error={errors.phone_number}
-                    />
-                    <FormField
-                      name="birth_date"
-                      label="Fecha de nacimiento"
-                      type="date"
-                      value={formData.birth_date}
-                      onChange={handleChange}
-                      error={errors.birth_date}
-                    />
-                    <FormField
-                      name="gender"
-                      label="Género"
-                      type="select"
-                      options={GENDER_OPTIONS}
-                      value={formData.gender}
-                      onChange={handleChange}
-                      error={errors.gender}
-                    />
-                  </div>
-                </div>
-              )}
-
-              {currentStep === 3 && (
-                <div className="space-y-4">
-                  <h2 className="text-xl font-semibold mb-4">Información Profesional</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <FormField
-                      name="collegiate_number"
-                      label="Número Colegiado"
-                      value={formData.collegiate_number}
-                      onChange={handleChange}
-                      error={errors.collegiate_number}
-                    />
-                    <FormField
-                      name="autonomic_community"
-                      label="Comunidad Autónoma"
-                      type="select"
-                      options={AUTONOMIC_COMMUNITY_OPTIONS}
-                      value={formData.autonomic_community}
-                      onChange={handleChange}
-                      error={errors.autonomic_community}
-                    />
-                    {formData.autonomic_community && (
-                      <div className="md:col-span-2 text-center -mt-10">
-                        <a
-                          href={
-                            AUTONOMIC_COMMUNITY_OPTIONS.find(
-                              (c) => c.value === formData.autonomic_community
-                            )?.url || "#"
-                          }
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:text-blue-800 text-sm inline-flex items-center gap-1"
-                        >
-                          <Info size={14} />
-                          Verificar datos en el colegio oficial de{" "}
-                          {AUTONOMIC_COMMUNITY_OPTIONS.find(
-                            (c) => c.value === formData.autonomic_community
-                          )?.label}
-                        </a>
+                {currentStep === 2 && (
+                  <div className="space-y-4">
+                    <h2 className="text-xl font-semibold mb-4">Información Personal</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <FormField
+                        name="first_name"
+                        label="Nombre"
+                        value={formData.first_name}
+                        onChange={handleChange}
+                        error={errors.first_name}
+                      />
+                      <FormField
+                        name="last_name"
+                        label="Apellidos"
+                        value={formData.last_name}
+                        onChange={handleChange}
+                        error={errors.last_name}
+                      />
+                      <FormField
+                        name="dni"
+                        label="DNI"
+                        value={formData.dni}
+                        onChange={handleChange}
+                        error={errors.dni}
+                        info="Necesitamos tu DNI para verificar tu identidad."
+                      />
+                      <FormField
+                        name="phone_number"
+                        label="Número de teléfono"
+                        type="tel"
+                        value={formData.phone_number}
+                        onChange={handleChange}
+                        error={errors.phone_number}
+                      />
+                      <div className="mb-4 relative">
+                        <label htmlFor="birth_date" className="block text-sm font-medium text-gray-700 dark:text-white mb-1">Fecha de nacimiento
+                          <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          className="w-full px-4 py-2 border border-gray-300 dark:border-neutral-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1E5ACD] dark:bg-neutral-800 dark:text-white"
+                          type="date"
+                          name="birth_date"
+                          id="birth_date"
+                          value={formData.birth_date}
+                          onChange={handleChange}
+                          max={getMaxBirthDate()}
+                          min={"1900-01-01"}
+                        />
+                        {errors.birth_date && <span className="error">{errors.birth_date}</span>}
                       </div>
-                    )}
-                    <FormField
-                      name="postal_code"
-                      label="Código Postal"
-                      value={formData.postal_code}
-                      onChange={handleChange}
-                      error={errors.postal_code}
-                    />
+                      <FormField
+                        name="gender"
+                        label="Género"
+                        type="select"
+                        options={GENDER_OPTIONS}
+                        value={formData.gender}
+                        onChange={handleChange}
+                        error={errors.gender}
+                      />
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              {currentStep === 4 && (
-                <div className="space-y-6">
-                  <h2 className="text-2xl font-bold text-[#1E5ACD] text-center">
-                    Selecciona tu Plan
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-                    {/* Fisio Blue */}
-                    <label
-                      className={`relative cursor-pointer p-6 rounded-xl border-2 transition-all ${
-                        formData.plan === "blue"
+                {currentStep === 3 && (
+                  <div className="space-y-4">
+                    <h2 className="text-xl font-semibold mb-4">Información Profesional</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <FormField
+                        name="collegiate_number"
+                        label="Número Colegiado"
+                        value={formData.collegiate_number}
+                        onChange={handleChange}
+                        error={errors.collegiate_number}
+                      />
+                      <FormField
+                        name="autonomic_community"
+                        label="Comunidad Autónoma"
+                        type="select"
+                        options={AUTONOMIC_COMMUNITY_OPTIONS}
+                        value={formData.autonomic_community}
+                        onChange={handleChange}
+                        error={errors.autonomic_community}
+                      />
+                      {formData.autonomic_community && (
+                        <div className="md:col-span-2 text-center -mt-10">
+                          <a
+                            href={
+                              AUTONOMIC_COMMUNITY_OPTIONS.find(
+                                (c) => c.value === formData.autonomic_community
+                              )?.url || "#"
+                            }
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:text-blue-800 text-sm inline-flex items-center gap-1"
+                          >
+                            <Info size={14} />
+                            Verificar datos en el colegio oficial de{" "}
+                            {AUTONOMIC_COMMUNITY_OPTIONS.find(
+                              (c) => c.value === formData.autonomic_community
+                            )?.label}
+                          </a>
+                        </div>
+                      )}
+                      <FormField
+                        name="postal_code"
+                        label="Código Postal"
+                        value={formData.postal_code}
+                        onChange={handleChange}
+                        error={errors.postal_code}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {currentStep === 4 && (
+                  <div className="space-y-6">
+                    <h2 className="text-2xl font-bold text-[#1E5ACD] text-center">
+                      Selecciona tu Plan
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                      {/* Fisio Blue */}
+                      <label
+                        className={`relative cursor-pointer p-6 rounded-xl border-2 transition-all ${formData.plan === "blue"
                           ? "border-[#1E5ACD] bg-blue-50 dark:bg-blue-900/30"
                           : "border-gray-200 hover:border-blue-200 dark:border-neutral-700 dark:hover:border-blue-600"
-                      }`}
-                    >
-                      <div className="flex items-start gap-4">
-                        <div className="mt-1">
-                          <input
-                            type="radio"
-                            name="plan"
-                            value="blue"
-                            checked={formData.plan === "blue"}
-                            onChange={() => setFormData((prev) => ({ ...prev, plan: "blue" }))}
-                            className="w-5 h-5 text-[#1E5ACD] border-2 border-gray-300 focus:ring-[#1E5ACD]"
-                          />
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-baseline justify-between">
-                            <h3 className="text-xl font-semibold text-[#1E5ACD]">
-                              Fisio Blue
-                            </h3>
-                            <p className="text-xl font-high">
-                              17,99€<span className="text-sm text-gray-500">/mes</span>
-                            </p>
+                          }`}
+                      >
+                        <div className="flex items-start gap-4">
+                          <div className="mt-1">
+                            <input
+                              type="radio"
+                              name="plan"
+                              value="blue"
+                              checked={formData.plan === "blue"}
+                              onChange={() => setFormData((prev) => ({ ...prev, plan: "blue" }))}
+                              className="w-5 h-5 text-[#1E5ACD] border-2 border-gray-300 focus:ring-[#1E5ACD]"
+                            />
                           </div>
-                          <ul className="mt-4 space-y-3 text-gray-600 dark:text-gray-300">
-                            <li className="flex items-center gap-2">
-                              <CheckIcon className="w-5 h-5 text-green-500" />
-                              Videollamadas con todas las herramientas
-                            </li>
-                            <li className="flex items-center gap-2">
-                              <CheckIcon className="w-5 h-5 text-green-500" />
-                              Seguimiento del paciente
-                            </li>
-                            <li className="flex items-center gap-2">
-                              <CheckIcon className="w-5 h-5 text-green-500" />
-                              Chat integrado
-                            </li>
-                            <li className="flex items-center gap-2">
-                              <CheckIcon className="w-5 h-5 text-green-500" />
-                              Subir y compartir vídeos (hasta 15)
-                            </li>
-                            <li className="flex items-center gap-2">
-                              <CheckIcon className="w-5 h-5 text-green-500" />
-                              Soporte técnico limitado
-                            </li>
-                          </ul>
+                          <div className="flex-1">
+                            <div className="flex items-baseline justify-between">
+                              <h3 className="text-xl font-semibold text-[#1E5ACD]">
+                                Fisio Blue
+                              </h3>
+                              <p className="text-xl font-high">
+                                17,99€<span className="text-sm text-gray-500">/mes</span>
+                              </p>
+                            </div>
+                            <ul className="mt-4 space-y-3 text-gray-600 dark:text-gray-300">
+                              <li className="flex items-center gap-2">
+                                <CheckIcon className="w-5 h-5 text-green-500" />
+                                Videollamadas con todas las herramientas
+                              </li>
+                              <li className="flex items-center gap-2">
+                                <CheckIcon className="w-5 h-5 text-green-500" />
+                                Seguimiento del paciente
+                              </li>
+                              <li className="flex items-center gap-2">
+                                <CheckIcon className="w-5 h-5 text-green-500" />
+                                Chat integrado
+                              </li>
+                              <li className="flex items-center gap-2">
+                                <CheckIcon className="w-5 h-5 text-green-500" />
+                                Subir y compartir vídeos (hasta 15)
+                              </li>
+                              <li className="flex items-center gap-2">
+                                <CheckIcon className="w-5 h-5 text-green-500" />
+                                Soporte técnico limitado
+                              </li>
+                            </ul>
+                          </div>
                         </div>
-                      </div>
-                    </label>
+                      </label>
 
-                    {/* Fisio Gold */}
-                    <label
-                      className={`relative cursor-pointer p-6 rounded-xl border-2 transition-all ${
-                        formData.plan === "gold"
+                      {/* Fisio Gold */}
+                      <label
+                        className={`relative cursor-pointer p-6 rounded-xl border-2 transition-all ${formData.plan === "gold"
                           ? "border-amber-400 bg-amber-50 dark:bg-amber-900/30"
                           : "border-gray-200 hover:border-amber-200 dark:border-neutral-700 dark:hover:border-amber-600"
-                      }`}
-                    >
-                      <div className="flex items-start gap-4">
-                        <div className="mt-1">
-                          <input
-                            type="radio"
-                            name="plan"
-                            value="gold"
-                            checked={formData.plan === "gold"}
-                            onChange={() => setFormData((prev) => ({ ...prev, plan: "gold" }))}
-                            className="w-5 h-5 text-amber-500 border-2 border-gray-300 focus:ring-amber-500"
-                          />
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-baseline justify-between">
-                            <div className="flex items-center gap-2">
-                              <h3 className="text-xl font-semibold text-amber-600">
-                                Fisio Gold
-                              </h3>
-                              <h3 className="px-2 py-1 text-xs font-medium bg-amber-100 text-amber-800 rounded-full">
-                                MÁS POPULAR
-                              </h3>
-                            </div>
-                            <p className="text-xl font-high">
-                              24,99€<span className="text-sm text-gray-500">/mes</span>
-                            </p>
+                          }`}
+                      >
+                        <div className="flex items-start gap-4">
+                          <div className="mt-1">
+                            <input
+                              type="radio"
+                              name="plan"
+                              value="gold"
+                              checked={formData.plan === "gold"}
+                              onChange={() => setFormData((prev) => ({ ...prev, plan: "gold" }))}
+                              className="w-5 h-5 text-amber-500 border-2 border-gray-300 focus:ring-amber-500"
+                            />
                           </div>
-                          <ul className="mt-4 space-y-3 text-gray-600 dark:text-gray-300">
-                            <li className="flex items-center gap-2">
-                              <CheckIcon className="w-5 h-5 text-green-500" />
-                              Todas las ventajas de Fisio Blue
-                            </li>
-                            <li className="flex items-center gap-2">
-                              <StarIcon className="w-4 h-4 text-amber-500" />
-                              Mayor alcance
-                            </li>
-                            <li className="flex items-center gap-2">
-                              <StarIcon className="w-4 h-4 text-amber-500" />
-                              Tick de verificación
-                            </li>
-                            <li className="flex items-center gap-2">
-                              <StarIcon className="w-4 h-4 text-amber-500" />
-                              Subir y compartir vídeos (hasta 30)
-                            </li>
-                            <li className="flex items-center gap-2">
-                              <StarIcon className="w-4 h-4 text-amber-500" />
-                              Soporte técnico personalizado
-                            </li>
-                          </ul>
+                          <div className="flex-1">
+                            <div className="flex items-baseline justify-between">
+                              <div className="flex items-center gap-2">
+                                <h3 className="text-xl font-semibold text-amber-600">
+                                  Fisio Gold
+                                </h3>
+                                <h3 className="px-2 py-1 text-xs font-medium bg-amber-100 text-amber-800 rounded-full">
+                                  MÁS POPULAR
+                                </h3>
+                              </div>
+                              <p className="text-xl font-high">
+                                24,99€<span className="text-sm text-gray-500">/mes</span>
+                              </p>
+                            </div>
+                            <ul className="mt-4 space-y-3 text-gray-600 dark:text-gray-300">
+                              <li className="flex items-center gap-2">
+                                <CheckIcon className="w-5 h-5 text-green-500" />
+                                Todas las ventajas de Fisio Blue
+                              </li>
+                              <li className="flex items-center gap-2">
+                                <StarIcon className="w-4 h-4 text-amber-500" />
+                                Mayor alcance
+                              </li>
+                              <li className="flex items-center gap-2">
+                                <StarIcon className="w-4 h-4 text-amber-500" />
+                                Tick de verificación
+                              </li>
+                              <li className="flex items-center gap-2">
+                                <StarIcon className="w-4 h-4 text-amber-500" />
+                                Subir y compartir vídeos (hasta 30)
+                              </li>
+                              <li className="flex items-center gap-2">
+                                <StarIcon className="w-4 h-4 text-amber-500" />
+                                Soporte técnico personalizado
+                              </li>
+                            </ul>
+                          </div>
                         </div>
-                      </div>
-                    </label>
-                  </div>
+                      </label>
+                    </div>
 
-                  {errors.plan && (
-                    <p className="text-red-500 text-center mt-4">⚠️ {errors.plan}</p>
+                    {errors.plan && (
+                      <p className="text-red-500 text-center mt-4">⚠️ {errors.plan}</p>
+                    )}
+                  </div>
+                )}
+
+                <div className="flex justify-between mt-8">
+                  {currentStep > 1 && currentStep < 5 && (
+                    <button
+                      type="button"
+                      onClick={handlePrevStep}
+                      className="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
+                    >
+                      Anterior
+                    </button>
+                  )}
+                  {currentStep < 4 && (
+                    <button
+                      type="button"
+                      onClick={handleNextStep}
+                      className="ml-auto px-6 py-2 bg-[#1E5ACD] hover:bg-[#1848A3] text-white font-medium rounded-md transition-colors"
+                    >
+                      Siguiente
+                    </button>
+                  )}
+                  {currentStep === 4 && (
+                    <button
+                      type="button"
+                      onClick={handleProceedToVerification}
+                      className="ml-auto px-6 py-2 bg-[#1E5ACD] hover:bg-[#1848A3] text-white font-medium rounded-md transition-colors"
+                    >
+                      Continuar a Verificación
+                    </button>
                   )}
                 </div>
-              )}
 
-              <div className="flex justify-between mt-8">
-                {currentStep > 1 && currentStep < 5 && (
-                  <button
-                    type="button"
-                    onClick={handlePrevStep}
-                    className="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
-                  >
-                    Anterior
-                  </button>
+                {isValidating && (
+                  <p className="text-center text-blue-600 mt-4">
+                    Validando datos, por favor espere...
+                  </p>
                 )}
-                {currentStep < 4 && (
-                  <button
-                    type="button"
-                    onClick={handleNextStep}
-                    className="ml-auto px-6 py-2 bg-[#1E5ACD] hover:bg-[#1848A3] text-white font-medium rounded-md transition-colors"
-                  >
-                    Siguiente
-                  </button>
-                )}
-                {currentStep === 4 && (
-                  <button
-                    type="button"
-                    onClick={handleProceedToVerification}
-                    className="ml-auto px-6 py-2 bg-[#1E5ACD] hover:bg-[#1848A3] text-white font-medium rounded-md transition-colors"
-                  >
-                    Continuar a Verificación
-                  </button>
-                )}
-              </div>
-
-              {isValidating && (
-                <p className="text-center text-blue-600 mt-4">
-                  Validando datos, por favor espere...
-                </p>
-              )}
-              {validationMessage && !isValidating && (
-                <p
-                  className={`text-center mt-4 ${
-                    validationMessage.toLowerCase().includes("corrige") ||
-                    validationMessage.toLowerCase().includes("errores")
+                {validationMessage && !isValidating && (
+                  <p
+                    className={`text-center mt-4 ${validationMessage.toLowerCase().includes("corrige") ||
+                      validationMessage.toLowerCase().includes("errores")
                       ? "text-red-600"
                       : "text-green-600"
-                  }`}
-                >
-                  {validationMessage}
-                </p>
-              )}
-            </form>
-          )}
+                      }`}
+                  >
+                    {validationMessage}
+                  </p>
+                )}
+              </form>
+            )}
 
-          {/* Paso 5: Verificación de Identidad */}
-          {currentStep === 5 && (
-            <IdentityVerificationStep
-              formData={formData}
-              onVerificationSuccess={() => setCurrentStep(6)}
-            />
-          )}
+            {/* Paso 5: Verificación de Identidad */}
+            {currentStep === 5 && (
+              <IdentityVerificationStep
+                formData={formData}
+                onVerificationSuccess={() => setCurrentStep(6)}
+              />
+            )}
 
-          {/* Paso 6: Pago */}
-          {currentStep === 6 && (
-            <div className="p-6">
-              <Elements stripe={stripePromise}>
-                <StripePaymentForm
-                  amount={formData.plan === "blue" ? 1799 : 2499}
-                  onPaymentSuccess={handlePaymentSuccess}
-                />
-              </Elements>
-              {isSubmitting && (
-                <p className="text-center text-blue-600 mt-4">
-                  Terminando de registrar tus datos...
-                </p>
-              )}
-            </div>
-          )}
-        </div>
+            {/* Paso 6: Pago */}
+            {currentStep === 6 && (
+              <div className="p-6">
+                <Elements stripe={stripePromise}>
+                  <StripePaymentForm
+                    amount={formData.plan === "blue" ? 1799 : 2499}
+                    onPaymentSuccess={handlePaymentSuccess}
+                  />
+                </Elements>
+                {isSubmitting && (
+                  <p className="text-center text-blue-600 mt-4">
+                    Terminando de registrar tus datos...
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
 
-        <div className="text-center mt-6">
-          <p className="text-gray-600 dark:text-gray-400">
-            ¿Ya tienes una cuenta?{" "}
+          <div className="text-center mt-6">
+            <p className="text-gray-600 dark:text-gray-400">
+              ¿Ya tienes una cuenta?{" "}
+              <button
+                onClick={() => router.push("/login")}
+                className="text-[#1E5ACD] hover:underline font-medium"
+              >
+                Iniciar sesión
+              </button>
+            </p>
             <button
-              onClick={() => router.push("/login")}
-              className="text-[#1E5ACD] hover:underline font-medium"
+              onClick={() => router.push("/register")}
+              className="mt-4 text-gray-500 hover:text-gray-700 flex items-center gap-2 mx-auto"
             >
-              Iniciar sesión
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+              </svg>
+              Volver a selección de rol
             </button>
-          </p>
-          <button
-            onClick={() => router.push("/register")}
-            className="mt-4 text-gray-500 hover:text-gray-700 flex items-center gap-2 mx-auto"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M19 12H5M12 19l-7-7 7-7" />
-            </svg>
-            Volver a selección de rol
-          </button>
+          </div>
         </div>
       </div>
-    </div>
     </div>
   );
 };

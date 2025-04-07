@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Camera, Plus, Trash2, Edit, Save, StarIcon, Film } from "lucide-react";
+import { Camera, Plus, Trash2, Edit, Save, StarIcon, Film, Bell, BicepsFlexed } from 'lucide-react';
 import ScheduleCalendar from "@/components/ui/ScheduleCalendar";
 import { getApiBaseUrl } from "@/utils/api";
 import { GradientButton } from "@/components/ui/gradient-button";
@@ -10,6 +10,8 @@ import Link from "next/link";
 import styles from "@/components/ratings.module.css";
 import Alert from "@/components/ui/Alert";
 import ConfirmModal from "@/components/ui/ConfirmModal";
+import SubscriptionSlider from "@/components/ui/SubscriptionSlider";
+
 
 const getAuthToken = () => {
   return localStorage.getItem("token"); // Obtiene el token JWT
@@ -148,6 +150,8 @@ const FisioProfile = () => {
   const [confirmRatingDelete, setConfirmRatingDelete] =
     useState<boolean>(false);
 
+  const [id, setId] = useState<number | null>(null);
+
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -219,6 +223,8 @@ const FisioProfile = () => {
           }
         );
         console.log("response", response.data);
+
+        setId(response.data.physio.id);
 
         setProfile({
           user: {
@@ -1630,19 +1636,33 @@ const FisioProfile = () => {
 
             {/* Sección de servicios */}
             <div className="space-y-4">
-              <div className="flex justify-between items-center mb-4 mt-4">
-                <h3 className="text-lg font-semibold">Servicios</h3>
-                <GradientButton
-                  variant="create"
-                  className="px-6 py-2 font-medium rounded-xl flex items-center gap-2 mx-auto"
-                  onClick={(e) => {
-                    e.preventDefault(); // Esto evita que se envíe el formulario
-                    setEditingServiceIndex(null);
-                    setShowServiceModal(true);
-                  }}
-                >
-                  <Plus className="mr-2 w-4 h-4" /> Añadir Servicio
-                </GradientButton>
+              <div className="grid grid-cols-2 gap-4 mb-4 mt-4">
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">Servicios</h3>
+                  <GradientButton
+                    variant="create"
+                    className="px-3 py-2 font-medium rounded-xl flex items-center gap-2"
+                    onClick={(e) => {
+                      e.preventDefault(); // Esto evita que se envíe el formulario
+                      setEditingServiceIndex(null);
+                      setShowServiceModal(true);
+                    }}
+                  >
+                    <Plus className="w-4 h-4" /> Añadir Servicio
+                  </GradientButton>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">Ejercicios</h3>
+                  <Link href={`/physio-management/${id}/exercises`} passHref>
+                    <GradientButton
+                      variant="create"
+                      className="px-3 py-2 font-medium rounded-xl flex items-center gap-2"
+                    >
+                      <BicepsFlexed className="w-4 h-4" /> Biblioteca de
+                      Ejercicios
+                    </GradientButton>
+                  </Link>
+                </div>
               </div>
 
               {services.length === 0 ? (
@@ -1689,26 +1709,44 @@ const FisioProfile = () => {
               )}
             </div>
 
-            <div>
-              <GradientButton
-                variant="edit"
-                className="mt-8 w-full py-4 px-6 bg-gradient-to-r from-[#1E5ACD] to-[#3a6fd8] text-white font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center"
-              >
-                <Save size={18} className="mr-2" />
-                Actualizar Perfil
-              </GradientButton>
-              <Link href="/physio-management/video" passHref>
-                <GradientButton
-                  variant="edit"
-                  className="w-full py-2 px-4 bg-gradient-to-r from-[#1E5ACD] to-[#3a6fd8] text-white font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center"
-                >
-                  <Film size={22} className="mr-2" />
-                  Subir vídeo
-                </GradientButton>
-              </Link>
-            </div>
-          </form>
-        </div>
+                        <div>
+                            <GradientButton
+                                variant="edit"
+                                className="mt-8 w-full py-4 px-6 bg-gradient-to-r from-[#1E5ACD] to-[#3a6fd8] text-white font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center"
+                            >
+                                <Save size={18} className="mr-2" />
+                                Actualizar Perfil
+                            </GradientButton>
+                            <Link href="/physio-management/video" passHref>
+                                <GradientButton
+                                    variant="edit"
+                                    className="w-full py-2 px-4 bg-gradient-to-r from-[#1E5ACD] to-[#3a6fd8] text-white font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center"
+                                >
+                                    <Film size={22} className="mr-2" />
+                                    Subir vídeo
+                                </GradientButton>
+                            </Link>
+                        </div>
+                        <div className="border-t border-gray-200 pt-5 mt-5">
+                <div className="mb-2">
+                  <div className="flex items-center mb-3 gap-2">
+                    <Bell size={16} className="text-gray-500 mr-1" />{" "}
+                    {/* Changed to gray */}
+                    <h3 className="text-base font-semibold text-gray-800">
+                      Preferencias de Notificaciones
+                    </h3>
+                  </div>
+                  <p className="text text-gray-600 mb-3">
+                    {" "}
+                    Configura si deseas recibir notificaciones sobre tus citas y
+                    actualizaciones.
+                  </p>
+                  <SubscriptionSlider />
+                </div>
+              </div>
+                    </form>
+                </div>
+
 
         {/* Modal para añadir/editar servicios */}
         {showServiceModal && (

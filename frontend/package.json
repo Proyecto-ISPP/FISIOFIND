@@ -16,6 +16,7 @@
     "@fullcalendar/list": "^6.1.15",
     "@fullcalendar/react": "^6.1.15",
     "@fullcalendar/timegrid": "^6.1.15",
+    "@jsonforms/material-renderers": "^3.5.1",
     "@react-three/drei": "^10.0.4",
     "@react-three/fiber": "^9.1.0",
     "@stripe/react-stripe-js": "^3.5.1",
