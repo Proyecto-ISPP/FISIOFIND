@@ -117,8 +117,9 @@ class SeleniumScraper:
         except Exception as e:
             logging.error("Error al cerrar el driver: %s", e, exc_info=True)
         try:
-            self.driver.service.stop()
-            logging.info("Servicio del driver detenido correctamente")
+            if os.getenv("DEBUG") == "True":
+                self.driver.service.stop()
+                logging.info("Servicio del driver detenido correctamente")
         except Exception as e:
             logging.error("Error al detener el servicio del driver: %s", e, exc_info=True)
 
