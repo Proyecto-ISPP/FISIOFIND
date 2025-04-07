@@ -635,7 +635,7 @@ const FisioProfile = () => {
         if (value && value.length > 500) error = "Máximo 500 caracteres.";
         break;
       case "degree":
-        if (!value) error = "El título es obligatorio.";
+        if (!value) error = "La titulación es obligatoria.";
         else if (value.length < 10) error = "Se requiere un mínimo de 10 caracteres.";
         else if (value.length > 100) error = "Máximo 100 caracteres.";
         break;
