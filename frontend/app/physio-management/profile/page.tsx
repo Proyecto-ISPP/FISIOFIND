@@ -44,29 +44,33 @@ const FisioProfile = () => {
     custom_questionnaire?: Questionary;
   }
 
-  const [profile, setProfile] = useState({
-    user: {
-      dni: "",
-      email: "",
-      first_name: "",
-      last_name: "",
-      phone_number: "",
-      photo: "",
-      postal_code: "",
-      user_id: "",
-      username: "",
-    },
-    autonomic_community: "",
-    bio: "",
-    birth_date: "",
-    collegiate_number: "",
-    gender: "",
-    rating_avg: "",
-    schedule: "",
-    specializations: "",
-    services: [] as Service[],
-    plan: "",
-  });
+    const [profile, setProfile] = useState({
+        user: {
+            dni: "",
+            email: "",
+            first_name: "",
+            last_name: "",
+            phone_number: "",
+            photo: "",
+            postal_code: "",
+            user_id: "",
+            username: "",
+        },
+        autonomic_community: "",
+        bio: "",
+        birth_date: "",
+        collegiate_number: "",
+        gender: "",
+        rating_avg: "",
+        schedule: "",
+        specializations: "",
+        services: [] as Service[],
+        plan: "",
+        degree: "",
+        university:"",
+        experience: "",
+        workplace:""
+    });
 
   const [editingServiceIndex, setEditingServiceIndex] = useState<number | null>(
     null
@@ -225,44 +229,64 @@ const FisioProfile = () => {
         console.log("response", response.data);
         setId(response.data.physio.id);
 
-        setProfile({
-          user: {
-            dni: response.data.physio.user_data.dni,
-            email: response.data.physio.user_data.email,
-            first_name: response.data.physio.user_data.first_name,
-            last_name: response.data.physio.user_data.last_name,
-            phone_number: response.data.physio.user_data.phone_number,
-            photo: response.data.physio.user_data.photo,
-            postal_code: response.data.physio.user_data.postal_code,
-            user_id: response.data.physio.user_data.user_id,
-            username: response.data.physio.user_data.username,
-          },
-          autonomic_community: response.data.physio.autonomic_community,
-          bio: response.data.physio.bio,
-          birth_date: response.data.physio.birth_date,
-          collegiate_number: response.data.physio.collegiate_number,
-          gender: response.data.physio.gender,
-          rating_avg: response.data.physio.rating_avg,
-          schedule: response.data.physio.schedule,
-          specializations: response.data.physio.specializations,
-          services: [],
-          plan: response.data.physio.plan,
-        });
-        try {
-          let parsedServices = [];
-          // Comprobar si los servicios son un string JSON o un array o un objeto
-          if (typeof response.data.physio.services === "string") {
-            try {
-              parsedServices = JSON.parse(response.data.physio.services);
-            } catch (e) {
-              console.error("Error al parsear los servicios:", e);
-            }
-          } else if (Array.isArray(response.data.physio.services)) {
-            parsedServices = response.data.physio.services;
-          } else if (typeof response.data.physio.services === "object") {
-            // Si es un objeto con claves (como en el ejemplo)
-            parsedServices = response.data.physio.services;
-          }
+                setProfile({
+                    user: {
+                        dni: response.data.physio.user_data.dni,
+                        email: response.data.physio.user_data.email,
+                        first_name: response.data.physio.user_data.first_name,
+                        last_name: response.data.physio.user_data.last_name,
+                        phone_number: response.data.physio.user_data.phone_number,
+                        photo: response.data.physio.user_data.photo,
+                        postal_code: response.data.physio.user_data.postal_code,
+                        user_id: response.data.physio.user_data.user_id,
+                        username: response.data.physio.user_data.username,
+                    },
+                    autonomic_community: response.data.physio.autonomic_community,
+                    bio: response.data.physio.bio,
+                    birth_date: response.data.physio.birth_date,
+                    collegiate_number: response.data.physio.collegiate_number,
+                    gender: response.data.physio.gender,
+                    rating_avg: response.data.physio.rating_avg,
+                    schedule: response.data.physio.schedule,
+                    specializations: response.data.physio.specializations,
+                    services: [],
+                    plan: response.data.physio.plan,
+                    degree: response.data.physio.degree,
+                    university: response.data.physio.university,
+                    experience: response.data.physio.experience,
+                    workplace: response.data.physio.workplace,
+                });
+
+                // Verificar si faltan datos profesionales importantes
+                const missingFields = [];
+                if (!response.data.physio.degree) missingFields.push("titulación");
+                if (!response.data.physio.university) missingFields.push("universidad");
+                if (!response.data.physio.experience) missingFields.push("experiencia");
+                if (!response.data.physio.workplace) missingFields.push("centro de trabajo");
+        
+                // Mostrar alerta si faltan campos
+                if (missingFields.length > 0) {
+                  showAlert(
+                    "warning", 
+                    `Tu perfil profesional está incompleto. Por favor, completa los campos de ${missingFields.join(", ")} para mejorar tu visibilidad.`
+                );
+                }
+
+                try {
+                    let parsedServices = [];
+                    // Comprobar si los servicios son un string JSON o un array o un objeto
+                    if (typeof response.data.physio.services === 'string') {
+                        try {
+                            parsedServices = JSON.parse(response.data.physio.services);
+                        } catch (e) {
+                            console.error("Error al parsear los servicios:", e);
+                        }
+                    } else if (Array.isArray(response.data.physio.services)) {
+                        parsedServices = response.data.physio.services;
+                    } else if (typeof response.data.physio.services === 'object') {
+                        // Si es un objeto con claves (como en el ejemplo)
+                        parsedServices = response.data.physio.services;
+                    }
 
           // Procesar los servicios dependiendo de su formato
           let serviceList: Service[] = [];
@@ -609,6 +633,26 @@ const FisioProfile = () => {
         // Only validate max length if bio has content
         if (value && value.length > 500) error = "Máximo 500 caracteres.";
         break;
+      case "degree":
+        if (!value) error = "La titulación es obligatoria.";
+        else if (value.length < 10) error = "Se requiere un mínimo de 10 caracteres.";
+        else if (value.length > 100) error = "Máximo 100 caracteres.";
+        break;
+      case "university":
+        if (!value) error = "La universidad es obligatoria.";
+        else if (value.length < 10) error = "Se requiere un mínimo de 10 caracteres.";
+        else if (value.length > 100) error = "Máximo 100 caracteres.";
+        break;
+      case "experience":
+        if (!value) error = "La experiencia es obligatoria.";
+        else if (value.length < 10) error = "Se requiere un mínimo de 10 caracteres.";
+        else if (value.length > 100) error = "Máximo 100 caracteres.";
+        break;
+      case "workplace":
+        if (!value) error = "El lugar de trabajo es obligatorio.";
+        else if (value.length < 10) error = "Se requiere un mínimo de 10 caracteres.";
+        else if (value.length > 100) error = "Máximo 100 caracteres.";
+        break;
     }
 
     setFormErrors((prevErrors) => ({ ...prevErrors, [name]: error }));
@@ -620,15 +664,23 @@ const FisioProfile = () => {
 
     validateField(name, value); // Validar cada campo en tiempo real
 
-    if (name === "bio") {
-      setProfile((prevProfile) => ({ ...prevProfile, bio: value }));
-    } else {
-      setProfile((prevProfile) => ({
-        ...prevProfile,
-        user: { ...prevProfile.user, [name]: value },
-      }));
-    }
-  };
+        if (name === "bio") {
+            setProfile((prevProfile) => ({ ...prevProfile, bio: value }));
+        } // Si el campo es alguno de los otros, se actualiza dentro de "user"
+        else if (["degree", "university", "experience", "workplace"].includes(name)) {
+            setProfile((prevProfile) => ({
+                ...prevProfile,
+                [name]: value,  // Se actualiza directamente el campo del perfil
+            }));
+        }
+        // Para los campos dentro de "user" se hace de la forma habitual
+        else {
+            setProfile((prevProfile) => ({
+                ...prevProfile,
+                user: { ...prevProfile.user, [name]: value },
+            }));
+        }
+    };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -675,6 +727,11 @@ const FisioProfile = () => {
         "specializations",
         JSON.stringify(selectedSpecializations)
       );
+      formData.append("degree", profile.degree || "");
+      formData.append("university", profile.university || "");
+      formData.append("experience", profile.experience || "");
+      formData.append("workplace", profile.workplace || "");
+
       // Actualizar el schedule con los datos actuales del calendario
       // const { initialized, ...scheduleWithoutInitialized } = schedule;
       // formData.append("schedule", scheduleWithoutInitialized);
@@ -1636,6 +1693,58 @@ const FisioProfile = () => {
                 <span className="text-red-500 text-sm">{formErrors.bio}</span>
               )}
             </div>
+
+                        {/* Titulación */}
+                        <div className="space-y-2">
+                            <label className="block text-sm font-large text-gray-700 mb-2 mt-4">Titulación</label>
+                            <input
+                                type="text"
+                                name="degree"
+                                value={profile.degree || ""}
+                                onChange={handleChange}
+                                className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+                            />
+                            {formErrors.degree && <span className="text-red-500 text-sm">{formErrors.degree}</span>}
+                        </div>
+
+                        {/* Universidad */}
+                        <div className="space-y-2">
+                            <label className="block text-sm font-large text-gray-700 mb-2 mt-4">Universidad</label>
+                            <input
+                                type="text"
+                                name="university"
+                                value={profile.university || ""}
+                                onChange={handleChange}
+                                className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+                            />
+                            {formErrors.university && <span className="text-red-500 text-sm">{formErrors.university}</span>}
+                        </div>
+
+                        {/* Experiencia */}
+                        <div className="space-y-2">
+                            <label className="block text-sm font-large text-gray-700 mb-2 mt-4">Experiencia</label>
+                            <textarea
+                                name="experience"
+                                value={profile.experience || ""}
+                                onChange={handleChange}
+                                rows={4}
+                                className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+                            />
+                            {formErrors.experience && <span className="text-red-500 text-sm">{formErrors.experience}</span>}
+                        </div>
+
+                        {/* Centro de trabajo */}
+                        <div className="space-y-2">
+                            <label className="block text-sm font-large text-gray-700 mb-2 mt-4">Centro de trabajo</label>
+                            <input
+                                type="text"
+                                name="workplace"
+                                value={profile.workplace || ""}
+                                onChange={handleChange}
+                                className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+                            />
+                            {formErrors.workplace && <span className="text-red-500 text-sm">{formErrors.workplace}</span>}
+                        </div>
 
             {/* Sección de servicios */}
             <div className="space-y-4">
