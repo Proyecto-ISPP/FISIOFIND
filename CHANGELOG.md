@@ -1,12 +1,13 @@
-## 🚀 Changelog - 4.0.0
+## 🚀 Changelog - 5.0.0
 
 ### ✨ Features (0)
 
-### 🐛 Fixes (2)
-- Merge pull request #435 from Proyecto-ISPP/hotfix/workflow-procesamiento-pagos (@Miguel Encina)
-- fix: corrección del workflow de procesamiento de pagos (@Daniel Tortorici Bartús)
-### 📖 Documentation (0)
+### 🐛 Fixes (0)
 
-### 🌀 Other Changes (0)
-
+### 📖 Documentation (3)
+- docs: Conclusiones y observaciones (@albcarsic)
+- docs: Añadido el punto 2 (@albcarsic)
+- docs: Primera versión feedback 04-04 (@albcarsic)
+### 🌀 Other Changes (1)
+- Merge pull request #474 from Proyecto-ISPP/docs/doc-feedback-04-04 (@Daniel Vela Camacho)
 ### 🔗 Pull Requests
