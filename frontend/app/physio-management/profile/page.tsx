@@ -264,6 +264,22 @@ const FisioProfile = () => {
                     experience: response.data.physio.experience,
                     workplace: response.data.physio.workplace,
                 });
+
+                // Verificar si faltan datos profesionales importantes
+                const missingFields = [];
+                if (!response.data.physio.degree) missingFields.push("titulación");
+                if (!response.data.physio.university) missingFields.push("universidad");
+                if (!response.data.physio.experience) missingFields.push("experiencia");
+                if (!response.data.physio.workplace) missingFields.push("centro de trabajo");
+        
+                // Mostrar alerta si faltan campos
+                if (missingFields.length > 0) {
+                  showAlert(
+                    "warning", 
+                    `Tu perfil profesional está incompleto. Por favor, completa los campos de ${missingFields.join(", ")} para mejorar tu visibilidad.`
+                );
+                }
+
                 try {
                     let parsedServices = [];
                     // Comprobar si los servicios son un string JSON o un array o un objeto
@@ -624,6 +640,26 @@ const FisioProfile = () => {
       case "bio":
         // Only validate max length if bio has content
         if (value && value.length > 500) error = "Máximo 500 caracteres.";
+        break;
+      case "degree":
+        if (!value) error = "El título es obligatorio.";
+        else if (value.length < 10) error = "Se requiere un mínimo de 10 caracteres.";
+        else if (value.length > 100) error = "Máximo 100 caracteres.";
+        break;
+      case "university":
+        if (!value) error = "La universidad es obligatoria.";
+        else if (value.length < 10) error = "Se requiere un mínimo de 10 caracteres.";
+        else if (value.length > 100) error = "Máximo 100 caracteres.";
+        break;
+      case "experience":
+        if (!value) error = "La experiencia es obligatoria.";
+        else if (value.length < 10) error = "Se requiere un mínimo de 10 caracteres.";
+        else if (value.length > 100) error = "Máximo 100 caracteres.";
+        break;
+      case "workplace":
+        if (!value) error = "El lugar de trabajo es obligatorio.";
+        else if (value.length < 10) error = "Se requiere un mínimo de 10 caracteres.";
+        else if (value.length > 100) error = "Máximo 100 caracteres.";
         break;
     }
 
