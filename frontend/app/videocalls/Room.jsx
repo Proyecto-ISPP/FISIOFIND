@@ -37,7 +37,8 @@ const Room = ({ roomCode }) => {
   const [showSettings, setShowSettings] = useState(false);
   const [selectedTool, setSelectedTool] = useState(null);
   const [activePainMap, setActivePainMap] = useState(null);
-  const [partsColored, setPartsColored] = useState([]);
+  const [partsColoredFront, setPartsColoredFront] = useState([]);
+  const [partsColoredBack, setPartsColoredBack] = useState([]);
 
   // Inicializamos los hooks SIEMPRE
   const webSocket = useWebSocket(roomCode, userRole, () => {});
@@ -114,7 +115,7 @@ useEffect(() => {
       });
       console.log("✅ Acceso validado con backend:", response.data);
     } catch (error) {
-      console.error("❌ Acceso denegado por backend:", error.response?.data || error.message);
+      console.error(" Acceso denegado por backend:", error.response?.data || error.message);
       alert("No tienes permiso para acceder a esta sala.");
       window.location.href = '/videocalls';
       return;
@@ -156,8 +157,12 @@ useEffect(() => {
           case 'pain-map':
             if (data.message.mapId) {
               setActivePainMap(data.message.mapId === 'quit' ? null : data.message.mapId);
-            } else if (data.message.partsSelected) {
-              setPartsColored(data.message.partsSelected);
+            } else if (data.message.partsSelected && data.message.side) {
+              if (data.message.side === "front") {
+                setPartsColoredFront(data.message.partsSelected);
+              } else if (data.message.side === "back") {
+                setPartsColoredBack(data.message.partsSelected);
+              }
             }
             break;
           default:
@@ -277,7 +282,8 @@ useEffect(() => {
           <MapaDolor
             scale={1.3}
             gender={activePainMap}
-            partsColored={partsColored}
+            partsColoredFront={partsColoredFront}
+            partsColoredBack={partsColoredBack}
             sendWebSocketMessage={webSocket.sendWebSocketMessage}
           />
         </>
@@ -297,7 +303,8 @@ useEffect(() => {
               handlePainMapSelect={handlePainMapSelect}
               sendPainMapToPatient={sendPainMapToPatient}
               userRole={userRole}
-              partsColored={partsColored}
+              partsColoredFront={partsColoredFront}
+              partsColoredBack={partsColoredBack}
               sendWebSocketMessage={webSocket.sendWebSocketMessage}
             />
           )}

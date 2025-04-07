@@ -1,7 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-import boto3
+from encrypted_fields.fields import EncryptedCharField
+from django.core.files.storage import FileSystemStorage
 from django.conf import settings
+from django.core.exceptions import ValidationError
 
 ACCOUNT_STATUS_CHOICES = [
     ('ACTIVE', 'Active'),
@@ -14,6 +16,7 @@ GENDER_CHOICES = [
     ('M', 'Male'),
     ('F', 'Female'),
     ('O', 'Other'),
+    ('P', 'Prefer not to say'),
 ]
 
 AUTONOMIC_COMMUNITY_CHOICES = [
@@ -36,30 +39,51 @@ AUTONOMIC_COMMUNITY_CHOICES = [
     ('COMUNIDAD VALENCIANA', 'Comunidad Valenciana')
 ]
 
-class AppUser(AbstractUser):
-    photo = models.ImageField(null=True, blank=True, upload_to='profile_photos/')
-    dni = models.CharField(max_length=9, unique=True)
-    phone_number = models.CharField(max_length=9)
-    postal_code = models.CharField(max_length=5)
-    account_status = models.CharField(max_length=10, choices=ACCOUNT_STATUS_CHOICES, default='UNVERIFIED')
+def validate_image_file(value):
+    # Check file size
+    if value.size > 5 * 1024 * 1024:  # 5MB
+        raise ValidationError('Las imágenes no peuden superar los 5MB')
     
+    # Check file extension
+    ext = value.name.split('.')[-1].lower()
+    if ext not in ['jpg', 'jpeg', 'png']:
+        raise ValidationError('Solo imágenes en formato JPG, JPEG o PNG son permitidos')
+
+class AppUser(AbstractUser):
+    photo = models.ImageField(null=True, blank=True, verbose_name='Foto', upload_to='user_photos/', storage=FileSystemStorage(location=settings.PROFILE_PHOTOS_ROOT, base_url=settings.PROFILE_PHOTOS_URL))
+    dni = EncryptedCharField(max_length=255, null=True, unique=True, verbose_name='DNI')
+    phone_number = models.CharField(max_length=9, verbose_name='Número de teléfono', null=True, blank=True)
+    postal_code = models.CharField(max_length=5, verbose_name='Código postal')
+    account_status = models.CharField(max_length=10, choices=ACCOUNT_STATUS_CHOICES, default='UNVERIFIED', verbose_name='Estado de la cuenta')
+
     def __str__(self):
         return f"{self.username} - {self.email}"
 
+    class Meta:
+        verbose_name = "Usuario"
+        verbose_name_plural = "Usuarios"
+
 class Patient(models.Model):
-    user = models.OneToOneField(AppUser, on_delete=models.CASCADE, related_name='patient')
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
-    stripe_customer_id = models.CharField(max_length=255, blank=True, null=True)
-    birth_date = models.DateField()
-    
+    user = models.OneToOneField(AppUser, on_delete=models.CASCADE, related_name='patient', verbose_name='Usuario')
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, verbose_name='Género')
+    stripe_customer_id = EncryptedCharField(max_length=255, blank=True, null=True, verbose_name='ID Stripe')
+    birth_date = models.DateField(verbose_name='Fecha de nacimiento')
+
     def __str__(self):
         return f"{self.user.username} - {self.user.email}"
-    
+
+    class Meta:
+        verbose_name = "Paciente"
+        verbose_name_plural = "Pacientes"
+
+
 class Specialization(models.Model):
-    name = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=50, unique=True, verbose_name='Nombre')
 
     def __str__(self):
         return self.name
+
+
 class PhysiotherapistSpecialization(models.Model):
     physiotherapist = models.ForeignKey(
         'Physiotherapist', on_delete=models.CASCADE, related_name="physio_specializations"
@@ -68,6 +92,11 @@ class PhysiotherapistSpecialization(models.Model):
         'Specialization', on_delete=models.SET_NULL, null=True, blank=True
     )
     
+    class Meta:
+        verbose_name = "Relación fisio-especialización"
+        verbose_name_plural = "Relaciones fisio-especialización"
+
+
 class Pricing(models.Model):
     name = models.CharField(max_length=50, unique=True)
     price = models.DecimalField(max_digits=5, decimal_places=2)
@@ -76,66 +105,40 @@ class Pricing(models.Model):
     def __str__(self):
         return self.name
 
+
 class Physiotherapist(models.Model):
-    user = models.OneToOneField(AppUser, on_delete=models.CASCADE, related_name='physio')
-    bio = models.TextField(null=True, blank=True)
-    autonomic_community = models.CharField(max_length=30, choices=AUTONOMIC_COMMUNITY_CHOICES)
-    rating_avg = models.FloatField(null=True, blank=True)
-    schedule = models.JSONField(null=True, blank=True)
-    birth_date = models.DateField()
-    collegiate_number = models.CharField(max_length=30)
-    services = models.JSONField(null=True, blank=True)
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
-    specializations = models.ManyToManyField(Specialization, through="PhysiotherapistSpecialization")
+    user = models.OneToOneField(AppUser, on_delete=models.CASCADE, related_name='physio', verbose_name='Usuario')
+    bio = models.TextField(null=True, blank=True, verbose_name='Bio')
+    autonomic_community = models.CharField(max_length=30, choices=AUTONOMIC_COMMUNITY_CHOICES, verbose_name='Comunidad autónoma')
+    rating_avg = models.FloatField(null=True, blank=True, verbose_name='Media valoraciones')
+    schedule = models.JSONField(null=True, blank=True, verbose_name='Agenda')
+    birth_date = models.DateField(verbose_name='Fecha de naciemiento')
+    collegiate_number = models.CharField(max_length=30, verbose_name='Número de colegiado')
+    services = models.JSONField(null=True, blank=True, verbose_name='Servicios')
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, verbose_name='Género')
+    specializations = models.ManyToManyField(Specialization, through="PhysiotherapistSpecialization", verbose_name='Especialización')
     plan = models.ForeignKey(
         Pricing,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='physios'
+        related_name='physios',
+        verbose_name='Plan'
     )
     # Campos para integración con Stripe
-    stripe_subscription_id = models.CharField(max_length=255, blank=True, null=True)
-    subscription_status = models.CharField(max_length=20, default='pending')  # Valores: 'pending', 'active', 'canceled'
+    stripe_subscription_id = models.CharField(max_length=255, blank=True, null=True, verbose_name='ID Stripe')
+    subscription_status = models.CharField(max_length=20, default='pending', verbose_name='Estado de la suscripción')  # Valores: 'pending', 'active', 'canceled'
 
     def __str__(self):
         return f"{self.user.username} - {self.user.email}"
+
+    class Meta:
+        verbose_name = "Fisioterapeuta"
+        verbose_name_plural = "Fisioterapeutas"
+
 
 class Admin(models.Model):
     user = models.OneToOneField(AppUser, on_delete=models.CASCADE, related_name='admin')
-    
+
     def __str__(self):
         return f"{self.user.username} - {self.user.email}"
-    
-
-class Video(models.Model):
-    physiotherapist = models.ForeignKey(Physiotherapist, on_delete=models.CASCADE, related_name='videos')
-    patients = models.ManyToManyField(Patient, related_name='videos', blank=True)
-    title = models.CharField(max_length=255)
-    description = models.TextField(blank=True, null=True)
-    uploaded_at = models.DateTimeField(auto_now_add=True)
-    file_key = models.CharField(
-        max_length=500, unique=True
-    )     
-
-    def __str__(self): 
-        return self.title
-    
-    def delete_from_storage(self):
-        """Elimina el archivo de DigitalOcean Spaces"""
-        s3_client = boto3.client(
-            "s3",
-            aws_access_key_id=settings.DIGITALOCEAN_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.DIGITALOCEAN_SECRET_ACCESS_KEY,
-            endpoint_url=settings.DIGITALOCEAN_ENDPOINT_URL
-        )
-
-        try:
-            s3_client.delete_object(Bucket=settings.DIGITALOCEAN_SPACE_NAME, Key=self.file_key)
-        except Exception as e:
-            print(f"Error al eliminar el archivo de Spaces: {e}")
-
-    @property
-    def file_url(self):
-        """Devuelve la URL pública del archivo almacenado en DigitalOcean"""
-        return f"https://fisiofind-repo.fra1.digitaloceanspaces.com/{self.file_key}"

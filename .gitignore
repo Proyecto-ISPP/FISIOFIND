@@ -23,7 +23,7 @@ setup.cfg
 **/migrations/*.pyc
 !**/migrations/__init__.py
 
-static/
+# static/
 
 # Archivos estáticos y subidos
 staticfiles/

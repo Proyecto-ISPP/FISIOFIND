@@ -3,56 +3,28 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
-import Modal from "@/components/ui/Modal";
 import Link from "next/link";
-import axios from "axios";
-import { getApiBaseUrl } from "@/utils/api";
 import { useAppointment } from "@/context/appointmentContext";
-import DraftModal from "@/components/ui/draftAppointmentModal";
-import { DemoWindow } from "@/components/demo-window";
-import { WavyBackground } from "@/components/ui/wavy-background";
-import { GradientButton } from "@/components/ui/gradient-button";
 import { CookieConsent } from "@/components/CookieConsent";
-
-interface Physiotherapist {
-  id: string;
-  name: string;
-  speciality: string;
-  rating: number;
-  image: string;
-  location: string;
-  reviews: number;
-  specializations?: string;
-}
+import TopRatings from "@/components/ratings";
+import { HeroHighlight, Highlight } from "@/components/ui/hero-highlight";
+import { GradientButton } from "@/components/ui/gradient-button";
+import { DemoWindow } from "@/components/demo-window";
+import { PhysioCallToAction } from "@/components/ui/physio-cta";
 
 const Home = () => {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isPhysioModalOpen, setIsPhysioModalOpen] = useState(false);
-
-  const openPhysioModal = () => setIsPhysioModalOpen(true);
-  const closePhysioModal = () => setIsPhysioModalOpen(false);
   const [isClient, setIsClient] = useState(false);
   const [token, setToken] = useState<string | null>(null);
-  const apiBaseurl = getApiBaseUrl();
   const [showDraftModal, setShowDraftModal] = useState(false);
   const [draftData, setDraftData] = useState<any>(null);
-  const [returnUrl, setReturnUrl] = useState<string | null>(null);
   const { dispatch } = useAppointment();
 
   useEffect(() => {
     setIsClient(true);
   }, []);
-
-  // Si el usuario está autenticado se abre el modal, si no, redirige al perfil público
-  const handleViewPhysio = (physioName: string) => {
-    if (isAuthenticated) {
-      openPhysioModal();
-    } else {
-      router.push(`/profile/${physioName}`);
-    }
-  };
 
   // Solo comprueba la existencia del token en localStorage
   useEffect(() => {
@@ -62,28 +34,6 @@ const Home = () => {
       setIsAuthenticated(!!token);
     }
   }, [isClient, token]);
-
-  // Efecto para mover imágenes flotantes al hacer scroll
-  // Modify the floating images styles
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      const floatingImages = document.querySelectorAll(".floating-image");
-
-      // Only apply floating effect if screen is large enough
-      if (window.innerWidth > 1240) {
-        floatingImages.forEach((image, index) => {
-          const offset = (index + 1) * 50;
-          (image as HTMLElement).style.transform = `translateX(${
-            scrollY / offset
-          }px)`;
-        });
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   // Efecto para cargar el borrador unificado
   useEffect(() => {
@@ -120,340 +70,43 @@ const Home = () => {
     setShowDraftModal(value);
   };
 
-  // Datos de ejemplo para los fisioterapeutas destacados
-  // const topPhysiotherapists: Physiotherapist[] = [
-  //   {
-  //     name: "Dr. Ana García",
-  //     speciality: "Fisioterapia Deportiva",
-  //     rating: 4.9,
-  //     image:
-  //       "https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=3328&auto=format&fit=crop",
-  //     location: "Madrid",
-  //     reviews: 128,
-  //   },
-  //   {
-  //     name: "Dr. Carlos Rodríguez",
-  //     speciality: "Rehabilitación Neurológica",
-  //     rating: 4.8,
-  //     image:
-  //       "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=3270&auto=format&fit=crop",
-  //     location: "Barcelona",
-  //     reviews: 96,
-  //   },
-  //   {
-  //     name: "Dra. Laura Martínez",
-  //     speciality: "Fisioterapia Pediátrica",
-  //     rating: 4.8,
-  //     image:
-  //       "https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=3270&auto=format&fit=crop",
-  //     location: "Valencia",
-  //     reviews: 112,
-  //   },
-  // ];
-
-  const SearchPhysiotherapists = () => {
-    const [searchResults, setSearchResults] = useState<Physiotherapist[]>([]);
-    const [specialization, setSpecialization] = useState("");
-    const [specializations, setSpecializations] = useState<string[]>([]);
-    const [searchAttempted, setSearchAttempted] = useState(false);
-
-    useEffect(() => {
-      const checkScriptLoaded = () => {
-        if (
-          typeof window !== "undefined" &&
-          typeof window.customElements !== "undefined" &&
-          window.customElements.get("animated-icons")
-        ) {
-        } else {
-          setTimeout(checkScriptLoaded, 200);
-        }
-      };
-
-      checkScriptLoaded();
-    }, []);
-
-    useEffect(() => {
-      const fetchSpecializations = async () => {
-        try {
-          const response = await axios.get(
-            `${getApiBaseUrl()}/api/guest_session/specializations/`
-          );
-
-          if (response.status === 200) {
-            if (response.data && response.data.length > 0) {
-              setSpecializations(["", ...response.data]);
-            } else {
-              console.warn("Specializations list is empty.");
-              setSpecializations([]); // Set an empty list if no data is returned
-            }
-          } else {
-            console.warn("Unexpected response status:", response.status);
-          }
-        } catch (error) {
-          console.error("Error fetching data:", error);
-        }
-      };
-
-      fetchSpecializations();
-    }, []);
-
-    const handleSearch = async () => {
-      setSearchAttempted(true);
-
-      if (!specialization) {
-        return;
-      }
-
-      try {
-        const searchUrl = `${apiBaseurl}/api/guest_session/physios-with-specializations/?specialization=${specialization}`;
-        const response = await axios.get(searchUrl);
-
-        if (response.status === 200) {
-          const results = response.data.map(
-            (physio: {
-              id: string;
-              first_name: string;
-              last_name: string;
-              specializations: string[];
-            }) => ({
-              id: physio.id,
-              name: `${physio.first_name} ${physio.last_name}`,
-              specializations: physio.specializations.join(", "),
-            })
-          );
-          console.log(results);
-          setSearchResults(results);
-        } else {
-          alert(response.data.detail || "No se encontraron resultados.");
-          setSearchResults([]);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setSearchResults([]);
-      }
-    };
-
-    return (
-      <div className="w-full flex items-center relative">
-        {showDraftModal && draftData && (
-          <DraftModal
-            draftData={draftData}
-            onResume={handleResumeDraft}
-            onDiscard={handleDiscardDraft}
-          />
-        )}
-        <section className="w-full py-4 relative overflow-hidden">
-          <h2 className="text-3xl text-[#253240] font-bold mb-2 text-center">
-            Encuentra a tu fisioterapeuta ideal
-          </h2>
-          <p className="text-lg mx-auto text-center mb-4 max-w-2xl">
-            Busca por especialidad
-          </p>
-          <div className="max-w-6xl mx-auto px-4">
-            <form className="max-w-2xl mx-auto">
-              {/* Contenedor flex para el dropdown de especialidades y el botón de búsqueda */}
-              <div className="flex items-center space-x-4 mx-auto">
-                {/* Dropdown para especialidad */}
-                <div className="w-3/4 mx-auto">
-                  <select
-                    value={specialization}
-                    onChange={(e) => setSpecialization(e.target.value)}
-                    className="border border-gray-300 rounded-md px-4 py-2 w-full"
-                  >
-                    <option value="" disabled>
-                      Especialidad
-                    </option>
-                    {specializations.map((spec, index) => (
-                      <option key={index} value={spec}>
-                        {spec}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Botón de búsqueda */}
-                <button
-                  type="button"
-                  className="hover:bg-gray-300 text-gray-700 w-16 flex items-center justify-center rounded-full transition-all"
-                  id="search-button"
-                  onClick={handleSearch}
-                >
-                  <div className="flex items-center justify-center">
-                    <Image
-                      src="./static/search.svg"
-                      alt="Search Icon"
-                      width={24}
-                      height={24}
-                    />
-                  </div>
-                </button>
-              </div>
-            </form>
-
-            {/* Mostrar la alerta si no se selecciona una especialidad */}
-            {searchAttempted && !specialization && (
-              <div className="error flex justify-center items-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-xs z-10">
-                <div className="error__icon">
-                  {/* Aquí puede ir un icono de advertencia */}
-                </div>
-                <div className="error__title">
-                  Por favor, selecciona una especialidad
-                </div>
-                <div
-                  className="error__close"
-                  onClick={() => setSpecialization("")}
-                >
-                  {/* Icono de cerrar */}
-                </div>
-              </div>
-            )}
-
-            {/* Mostrar los resultados de la búsqueda */}
-            {searchResults.length > 0 && (
-              <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {searchResults.map((physio, index) => (
-                  <CardContainer key={index}>
-                    <CardBody className="bg-gradient-to-bl from-white to-[#65C2C9]/50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-blue-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-full min-h-[350px] rounded-xl p-6 border flex flex-col justify-between">
-                      <CardItem
-                        translateZ="50"
-                        className="text-xl font-bold text-neutral-600 dark:text-white"
-                      >
-                        {physio.name}
-                      </CardItem>
-                      <CardItem
-                        as="p"
-                        translateZ="40"
-                        className="text-neutral-500 text-sm mt-2 dark:text-neutral-300"
-                      >
-                        {physio.specializations}
-                      </CardItem>
-                      <CardItem translateZ="60" className="w-full">
-                        <Image
-                          src="/static/fisioterapeuta_sample.webp"
-                          className="h-40 w-full object-cover rounded-xl group-hover/card:shadow-xl"
-                          alt="Fisioterapeuta"
-                          width={500}
-                          height={500}
-                        />
-                      </CardItem>
-                      <div className="flex justify-center mt-4">
-                        <CardItem
-                          translateZ="20"
-                          className="px-6 py-2 rounded-xl bg-[#1E5ACD] hover:bg-[#5ab3a8] text-white text-sm font-bold transition-colors cursor-pointer"
-                          onClick={() => router.push(`/appointments/create/${physio.id}`)}
-                        >
-                          Reservar cita
-                        </CardItem>
-                      </div>
-                    </CardBody>
-                  </CardContainer>
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
-      </div>
-    );
-  };
-
   return (
-    <div className="min-h-screen w-full z=90" style={{ backgroundColor: "rgb(238, 251, 250)" }}>
+    <div
+      className="min-h-screen w-full z=90"
+      style={{ backgroundColor: "rgb(238, 251, 250)" }}
+    >
       {/* Add CookieConsent component */}
       <CookieConsent />
-      {/* Hero Section */}
-      <section className="flex flex-col items-center justify-center text-center relative overflow-hidden mb-8">
-          <div className="absolute top-0 left-0 w-full h-full">
-            <div className="floating-image" style={{ right: "70%", top: "35%" }}>
-              <Image
-                src="/static/9_girl.webp"
-                alt="Floating Image 3"
-                width={250}
-                height={250}
-              />
-            </div>
-            <div className="floating-image" style={{ left: "30%", top: "10%" }}>
-              <Image
-                src="/static/1_heart.webp"
-                alt="Floating Image 1"
-                width={70}
-                height={70}
-              />
-            </div>
-            <div className="floating-image" style={{ right: "30%", top: "10%" }}>
-              <Image
-                src="/static/7_treatment.webp"
-                alt="Floating Image 3"
-                width={80}
-                height={80}
-              />
-            </div>
-            <div className="floating-image" style={{ right: "10%", top: "35%" }}>
-              <Image
-                src="/static/2_liftweights.webp"
-                alt="Floating Image 3"
-                width={150}
-                height={150}
-              />
-            </div>
-          </div>
-          <div className="flex flex-col items-center mt-8">
-            <Image
-              src="/static/logo_fisio_find_smaller.webp"
-              alt="Fisio Find Logo"
-              width={250}
-              height={250}
-              className="mb-12 relative z-10 w-[250px] h-auto"
-            />
-            <h1 className="text-7xl font-bold mb-12 font-alfa-slab-one relative z-10">
-              <span className="text-white drop-shadow-[0_2.5px_3.5px_#41B8D5]">Fisio Find</span>
-            </h1>
-            <p className="text-xl font-bold mb-14 max-w-2xl mx-auto relative z-10 text-[#253240] mt-16">
-              La plataforma especializada en fisioterapia online donde te conectamos
-              con el profesional que mejor se ajusta a tus necesidades.
-            </p>
-          </div>
-      </section>
 
-
-      {/* Search Section */}
-      {/* Unified Search Bar */}
-      <SearchPhysiotherapists />
-
-      {/* Focus Cards Section: solo se muestra si NO está autenticado */}
-      {!isAuthenticated && (
-        <section className="flex flex-col items-center justify-center text-center py-12 dark:bg-neutral-900">
-          <br />
-          <h2 className="text-3xl text-[#253240] font-bold mb-4">
-            Únete a Fisio Find
-          </h2>
-          <p className="text-lg mb-8">
-            Crea una cuenta o inicia sesión para disfrutar de todas nuestras
-            posibilidades.
-          </p>
-          <div className="flex flex-col gap-4">
-            <GradientButton
-              variant="create" 
-              fullWidth
-              onClick={() => router.push("/register")}
-            >
-              Crea una cuenta
-            </GradientButton>
-            <p className="text-lg">Si ya tienes una cuenta ...</p>
-            <GradientButton
-              variant="edit" 
-              fullWidth
-              onClick={() => router.push("/login")}
-            >
-              Inicia sesión
-            </GradientButton>
-          </div>
-          <section className="w-full bg-[#1E5ACD] py-4 text-center text-white rounded-lg mx-auto mt-8 max-w-4xl shadow-lg">
-            <div className="px-4 flex flex-col sm:flex-row items-center justify-center">
-              <p className="font-bold text-lg sm:text-xl mb-2 sm:mb-0">
-                ¿Eres fisioterapeuta?
-              </p>
+      {/* Header */}
+      {/* {!isAuthenticated && (
+        <header className="bg-[rgb(238, 251, 250)] shadow-md py-4">
+          <div className="max-w-screen-xl mx-auto px-4 flex justify-between items-center">
+            <div className="hidden md:flex items-center space-x-2">
               <button
-                className="ml-0 sm:ml-3 px-4 py-2 bg-white text-[#1E5ACD] rounded-md font-semibold hover:bg-gray-100 transition-all"
+                type="button"
+                className="flex items-center space-x-3 bg-[#41B8D5] hover:bg-[#5ab3a8] text-white font-bold py-2 px-6 rounded-full shadow transition-all"
+                onClick={() => router.push("/advanced-search")}
+              >
+                <Image src="/static/search.svg" alt="Search Icon" width={24} height={24} />
+                <span>Encuentra el fisio que más se adapta a tí </span>
+              </button>
+            </div>
+            <div className="flex items-center space-x-3 md:space-x-3 pl-10 md:pl-0">
+              <button
+                className="text-[#05668D] hover:text-[#05AC9C] px-3 py-2 font-medium"
+                onClick={() => router.push("/login")}
+              >
+                Iniciar sesión
+              </button>
+              <button
+                className="bg-[#41B8D5] hover:bg-[#05AC9C] text-white px-4 py-2 rounded-full font-medium"
+                onClick={() => router.push("/register")}
+              >
+                Regístrate
+              </button>
+              <button
+                className="border border-[#1E5ACD] text-[#1E5ACD] hover:bg-[#1E5ACD] hover:text-white px-4 py-2 rounded-full font-medium"
                 onClick={() =>
                   window.open(
                     "https://fisiofind-landing-page.netlify.app/",
@@ -461,86 +114,444 @@ const Home = () => {
                   )
                 }
               >
-                Para más información, accede aquí
+                ¿Eres fisio?
               </button>
             </div>
-          </section>
-          <br />
+          </div>
+        </header>
+      )} */}
+      {!isAuthenticated && (
+        <header className="bg-[rgb(238, 251, 250)] shadow-md py-4">
+          <div className="max-w-screen-xl mx-auto px-4 flex justify-end items-center">
+            {/* Botones alineados a la derecha */}
+            <div className="flex items-center space-x-3 md:space-x-3">
+              <button
+                className="text-[#05668D] hover:text-[#05AC9C] px-3 py-2 font-medium"
+                onClick={() => router.push("/login")}
+              >
+                Iniciar sesión
+              </button>
+              <button
+                className="bg-[#41B8D5] hover:bg-[#05AC9C] text-white px-4 py-2 rounded-full font-medium"
+                onClick={() => router.push("/register")}
+              >
+                Regístrate
+              </button>
+              <button
+                className="border border-[#1E5ACD] text-[#1E5ACD] hover:bg-[#1E5ACD] hover:text-white px-4 py-2 rounded-full font-medium"
+                onClick={() => window.open("https://fisiofind-landing-page.netlify.app/", "_blank")}
+              >
+                ¿Eres fisio?
+              </button>
+            </div>
+          </div>
+        </header>
+      )}
+
+      {/* Hero Section */}
+      <section className="relative bg-gradient-to-br from-[#6BC9BE] to-[#05668D] text-white py-16">
+        <div className="max-w-screen-xl mx-auto px-4 pb-16 pt-8">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="ml-8">
+              <h1 className="text-7xl font-bold mb-6">Fisio Find</h1>
+              <HeroHighlight containerClassName="h-auto py-12">
+                <p className="text-xl font-bold leading-loose">
+                  La plataforma especializada en
+                  <Highlight className="from-[#41B8D5] to-[#1E5ACD] dark:from-[#41B8D5] dark:to-[#1E5ACD]">
+                    fisioterapia
+                  </Highlight>
+                  online donde te conectamos con el
+                  <Highlight className="from-[#41B8D5] to-[#1E5ACD] dark:from-[#41B8D5] dark:to-[#1E5ACD]">
+                    profesional
+                  </Highlight>
+                  que mejor se ajusta a tus necesidades.
+                </p>
+              </HeroHighlight>
+              <br></br>
+              <GradientButton
+                onClick={() => router.push("/advanced-search")}
+                className="mt-6 border-none text-white font-inherit text-[17px] py-[0.6em] px-[1.5em] rounded-[20px] bg-gradient-to-r from-[#0400ff] to-[#4ce3f7] bg-[length:100%_auto] hover:bg-[length:200%_auto] hover:bg-right-center flex items-center justify-center animate-[pulse512_1.5s_infinite]"
+                style={{
+                  "@keyframes pulse512": {
+                    "0%": { boxShadow: "0 0 0 0 #05bada66" },
+                    "70%": { boxShadow: "0 0 0 10px rgb(218 103 68 / 0%)" },
+                    "100%": { boxShadow: "0 0 0 0 rgb(218 103 68 / 0%)" },
+                  },
+                }}
+              >
+                <span>Encuentra a tu fisioterapeuta ideal  </span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 ml-2"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M14 5l7 7m0 0l-7 7m7-7H3"
+                  />
+                </svg>
+              </GradientButton>
+            </div>
+
+            <div className="relative hidden md:block">
+              {/* Floating images around the logo */}
+              <div className="absolute top-0 left-0 w-full h-full hidden lg:block">
+                <div
+                  className="floating-image"
+                  style={{ right: "50%", top: "55%" }}
+                >
+                  <Image
+                    src="/static/9_girl.webp"
+                    alt="Floating Image 3"
+                    width={400}
+                    height={400}
+                  />
+                </div>
+                <div
+                  className="floating-image"
+                  style={{ left: "10%", top: "-5%" }}
+                >
+                  <Image
+                    src="/static/1_heart.webp"
+                    alt="Floating Image 1"
+                    width={150}
+                    height={150}
+                  />
+                </div>
+                <div
+                  className="floating-image"
+                  style={{ right: "0%", top: "-15%" }}
+                >
+                  <Image
+                    src="/static/7_treatment.webp"
+                    alt="Floating Image 3"
+                    width={180}
+                    height={180}
+                  />
+                </div>
+                <div
+                  className="floating-image"
+                  style={{ right: "-20%", top: "30%" }}
+                >
+                  <Image
+                    src="/static/2_liftweights.webp"
+                    alt="Floating Image 3"
+                    width={300}
+                    height={300}
+                  />
+                </div>
+              </div>
+
+              <Image
+                src="/static/fisio_find_logo_white.webp"
+                alt="Hero Image"
+                width={500}
+                height={400}
+                className="filter blur-[2px]"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Wave Divider */}
+        <div className="absolute bottom-0 left-0 right-0 bg-[rgb(238, 251, 250)]">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 1440 120"
+            fill="rgb(238, 251, 250)"
+            preserveAspectRatio="none"
+            className="block w-full h-[120px]" // Added explicit height
+          >
+            <path d="M0,32L80,48C160,64,320,96,480,96C640,96,800,64,960,48C1120,32,1280,32,1360,32L1440,32L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
+          </svg>
+        </div>
+      </section>
+
+      {/* How it works Section */}
+      <section className="pt-16 pb-16 bg-[rgb(238, 251, 250)] relative -mt-1">
+        {" "}
+        {/* Added relative and negative margin */}
+        <div className="max-w-screen-xl mx-auto px-4">
+          <h2 className="text-4xl font-bold text-[#253240] mb-12 text-center">
+            ¿Cómo funciona Fisio Find?
+          </h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center p-6 rounded-xl hover:shadow-lg transition-all">
+              <div className="bg-[#f0f9fa] rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-12 w-12 text-[#05AC9C]"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-[#253240] mb-4">
+                Encuentra a tu fisioterapeuta
+              </h3>
+              <p className="text-gray-600">
+                Podrás comparar entre diferentes profesionales y escoger el que
+                mejor se adapte a tus necesidades.
+              </p>
+            </div>
+
+            <div className="text-center p-6 rounded-xl hover:shadow-lg transition-all">
+              <div className="bg-[#f0f9fa] rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-12 w-12 text-[#05AC9C]"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-[#253240] mb-4">
+                Contacta y reserva tu sesión
+              </h3>
+              <p className="text-gray-600">
+                Selecciona el día y la hora en la agenda de tu fisio de forma
+                rápida y segura.
+              </p>
+            </div>
+
+            <div className="text-center p-6 rounded-xl hover:shadow-lg transition-all">
+              <div className="bg-[#f0f9fa] rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-12 w-12 text-[#05AC9C]"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-[#253240] mb-4">
+                Videoconsulta Especializada
+              </h3>
+              <p className="text-gray-600">
+                Consultas online con herramientas específicas de diagnóstico y
+                seguimiento personalizado.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Demo Video */}
+      <section className="px-4 py-16 relative z-10">
+        <DemoWindow />
+      </section>
+
+      {/* Authentication Section: solo se muestra si NO está autenticado */}
+      {!isAuthenticated && (
+        <section className="py-16 bg-[rgb(238, 251, 250)]">
+          <div className="max-w-screen-xl mx-auto px-4">
+            <h2 className="text-4xl font-bold text-[#253240] mb-12 text-center">
+              Únete a Fisio Find
+            </h2>
+
+            <div className="max-w-md mx-auto">
+              <div className="mb-6">
+                <GradientButton
+                  onClick={() => router.push("/register")}
+                  className="w-full py-4 text-lg"
+                >
+                  Crea una cuenta
+                </GradientButton>
+              </div>
+
+              <p className="text-center text-gray-600 mb-6">
+                Si ya tienes una cuenta...
+              </p>
+
+              <div className="mb-6">
+                <GradientButton
+                  variant="edit"
+                  onClick={() => router.push("/login")}
+                  className="w-full py-4 text-lg"
+                >
+                  Inicia sesión
+                </GradientButton>
+              </div>
+
+              <PhysioCallToAction />
+
+              {/* <div className="bg-[#1E5ACD] p-6 rounded-lg text-white text-center mt-12">
+                <p className="font-bold text-lg mb-4">¿Eres fisioterapeuta?</p>
+                <button
+                  className="px-6 py-2 bg-white text-[#1E5ACD] rounded-lg font-semibold hover:bg-gray-100 transition-all"
+                  onClick={() =>
+                    window.open(
+                      "https://fisiofind-landing-page.netlify.app/",
+                      "_blank"
+                    )
+                  }
+                >
+                  Para más información, accede aquí
+                </button>
+              </div> */}
+            </div>
+          </div>
         </section>
       )}
-      {/* Sección “¿Eres fisioterapeuta?” */}
 
-      {/* Top Physiotherapists Section */}
-      <section className="max-w-7xl mx-auto px-4 mb-12">
-        <h2 className="text-3xl text-[#253240] font-bold mb-8 text-center">
-          Top Fisioterapeutas
-        </h2>
-        {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {topPhysiotherapists.map((physio, index) => (
-            <CardContainer key={index}>
-              <CardBody className="bg-gradient-to-bl from-white to-[#65C2C9]/50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-blue-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-full h-auto rounded-xl p-6 border">
-                <CardItem
-                  translateZ="50"
-                  className="text-xl font-bold text-neutral-600 dark:text-white"
-                >
-                  {physio.name}
-                </CardItem>
-                <CardItem
-                  as="p"
-                  translateZ="40"
-                  className="text-neutral-500 text-sm mt-2 dark:text-neutral-300"
-                >
-                  {physio.speciality}
-                </CardItem>
-                <CardItem translateZ="60" className="w-full mt-4">
-                  <img
-                    src={physio.image}
-                    className="h-48 w-full object-cover rounded-xl group-hover/card:shadow-xl"
-                    alt={physio.name}
-                  />
-                </CardItem>
-                <div className="flex justify-between items-center mt-6">
-                  <CardItem translateZ="20" className="flex items-center gap-1">
-                    <span className="text-yellow-500">★</span>
-                    <span className="font-semibold">{physio.rating}</span>
-                    <span className="text-sm text-neutral-500">
-                      ({physio.reviews} reviews)
-                    </span>
-                  </CardItem>
-                  <CardItem
-                    translateZ="20"
-                    as="button"
-                    className="px-4 py-2 rounded-xl bg-[#1E5ACD] text-white text-sm font-bold hover:bg-[#1848A3] transition-colors"
-                    onClick={() => handleViewPhysio(physio.name)}
-                  >
-                    Ver perfil
-                  </CardItem>
-                </div>
-              </CardBody>
-            </CardContainer>
-          ))}
-        </div> */}
+      {/* Ratings Section */}
+      <section className="py-16 bg-[rgb(238, 251, 250)]">
+        <div className="max-w-screen-xl mx-auto px-4">
+          <h2 className="text-4xl font-bold text-[#253240] mb-12 text-center">
+            La opinión de fisioterapeutas profesionales
+          </h2>
+          <TopRatings />
+        </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-4">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 pt-8 gap-8 border-t border-gray-700 text-center">
-          <div className="flex flex-col items-center">
-            <h3 className="text-lg font-bold mb-4">Sobre Fisio Find</h3>
-            <p>
-              Una plataforma innovadora diseñada para conectar pacientes con los
-              mejores fisioterapeutas.
-            </p>
+      <footer className="bg-gradient-to-br from-[#05668D] to-[#6BC9BE] text-white py-16 relative">
+        {/* Wave Divider at top of footer */}
+        <div className="absolute top-0 left-0 right-0 transform rotate-180">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 1440 120"
+            fill="rgb(238, 251, 250)"
+            preserveAspectRatio="none"
+            className="block w-full h-[120px]"
+          >
+            <path d="M0,32L80,48C160,64,320,96,480,96C640,96,800,64,960,48C1120,32,1280,32,1360,32L1440,32L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
+          </svg>
+        </div>
+
+        <div className="container mx-auto px-6 pt-8 relative z-10">
+          {/* Logo and name */}
+          <div className="flex justify-center mb-8">
+            <div className="flex items-center">
+              <Image
+                src="/static/fisio_find_logo_white.webp"
+                alt="Fisio Find Logo"
+                width={60}
+                height={60}
+                className="mr-3"
+              />
+              <span className="text-2xl font-bold">Fisio Find</span>
+            </div>
           </div>
+        </div>
+
+        {/* Main footer content - three equal columns with consistent spacing */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-x-12 gap-y-10 max-w-6xl mx-auto">
+          {/* Column 1 */}
           <div className="flex flex-col items-center">
-            <h3 className="text-lg font-bold mb-4">Enlaces Útiles</h3>
-            <ul>
+            <h3 className="text-xl font-bold mb-4 relative">
+              <span className="relative z-10">Sobre Fisio Find</span>
+              <span className="absolute left-1/2 -translate-x-1/2 bottom-0 w-12 h-1 bg-[#41B8D5] rounded-full"></span>
+            </h3>
+            <p className="text-center max-w-xs mx-auto">
+              Una plataforma innovadora diseñada para conectar pacientes con los
+              mejores fisioterapeutas especializados en todo España.
+            </p>
+            <div className="flex space-x-4 mt-6">
+              <a
+                href="https://www.linkedin.com/company/fisiofindapp/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-white bg-opacity-20 hover:bg-opacity-30 p-2 rounded-full transition-all"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                </svg>
+              </a>
+              <a
+                href="https://www.instagram.com/fisiofindapp"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-white bg-opacity-20 hover:bg-opacity-30 p-2 rounded-full transition-all"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                </svg>
+              </a>
+              <a
+                href="https://www.youtube.com/@fisiofindapp"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-white bg-opacity-20 hover:bg-opacity-30 p-2 rounded-full transition-all"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z" />
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          {/* Column 2 - Middle column */}
+          <div className="flex flex-col items-center">
+            <h3 className="text-xl font-bold mb-4 relative">
+              <span className="relative z-10">Enlaces Útiles</span>
+              <span className="absolute left-1/2 -translate-x-1/2 bottom-0 w-12 h-1 bg-[#41B8D5] rounded-full"></span>
+            </h3>
+            <ul className="space-y-3">
               <li>
                 <a
                   href="https://fisiofind-landing-page.netlify.app/"
                   target="_blank"
                   rel="noopener noreferrer"
+                  className="hover:text-[#41B8D5] transition-colors flex items-center justify-center"
                 >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4 mr-2"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
                   Conoce Fisio Find
                 </a>
               </li>
@@ -549,61 +560,154 @@ const Home = () => {
                   href="https://github.com/Proyecto-ISPP/FISIOFIND"
                   target="_blank"
                   rel="noopener noreferrer"
+                  className="hover:text-[#41B8D5] transition-colors flex items-center justify-center"
                 >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4 mr-2"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
                   Repositorio GitHub
                 </a>
               </li>
               <li>
-                <a href="/terms">Política de Privacidad</a>
+                <a
+                  href="/terms"
+                  className="hover:text-[#41B8D5] transition-colors flex items-center justify-center"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4 mr-2"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  Política de Privacidad
+                </a>
               </li>
               <li>
-                <Link href="/terms">Términos de Servicio</Link>
+                <Link
+                  href="/terms"
+                  className="hover:text-[#41B8D5] transition-colors flex items-center justify-center"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4 mr-2"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  Términos de Servicio
+                </Link>
               </li>
             </ul>
           </div>
-          <div className="flex flex-col items-center">
-            <h3 className="text-lg font-bold mb-4">Contacto</h3>
-            <p>Correo: <a href="mailto:support@fisiofind.com" className="hover:underline">support@fisiofind.com</a></p>
-            <p>Ubicación: Sevilla, España</p>
-          </div>
-        </div>
-        <div className="text-center mt-8 pt-8 border-t border-gray-700">
-          <p>© 2025 Fisio Find. Bajo licencia MIT</p>
-        </div>
-      </footer>
 
-      {/* Modal para usuarios no autenticados */}
-      {isPhysioModalOpen && (
-        <Modal onClose={closePhysioModal}>
-          <div className="p-6 bg-white rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold mb-4">Acceso requerido</h2>
-            <p className="mb-4">
-              Por favor, inicia sesión o crea una cuenta para ver el perfil del
-              fisioterapeuta.
-            </p>
-            <div className="flex justify-end gap-4">
-              <button
-                className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300"
-                onClick={closePhysioModal}
-              >
-                Cancelar
-              </button>
-              <button
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                onClick={() => router.push("/profile/login")}
-              >
-                Iniciar sesión
-              </button>
-              <button
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-                onClick={() => router.push("/profile/signup")}
-              >
-                Crear cuenta
-              </button>
+          {/* Column 3 */}
+          <div className="flex flex-col items-center">
+            <h3 className="text-xl font-bold mb-4 relative">
+              <span className="relative z-10">Contacto</span>
+              <span className="absolute left-1/2 -translate-x-1/2 bottom-0 w-12 h-1 bg-[#41B8D5] rounded-full"></span>
+            </h3>
+            <div className="space-y-3">
+              <p className="flex items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 mr-3 text-[#41B8D5]"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  />
+                </svg>
+                <a href="mailto:info@fisiofind.com" className="hover:underline">
+                  info@fisiofind.com
+                </a>
+              </p>
+              <p className="flex items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 mr-3 text-[#41B8D5]"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  />
+                </svg>
+                <a
+                  href="mailto:denuncias@fisiofind.com"
+                  className="hover:underline"
+                >
+                  denuncias@fisiofind.com
+                </a>
+              </p>
+              <p className="flex items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 mr-3 text-[#41B8D5]"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                </svg>
+                Sevilla, España
+              </p>
             </div>
           </div>
-        </Modal>
-      )}
+        </div>
+
+        {/* Copyright */}
+        <div className="text-center pt-8 border-t border-white border-opacity-20">
+          <div className="flex flex-wrap justify-center gap">
+            <p>© 2025 Fisio Find. Bajo licencia MIT</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

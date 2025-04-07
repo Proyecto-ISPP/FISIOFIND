@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import clsx from "clsx";
+// import clsx from "clsx";
 import { Service, QuestionaryResponse, Questionary } from "@/lib/definitions";
 import { useAppointment } from "@/context/appointmentContext";
 import AppointmentCalendar from "./AppointmentCalendar";
@@ -53,7 +53,9 @@ const WizardContent: React.FC<WizardContentProps> = ({
         payload: {
           service: {
             id: service.id,
+            title: service.title,
             type: service.title,
+            tipo: service.tipo,
             price: service.price,
             duration: parseInt(service.duration),
             questionary: service.questionary,
@@ -205,7 +207,7 @@ const WizardContent: React.FC<WizardContentProps> = ({
         {questionaryResponses && Object.keys(questionaryResponses).length > 0 && (
           <div className="mt-4">
             <h4 className="font-bold mb-2">Respuestas del cuestionario:</h4>
-            <div className="bg-gray-50 p-3 rounded-md">
+            <div className="bg-gray-50 p-3 rounded-md max-h-64 overflow-y-auto">
               {Object.entries(questionaryResponses).map(([key, value]) => {
                 // Encontrar la pregunta correspondiente por su scope
                 const question = questionary?.elements?.find(
