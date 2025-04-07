@@ -1,7 +1,6 @@
 import re
 import json
 
-
 def validate_dni_structure(data_dni):
     dni_pattern = re.compile(r'^\d{8}[A-HJ-NP-TV-Z]$')
     return dni_pattern.match(data_dni)

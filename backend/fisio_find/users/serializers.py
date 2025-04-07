@@ -5,7 +5,12 @@ from django.contrib.auth.password_validation import validate_password
 from django.db.utils import IntegrityError
 from django.db import transaction
 from users.validacionFisios import validar_colegiacion
-from .models import AppUser, Patient, Physiotherapist, PhysiotherapistSpecialization, Specialization, Pricing
+from .models import (
+    AppUser, Patient, 
+    Physiotherapist, PhysiotherapistSpecialization, 
+    Specialization, Pricing,
+    add_dni_to_encryptedvalues,
+    remove_dni_on_delete,validate_unique_DNI)
 from datetime import date, datetime
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
@@ -134,8 +139,6 @@ class PatientSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"username": "El nombre de usuario es obligatorio."})
         if not user_data.get('email'):
             raise serializers.ValidationError({"email": "El email es obligatorio."})
-        if not user_data.get('dni'):
-            raise serializers.ValidationError({"dni": "El DNI es obligatorio."})
         if not data.get('gender'):
             raise serializers.ValidationError({"gender": "El género es obligatorio."})
         if not data.get('birth_date'):
@@ -213,6 +216,9 @@ class PatientRegisterSerializer(serializers.ModelSerializer):
 
         if validate_dni_match_letter(data['dni']):
             validation_errors["dni"] = "La letra del DNI no coincide con el número."
+
+        if validate_unique_DNI(data['dni']):
+            validation_errors["dni"] = "Ya existe un usuario con este DNI registrado."
 
         if 'phone_number' in data and data['phone_number'] and telefono_no_mide_9(data['phone_number']):
             validation_errors["phone_number"] = "El número de teléfono debe tener 9 caracteres."
@@ -326,6 +332,10 @@ class PhysioRegisterSerializer(serializers.ModelSerializer):
             validation_errors["dni"] = "El DNI debe tener 8 números seguidos de una letra válida."
         if validate_dni_match_letter(data['dni']):
             validation_errors["dni"] = "La letra del DNI no coincide con el número."
+
+        if validate_unique_DNI(data['dni']):
+            validation_errors["dni"] = "Ya existe un usuario con este DNI registrado."
+
         if 'phone_number' in data and data['phone_number'] and telefono_no_mide_9(data['phone_number']):
             validation_errors["phone_number"] = "El número de teléfono debe tener 9 caracteres."
         if codigo_postal_no_mide_5(data['postal_code']):
@@ -460,6 +470,10 @@ class PhysioUpdateSerializer(serializers.ModelSerializer):
 
             if validate_dni_match_letter(data['dni']):
                 validation_errors["dni"] = "La letra del DNI no coincide con el número."
+            
+            if validate_unique_DNI(data['dni']):
+                validation_errors["dni"] = "Ya existe un usuario con este DNI registrado."
+
 
         if 'phone_number' in data and telefono_no_mide_9(data['phone_number']):
             validation_errors["phone_number"] = "El número de teléfono debe tener 9 caracteres."
