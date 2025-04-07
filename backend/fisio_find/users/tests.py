@@ -15,6 +15,61 @@ from django.core.exceptions import ValidationError
 from datetime import datetime
 from rest_framework import serializers
 import stripe
+from rest_framework import status
+
+class ChangePasswordTests(APITestCase):
+    def setUp(self):
+        self.user = AppUser.objects.create_user(
+            username="testuser",
+            email="existing@example.com",
+            password="Test1234",
+            dni="11111111A",
+            phone_number="611111111",
+            postal_code="28001"
+        )
+        self.url = reverse('change_password')
+
+    def authenticate(self):
+        response = self.client.post(reverse('login'), {
+            'username': 'testuser',
+            'password': 'Test1234'
+        })
+        self.assertEqual(response.status_code, 200)
+        token = response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+    def test_change_password_successfully(self):
+        self.authenticate()
+        response = self.client.post(self.url, {
+            'old_password': 'Test1234',
+            'new_password': 'NewSecurePass456'
+        })
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+
+        # Verificamos que la contraseña está cifrada y que la nueva es válida
+        self.assertNotEqual(self.user.password, 'NewSecurePass456')
+        self.assertTrue(self.user.check_password('NewSecurePass456'))
+
+    def test_change_password_with_wrong_old_password(self):
+        self.authenticate()
+        response = self.client.post(self.url, {
+            'old_password': 'WrongPassword',
+            'new_password': 'NewSecurePass456'
+        })
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password('Test1234'))
+
+    def test_change_password_requires_authentication(self):
+        response = self.client.post(self.url, {
+            'old_password': 'Test1234',
+            'new_password': 'NewSecurePass456'
+        })
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 def get_fake_image(name="photo.jpg"):
