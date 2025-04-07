@@ -90,9 +90,6 @@ def send_registration_confirmation_email(user_id, email, first_name):
         </head>
         <body style="font-family: Arial, sans-serif; margin: 0; padding: 0; line-height: 1.6;">
             <div style="max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5; border-radius: 8px;">
-                <div style="text-align: center; padding: 20px 0;">
-                    <img src="https://s2.fisiofind.com/static/images/logo.png" alt="FisioFind Logo" style="max-width: 200px;">
-                </div>
                 <h2 style="color: #1E5AAD; text-align: center;">¡Bienvenido, {first_name}!</h2>
                 <p style="color: #333;">Gracias por registrarte en FisioFind. Para activar tu cuenta, por favor haz clic en el botón de abajo:</p>
                 <div style="text-align: center; margin: 30px 0;">
@@ -103,8 +100,8 @@ def send_registration_confirmation_email(user_id, email, first_name):
                 </div>
                 <p style="color: #666;">Este enlace expirará en <strong>24 horas</strong>. Si no solicitaste este registro, por favor ignora este correo.</p>
                 <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
-                <p style="font-size: 12px; color: #999; text-align: center;">Si tienes problemas para hacer clic en el botón, copia y pega este enlace en tu navegador: {confirmation_link}</p>
-                <p style="font-size: 12px; color: #999; text-align: center;">© 2023 FisioFind. Todos los derechos reservados.</p>
+               <p style="font-size: 12px; color: #999; text-align: center;">Si tienes problemas para acceder mediante el botón, haz clic aquí: <a href="{confirmation_link}" style="color: #00a896; text-decoration: underline;">link</a></p>
+                <p style="font-size: 12px; color: #999; text-align: center;">© 2025 FisioFind. Todos los derechos reservados.</p>
             </div>
         </body>
         </html>
