@@ -10,6 +10,9 @@ from .serializers import PhysioSerializer, PatientSerializer, AppUserSerializer
 from .models import AppUser, Physiotherapist, Patient, Specialization
 from django.conf import settings
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+
 
 import logging
 import stripe
@@ -150,6 +153,31 @@ def custom_token_obtain_view(request):
         return Response({'access': response.data['access']})
     return Response(response.data, status=response.status_code)
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def change_password_view(request):
+    user = request.user
+    old_password = request.data.get('old_password')
+    new_password = request.data.get('new_password')
+
+    if not old_password or not new_password:
+        return Response({'detail': 'Se requieren las contraseñas.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if not user.check_password(old_password):
+        return Response({'detail': 'La contraseña antigua es incorrecta.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        validate_password(new_password, user=user)
+    except ValidationError as e:
+        error_message = " ".join(e.messages)
+        return Response(
+            {"detail": f"Error de validación de contraseña: {error_message}"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    user.set_password(new_password)
+    user.save()
+
+    return Response({'detail': 'Contraseña actualizada correctamente.'}, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
 def logout_view(request):
