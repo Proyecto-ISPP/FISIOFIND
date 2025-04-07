@@ -22,6 +22,7 @@ urlpatterns = [
     path('api/videocall/', include('videocall.urls')),
     path('api/treatments/', include('treatments.urls')),
     path('api/guest_session/', include('guest_session.urls')),
+    path('api/questionnaires/', include('questionnaire.urls')),
     path('api/payments/', include('payment.urls')),
     path('api/ratings/', include('ratings.urls')),
     path('api/cloud/', include('files.urls')),

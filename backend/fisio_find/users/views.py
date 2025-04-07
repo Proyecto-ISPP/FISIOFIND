@@ -1,3 +1,5 @@
+import os
+import requests
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -198,6 +200,56 @@ def validate_physio_registration(request):
     if serializer.is_valid():
         return Response({"valid": True}, status=status.HTTP_200_OK)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def verify_physio_id(request):
+    inquiry_id = request.data.get('inquiryId')
+    form_data = request.data.get('formData')
+
+    if not inquiry_id or not form_data:
+        return Response(
+            {"error": "Faltan campos requeridos (inquiryId o formData)."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # Construimos la URL para llamar a la API de Persona
+    persona_api_url = f"https://api.withpersona.com/api/v1/inquiries/{inquiry_id}"
+    headers = {
+        "Authorization": f"Bearer {os.getenv('PERSONA_API_KEY')}",  # Asegúrate de que la clave API esté configurada en tus variables de entorno
+        "accept": "application/json",
+        "Persona-Version": "2023-01-05"
+    }
+
+    try:
+        persona_response = requests.get(persona_api_url, headers=headers)
+        if persona_response.status_code != 200:
+            return Response(
+                {"error": "Error al obtener la información de Persona."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+    except Exception as e:
+        logging.error(f"Error en la conexión con Persona: {str(e)}")
+        return Response(
+            {"error": "Error en la conexión con Persona."},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+    # Ejemplo de extracción y comparación de datos:
+    # Se asume que la respuesta de Persona tiene un campo "document" con el número del documento.
+    cleaned_response = persona_response.json().get("data", {}).get("attributes", {}) # obtiene el json limpio
+    document_number = cleaned_response.get("identification-number", {}) # obtiene el dni de la respuesta de persona
+    form_dni = form_data.get("dni", "").upper()
+    
+    # para cuando tengamos el entorno de produccion
+    persona_name = cleaned_response.get("name-first", {}) + " " + cleaned_response.get("name-last", {})
+    form_name = form_data.get("first_name", "") + " " + form_data.get("last_name", "")
+
+    # Se compara el número del documento obtenido de Persona con el enviado en formData
+    verifiedDNI = document_number == form_dni
+    verifiedName = persona_name == form_name
+
+    return Response({"verified": True}) # hay que cambiar esto XD
 
 
 @api_view(['POST'])

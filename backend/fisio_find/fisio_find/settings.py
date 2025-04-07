@@ -96,6 +96,7 @@ INSTALLED_APPS += [
     'appointment',
     'terms',
     'guest_session',
+    'questionnaire',
     'treatments',
     'gestion_survey',
     'payment',

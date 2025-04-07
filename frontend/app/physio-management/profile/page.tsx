@@ -2,7 +2,16 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Camera, Plus, Trash2, Edit, Save, StarIcon, Film } from "lucide-react";
+import {
+  Camera,
+  Plus,
+  Trash2,
+  Edit,
+  Save,
+  StarIcon,
+  Film,
+  BicepsFlexed,
+} from "lucide-react";
 import ScheduleCalendar from "@/components/ui/ScheduleCalendar";
 import { getApiBaseUrl } from "@/utils/api";
 import { GradientButton } from "@/components/ui/gradient-button";
@@ -148,6 +157,8 @@ const FisioProfile = () => {
   const [confirmRatingDelete, setConfirmRatingDelete] =
     useState<boolean>(false);
 
+  const [id, setId] = useState<number | null>(null);
+
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -219,6 +230,8 @@ const FisioProfile = () => {
           }
         );
         console.log("response", response.data);
+
+        setId(response.data.physio.id);
 
         setProfile({
           user: {
@@ -1630,19 +1643,33 @@ const FisioProfile = () => {
 
             {/* Sección de servicios */}
             <div className="space-y-4">
-              <div className="flex justify-between items-center mb-4 mt-4">
-                <h3 className="text-lg font-semibold">Servicios</h3>
-                <GradientButton
-                  variant="create"
-                  className="px-6 py-2 font-medium rounded-xl flex items-center gap-2 mx-auto"
-                  onClick={(e) => {
-                    e.preventDefault(); // Esto evita que se envíe el formulario
-                    setEditingServiceIndex(null);
-                    setShowServiceModal(true);
-                  }}
-                >
-                  <Plus className="mr-2 w-4 h-4" /> Añadir Servicio
-                </GradientButton>
+              <div className="grid grid-cols-2 gap-4 mb-4 mt-4">
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">Servicios</h3>
+                  <GradientButton
+                    variant="create"
+                    className="px-3 py-2 font-medium rounded-xl flex items-center gap-2"
+                    onClick={(e) => {
+                      e.preventDefault(); // Esto evita que se envíe el formulario
+                      setEditingServiceIndex(null);
+                      setShowServiceModal(true);
+                    }}
+                  >
+                    <Plus className="w-4 h-4" /> Añadir Servicio
+                  </GradientButton>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">Ejercicios</h3>
+                  <Link href={`/physio-management/${id}/exercises`} passHref>
+                    <GradientButton
+                      variant="create"
+                      className="px-3 py-2 font-medium rounded-xl flex items-center gap-2"
+                    >
+                      <BicepsFlexed className="w-4 h-4" /> Biblioteca de
+                      Ejercicios
+                    </GradientButton>
+                  </Link>
+                </div>
               </div>
 
               {services.length === 0 ? (
