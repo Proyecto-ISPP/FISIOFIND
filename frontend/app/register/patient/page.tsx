@@ -30,7 +30,6 @@ const GENDER_OPTIONS = [
   { value: "P", label: "Prefiero no decirlo" },
 ];
 
-// Componente reutilizable para los campos del formulario
 const FormField = ({
   name,
   label,
@@ -131,6 +130,31 @@ const FormField = ({
   );
 };
 
+// Modal Component
+const ConfirmationModal = ({ isOpen, onClose, email, onConfirm }: { isOpen: boolean, onClose: () => void, email: string, onConfirm: () => void }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white dark:bg-black p-6 rounded-lg shadow-xl max-w-md w-full">
+        <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">Confirma tu correo</h2>
+        <p className="mb-4 text-gray-700 dark:text-gray-300">
+          Te hemos enviado un correo de confirmación a <strong>{email}</strong>. Por favor, verifica tu buzón y sigue las instrucciones para activar tu cuenta.
+        </p>
+        <button
+          onClick={() => {
+            onClose();
+            onConfirm();
+          }}
+          className="px-4 py-2 bg-[#1E5ACD] text-white font-medium rounded-lg hover:bg-[#1747A0] transition-colors"
+        >
+          Entendido
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const PatientRegistrationForm = () => {
   const router = useRouter();
 
@@ -170,6 +194,8 @@ const PatientRegistrationForm = () => {
     type: "info",
     message: ""
   });
+  const [showModal, setShowModal] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Nuevo estado para rastrear el login
 
   const showAlert = (type: "success" | "error" | "info" | "warning", message: string) => {
     setAlert({
@@ -186,11 +212,10 @@ const PatientRegistrationForm = () => {
     }, 5000);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     setIsClient(true);
   }, []);
 
-  // Memorizar la función para evitar recrearla en cada render
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       const { name, value } = e.target;
@@ -296,18 +321,15 @@ const PatientRegistrationForm = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-  
     // Create a new object with only the fields the server expects
     const requestData = { ...formData };
-    
     // Remove phone_number if it's empty
     if (!requestData.phone_number.trim()) {
       delete requestData.phone_number;
     }
-    
     // Remove confirm_password since the server doesn't expect it
     delete requestData.confirm_password;
-  
+
     try {
       const response = await axios.post(
         `${getApiBaseUrl()}/api/app_user/patient/register/`,
@@ -327,9 +349,7 @@ const PatientRegistrationForm = () => {
 
         if (loginResponse.status === 200) {
           localStorage.setItem("token", loginResponse.data.access);
-          setTimeout(() => {
-            router.push("/");
-          }, 1000);
+          setIsLoggedIn(true); // Marcar que el usuario está logueado
         }
       }
     } catch (error: any) {
@@ -341,7 +361,6 @@ const PatientRegistrationForm = () => {
       setIsSubmitting(false);
     }
   };
-
   return (
     <div>
       {alert.show && (
@@ -368,7 +387,6 @@ const PatientRegistrationForm = () => {
             Completa el formulario para encontrar fisioterapeutas cerca de ti
           </p>
         </div>
-
         <div className="bg-white dark:bg-black rounded-xl shadow-xl overflow-hidden">
           {/* Progress Steps */}
           <div className="px-6 pt-6">
@@ -397,67 +415,65 @@ const PatientRegistrationForm = () => {
               </div>
             </div>
           </div>
-
-          <form onSubmit={handleSubmit} className="p-6">
-            {currentStep === 1 && (
-              <div className="space-y-4">
-                <h2 className="text-xl font-semibold mb-4">Información de Cuenta</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="md:col-span-2">
-                    <FormField
-                      name="username"
-                      label="Nombre de usuario"
-                      value={formData.username}
-                      onChange={handleChange}
-                      error={errors.username}
-                    />
-                  </div>
-                  <FormField
-                    name="email"
-                    label="Email"
-                    type="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    error={errors.email}
-                  />
-                  <FormField
-                    name="password"
-                    label="Contraseña"
-                    type="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    error={errors.password}
-                  />
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:col-span-2">
-                    <div>
+            <form onSubmit={handleSubmit} className="p-6">
+              {currentStep === 1 && (
+                <div className="space-y-4">
+                  <h2 className="text-xl font-semibold mb-4">Información de Cuenta</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="md:col-span-2">
                       <FormField
-                        name="confirm_password"
-                        label="Confirmar contraseña"
-                        type="password"
-                        value={formData.confirm_password}
+                        name="username"
+                        label="Nombre de usuario"
+                        value={formData.username}
                         onChange={handleChange}
-                        error={errors.confirm_password}
+                        error={errors.username}
                       />
                     </div>
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex flex-col justify-center h-full">
-                      <h3 className="text-sm font-medium text-blue-800 mb-2 flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        Requisitos de contraseña
-                      </h3>
-                      <ul className="text-xs text-blue-700 space-y-1 ml-7 list-disc">
-                        <li>Mínimo 8 caracteres</li>
-                        <li>No debe ser similar a tu información personal</li>
-                        <li>No debe ser una contraseña común</li>
-                        <li>No puede ser únicamente numérica</li>
-                      </ul>
+                    <FormField
+                      name="email"
+                      label="Email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      error={errors.email}
+                    />
+                    <FormField
+                      name="password"
+                      label="Contraseña"
+                      type="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      error={errors.password}
+                    />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:col-span-2">
+                      <div>
+                        <FormField
+                          name="confirm_password"
+                          label="Confirmar contraseña"
+                          type="password"
+                          value={formData.confirm_password}
+                          onChange={handleChange}
+                          error={errors.confirm_password}
+                        />
+                      </div>
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex flex-col justify-center h-full">
+                        <h3 className="text-sm font-medium text-blue-800 mb-2 flex items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          Requisitos de contraseña
+                        </h3>
+                        <ul className="text-xs text-blue-700 space-y-1 ml-7 list-disc">
+                          <li>Mínimo 8 caracteres</li>
+                          <li>No debe ser similar a tu información personal</li>
+                          <li>No debe ser una contraseña común</li>
+                          <li>No puede ser únicamente numérica</li>
+                        </ul>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            )}
-
+              )}
             {currentStep === 2 && (
               <div className="space-y-4">
                 <h2 className="text-xl font-semibold mb-4">
@@ -522,72 +538,69 @@ const PatientRegistrationForm = () => {
                 </div>
               </div>
             )}
-
-            <div className="flex justify-between mt-8">
-              {currentStep > 1 && (
-                <button
-                  type="button"
-                  onClick={handlePrevStep}
-                  className="px-6 py-2 bg-[#05AC9C] text-white font-medium rounded-xl transition-colors hover:bg-[#048F83] flex items-center gap-2"
-                >
-                  Anterior
-                </button>
-              )}
-
-              {currentStep < 2 ? (
-                <button
-                  type="button"
-                  onClick={handleNextStep}
-                  className="ml-auto px-6 py-2 bg-gradient-to-r from-[#05668D] to-[#0A7487] hover:from-[#0A7487] hover:to-[#05918F] text-white font-medium rounded-xl transition-colors"
-                >
-                  Siguiente
-                </button>
-              ) : (
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="ml-auto px-6 py-2 bg-gradient-to-r from-[#05668D] to-[#0A7487] hover:from-[#0A7487] hover:to-[#05918F] text-white font-medium rounded-xl transition-colors disabled:from-blue-300 disabled:to-blue-400"
-                >
-                  {isSubmitting ? "Registrando..." : "Completar Registro"}
-                </button>
-              )}
-            </div>
-          </form>
-        </div>
-
-        <div className="text-center mt-6">
-          <p className="text-gray-600 dark:text-gray-400">
-            ¿Ya tienes una cuenta?{" "}
+              <div className="flex justify-between mt-8">
+                {currentStep > 1 && (
+                  <button
+                    type="button"
+                    onClick={handlePrevStep}
+                    className="px-6 py-2 bg-[#05AC9C] text-white font-medium rounded-xl transition-colors hover:bg-[#048F83] flex items-center gap-2"
+                  >
+                    Anterior
+                  </button>
+                )}
+                {currentStep < 2 ? (
+                  <button
+                    type="button"
+                    onClick={handleNextStep}
+                    className="ml-auto px-6 py-2 bg-gradient-to-r from-[#05668D] to-[#0A7487] hover:from-[#0A7487] hover:to-[#05918F] text-white font-medium rounded-xl transition-colors"
+                  >
+                    Siguiente
+                  </button>
+                ) : (
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="ml-auto px-6 py-2 bg-gradient-to-r from-[#05668D] to-[#0A7487] hover:from-[#0A7487] hover:to-[#05918F] text-white font-medium rounded-xl transition-colors disabled:from-blue-300 disabled:to-blue-400"
+                  >
+                    {isSubmitting ? "Registrando..." : "Completar Registro"}
+                  </button>
+                )}
+              </div>
+            </form>
+          </div>
+          <div className="text-center mt-6">
+            <p className="text-gray-600 dark:text-gray-400">
+              ¿Ya tienes una cuenta?{" "}
+              <button
+                onClick={() => router.push("/login")}
+                className="text-[#1E5ACD] hover:underline font-medium"
+              >
+                Iniciar sesión
+              </button>
+            </p>
             <button
-              onClick={() => router.push("/login")}
-              className="text-[#1E5ACD] hover:underline font-medium"
+              onClick={() => router.push("/register")}
+              className="mt-4 text-gray-500 hover:text-gray-700 flex items-center gap-2 mx-auto"
             >
-              Iniciar sesión
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+              </svg>
+              Volver a selección de rol
             </button>
-          </p>
-          <button
-            onClick={() => router.push("/register")}
-            className="mt-4 text-gray-500 hover:text-gray-700 flex items-center gap-2 mx-auto"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M19 12H5M12 19l-7-7 7-7" />
-            </svg>
-            Volver a selección de rol
-          </button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
   );
 };
 
