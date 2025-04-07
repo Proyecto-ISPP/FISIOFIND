@@ -208,7 +208,7 @@ export function SidebarDemo() {
                   <div key={`mobile-public-${idx}`} className="w-full">
                     <Link
                       href={link.href}
-                      className="flex flex-col items-center gap-2 py-3 px-2 rounded-lg hover:bg-neutral-200 transition-all duration-200 w-full"
+                      className="flex flex-col items-center gap-2 py-3 px-2 rounded-xl hover:bg-neutral-200 transition-all duration-200 w-full"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       <div className="flex items-center justify-center">
@@ -226,7 +226,7 @@ export function SidebarDemo() {
                     <div key={`mobile-private-${idx}`} className="w-full">
                       <Link
                         href={link.href}
-                        className="flex flex-col items-center gap-2 py-3 px-2 rounded-lg hover:bg-neutral-200 transition-all duration-200 w-full"
+                        className="flex flex-col items-center gap-2 py-3 px-2 rounded-xl hover:bg-neutral-200 transition-all duration-200 w-full"
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         <div className="flex items-center justify-center">
@@ -302,7 +302,7 @@ export function SidebarDemo() {
 
 const Logo = () => {
   return (
-    <a
+    <Link
       href="/"
       className="font-normal flex items-center justify-center text-sm text-[#253240] py-1 relative z-300 w-full"
     >
@@ -311,13 +311,13 @@ const Logo = () => {
         alt="Logo"
         className="h-16 w-auto flex-shrink-0"
       />
-    </a>
+    </Link>
   );
 };
 
 export const LogoIcon = () => {
   return (
-    <a
+    <Link
       href="/"
       className="font-normal flex justify-center items-center text-base text-[#253240] py-2 relative z-300 w-full"
     >
@@ -328,6 +328,6 @@ export const LogoIcon = () => {
           className="h-12 w-auto flex-shrink-0 object-contain"
         />
       </div>
-    </a>
+    </Link>
   );
 };

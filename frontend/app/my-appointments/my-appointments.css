@@ -39,6 +39,12 @@
   .fc-button-active {
     background-color: #05918F !important; /* Azul verdoso */
   }
+
+  .fc-event-finished {
+    background-color: #6B7280 !important; /* gray-500 */
+    border-color: #4B5563 !important; /* gray-600 */
+    color: #ffffff !important;
+  }
   
   /* ======= BOTÓN HOVER ======= */
   .fc-button:hover {
@@ -82,24 +88,25 @@
   }
 
   .fc-event-hovered {
-    background-color: #41B8D5 !important; /* Ejemplo: Color de fondo cuando se pasa el ratón */
-  }
-
-  .fc-event-confirmed {
-    background-color: green !important;
-    border-color: #1F7A6C !important;
-    color: #ffffff !important;
+    background-color: #41B8D5 !important;
+    color: #000000 !important;
   }
 
   .fc-event-pending {
-    background-color: darkolivegreen !important;
-    border-color: #4FA48F !important;
+    background-color: #FEF3C7 !important; /* yellow-100 */
+    border-color: #FCD34D !important; /* yellow-300 */
+    color: #92400E !important; /* yellow-800 */
+  }
+
+  .fc-event-confirmed {
+    background-color: #059669 !important; /* green */
+    border-color: #047857 !important; /* darker green for border */
     color: #ffffff !important;
   }
 
   .fc-event-booked {
-    background-color: olivedrab !important;
-    border-color: #8AC4B3 !important;
+    background-color: #EF4444 !important; /* red */
+    border-color: #DC2626 !important; /* darker red for border */
     color: #ffffff !important;
   }
   
