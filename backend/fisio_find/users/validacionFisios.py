@@ -9,6 +9,7 @@ from selenium.webdriver.common.keys import Keys
 from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
+import undetected_chromedriver as uc
 
 # Cargar las variables de entorno desde el archivo .env
 load_dotenv()
@@ -37,22 +38,16 @@ class SeleniumScraper:
             )
             logging.info("SeleniumScraper inicializado en modo DEBUG")
         else:
-            options = webdriver.ChromeOptions()
-            options.add_argument("--headless")  # Ejecutar en segundo plano
+            options = uc.ChromeOptions()
+            options.headless = True  # Ejecutar en segundo plano
             options.add_argument("--no-sandbox")
             options.add_argument("--enable-javascript")  # Asegurar que JS está habilitado
             options.add_argument("--disable-gpu")
-            options.add_argument("--window-size=1920x1080")
+            options.add_argument("--window-size=1920,1080")
             options.add_argument("--disable-dev-shm-usage")
-            options.add_argument("--disable-blink-features=AutomationControlled")
-            options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36")
             options.binary_location = "/usr/bin/chromium-browser"
-            chromedriver_path = "/usr/bin/chromedriver"
-            self.driver = webdriver.Chrome(
-                service=Service(executable_path=chromedriver_path),
-                options=options
-            )
-            logging.info("SeleniumScraper inicializado en modo producción")
+            self.driver = uc.Chrome(options=options)  # Usamos undetected-chromedriver
+            logging.info("SeleniumScraper inicializado en modo producción con undetected-chromedriver")
 
     def obtener_colegiado(
         self, valorBusqueda: str, url: str, xpath: str, loadTime: int = 2, general: str = None
