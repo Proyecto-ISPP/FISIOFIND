@@ -56,7 +56,7 @@ const PhysiotherapistModal = ({ physio, isOpen, onClose, renderStars }: Physioth
       onClick={handleCloseModal}
     >
       <div 
-        className={`bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 relative transition-all duration-300 ${
+        className={`bg-white rounded-2xl shadow-2xl max-w-xl w-4/5 h-auto p-6 relative transition-all duration-300 ${
           isAnimating ? "translate-y-0 scale-100" : "translate-y-8 scale-95"
         }`}
         onClick={(e) => e.stopPropagation()}
@@ -73,7 +73,7 @@ const PhysiotherapistModal = ({ physio, isOpen, onClose, renderStars }: Physioth
         <div className="flex flex-col items-center">
           <div className="relative w-32 h-32 mb-4 overflow-hidden rounded-full ring-4 ring-[#65C2C9]/20 transition-transform duration-300 hover:scale-105">
             <Image
-              src={physio.image || "/static/fisioterapeuta_sample.webp"}
+              src={physio.image?.startsWith("http") ? physio.image : "/static/fisioterapeuta_sample.webp"}
               alt={physio.name}
               fill
               className="object-cover"
