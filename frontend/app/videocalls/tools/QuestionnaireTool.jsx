@@ -43,6 +43,7 @@ const QuestionnaireTool = ({
   const [questionErrors, setQuestionErrors] = useState({});
   const [newQuestionError, setNewQuestionError] = useState('');
   const [newOptionsError, setNewOptionsError] = useState('');
+  const isLabelValid = formData.newQuestion.label.trim() !== '';
 
   useEffect(() => {
     const fetchQuestionnaires = async () => {
@@ -142,13 +143,15 @@ const QuestionnaireTool = ({
   };
 
   const validateOptions = (options) => {
+    // Verificar que hay al menos una opción no vacía
     const validOptions = options.filter(opt => opt.trim() !== '');
     
-    if (options.length > 0 && validOptions.length === 0) {
+    if (validOptions.length === 0) {
       setNewOptionsError('Debe proporcionar al menos una opción válida');
       return false;
     }
     
+    // Verificar que no hay opciones vacías entre opciones válidas
     if (validOptions.length !== options.filter(opt => opt !== '').length) {
       setNewOptionsError('No se permiten opciones vacías');
       return false;
@@ -224,17 +227,33 @@ const QuestionnaireTool = ({
   };
 
   const handleAddQuestion = () => {
-    if (!validateNewQuestion()) return;
+    const isLabelValid = formData.newQuestion.label.trim() !== '';
+    const isLabelWithinLimit = formData.newQuestion.label.length <= CHARACTER_LIMIT;
     
-    // Limpiar opciones vacías si es tipo select
-    const newQuestion = { ...formData.newQuestion };
-    if (newQuestion.type === 'select') {
-      newQuestion.options = newQuestion.options.filter(opt => opt.trim() !== '');
+    if (!isLabelValid) {
+      setNewQuestionError('La pregunta no puede estar vacía');
+      return;
+    } else if (!isLabelWithinLimit) {
+      setNewQuestionError(`La pregunta no puede exceder los ${CHARACTER_LIMIT} caracteres`);
+      return;
     }
     
-    setFormData(prev => ({
-      ...prev,
-      questions: [...prev.questions, newQuestion],
+    if (formData.newQuestion.type === 'select') {
+      if (!validateOptions(formData.newQuestion.options)) {
+        return;
+      }
+    } else {
+      setNewQuestionError('');
+    }
+    
+    const cleanedQuestion = { ...formData.newQuestion };
+    if (cleanedQuestion.type === 'select') {
+      cleanedQuestion.options = cleanedQuestion.options.filter(opt => opt.trim() !== '');
+    }
+    
+    setFormData(prevData => ({
+      ...prevData,
+      questions: [...prevData.questions, cleanedQuestion],
       newQuestion: { label: '', type: 'string', options: [] }
     }));
     
@@ -246,11 +265,10 @@ const QuestionnaireTool = ({
     const updatedQuestions = [...formData.questions];
     
     if (field === 'label' && value.length > CHARACTER_LIMIT) {
-      return; // No permitir exceder el límite de caracteres
+      return; 
     }
     
     if (field === 'options') {
-      // Convertir string separado por comas a array
       if (typeof value === 'string') {
         value = value.split(',').map(opt => opt.trim());
       }
@@ -298,7 +316,8 @@ const QuestionnaireTool = ({
       if (!validateQuestion(question, index)) {
         isValid = false;
         newErrors[index] = {
-          label: question.label.trim() === '' ? 'La pregunta no puede estar vacía' : '',
+          label: question.label.trim() === '' ? 'La pregunta no puede estar vacía' : 
+                 question.label.length > CHARACTER_LIMIT ? `La pregunta no puede exceder los ${CHARACTER_LIMIT} caracteres` : '',
           options: question.type === 'select' && 
                     (question.options.filter(opt => opt.trim() !== '').length === 0) ? 
                     'Debe proporcionar al menos una opción válida' : ''
@@ -311,21 +330,31 @@ const QuestionnaireTool = ({
   };
 
   const handleSaveQuestionnaire = async () => {
-    // Validación previa (se mantiene igual)
-    const isTitleValid = validateTitle(formData.title);
-    
-    if (formData.questions.length === 0) {
-      addChatMessage('Sistema', 'Debes agregar al menos una pregunta');
+    // Validar título de forma explícita
+    if (!formData.title.trim()) {
+      setTitleError('El título no puede estar vacío');
       return;
-    }
-    
-    const areQuestionsValid = validateAllQuestions();
-    
-    if (!isTitleValid || !areQuestionsValid) {
-      addChatMessage('Sistema', 'Por favor, corrige los errores antes de guardar');
+    } else if (formData.title.length > CHARACTER_LIMIT) {
+      setTitleError(`El título no puede exceder los ${CHARACTER_LIMIT} caracteres`);
       return;
+    }  else if (formData.questions.length === 0) {
+        setNewQuestionError('Debes agregar al menos una pregunta');
+        return;
+    } else {
+      for (const question of formData.questions) {
+        if (question.type === 'select') {
+          const validOptions = question.options.filter(opt => opt.trim() !== '');
+          if (validOptions.length === 0) {
+            setNewQuestionError('Las preguntas de tipo selección deben tener al menos una opción válida');
+            return;
+          }
+        }
+      }
     }
-  
+      
+      // Si todas las validaciones pasan, remover el mensaje de error
+      setTitleError('');
+
     // Limpiar las opciones vacías en todas las preguntas
     const cleanedQuestions = formData.questions.map(q => {
       if (q.type === 'select') {
@@ -333,7 +362,7 @@ const QuestionnaireTool = ({
       }
       return q;
     });
-  
+
     const questionnaireData = {
       title: formData.title,
       json_schema: {
@@ -356,7 +385,7 @@ const QuestionnaireTool = ({
       },
       questions: cleanedQuestions
     };
-  
+
     try {
       let response;
       if (mode === 'edit') {
@@ -372,41 +401,48 @@ const QuestionnaireTool = ({
           { headers: { Authorization: `Bearer ${token}` } }
         );
       }
-  
+
       setQuestionnaires(prev => 
         mode === 'edit' 
           ? prev.map(q => q.id === editingQuestionnaire.id ? response.data : q)
           : [...prev, response.data]
       );
-  
+
       setMode('list');
       addChatMessage('Sistema', `Cuestionario ${mode === 'edit' ? 'actualizado' : 'creado'} correctamente`);
     } catch (error) {
       console.error('Error saving questionnaire:', error);
       
-      // Manejo mejorado de errores
-      let errorMessage = 'No se pudo guardar el cuestionario';
-      
-      // Extraer mensaje de error específico de la respuesta del backend
+      // Manejo de errores similiar a Cuestionarios.jsx
       if (error.response && error.response.data) {
-        if (error.response.data.detail) {
-          errorMessage = error.response.data.detail;
-        } else if (error.response.data.title) {
-          errorMessage = `Error en el título: ${error.response.data.title}`;
-          setTitleError(error.response.data.title);
-        } else if (error.response.data.questions) {
-          errorMessage = `Error en preguntas: ${error.response.data.questions}`;
-          // Podrías actualizar questionErrors aquí si tienes información sobre qué pregunta específica falló
-        } else if (typeof error.response.data === 'object') {
-          // Intentar extraer el primer mensaje de error disponible
-          const firstErrorKey = Object.keys(error.response.data)[0];
-          if (firstErrorKey) {
-            errorMessage = `${firstErrorKey}: ${error.response.data[firstErrorKey]}`;
+        if (typeof error.response.data === 'object') {
+          const fieldErrors = [];
+          
+          for (const field in error.response.data) {
+            if (Array.isArray(error.response.data[field])) {
+              error.response.data[field].forEach(msg => {
+                fieldErrors.push(`${field}: ${msg}`);
+              });
+            } else if (typeof error.response.data[field] === 'string') {
+              fieldErrors.push(`${field}: ${error.response.data[field]}`);
+            }
+          }
+          
+          if (fieldErrors.length > 0) {
+            addChatMessage('Error', `Errores de validación:\n${fieldErrors.join('\n')}`);
+            return;
+          }
+          
+          if (error.response.data.detail) {
+            addChatMessage('Error', `Error: ${error.response.data.detail}`);
+            return;
           }
         }
+        
+        addChatMessage('Error', `Error en la solicitud: ${JSON.stringify(error.response.data)}`);
+      } else {
+        addChatMessage('Error', 'Error de conexión con el servidor');
       }
-      
-      addChatMessage('Error', errorMessage);
     }
   };
 
@@ -424,24 +460,19 @@ const QuestionnaireTool = ({
   };
 
   // Helper para estilos de error
-  const errorStyle = {
+  const getErrorStyle = () => ({
     color: 'red',
-    fontSize: '12px',
-    marginTop: '4px',
+    fontSize: '14px',
+    marginTop: '5px',
     display: 'flex',
     alignItems: 'center',
     gap: '4px'
-  };
+  });
 
-  const errorIconStyle = {
-    marginRight: '4px'
-  };
+  const getInputErrorStyle = (hasError) => 
+    hasError ? { border: '1px solid red' } : {};
 
-  const inputErrorStyle = {
-    border: '1px solid red'
-  };
-
-  const charCountStyle = (length) => ({
+  const getCharCountStyle = (length) => ({
     fontSize: '12px', 
     textAlign: 'right', 
     color: length > CHARACTER_LIMIT * 0.8 ? 'orange' : 'gray',
@@ -588,15 +619,15 @@ const QuestionnaireTool = ({
               onChange={handleTitleChange}
               className={`${styles.inputField} ${titleError ? styles.inputError : ''}`}
               placeholder="Ej: Evaluación de dolor"
-              style={titleError ? inputErrorStyle : {}}
+              style={getInputErrorStyle(titleError)}
               maxLength={CHARACTER_LIMIT}
             />
-            <div style={charCountStyle(formData.title.length)}>
+            <div style={getCharCountStyle(formData.title.length)}>
               {formData.title.length}/{CHARACTER_LIMIT}
             </div>
             {titleError && (
-              <div style={errorStyle}>
-                <FontAwesomeIcon icon={faExclamationCircle} style={errorIconStyle} />
+              <div style={getErrorStyle()}>
+                <FontAwesomeIcon icon={faExclamationCircle} />
                 {titleError}
               </div>
             )}
@@ -613,15 +644,15 @@ const QuestionnaireTool = ({
                   onChange={handleNewQuestionChange}
                   className={`${styles.inputField} ${newQuestionError ? styles.inputError : ''}`}
                   placeholder="Ej: ¿Dónde sientes el dolor?"
-                  style={newQuestionError ? inputErrorStyle : {}}
+                  style={getInputErrorStyle(newQuestionError)}
                   maxLength={CHARACTER_LIMIT}
                 />
-                <div style={charCountStyle(formData.newQuestion.label.length)}>
+                <div style={getCharCountStyle(formData.newQuestion.label.length)}>
                   {formData.newQuestion.label.length}/{CHARACTER_LIMIT}
                 </div>
                 {newQuestionError && (
-                  <div style={errorStyle}>
-                    <FontAwesomeIcon icon={faExclamationCircle} style={errorIconStyle} />
+                  <div style={getErrorStyle()}>
+                    <FontAwesomeIcon icon={faExclamationCircle} />
                     {newQuestionError}
                   </div>
                 )}
@@ -648,11 +679,11 @@ const QuestionnaireTool = ({
                     onChange={handleNewOptionsChange}
                     className={`${styles.inputField} ${newOptionsError ? styles.inputError : ''}`}
                     placeholder="Ej: Leve, Moderado, Severo"
-                    style={newOptionsError ? inputErrorStyle : {}}
+                    style={getInputErrorStyle(newOptionsError)}
                   />
                   {newOptionsError && (
-                    <div style={errorStyle}>
-                      <FontAwesomeIcon icon={faExclamationCircle} style={errorIconStyle} />
+                    <div style={getErrorStyle()}>
+                      <FontAwesomeIcon icon={faExclamationCircle} />
                       {newOptionsError}
                     </div>
                   )}
@@ -662,9 +693,6 @@ const QuestionnaireTool = ({
               <button
                 onClick={handleAddQuestion}
                 className={styles.addButton}
-                disabled={!formData.newQuestion.label.trim() || 
-                        (formData.newQuestion.type === 'select' && 
-                         formData.newQuestion.options.filter(o => o.trim()).length === 0)}
               >
                 Añadir pregunta
               </button>
@@ -684,15 +712,15 @@ const QuestionnaireTool = ({
                           value={q.label}
                           onChange={(e) => handleUpdateQuestion(index, 'label', e.target.value)}
                           className={`${styles.inputField} ${questionErrors[index]?.label ? styles.inputError : ''}`}
-                          style={questionErrors[index]?.label ? inputErrorStyle : {}}
+                          style={getInputErrorStyle(questionErrors[index]?.label)}
                           maxLength={CHARACTER_LIMIT}
                         />
-                        <div style={charCountStyle(q.label.length)}>
+                        <div style={getCharCountStyle(q.label.length)}>
                           {q.label.length}/{CHARACTER_LIMIT}
                         </div>
                         {questionErrors[index]?.label && (
-                          <div style={errorStyle}>
-                            <FontAwesomeIcon icon={faExclamationCircle} style={errorIconStyle} />
+                          <div style={getErrorStyle()}>
+                            <FontAwesomeIcon icon={faExclamationCircle} />
                             {questionErrors[index].label}
                           </div>
                         )}
@@ -715,11 +743,11 @@ const QuestionnaireTool = ({
                             onChange={(e) => handleUpdateQuestion(index, 'options', e.target.value)}
                             className={`${styles.inputField} ${questionErrors[index]?.options ? styles.inputError : ''}`}
                             placeholder="Opciones"
-                            style={questionErrors[index]?.options ? inputErrorStyle : {}}
+                            style={getInputErrorStyle(questionErrors[index]?.options)}
                           />
                           {questionErrors[index]?.options && (
-                            <div style={errorStyle}>
-                              <FontAwesomeIcon icon={faExclamationCircle} style={errorIconStyle} />
+                            <div style={getErrorStyle()}>
+                              <FontAwesomeIcon icon={faExclamationCircle} />
                               {questionErrors[index].options}
                             </div>
                           )}
@@ -743,7 +771,6 @@ const QuestionnaireTool = ({
           <button
             onClick={handleSaveQuestionnaire}
             className={`${styles.actionButton} ${styles.primaryAction}`}
-            disabled={!formData.title.trim() || formData.questions.length === 0}
           >
             <FontAwesomeIcon icon={faSave} /> {mode === 'edit' ? 'Actualizar' : 'Guardar'}
           </button>

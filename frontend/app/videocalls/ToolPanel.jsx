@@ -17,7 +17,8 @@ const ToolPanel = ({
   userRole,
   addChatMessage,
   onCloseTool,
-  token
+  token,
+  questionnaires
 }) => {
   if (!selectedTool) return null;
 
@@ -38,6 +39,7 @@ const ToolPanel = ({
       )}
       {selectedTool === 'cuestionarios' && (
         <QuestionnaireTool
+          initialQuestionnaires={questionnaires}
           sendWebSocketMessage={sendWebSocketMessage}
           addChatMessage={addChatMessage}
           onClose={onCloseTool}
