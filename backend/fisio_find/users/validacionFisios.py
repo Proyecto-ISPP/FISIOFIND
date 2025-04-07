@@ -127,6 +127,25 @@ class SeleniumScraper:
 def quitar_tildes(texto):
     return ''.join(c for c in unicodedata.normalize('NFD', texto) if unicodedata.category(c) != 'Mn')
 
+def quitar_solo_tildes_extremadura(texto):
+    # Normaliza el texto en forma NFD para separar las letras de sus marcas
+    normalized = unicodedata.normalize('NFD', texto)
+    result_chars = []
+    for i, c in enumerate(normalized):
+        if unicodedata.combining(c):
+            # Si es una marca de combinación...
+            if c == "\u0303":
+                # Si la marca es la tilde y el carácter base es 'n' o 'N', la conservamos
+                if i > 0 and normalized[i-1] in ("n", "N"):
+                    result_chars.append(c)
+                # En otros casos (p. ej. tilde en otra letra) se elimina
+            else:
+                # Elimina cualquier otra marca (como la tilde aguda)
+                continue
+        else:
+            result_chars.append(c)
+    # Recompone la cadena en forma NFC
+    return unicodedata.normalize('NFC', ''.join(result_chars))
 
 def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
     logging.info("Iniciando validación de colegiación para '%s' en %s", nombre, comunidad)
@@ -301,7 +320,7 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
                 url = "https://cofext.org/cms/colegiados.php"
                 try:
                     xpath = '//*[@id="example_filter"]/label/input'
-                    soup = scraper.obtener_colegiado(quitar_tildes(nombre), url, xpath)
+                    soup = scraper.obtener_colegiado(quitar_solo_tildes_extremadura(nombre), url, xpath)
                     resultado = soup.find("tr", class_="odd")
                     if resultado:
                         datos = [td.text.strip() for td in resultado.find_all("td")]
