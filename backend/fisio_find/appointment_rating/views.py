@@ -76,8 +76,7 @@ def create_rating(request):
     appointment_id = request.data.get("appointment")
 
     # Verificar si la cita existe y pertenece al usuario autenticado
-    appointment = Appointment.objects.get(id=appointment_id)
-
+    appointment = get_object_or_404(Appointment, id=appointment_id, patient=request.user.patient)
     # Solo se puede valorar si la cita está terminada
     if appointment.status != "finished":
         return Response(
