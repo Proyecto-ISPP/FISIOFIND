@@ -50,9 +50,9 @@ export function prepareScheduleForBackend(schedule) {
 
 export function formatDateFromIso(isoDate: string): string {
   const date = new Date(isoDate);
-
-  // Formateamos la fecha en "DD-MM-YYYY HH:mm" pero en UTC
-  const formattedDate = `${String(date.getUTCDate()).padStart(2, '0')}-${String(date.getUTCMonth() + 1).padStart(2, '0')}-${date.getUTCFullYear()} ${String(date.getUTCHours()).padStart(2, '0')}:${String(date.getUTCMinutes()).padStart(2, '0')}`;
+  
+  // Formateamos la fecha en "DD-MM-YYYY HH:mm" en hora local
+  const formattedDate = `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
 
   return formattedDate;
 }
