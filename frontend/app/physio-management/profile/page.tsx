@@ -21,7 +21,6 @@ import Alert from "@/components/ui/Alert";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 import PhysioterapistRating from "@/components/ui/PhysioterapistRating";
 
-
 const getAuthToken = () => {
   return localStorage.getItem("token"); // Obtiene el token JWT
 };
@@ -156,8 +155,9 @@ const FisioProfile = () => {
     opinion: string;
   }>({ punctuation: 5, opinion: "" });
 
-    const [confirmRatingDelete, setConfirmRatingDelete] = useState<boolean>(false);
-    const [physioterapistId, setPhysioterapistId] = useState(null);
+  const [confirmRatingDelete, setConfirmRatingDelete] =
+    useState<boolean>(false);
+  const [physioterapistId, setPhysioterapistId] = useState(null);
 
   useEffect(() => {
     setIsClient(true);
@@ -223,49 +223,52 @@ const FisioProfile = () => {
           return;
         }
 
-                const response = await axios.get(`${getApiBaseUrl()}/api/app_user/current-user/`, {
-                    headers: { Authorization: `Bearer ${storedToken}` },
-                });
-                console.log("response", response.data);
-                setPhysioterapistId(response.data.physio.id);
-                setProfile({
-                    user: {
-                        dni: response.data.physio.user_data.dni,
-                        email: response.data.physio.user_data.email,
-                        first_name: response.data.physio.user_data.first_name,
-                        last_name: response.data.physio.user_data.last_name,
-                        phone_number: response.data.physio.user_data.phone_number,
-                        photo: response.data.physio.user_data.photo,
-                        postal_code: response.data.physio.user_data.postal_code,
-                        user_id: response.data.physio.user_data.user_id,
-                        username: response.data.physio.user_data.username,
-                    },
-                    autonomic_community: response.data.physio.autonomic_community,
-                    bio: response.data.physio.bio,
-                    birth_date: response.data.physio.birth_date,
-                    collegiate_number: response.data.physio.collegiate_number,
-                    gender: response.data.physio.gender,
-                    rating_avg: response.data.physio.rating_avg,
-                    schedule: response.data.physio.schedule,
-                    specializations: response.data.physio.specializations,
-                    services: [],
-                    plan: response.data.physio.plan
-                });
-                try {
-                    let parsedServices = [];
-                    // Comprobar si los servicios son un string JSON o un array o un objeto
-                    if (typeof response.data.physio.services === 'string') {
-                        try {
-                            parsedServices = JSON.parse(response.data.physio.services);
-                        } catch (e) {
-                            console.error("Error al parsear los servicios:", e);
-                        }
-                    } else if (Array.isArray(response.data.physio.services)) {
-                        parsedServices = response.data.physio.services;
-                    } else if (typeof response.data.physio.services === 'object') {
-                        // Si es un objeto con claves (como en el ejemplo)
-                        parsedServices = response.data.physio.services;
-                    }
+        const response = await axios.get(
+          `${getApiBaseUrl()}/api/app_user/current-user/`,
+          {
+            headers: { Authorization: `Bearer ${storedToken}` },
+          }
+        );
+        console.log("response", response.data);
+        setPhysioterapistId(response.data.physio.id);
+        setProfile({
+          user: {
+            dni: response.data.physio.user_data.dni,
+            email: response.data.physio.user_data.email,
+            first_name: response.data.physio.user_data.first_name,
+            last_name: response.data.physio.user_data.last_name,
+            phone_number: response.data.physio.user_data.phone_number,
+            photo: response.data.physio.user_data.photo,
+            postal_code: response.data.physio.user_data.postal_code,
+            user_id: response.data.physio.user_data.user_id,
+            username: response.data.physio.user_data.username,
+          },
+          autonomic_community: response.data.physio.autonomic_community,
+          bio: response.data.physio.bio,
+          birth_date: response.data.physio.birth_date,
+          collegiate_number: response.data.physio.collegiate_number,
+          gender: response.data.physio.gender,
+          rating_avg: response.data.physio.rating_avg,
+          schedule: response.data.physio.schedule,
+          specializations: response.data.physio.specializations,
+          services: [],
+          plan: response.data.physio.plan,
+        });
+        try {
+          let parsedServices = [];
+          // Comprobar si los servicios son un string JSON o un array o un objeto
+          if (typeof response.data.physio.services === "string") {
+            try {
+              parsedServices = JSON.parse(response.data.physio.services);
+            } catch (e) {
+              console.error("Error al parsear los servicios:", e);
+            }
+          } else if (Array.isArray(response.data.physio.services)) {
+            parsedServices = response.data.physio.services;
+          } else if (typeof response.data.physio.services === "object") {
+            // Si es un objeto con claves (como en el ejemplo)
+            parsedServices = response.data.physio.services;
+          }
 
           // Procesar los servicios dependiendo de su formato
           let serviceList: Service[] = [];
@@ -1365,12 +1368,12 @@ const FisioProfile = () => {
             </label>
           )}
 
-                    <h2 className="text-xl font-bold mb-2">{profile.user.username}</h2>
-                    <p className="text-blue-200 mb-4">Profesional</p>
+          <h2 className="text-xl font-bold mb-2">{profile.user.username}</h2>
+          <p className="text-blue-200 mb-4">Profesional</p>
 
-                    {/* Sección de valoración general*/}
+          {/* Sección de valoración general*/}
 
-                    <PhysioterapistRating physioterapistId={physioterapistId}/>
+          <PhysioterapistRating physioterapistId={physioterapistId} />
 
           {/* Sección de horario */}
           <div className="w-full mt-4">
@@ -1659,15 +1662,20 @@ const FisioProfile = () => {
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold mb-2">Ejercicios</h3>
-                  <Link href={`/physio-management/${id}/exercises`} passHref>
-                    <GradientButton
-                      variant="create"
-                      className="px-3 py-2 font-medium rounded-xl flex items-center gap-2"
+                  {physioterapistId && (
+                    <Link
+                      href={`/physio-management/${physioterapistId}/exercises`}
+                      passHref
                     >
-                      <BicepsFlexed className="w-4 h-4" /> Biblioteca de
-                      Ejercicios
-                    </GradientButton>
-                  </Link>
+                      <GradientButton
+                        variant="create"
+                        className="px-3 py-2 font-medium rounded-xl flex items-center gap-2"
+                      >
+                        <BicepsFlexed className="w-4 h-4" /> Biblioteca de
+                        Ejercicios
+                      </GradientButton>
+                    </Link>
+                  )}
                 </div>
               </div>
 
