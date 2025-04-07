@@ -419,7 +419,7 @@ def get_physio_invoices(request):
         ]
         redeemed_payments = [
             payment for payment in my_payments
-            if payment.status == 'Redeemed'
+            if payment.status == 'Redeemed' or payment.status == 'Completed'
         ]
 
         monthly_stats = []
@@ -427,7 +427,7 @@ def get_physio_invoices(request):
             target_date = today - relativedelta(months=i)
             month = target_date.strftime("%Y-%m")
             month_earnings = my_payments.filter(
-                status='Redeemed',
+                status__in=['Redeemed', 'Completed'],
                 payment_date__month=target_date.month,
                 payment_date__year=target_date.year
             ).aggregate(total_earnings=Sum('amount'))['total_earnings'] or 0
