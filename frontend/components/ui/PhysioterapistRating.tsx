@@ -147,10 +147,14 @@ const PhysioterapistRating: React.FC<PhysioterapistRatingProps> = ({
     } else if (ratingData.rating >= 2.5) {
       backgroundGradient =
         "linear-gradient(to right, #a78916 0%, #b99612 100%)";
-    } else {
+    } else if (ratingData.rating < 2.5) {
       backgroundGradient =
         "linear-gradient(to right, #d73c3c 0%, #f04545 100%)";
+    } else {
+      backgroundGradient =
+        "linear-gradient(to right, #999999 0%, #cccccc 100%)";
     }
+    console.log(ratingData);
   }
 
   return (
@@ -172,7 +176,9 @@ const PhysioterapistRating: React.FC<PhysioterapistRatingProps> = ({
           style={{ borderBottom: "1px solid #ffffff3d" }}
         >
           <span style={{ fontSize: "x-large" }}>
-            {ratingData ? ratingData.rating.toFixed(2) : "--"}
+            {ratingData && !Number.isNaN(ratingData.rating)
+              ? ratingData.rating.toFixed(2)
+              : "--"}
           </span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -252,88 +258,99 @@ const PhysioterapistRating: React.FC<PhysioterapistRatingProps> = ({
               className="overflow-y-auto pr-2 space-y-4"
               style={{ maxHeight: "calc(90vh - 180px)" }}
             >
-              {sortRatings(ratingsList).map((rating) => {
-                // Determinar la fecha a mostrar: si se editó, mostramos updated_at con la etiqueta "(editado)"
-                const createdDate = new Date(rating.created_at);
-                const updatedDate = rating.updated_at
-                  ? new Date(rating.updated_at)
-                  : null;
+              {ratingsList.length > 0 &&
+                sortRatings(ratingsList).map((rating) => {
+                  // Determinar la fecha a mostrar: si se editó, mostramos updated_at con la etiqueta "(editado)"
+                  const createdDate = new Date(rating.created_at);
+                  const updatedDate = rating.updated_at
+                    ? new Date(rating.updated_at)
+                    : null;
 
-                const dateToShow =
-                  updatedDate && updatedDate.getTime() !== createdDate.getTime()
-                    ? `(editado) ${updatedDate.toLocaleDateString()}`
-                    : createdDate.toLocaleDateString();
+                  const dateToShow =
+                    updatedDate &&
+                    updatedDate.getTime() !== createdDate.getTime()
+                      ? `(editado) ${updatedDate.toLocaleDateString()}`
+                      : createdDate.toLocaleDateString();
 
-                return (
-                  <div
-                    key={rating.id}
-                    className="border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow bg-gray-50"
-                  >
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="font-bold text-gray-800">
-                        {rating.patient_name}
-                      </span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm text-gray-600">
-                          {dateToShow}
+                  return (
+                    <div
+                      key={rating.id}
+                      className="border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow bg-gray-50"
+                    >
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="font-bold text-gray-800">
+                          {rating.patient_name}
                         </span>
-                        <button
-                          className="p-1 text-red-600 hover:text-red-700"
-                          onClick={() => reportRating(rating.id)}
-                          title="Reportar valoración"
-                        >
-                          <svg
-                            className={`w-5 h-5 ${
-                              rating.is_reported
-                                ? "fill-red-600 text-white"
-                                : "fill-black text-red-600"
-                            }`}
-                            fill="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm text-gray-600">
+                            {dateToShow}
+                          </span>
+                          <button
+                            className="p-1 text-red-600 hover:text-red-700"
+                            onClick={() => reportRating(rating.id)}
+                            title="Reportar valoración"
                           >
-                            <path
-                              fillRule="evenodd"
-                              d="M16,2 C16.265,2 16.52,2.105 16.707,2.293 L21.707,7.293 C21.895,7.48 22,7.735 22,8 L22,15 C22,15.234 21.918,15.46 21.768,15.64 L16.768,21.64 C16.578,21.868 16.297,22 16,22 L8,22 C7.735,22 7.48,21.895 7.293,21.707 L2.293,16.707 C2.105,16.52 2,16.265 2,16 L2,8 C2,7.735 2.105,7.48 2.293,7.293 L7.293,2.293 C7.48,2.105 7.735,2 8,2 L16,2 Z M15.586,4 L8.414,4 L4,8.414 L4,15.586 L8.414,20 L15.532,20 L20,14.638 L20,8.414 L15.586,4 Z M12,16 C12.552,16 13,16.448 13,17 C13,17.552 12.552,18 12,18 C11.448,18 11,17.552 11,17 C11,16.448 11.448,16 12,16 Z M12,6 C12.552,6 13,6.448 13,7 L13,13 C13,13.552 12.552,14 12,14 C11.448,14 11,13.552 11,13 L11,7 C11,6.448 11.448,6 12,6 Z"
-                            ></path>
-                          </svg>
-                        </button>
+                            <svg
+                              className={`w-5 h-5 ${
+                                rating.is_reported
+                                  ? "fill-red-600 text-white"
+                                  : "fill-black text-red-600"
+                              }`}
+                              fill="currentColor"
+                              viewBox="0 0 24 24"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M16,2 C16.265,2 16.52,2.105 16.707,2.293 L21.707,7.293 C21.895,7.48 22,7.735 22,8 L22,15 C22,15.234 21.918,15.46 21.768,15.64 L16.768,21.64 C16.578,21.868 16.297,22 16,22 L8,22 C7.735,22 7.48,21.895 7.293,21.707 L2.293,16.707 C2.105,16.52 2,16.265 2,16 L2,8 C2,7.735 2.105,7.48 2.293,7.293 L7.293,2.293 C7.48,2.105 7.735,2 8,2 L16,2 Z M15.586,4 L8.414,4 L4,8.414 L4,15.586 L8.414,20 L15.532,20 L20,14.638 L20,8.414 L15.586,4 Z M12,16 C12.552,16 13,16.448 13,17 C13,17.552 12.552,18 12,18 C11.448,18 11,17.552 11,17 C11,16.448 11.448,16 12,16 Z M12,6 C12.552,6 13,6.448 13,7 L13,13 C13,13.552 12.552,14 12,14 C11.448,14 11,13.552 11,13 L11,7 C11,6.448 11.448,6 12,6 Z"
+                              ></path>
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="font-semibold text-gray-700">
+                          {Number(rating.score).toFixed(1)}
+                        </span>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="20"
+                          height="20"
+                          style={{ marginBottom: "3px" }}
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="text-amber-500"
+                        >
+                          <path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z" />
+                        </svg>
+                      </div>
+                      <div className="mb-1">
+                        <span className="font-medium text-gray-700">
+                          Servicio:
+                        </span>{" "}
+                        <span className="text-gray-600">
+                          {rating.service_name}
+                        </span>
+                      </div>
+                      <div>
+                        <p className="text-gray-700 text-sm">
+                          {rating.comment}
+                        </p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="font-semibold text-gray-700">
-                        {Number(rating.score).toFixed(1)}
-                      </span>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        style={{ marginBottom: "3px" }}
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="text-amber-500"
-                      >
-                        <path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z" />
-                      </svg>
-                    </div>
-                    <div className="mb-1">
-                      <span className="font-medium text-gray-700">
-                        Servicio:
-                      </span>{" "}
-                      <span className="text-gray-600">
-                        {rating.service_name}
-                      </span>
-                    </div>
-                    <div>
-                      <p className="text-gray-700 text-sm">{rating.comment}</p>
-                    </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              {ratingsList.length === 0 && (
+                <div className="flex justify-center items-center h-full">
+                  <p className="text-gray-500">
+                    No hay valoraciones disponibles.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>

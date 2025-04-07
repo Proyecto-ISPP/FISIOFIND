@@ -157,8 +157,9 @@ const FisioProfile = () => {
 
   const [confirmRatingDelete, setConfirmRatingDelete] =
     useState<boolean>(false);
+  const [id, setId] = useState<number | null>(null);
   const [physioterapistId, setPhysioterapistId] = useState(null);
-
+  
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -169,7 +170,6 @@ const FisioProfile = () => {
         setDropdownOpen(false);
       }
     };
-
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, [dropdownOpen]);
@@ -230,7 +230,8 @@ const FisioProfile = () => {
           }
         );
         console.log("response", response.data);
-        setPhysioterapistId(response.data.physio.id);
+        setId(response.data.physio.id);
+
         setProfile({
           user: {
             dni: response.data.physio.user_data.dni,
