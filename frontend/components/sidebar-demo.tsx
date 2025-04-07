@@ -1,6 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Sidebar, SidebarBody, SidebarLink, useSidebar } from "@/components/ui/sidebar";
+import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faEdit
+} from '@fortawesome/free-solid-svg-icons';
 import {
   IconArrowLeft,
   IconSearch,
@@ -16,17 +20,20 @@ import { usePathname } from "next/navigation";
 import axios from "axios";
 import { getApiBaseUrl } from "@/utils/api";
 import { AnimatePresence, motion } from "framer-motion";
-import { cn } from "@/lib/utils";
 import Link from "next/link";
 
 export function SidebarDemo() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
+  const [isPinned, setIsPinned] = useState<boolean>(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const pathname = usePathname();
   const [urlPerfil, setUrlPerfil] = useState<string>("");
   const [isClient, setIsClient] = useState(false);
   const [token, setToken] = useState<string | null>(null);
+  const [userRole, setUserRole] = useState<string | null>(null);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
 
   useEffect(() => {
     setIsClient(true);
@@ -38,29 +45,62 @@ export function SidebarDemo() {
     window.location.href = "/"; // Redirect to home and refresh the page
   };
 
+  // Load pinned state from localStorage on initial render
+  useEffect(() => {
+    if (isClient) {
+      const storedPinnedState = localStorage.getItem("sidebarPinned");
+      if (storedPinnedState) {
+        setIsPinned(storedPinnedState === "true");
+      }
+    }
+  }, [isClient]);
+
+  // Handle pinning the sidebar
+  const handlePinToggle = () => {
+    const newPinnedState = !isPinned;
+    setIsPinned(newPinnedState);
+    localStorage.setItem("sidebarPinned", newPinnedState.toString());
+  };
+
+  // Modify sidebar behavior based on pinned state
+  useEffect(() => {
+    if (isPinned) {
+      setOpen(true);
+    }
+  }, [isPinned]);
+
   // Cada vez que cambia la ruta, revalidamos la existencia del token en localStorage
   useEffect(() => {
     if (isClient) {
       const storedToken = localStorage.getItem("token");
       setToken(storedToken);
-      setIsAuthenticated(!!token);
-      if (token) {
+      setIsAuthenticated(!!storedToken);
+      
+      if (storedToken) {
         axios
           .get(`${getApiBaseUrl()}/api/app_user/check-role/`, {
             headers: {
-              Authorization: "Bearer " + token,
+              Authorization: "Bearer " + storedToken,
             },
           })
           .then((response) => {
             const role = response.data.user_role;
+            setUserRole(role);
+            
             if (role === "patient") {
               setUrlPerfil("/patient-management/profile/");
             } else if (role === "physiotherapist") {
               setUrlPerfil("/physio-management/profile/");
             }
+            
+            if (role !== "physiotherapist" && pathname === "/questionnaires") {
+              window.location.href = "/";
+            }
           });
+      } else if (pathname === "/questionnaires") {
+        window.location.href = "/";
+        }
       }
-    }
   }, [pathname, isClient, token]);
 
   // Update the links array to separate public and private links
@@ -101,7 +141,16 @@ export function SidebarDemo() {
       icon: (
         <IconPhone className="text-[#1E5ACD] h-5 w-5 flex-shrink-0 mx-auto" />
       ),
-    }
+    },
+    ...(userRole === "physiotherapist" ? [
+      {
+        label: "Cuestionarios",
+        href: "/questionnaires",
+        icon: (
+          <FontAwesomeIcon icon={faEdit} className="text-[#8C4482] h-5 w-5 flex-shrink-0 mx-auto" />
+        ),
+      }
+    ] : []),
   ];
 
   const privateLinks = [
@@ -120,8 +169,8 @@ export function SidebarDemo() {
   };
 
   return (
-    <Sidebar open={open} setOpen={setOpen}>
-      {/* Mobile Menu Button - Only visible on mobile when menu is closed */}
+    <Sidebar open={open} setOpen={isPinned ? () => {} : setOpen}>
+    {/* Mobile Menu Button - Only visible on mobile when menu is closed */}
       <div className="md:hidden fixed top-4 left-4 z-50">
         {!isMobileMenuOpen && (
           <button 
@@ -133,7 +182,7 @@ export function SidebarDemo() {
         )}
       </div>
       
-      {/* Mobile Sidebar - Top bar overlay */}
+      {/* Mobile Sidebar */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
@@ -196,7 +245,7 @@ export function SidebarDemo() {
         )}
       </AnimatePresence>
       
-      {/* Desktop Sidebar - Keep original functionality */}
+      {/* Desktop Sidebar */}
       <SidebarBody className="flex flex-col h-full justify-between py-8 hidden md:flex">
         <div className="flex flex-col flex-1 overflow-y-auto scrollbar-hide overflow-x-hidden">
           <div className="mb-8">{open ? <Logo /> : <LogoIcon />}</div>
@@ -211,6 +260,25 @@ export function SidebarDemo() {
             }
           </div>
         </div>
+        
+        {/* Pin Sidebar Toggle - Only visible when sidebar is open */}
+        {open && (
+          <div className="mt-auto mb-4 px-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-600 font-medium">Fijar menú</span>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input 
+                  type="checkbox" 
+                  checked={isPinned} 
+                  onChange={handlePinToggle} 
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-500"></div>
+              </label>
+            </div>
+          </div>
+        )}
+        
         {isAuthenticated && (
           <div className="pt-2 pb-1 mt-auto cursor-pointer" onClick={handleLogout}>
             <SidebarLink

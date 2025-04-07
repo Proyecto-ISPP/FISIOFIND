@@ -22,10 +22,15 @@ urlpatterns = [
     path('api/videocall/', include('videocall.urls')),
     path('api/treatments/', include('treatments.urls')),
     path('api/guest_session/', include('guest_session.urls')),
+    path('api/questionnaires/', include('questionnaire.urls')),
     path('api/payments/', include('payment.urls')),
     path('api/ratings/', include('ratings.urls')),
     path('api/cloud/', include('files.urls')),
     path('api/appointment_ratings/', include('appointment_rating.urls')),
 ]
 
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+if settings.DEBUG:
+    # Serve profile photos
+    urlpatterns += static(settings.PROFILE_PHOTOS_URL, document_root=settings.PROFILE_PHOTOS_ROOT)
+    # Serve other media files
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

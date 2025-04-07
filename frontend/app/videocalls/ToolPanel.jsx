@@ -5,16 +5,21 @@ import styles from './Room.module.css';
 import Historial from './tools/Historial';
 import Modelo3D from './hooks/3DModel';
 import Plantillas from './tools/Templates';
-import Cuestionarios from './tools/Questionnaires';
+import QuestionnaireTool from './tools/QuestionnaireTool';
 
 const ToolPanel = ({
   selectedTool,
   activePainMap,
   handlePainMapSelect,
   sendPainMapToPatient,
-  partsColored, // Añadido para pasarlo a mapa dolor
-  sendWebSocketMessage, // Añadido para pasarlo a mapa dolor
-  userRole // Añadido para pasarlo a AnatomicalModel
+  partsColoredFront, // Añadido para pasarlo a mapa dolor
+  partsColoredBack, // Añadido para pasarlo a mapa dolor
+  sendWebSocketMessage,
+  userRole,
+  addChatMessage,
+  onCloseTool,
+  token,
+  questionnaires
 }) => {
   if (!selectedTool) return null;
 
@@ -29,11 +34,20 @@ const ToolPanel = ({
           activePainMap={activePainMap}
           handlePainMapSelect={handlePainMapSelect}
           sendPainMapToPatient={sendPainMapToPatient}
-          partsColored={partsColored}
+          partsColoredFront={partsColoredFront}
+          partsColoredBack={partsColoredBack}
           sendWebSocketMessage={sendWebSocketMessage}
         />
       )}
-      {selectedTool === 'cuestionarios' && <Cuestionarios />}
+      {selectedTool === 'cuestionarios' && (
+        <QuestionnaireTool
+          initialQuestionnaires={questionnaires}
+          sendWebSocketMessage={sendWebSocketMessage}
+          addChatMessage={addChatMessage}
+          onClose={onCloseTool}
+          token={token}
+        />
+      )}
     </div>
   );
 };

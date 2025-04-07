@@ -5,7 +5,7 @@ from .views import (
     ExerciseCreateView, ExerciseListView, ExerciseDetailView, ExerciseSearchView, ExerciseByAreaView,
     AssignExerciseToSessionView, UnassignExerciseFromSessionView, ExerciseListBySessionView,
     SeriesCreateView, SeriesDetailView, SeriesListByExerciseSessionView, SeriesDeleteView,
-    ExerciseLogCreateView, ExerciseLogListView, ExerciseLogDetailView
+    ExerciseLogCreateView, ExerciseLogListView, ExerciseLogDetailView, ExerciseUsageView
 )
 
 urlpatterns = [
@@ -49,4 +49,7 @@ urlpatterns = [
     path('exercise-logs/create/', ExerciseLogCreateView.as_view(), name='create_exercise_log'),
     path('exercise-sessions/<int:exercise_session_id>/logs/', ExerciseLogListView.as_view(), name='exercise_log_list'),
     path('exercise-logs/<int:pk>/', ExerciseLogDetailView.as_view(), name='exercise_log_detail'),
+    
+    # Uso de ejercicios
+    path('exercises/<int:exercise_id>/usage/', ExerciseUsageView.as_view(), name='exercise_usage'),
 ]

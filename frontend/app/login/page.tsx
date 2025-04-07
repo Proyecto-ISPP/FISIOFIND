@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, Suspense } from "react";
+import React, { useState, useCallback, Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import Image from "next/image";
@@ -217,8 +217,16 @@ const showAlert = (type: "success" | "error" | "info" | "warning", message: stri
   );
 }
 
-// Componente padre que envuelve en Suspense
 export default function LoginPaciente() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      router.replace("/restricted-access");
+    }
+  }, [router]);
+
   return (
     <Suspense fallback={<div className="text-center p-8">Cargando formulario...</div>}>
       <LoginPacienteForm />
