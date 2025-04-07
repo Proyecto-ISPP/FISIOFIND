@@ -127,7 +127,7 @@ class SeleniumScraper:
 def quitar_tildes(texto):
     return ''.join(c for c in unicodedata.normalize('NFD', texto) if unicodedata.category(c) != 'Mn')
 
-def quitar_solo_tildes_extremadura(texto):
+def quitar_solo_tildes(texto):
     # Normaliza el texto en forma NFD para separar las letras de sus marcas
     normalized = unicodedata.normalize('NFD', texto)
     result_chars = []
@@ -245,7 +245,7 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
             case "cantabria":
                 url = "https://colfisiocant.org/busqueda-profesionales/"
                 try:
-                    soup = scraper.obtener_colegiado(nombre, url, "//*[@id='tablepress-1_filter']/label/input")
+                    soup = scraper.obtener_colegiado(quitar_solo_tildes(nombre), url, "//*[@id='tablepress-1_filter']/label/input")
                     resultado = soup.find("tbody", class_="row-hover").tr
                     if resultado:
                         datos = [td.text.strip() for td in resultado.find_all("td")]
@@ -318,7 +318,7 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
                 url = "https://cofext.org/cms/colegiados.php"
                 try:
                     xpath = '//*[@id="example_filter"]/label/input'
-                    soup = scraper.obtener_colegiado(quitar_solo_tildes_extremadura(nombre), url, xpath)
+                    soup = scraper.obtener_colegiado(quitar_solo_tildes(nombre), url, xpath)
                     resultado = soup.find("tr", class_="odd")
                     if resultado:
                         datos = [td.text.strip() for td in resultado.find_all("td")]
