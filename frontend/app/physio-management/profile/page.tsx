@@ -1663,19 +1663,16 @@ const FisioProfile = () => {
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold mb-2">Ejercicios</h3>
-                  {physioterapistId && (
-                    <Link
-                      href={`/physio-management/${physioterapistId}/exercises`}
-                      passHref
+                  {id && (
+                    <Link href={`/physio-management/${id}/exercises`} passHref>
+                    <GradientButton
+                      variant="create"
+                      className="px-3 py-2 font-medium rounded-xl flex items-center gap-2"
                     >
-                      <GradientButton
-                        variant="create"
-                        className="px-3 py-2 font-medium rounded-xl flex items-center gap-2"
-                      >
-                        <BicepsFlexed className="w-4 h-4" /> Biblioteca de
-                        Ejercicios
-                      </GradientButton>
-                    </Link>
+                      <BicepsFlexed className="w-4 h-4" /> Biblioteca de
+                      Ejercicios
+                    </GradientButton>
+                  </Link>
                   )}
                 </div>
               </div>
