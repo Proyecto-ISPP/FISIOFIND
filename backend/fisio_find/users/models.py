@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from encrypted_fields.fields import EncryptedCharField
+from django.core.files.storage import FileSystemStorage
+from django.conf import settings
 
 ACCOUNT_STATUS_CHOICES = [
     ('ACTIVE', 'Active'),
@@ -36,13 +38,22 @@ AUTONOMIC_COMMUNITY_CHOICES = [
     ('COMUNIDAD VALENCIANA', 'Comunidad Valenciana')
 ]
 
+def validate_image_file(value):
+    # Check file size
+    if value.size > 5 * 1024 * 1024:  # 5MB
+        raise ValidationError('Las imágenes no peuden superar los 5MB')
+    
+    # Check file extension
+    ext = value.name.split('.')[-1].lower()
+    if ext not in ['jpg', 'jpeg', 'png']:
+        raise ValidationError('Solo imágenes en formato JPG, JPEG o PNG son permitidos')
 
 class AppUser(AbstractUser):
-    photo = models.ImageField(null=True, blank=True, upload_to='profile_photos/', verbose_name='Foto')
-    dni = EncryptedCharField(max_length=9, unique=True, verbose_name='DNI')
-    phone_number = models.CharField(max_length=9, verbose_name='Número de teléfono', null=True, blank=True)
-    postal_code = models.CharField(max_length=5, verbose_name='Código postal')
-    account_status = models.CharField(max_length=10, choices=ACCOUNT_STATUS_CHOICES, default='UNVERIFIED', verbose_name='Estado de la cuenta')
+    photo = models.ImageField(null=True, blank=True, verbose_name='Foto', upload_to='user_photos/', storage=FileSystemStorage(location=settings.PROFILE_PHOTOS_ROOT, base_url=settings.PROFILE_PHOTOS_URL))
+    dni = models.CharField(max_length=255, null=True, unique=True)
+    phone_number = models.CharField(max_length=9, null=True, blank=True)
+    postal_code = models.CharField(max_length=5)
+    account_status = models.CharField(max_length=10, choices=ACCOUNT_STATUS_CHOICES, default='UNVERIFIED')
     is_subscribed = models.BooleanField(default=True)
 
     def __str__(self):

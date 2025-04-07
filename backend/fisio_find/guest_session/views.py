@@ -1,5 +1,4 @@
 import base64
-from decimal import Decimal
 import json
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
@@ -7,9 +6,11 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import Q
 from users.models import Physiotherapist
-from users.models import Specialization 
+from users.models import Specialization
 from rest_framework.decorators import api_view, permission_classes
 import random
+from django.conf import settings
+import os
 
 
 class SearchPhysiotherapistView(APIView):
@@ -86,6 +87,7 @@ class PhysiotherapistsWithSpecializationView(APIView):
         except Specialization.DoesNotExist:
             return Response({"error": "Especialidad no encontrada"}, status=status.HTTP_404_NOT_FOUND)
 
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def advanced_search(request):
@@ -103,7 +105,10 @@ def advanced_search(request):
         filters &= Q(specializations__name__iexact=specialization)
 
     if gender and gender != 'indifferent':
-        filters &= Q(gender__iexact=gender[0])  # 'M' o 'F'
+        gender_map = {'male': 'M', 'female': 'F'}
+        gender_code = gender_map.get(gender, '')
+        if gender_code:
+            filters &= Q(gender__iexact=gender_code)  # 'M' o 'F'
 
     if postal_code:
         filters &= Q(user__postal_code__icontains=postal_code)
@@ -114,41 +119,80 @@ def advanced_search(request):
     # Obtener los fisioterapeutas con los filtros básicos
     physiotherapists = Physiotherapist.objects.filter(filters).distinct()
 
-    # Filtro por precio máximo
+    # Función auxiliar para calcular el precio medio (solo para serialización)
+    def get_average_price(services):
+        if not services:
+            return None
+        if isinstance(services, str):
+            try:
+                services = json.loads(services)
+            except json.JSONDecodeError:
+                return None
+
+        prices = []
+        for service_key, service_data in services.items():
+            if isinstance(service_data, dict) and 'price' in service_data:
+                try:
+                    price = float(service_data['price'])
+                    prices.append(price)
+                except (ValueError, TypeError):
+                    continue
+        return sum(prices) / len(prices) if prices else None
+
+    # Función auxiliar para verificar si hay algún servicio menor o igual a max_price
+    def has_service_below_price(services, max_price_value):
+        if not services:
+            return False
+        if isinstance(services, str):
+            try:
+                services = json.loads(services)
+            except json.JSONDecodeError:
+                return False
+
+        for service_key, service_data in services.items():
+            if isinstance(service_data, dict) and 'price' in service_data:
+                try:
+                    price = float(service_data['price'])
+                    if price <= max_price_value:
+                        return True
+                except (ValueError, TypeError):
+                    continue
+        return False
+
+    # Filtro por precio máximo (al menos un servicio menor o igual a max_price)
     if max_price:
         try:
             max_price_value = float(max_price)
-            physiotherapists = [
+            filtered_physios = [
                 physio for physio in physiotherapists
-                if any(
-                    float(service.get('price', float('inf'))) <= max_price_value
-                    for service in physio.services.values()
-                )
+                if has_service_below_price(physio.services, max_price_value)
             ]
+            physiotherapists = filtered_physios
         except (ValueError, TypeError):
             pass  # Ignora si max_price no es válido
 
     # Filtro por schedule (mañana, tarde, noche)
-    if schedule:
-        time_ranges = {
-            'mañana': (time_to_minutes('06:00'), time_to_minutes('14:00')),
-            'tarde': (time_to_minutes('14:00'), time_to_minutes('20:00')),
-            'noche': (time_to_minutes('20:00'), time_to_minutes('23:59'))
-        }
-        
-        if schedule in time_ranges:
-            req_start_min, req_end_min = time_ranges[schedule]
-            physiotherapists = [
-                physio for physio in physiotherapists
-                if has_availability_any_day(
-                    get_weekly_schedule(physio.schedule),
-                    req_start_min,
-                    req_end_min
-                )
-            ]
+    time_ranges = {
+        'mañana': (time_to_minutes('06:00'), time_to_minutes('14:00')),
+        'tarde': (time_to_minutes('14:00'), time_to_minutes('20:00')),
+        'noche': (time_to_minutes('20:00'), time_to_minutes('23:59'))
+    }
+
+    if schedule and schedule in time_ranges:
+        req_start_min, req_end_min = time_ranges[schedule]
+        filtered_physios = []
+        for physio in physiotherapists:
+            try:
+                weekly_schedule = get_weekly_schedule(physio.schedule)
+                if has_availability_any_day(weekly_schedule, req_start_min, req_end_min):
+                    filtered_physios.append(physio)
+            except Exception:
+                continue
+        physiotherapists = filtered_physios
 
     exact_matches = weighted_shuffle(physiotherapists)[:12]
 
+    # Lógica para sugerencias
     suggested_matches = []
     if not exact_matches and specialization:
         similar = Physiotherapist.objects.filter(
@@ -160,10 +204,7 @@ def advanced_search(request):
                 max_price_value = float(max_price)
                 similar = [
                     physio for physio in similar
-                    if any(
-                        float(service.get('price', float('inf'))) <= max_price_value
-                        for service in physio.services.values()
-                    )
+                    if has_service_below_price(physio.services, max_price_value)
                 ]
             except (ValueError, TypeError):
                 pass
@@ -179,21 +220,35 @@ def advanced_search(request):
             ]
         suggested_matches = weighted_shuffle(similar)[:12]
 
+    # Serialización con precio medio
     def serialize(physios):
         results = []
+        # Base URL del servidor (ajústala según tu configuración)
+        base_url = request.build_absolute_uri('/')[:-1]  # e.g., http://localhost:8000
+        
         for physio in physios:
             specializations = physio.specializations.all()
             specialization_names = [s.name for s in specializations]
-            
-            # Manejar el campo image
-            image_data = None
+
+            # Calcular precio medio
+            avg_price = get_average_price(physio.services)
+
+            # Manejar el campo image como URL completa
+            image_url = None
             if physio.user.photo:
                 if isinstance(physio.user.photo, str):
-                    image_data = physio.user.photo  # Asumir que es una URL
-                elif hasattr(physio.user.photo, 'read'):  # Es un archivo
-                    image_data = base64.b64encode(physio.user.photo.read()).decode('utf-8')
-                else:  # Datos binarios crudos
-                    image_data = base64.b64encode(physio.user.photo).decode('utf-8')
+                    # Si es una ruta relativa, construir la URL completa
+                    image_url = f"{base_url}{settings.MEDIA_URL}{physio.user.photo}"
+                elif hasattr(physio.user.photo, 'url'):
+                    # Si es un campo FileField, usar su URL
+                    image_url = f"{base_url}{physio.user.photo.url}"
+                elif hasattr(physio.user.photo, 'read'):
+                    # Si es un archivo, opcionalmente podrías seguir usando base64
+                    # Pero para consistencia, asumimos que está guardado en media/
+                    image_url = None  # O manejar esto de otra forma si es necesario
+                else:
+                    # Datos binarios crudos (menos común)
+                    image_url = None
 
             results.append({
                 'id': physio.id,
@@ -202,7 +257,8 @@ def advanced_search(request):
                 'gender': physio.gender,
                 'postalCode': physio.user.postal_code,
                 'rating': physio.rating_avg,
-                'image': image_data,
+                'price': avg_price,
+                'image': image_url,  # Ahora siempre es una URL completa o None
             })
         return results
 
@@ -223,8 +279,10 @@ def weighted_shuffle(physios):
             shuffled.append(physio)
     return shuffled
 
+
 def is_gold_physio(physio):
     return physio.plan and physio.plan.name == 'Gold'
+
 
 def time_to_minutes(time_str):
     """Convierte un string de tiempo HH:MM a minutos desde medianoche."""
@@ -236,6 +294,7 @@ def time_to_minutes(time_str):
     except (ValueError, TypeError):
         return 0  # Valor por defecto si la conversión falla
 
+
 def has_availability_any_day(weekly_schedule, req_start_min, req_end_min):
     """Verifica si hay disponibilidad en cualquier día que se solape con el rango solicitado."""
     for day_schedule in weekly_schedule.values():
@@ -244,7 +303,7 @@ def has_availability_any_day(weekly_schedule, req_start_min, req_end_min):
                 slot = slot[0]  # Toma el primer elemento de la lista
                 start_str = slot.get('start', '00:00')
                 end_str = slot.get('end', '00:00')
-                
+
                 # Si start y end están vacíos, asumir todo el día (00:00 - 23:59)
                 if not start_str and not end_str:
                     slot_start_min = time_to_minutes('00:00')  # 0 minutos
@@ -252,10 +311,11 @@ def has_availability_any_day(weekly_schedule, req_start_min, req_end_min):
                 else:
                     slot_start_min = time_to_minutes(start_str)
                     slot_end_min = time_to_minutes(end_str)
-                
+
                 if slot_start_min <= req_end_min and slot_end_min >= req_start_min:
                     return True
     return False
+
 
 def get_weekly_schedule(schedule):
     """Obtiene el weekly_schedule manejando tanto cadenas como diccionarios."""

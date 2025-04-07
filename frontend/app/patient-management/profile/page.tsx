@@ -3,12 +3,24 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { getApiBaseUrl } from "@/utils/api";
-import { Phone, Mail, MapPin, Calendar, FileText, Users, Camera, Save, Check, Lock, Film, Bell } from 'lucide-react';
+import {
+  Phone,
+  Mail,
+  MapPin,
+  Calendar,
+  FileText,
+  Users,
+  Camera,
+  Save,
+  Check,
+  Lock,
+  Film,
+  Bell,
+  Trash2
+} from "lucide-react";
 import { GradientButton } from "@/components/ui/gradient-button";
 import Link from "next/link";
 import SubscriptionSlider from "@/components/ui/SubscriptionSlider";
-
-const BASE_URL = `${getApiBaseUrl()}`;
 
 const getAuthToken = () => localStorage.getItem("token");
 
@@ -201,6 +213,19 @@ const PatientProfile = () => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Validate file size (5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setErrors({ photo: 'Las imágenes no pueden superar los 5MB' });
+        return;
+      }
+
+      // Validate file type
+      const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+      if (!validTypes.includes(file.type)) {
+        setErrors({ photo: 'Solo imágenes en formato JPG, JPEG o PNG son permitidos' });
+        return;
+      }
+
       const previewUrl = URL.createObjectURL(file);
 
       setProfile((prevProfile) => ({
@@ -214,6 +239,7 @@ const PatientProfile = () => {
       }));
 
       setSelectedFile(file);
+      setErrors({}); // Clear any previous errors
     }
   };
 
@@ -360,7 +386,7 @@ const PatientProfile = () => {
       return profile.user.preview;
     }
     if (profile?.user?.photo) {
-      return `${getApiBaseUrl()}/api/app_user${profile.user.photo}`;
+      return `${getApiBaseUrl()}${profile.user.photo}`;
     }
     return "/default_avatar.png";
   };
@@ -750,7 +776,7 @@ const PatientProfile = () => {
                   variant="danger"
                   onClick={() => setShowDeleteConfirmation(true)}
                   className="w-full"
-                >
+                > <Trash2 size={18} className="mr-2" />
                   Eliminar cuenta
                 </GradientButton>
 
