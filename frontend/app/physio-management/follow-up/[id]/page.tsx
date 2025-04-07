@@ -77,6 +77,7 @@ interface EvolutionDataByMetric {
 }
 
 const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const unwrappedParams = use(params as any);
   const { id } = unwrappedParams as {
     id: string;
