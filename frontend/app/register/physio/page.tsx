@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import Image from "next/image";
@@ -276,8 +276,16 @@ const StripePaymentForm = ({ amount, onPaymentSuccess }: StripePaymentFormProps)
 };
 
 const PhysioSignUpForm = () => {
+  
   const router = useRouter();
-  // currentStep: 1→2→3→4→5→6
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      router.replace("/restricted-access");
+    }
+  }, [router]);
+  
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [formData, setFormData] = useState<FormData>({
     username: "",
