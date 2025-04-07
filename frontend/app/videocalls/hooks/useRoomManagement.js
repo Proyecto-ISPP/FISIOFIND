@@ -73,7 +73,7 @@ const useRoomManagement = ({
       setShowModal(true);
       
       setTimeout(() => {
-        window.location.href = '/videocalls/end';
+        window.location.href = '/videocalls';
       }, 2000);
     }
   }, [onCallEndedMessage, closeConnection, cleanupMedia]);
