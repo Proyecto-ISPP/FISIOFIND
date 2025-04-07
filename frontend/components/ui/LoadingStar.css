@@ -1,0 +1,17 @@
+@keyframes pulse {
+    0% {
+      opacity: 0.5;
+      transform: scale(0.9);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    100% {
+      opacity: 0.5;
+      transform: scale(0.9);
+    }
+  }
+  .loading-star {
+    animation: pulse 1s infinite;
+  }

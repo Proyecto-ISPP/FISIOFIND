@@ -55,6 +55,7 @@ class AppUser(AbstractUser):
     phone_number = models.CharField(max_length=9, null=True, blank=True)
     postal_code = models.CharField(max_length=5)
     account_status = models.CharField(max_length=10, choices=ACCOUNT_STATUS_CHOICES, default='UNVERIFIED')
+    is_subscribed = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.username} - {self.email}"
@@ -128,6 +129,10 @@ class Physiotherapist(models.Model):
     # Campos para integración con Stripe
     stripe_subscription_id = models.CharField(max_length=255, blank=True, null=True, verbose_name='ID Stripe')
     subscription_status = models.CharField(max_length=20, default='pending', verbose_name='Estado de la suscripción')  # Valores: 'pending', 'active', 'canceled'
+    degree = models.CharField(max_length=255, blank=True, null=True)
+    university = models.CharField(max_length=255, blank=True, null=True)
+    experience = models.TextField(blank=True, null=True)
+    workplace = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.user.username} - {self.user.email}"
