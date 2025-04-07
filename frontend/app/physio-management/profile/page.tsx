@@ -10,6 +10,7 @@ import Link from "next/link";
 import styles from "@/components/ratings.module.css";
 import Alert from "@/components/ui/Alert";
 import ConfirmModal from "@/components/ui/ConfirmModal";
+import PhysioterapistRating from "@/components/ui/PhysioterapistRating";
 import SubscriptionSlider from "@/components/ui/SubscriptionSlider";
 
 
@@ -149,9 +150,9 @@ const FisioProfile = () => {
 
   const [confirmRatingDelete, setConfirmRatingDelete] =
     useState<boolean>(false);
-
   const [id, setId] = useState<number | null>(null);
-
+  const [physioterapistId, setPhysioterapistId] = useState(null);
+  
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -162,7 +163,6 @@ const FisioProfile = () => {
         setDropdownOpen(false);
       }
     };
-
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, [dropdownOpen]);
@@ -223,7 +223,6 @@ const FisioProfile = () => {
           }
         );
         console.log("response", response.data);
-
         setId(response.data.physio.id);
 
         setProfile({
@@ -1366,6 +1365,10 @@ const FisioProfile = () => {
           <h2 className="text-xl font-bold mb-2">{profile.user.username}</h2>
           <p className="text-blue-200 mb-4">Profesional</p>
 
+          {/* Sección de valoración general*/}
+
+          {id && <PhysioterapistRating physioterapistId={id} />}
+
           {/* Sección de horario */}
           <div className="w-full mt-4">
             <h3 className="text-lg font-semibold mb-2">Mi Horario</h3>
@@ -1653,7 +1656,8 @@ const FisioProfile = () => {
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold mb-2">Ejercicios</h3>
-                  <Link href={`/physio-management/${id}/exercises`} passHref>
+                  {id && (
+                    <Link href={`/physio-management/${id}/exercises`} passHref>
                     <GradientButton
                       variant="create"
                       className="px-3 py-2 font-medium rounded-xl flex items-center gap-2"
@@ -1662,6 +1666,7 @@ const FisioProfile = () => {
                       Ejercicios
                     </GradientButton>
                   </Link>
+                  )}
                 </div>
               </div>
 
