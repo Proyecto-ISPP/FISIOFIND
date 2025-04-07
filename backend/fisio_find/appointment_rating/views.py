@@ -7,6 +7,7 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 
 from appointment.models import Appointment
+from videocall.models import Room
 from .emailUtils import send_rating_email
 from .models import AppointmentRating
 from .serializers import AppointmentRatingSerializer
@@ -70,22 +71,38 @@ def get_appointment_rating(request, appointment_id):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@api_view(["GET"])
+@permission_classes([IsAuthenticated, IsPatient])
+def check_rating_by_room_code(request, room_code):
+    """
+    Verifica si la cita asociada a la sala con room_code ya tiene una valoración.
+    """
+    room = get_object_or_404(Room, code=room_code, patient=request.user.patient)
+    appointment = room.appointment
+    rating = AppointmentRating.objects.filter(appointment=appointment).first()
+    if rating:
+        serializer = AppointmentRatingSerializer(rating)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    else:
+        return Response({"rating_exists": False}, status=status.HTTP_200_OK)
+
+
 @api_view(["POST"])
 @permission_classes([IsPatient])
-def create_rating(request):
+def create_rating_by_room_code(request, room_code):
     """Permite a un paciente valorar a un fisioterapeuta solo si la cita está finalizada"""
-    appointment_id = request.data.get("appointment")
+   
+    # Verificar si la room existe y pertenece al usuario autenticado
+    room = get_object_or_404(
+        Room, code=room_code, patient=request.user.patient
+    )
+    
+    appointment_id = room.appointment.id
 
     # Verificar si la cita existe y pertenece al usuario autenticado
     appointment = get_object_or_404(
         Appointment, id=appointment_id, patient=request.user.patient
     )
-    # Solo se puede valorar si la cita está terminada
-    if appointment.status != "finished":
-        return Response(
-            {"error": "Solo puedes valorar citas finalizadas."},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
 
     # Verifica que la cita se completó hace menos de 7 días.
     if timezone.now() - appointment.end_time > timedelta(days=7):
@@ -101,6 +118,8 @@ def create_rating(request):
         return Response(
             {"error": "Ya has valorado esta cita."}, status=status.HTTP_400_BAD_REQUEST
         )
+        
+    request.data["appointment"] = appointment_id
 
     # Serializar y guardar la valoración
     serializer = AppointmentRatingSerializer(data=request.data)
