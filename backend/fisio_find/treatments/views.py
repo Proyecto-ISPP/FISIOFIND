@@ -793,6 +793,62 @@ class ExerciseByAreaView(APIView):
         ]
 
         return Response(response_data, status=status.HTTP_200_OK)
+
+# Add this new view to retrieve sessions and treatments for an exercise
+class ExerciseUsageView(APIView):
+    """
+    Vista para obtener las sesiones y tratamientos donde se usa un ejercicio específico.
+    """
+    permission_classes = [IsPhysiotherapist]
+    
+    def get(self, request, exercise_id):
+        try:
+            # Verify the exercise exists and belongs to the requesting physiotherapist
+            exercise = Exercise.objects.get(id=exercise_id)
+            if exercise.physiotherapist.user != request.user:
+                return Response(
+                    {'detail': 'No tiene permiso para ver este ejercicio'},
+                    status=status.HTTP_403_FORBIDDEN
+                )
+                
+            # Get all exercise sessions for this exercise
+            exercise_sessions = ExerciseSession.objects.filter(exercise=exercise)
+            
+            # Prepare the result data
+            usage_data = []
+            
+            for es in exercise_sessions:
+                session = es.session
+                treatment = session.treatment
+                
+                # Get series information for this exercise in this session
+                series_list = Series.objects.filter(exercise_session=es)
+                series_data = SeriesSerializer(series_list, many=True).data
+                
+                usage_data.append({
+                    'exercise_session_id': es.id,
+                    'session': {
+                        'id': session.id,
+                        'name': session.name or f"Sesión {session.id}",
+                        'day_of_week': session.day_of_week
+                    },
+                    'treatment': {
+                        'id': treatment.id,
+                        'patient_name': f"{treatment.patient.user.first_name} {treatment.patient.user.last_name}",
+                        'start_time': treatment.start_time,
+                        'end_time': treatment.end_time,
+                        'is_active': treatment.is_active
+                    },
+                    'series': series_data
+                })
+                
+            return Response(usage_data)
+            
+        except Exercise.DoesNotExist:
+            return Response(
+                {'detail': 'No se ha encontrado el ejercicio'},
+                status=status.HTTP_404_NOT_FOUND
+            )
     
 class AssignExerciseToSessionView(APIView):
     """
