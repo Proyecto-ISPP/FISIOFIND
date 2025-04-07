@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from encrypted_fields.fields import EncryptedCharField
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
+from django.core.exceptions import ValidationError
 
 ACCOUNT_STATUS_CHOICES = [
     ('ACTIVE', 'Active'),
