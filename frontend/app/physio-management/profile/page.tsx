@@ -2,16 +2,7 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import {
-  Camera,
-  Plus,
-  Trash2,
-  Edit,
-  Save,
-  StarIcon,
-  Film,
-  BicepsFlexed,
-} from "lucide-react";
+import { Camera, Plus, Trash2, Edit, Save, StarIcon, Film, Bell, BicepsFlexed } from 'lucide-react';
 import ScheduleCalendar from "@/components/ui/ScheduleCalendar";
 import { getApiBaseUrl } from "@/utils/api";
 import { GradientButton } from "@/components/ui/gradient-button";
@@ -20,6 +11,8 @@ import styles from "@/components/ratings.module.css";
 import Alert from "@/components/ui/Alert";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 import UpdatePasswordModal from "@/components/user-update-password-modal";
+import SubscriptionSlider from "@/components/ui/SubscriptionSlider";
+
 
 const getAuthToken = () => {
   return localStorage.getItem("token"); // Obtiene el token JWT
@@ -1761,26 +1754,43 @@ const FisioProfile = () => {
               )}
             </div>
 
-            <div>
-              <GradientButton
-                variant="edit"
-                className="mt-8 w-full py-4 px-6 bg-gradient-to-r from-[#1E5ACD] to-[#3a6fd8] text-white font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center"
-              >
-                <Save size={18} className="mr-2" />
-                Actualizar Perfil
-              </GradientButton>
-              <Link href="/physio-management/video" passHref>
-                <GradientButton
-                  variant="edit"
-                  className="w-full py-2 px-4 bg-gradient-to-r from-[#1E5ACD] to-[#3a6fd8] text-white font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center"
-                >
-                  <Film size={22} className="mr-2" />
-                  Subir vídeo
-                </GradientButton>
-              </Link>
-            </div>
-          </form>
-        </div>
+                        <div>
+                            <GradientButton
+                                variant="edit"
+                                className="mt-8 w-full py-4 px-6 bg-gradient-to-r from-[#1E5ACD] to-[#3a6fd8] text-white font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center"
+                            >
+                                <Save size={18} className="mr-2" />
+                                Actualizar Perfil
+                            </GradientButton>
+                            <Link href="/physio-management/video" passHref>
+                                <GradientButton
+                                    variant="edit"
+                                    className="w-full py-2 px-4 bg-gradient-to-r from-[#1E5ACD] to-[#3a6fd8] text-white font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center"
+                                >
+                                    <Film size={22} className="mr-2" />
+                                    Subir vídeo
+                                </GradientButton>
+                            </Link>
+                        </div>
+                        <div className="border-t border-gray-200 pt-5 mt-5">
+                <div className="mb-2">
+                  <div className="flex items-center mb-3 gap-2">
+                    <Bell size={16} className="text-gray-500 mr-1" />{" "}
+                    {/* Changed to gray */}
+                    <h3 className="text-base font-semibold text-gray-800">
+                      Preferencias de Notificaciones
+                    </h3>
+                  </div>
+                  <p className="text text-gray-600 mb-3">
+                    {" "}
+                    Configura si deseas recibir notificaciones sobre tus citas y
+                    actualizaciones.
+                  </p>
+                  <SubscriptionSlider />
+                </div>
+              </div>
+                    </form>
+                </div>
         {showUpdatePasswordModal && (
           <UpdatePasswordModal
             onClose={() => {

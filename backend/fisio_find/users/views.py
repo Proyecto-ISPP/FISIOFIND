@@ -22,10 +22,9 @@ from .permissions import (
     IsPatient,
     IsPhysiotherapist,
 )
-
-from users.util import check_service_json
-from .emailUtils import send_account_deletion_email
+from .emailUtils import send_registration_confirmation_email, send_account_deletion_email
 from django.core import signing
+from users.util import check_service_json
 
 
 class PatientProfileView(generics.RetrieveAPIView):
@@ -87,7 +86,6 @@ def patient_register_view(request):
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
 def verify_user_and_update_status(user_id):
     """
     Función para cambiar el estado del usuario a verified y devolver una Response.
@@ -110,8 +108,7 @@ def verify_user_and_update_status(user_id):
             "error": "Ocurrió un error al verificar el usuario.",
             "status": "error"
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
+    
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def verify_registration(request, token):

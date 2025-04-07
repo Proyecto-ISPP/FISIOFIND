@@ -1,11 +1,11 @@
-## 🚀 Changelog - 10.0.0
+## 🚀 Changelog - 7.0.0
 
 ### ✨ Features (0)
 
-### 🐛 Fixes (0)
-
+### 🐛 Fixes (1)
+- fix: eliminar linea de archivo .log (@Ramón Gavira)
 ### 📖 Documentation (0)
 
-### 🌀 Other Changes (1)
-- Update frontend/app/confirm-appointment/[token]/page.tsx (@Daniel Vela Camacho)
+### 🌀 Other Changes (0)
+
 ### 🔗 Pull Requests
