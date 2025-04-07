@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { getApiBaseUrl } from "@/utils/api";
 import { useRouter } from "next/navigation";
-import { use } from "react";
+import React, { use } from "react";
 
 type AreaChoice =
   | "NECK"
@@ -89,6 +89,8 @@ const ExercisesPage = ({
 }: {
   params: { id: string; sessionId: string };
 }) => {
+  
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const unwrappedParams = use(params as any);
   const { id, sessionId } = unwrappedParams as { id: string; sessionId: string };
 
