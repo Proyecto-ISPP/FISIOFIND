@@ -1389,6 +1389,15 @@ const FisioProfile = () => {
               Editar Horario
             </GradientButton>
           </div>
+          <div className="w-full mt-4">
+          <GradientButton
+              variant="edit"
+              className="px-6 py-2 font-medium rounded-xl flex items-center gap-2 mx-auto"
+              onClick={() => window.location.href = "/physio-management/balance"}
+            >
+              Consultar Saldo
+            </GradientButton>
+          </div>
 
           {/* Sección de valoración */}
           <div className="space-y-4 mt-8">
