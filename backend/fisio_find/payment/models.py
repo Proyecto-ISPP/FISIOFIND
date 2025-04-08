@@ -9,10 +9,12 @@ from encrypted_fields.fields import EncryptedCharField
 class Payment(models.Model):
     PAYMENT_STATUSES = (
         ('Not Paid', 'Not Paid'),
+        ('Not Captured', 'Not Captured'), 
         ('Paid', 'Paid'),
         ('Refunded', 'Refunded'),
         ('Canceled', 'Canceled'),
-        ('redeemed', 'redeemed'), #Pago cobrado por el fisioterapeuta
+        ('Redeemed', 'Redeemed'), #Pago cobrado por el fisioterapeuta
+        ('Completed', 'Completed'), 
         ('Not Captured', 'Not Captured'), #Pago no cobrado por el fisioterapeuta
     )
     appointment = models.OneToOneField(Appointment, on_delete=models.CASCADE, related_name='payment',verbose_name='Cita')

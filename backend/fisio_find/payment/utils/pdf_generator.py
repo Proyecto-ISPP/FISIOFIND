@@ -6,6 +6,12 @@ from reportlab.lib.units import inch
 from reportlab.platypus import Image
 from io import BytesIO
 from decimal import Decimal
+from reportlab.pdfgen import canvas
+import io
+from django.utils import timezone
+from reportlab.lib.pagesizes import A4
+
+
 
 def generate_invoice_pdf(payment):
     buffer = BytesIO()
@@ -114,3 +120,98 @@ def generate_invoice_pdf(payment):
     pdf = buffer.getvalue()
     buffer.close()
     return pdf
+
+
+
+class PaymentPhysioInvoicePDF:
+    def __init__(self, physiotherapist, iban, paid_payments, invoice_number):
+        self.physiotherapist = physiotherapist
+        self.iban = iban
+        self.paid_payments = paid_payments
+        self.invoice_number = invoice_number
+        self.buffer = io.BytesIO()
+        self.styles = getSampleStyleSheet()
+
+    def generate_pdf(self):
+        # Configurar el documento
+        doc = SimpleDocTemplate(
+            self.buffer,
+            pagesize=A4,
+            rightMargin=72,
+            leftMargin=72,
+            topMargin=72,
+            bottomMargin=72
+        )
+
+        # Elementos del PDF
+        elements = []
+
+        # Encabezado
+        header_data = [
+            ["FISIOFIND", f"Factura {self.invoice_number}"],
+            [self.physiotherapist, f"Fecha: {timezone.now().strftime('%d/%m/%Y')}"],
+            ["", f"IBAN: {self.iban}"]
+        ]
+        
+        header_table = Table(header_data, colWidths=[300, 200])
+        header_table.setStyle(TableStyle([
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 14),
+            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+            ('FONTSIZE', (0, 1), (-1, -1), 10),
+            ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
+            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+        ]))
+        elements.append(header_table)
+        elements.append(Paragraph("<br/><br/>", self.styles['Normal']))
+
+        # Tabla de citas
+        appointments_data = [["ID Pago", "ID Cita", "Fecha", "Importe (€)"]]  # Añadí ID Pago
+        total_amount = 0
+
+        for payment in self.paid_payments:
+            appointment = payment.appointment
+            appointments_data.append([
+                f"#{payment.id}",  # Añadí el ID del pago
+                f"#{appointment.id}",
+                appointment.start_time.strftime('%d/%m/%Y'),
+                f"{payment.amount:.2f}"
+            ])
+            total_amount += payment.amount
+
+        # Añadir fila de total
+        appointments_data.append(["", "", "TOTAL", f"{total_amount:.2f}"])
+
+        appointments_table = Table(appointments_data, colWidths=[80, 80, 200, 80])  # Ajusté los anchos
+        appointments_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 10),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -2), colors.white),
+            ('TEXTCOLOR', (0, 1), (-1, -2), colors.black),
+            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+            ('FONTSIZE', (0, 1), (-1, -1), 10),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+            ('BACKGROUND', (0, -1), (-1, -1), colors.lightgrey),
+            ('FONTNAME', (2, -1), (-1, -1), 'Helvetica-Bold'),
+        ]))
+        elements.append(appointments_table)
+
+        # Pie de página
+        def add_page_details(canvas, doc):
+            canvas.saveState()
+            canvas.setFont('Helvetica', 9)
+            canvas.drawString(72, 40, f"Factura emitida por {self.physiotherapist}")
+            canvas.drawString(72, 25, "Gracias por su confianza")
+            canvas.drawRightString(A4[0] - 72, 25, f"Página {doc.page}")
+            canvas.restoreState()
+
+        # Construir el PDF
+        doc.build(elements, onFirstPage=add_page_details, onLaterPages=add_page_details)
+        self.buffer.seek(0)
+        
+        return self.buffer
