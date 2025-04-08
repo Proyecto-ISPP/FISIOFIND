@@ -463,7 +463,8 @@ def get_physio_invoices(request):
         return Response(response_data, status=status.HTTP_200_OK)
 
     except Exception as e:
-        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        logging.error("An error occurred: %s", str(e), exc_info=True)
+        return Response({"error": "An internal error has occurred. Please try again later."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 @permission_classes([IsPhysiotherapist])
