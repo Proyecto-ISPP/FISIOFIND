@@ -134,8 +134,16 @@ useEffect(() => {
       chat.addChatMessage('Sistema', 'Cámara y micrófono inicializados correctamente');
       webSocket.connectWebSocket();
     } catch (err) {
-      console.error('Error durante la inicialización:', err);
-      webRTC.setErrorMessage(`Error de inicialización: ${err.message}`);
+      //console.error('Error durante la inicialización:', err);
+      //webRTC.setErrorMessage(`Error de inicialización: ${err.message}`);
+      if (err.name === 'NotAllowedError') {
+        webRTC.setErrorMessage('Permiso denegado para cámara o micrófono. Habilita los permisos en tu navegador.');
+      } else if (err.name === 'NotFoundError') {
+        console.log("Aqui estoy")
+        webRTC.setErrorMessage('No se encontró cámara o micrófono. Verifica la conexión de tus dispositivos.');
+      } else {
+        webRTC.setErrorMessage(`Error: ${err.message}`);
+      }
     }
   };
 
