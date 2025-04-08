@@ -10,6 +10,7 @@ import Link from "next/link";
 import styles from "@/components/ratings.module.css";
 import Alert from "@/components/ui/Alert";
 import ConfirmModal from "@/components/ui/ConfirmModal";
+import UpdatePasswordModal from "@/components/user-update-password-modal";
 import PhysioterapistRating from "@/components/ui/PhysioterapistRating";
 import SubscriptionSlider from "@/components/ui/SubscriptionSlider";
 
@@ -97,6 +98,7 @@ const FisioProfile = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
+  const [showUpdatePasswordModal, setShowUpdatePasswordModal] = useState(false);
   const [schedule, setSchedule] = useState({
     exceptions: {},
     appointments: [],
@@ -356,6 +358,39 @@ const FisioProfile = () => {
       } finally {
         setLoading(false);
       }
+    }
+  };
+
+  const changePasswordSendToApi = async (
+    oldPassword: string,
+    newPassword: string,
+  ): Promise<number | null> => {
+    try {
+      // Preparar el servicio en el formato que espera el backend
+      const passwordsForBackend = {
+        old_password: oldPassword,
+        new_password: newPassword,
+      };
+
+      const response = await axios.post(
+        `${getApiBaseUrl()}/api/app_user/change_password/`,
+        passwordsForBackend,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setShowUpdatePasswordModal(false)
+      showAlert("success", "Contraseña actualizada correctamente");
+      return response.data;
+    } catch (error: unknown) {
+      console.log("Error al añadir cambiar la contraseña:", error);
+      if (axios.isAxiosError(error) && error.response) {
+        console.log("Respuesta de error del backend:", error.response.data);
+        if (error.response.data.detail) {
+          showAlert("error", `${error.response.data.detail}`);
+        }
+      } else {
+        showAlert("error", "Error al cambiar contraseña.");
+      }
+      return null;
     }
   };
 
@@ -1597,6 +1632,16 @@ const FisioProfile = () => {
                 )}
               </div>
             </div>
+            <GradientButton
+                    variant="create"
+                    className="px-3 py-2 font-medium rounded-xl flex items-center gap-2"
+                    onClick={(e) => {
+                      e.preventDefault(); // Esto evita que se envíe el formulario
+                      setShowUpdatePasswordModal(true);
+                    }}
+                  >
+                    <Plus className="w-4 h-4" /> Actualizar contraseña
+                  </GradientButton>
 
             {/* Desplegable de especializaciones */}
             <div className="space-y-2">
@@ -1860,7 +1905,15 @@ const FisioProfile = () => {
               </div>
                     </form>
                 </div>
-
+        {showUpdatePasswordModal && (
+          <UpdatePasswordModal
+            onClose={() => {
+              setShowUpdatePasswordModal(false);
+            }}
+            onSave={changePasswordSendToApi}
+            showAlert={showAlert}
+          />
+        )}
 
         {/* Modal para añadir/editar servicios */}
         {showServiceModal && (

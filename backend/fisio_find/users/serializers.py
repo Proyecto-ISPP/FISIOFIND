@@ -139,15 +139,25 @@ class PatientSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"username": "El nombre de usuario es obligatorio."})
         if not user_data.get('email'):
             raise serializers.ValidationError({"email": "El email es obligatorio."})
+
+        """
+        if not user_data.get('dni'):
+            raise serializers.ValidationError({"dni": "El DNI es obligatorio."})
+        """
+
         if not data.get('gender'):
             raise serializers.ValidationError({"gender": "El género es obligatorio."})
+        """
         if not data.get('birth_date'):
             raise serializers.ValidationError({"birth_date": "La fecha de nacimiento es obligatoria."})
+        """
 
         return data
 
     def update(self, instance, validated_data):
-        """Impide la modificación del DNI y actualiza los demás datos"""
+        """Impide la modificación del DNI, fecha de nacimiento y status de la cuenta 
+            y actualiza los demás datos
+        """
         user_data = validated_data.pop('user', None)
         user_instance = instance.user
 
@@ -157,6 +167,9 @@ class PatientSerializer(serializers.ModelSerializer):
 
         if 'birth_date' in validated_data:
             validated_data.pop('birth_date', None)
+        
+        if 'account_status' in validated_data:
+            validated_data.pop('account_status', None)
 
         # Si hay datos de usuario, actualizar solo los campos permitidos
         if user_data:

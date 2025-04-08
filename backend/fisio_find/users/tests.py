@@ -16,6 +16,63 @@ from datetime import datetime
 from rest_framework import serializers
 import stripe
 from users.models import validate_unique_DNI, delete_DNI_from_encryptedvalues,add_dni_to_encryptedvalues
+from rest_framework import status
+
+class ChangePasswordTests(APITestCase):
+    def setUp(self):
+        self.user = AppUser.objects.create_user(
+            username="testuser",
+            email="existing@example.com",
+            password="Test1234",
+            dni="11111111A",
+            phone_number="611111111",
+            postal_code="28001"
+        )
+        self.url = reverse('change_password')
+
+    def authenticate(self):
+        response = self.client.post(reverse('login'), {
+            'username': 'testuser',
+            'password': 'Test1234'
+        })
+        self.assertEqual(response.status_code, 200)
+        token = response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+    def test_change_password_successfully(self):
+        self.authenticate()
+        response = self.client.post(self.url, {
+            'old_password': 'Test1234',
+            'new_password': 'NewSecurePass456'
+        })
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+
+        # Verificamos que la contraseña está cifrada y que la nueva es válida
+        self.assertNotEqual(self.user.password, 'NewSecurePass456')
+        self.assertTrue(self.user.check_password('NewSecurePass456'))
+
+    def test_change_password_with_wrong_old_password(self):
+        self.authenticate()
+        response = self.client.post(self.url, {
+            'old_password': 'WrongPassword',
+            'new_password': 'NewSecurePass456'
+        })
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password('Test1234'))
+
+    def test_change_password_requires_authentication(self):
+        response = self.client.post(self.url, {
+            'old_password': 'Test1234',
+            'new_password': 'NewSecurePass456'
+        })
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
 
 class EncryptedValuesTestCase(TestCase):
     def test_validate_unique_dni_returns_false_if_not_exists(self):
@@ -97,6 +154,7 @@ class EncryptedValuesTestCase(TestCase):
 
         # Debe haberse eliminado también el objeto EncryptedValues
         self.assertEqual(EncryptedValues.objects.count(), 0)
+
 
 
 def get_fake_image(name="photo.jpg"):
