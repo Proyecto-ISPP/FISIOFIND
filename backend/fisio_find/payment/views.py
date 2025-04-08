@@ -8,10 +8,13 @@ from .serializers import PaymentSerializer
 from appointment.models import Appointment
 from django.utils import timezone
 from users.permissions import IsPatient, IsPhysiotherapist
-from .utils.pdf_generator import generate_invoice_pdf
+from .utils.pdf_generator import PaymentPhysioInvoicePDF, generate_invoice_pdf
 from django.http import HttpResponse, JsonResponse
 from django.db.models import Sum
 import logging
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+from django.http import FileResponse
 
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -135,11 +138,6 @@ def cancel_payment_patient(payment_id):
         appointment = payment.appointment
         now = timezone.now()
 
-        # No se puede cancelar si la cita ya pasó
-        if now > appointment.start_time:
-            return Response({'error': 'The appointment has already passed'},
-                            status=status.HTTP_400_BAD_REQUEST)
-
         # Caso 1: Pago no realizado antes de las 48 horas antes de la cita
         if payment.status == 'Not Paid' and now < payment.payment_deadline:
             if payment.stripe_payment_intent_id:
@@ -152,30 +150,30 @@ def cancel_payment_patient(payment_id):
             return Response({'message': 'Appointment canceled without charge'}, status=status.HTTP_200_OK)
 
         # Caso 2: Pago realizado y antes de las 48 horas antes de la cita
-        if payment.status == 'Paid' and now < payment.payment_deadline:
-            payment_intent = stripe.PaymentIntent.retrieve(
-                payment.stripe_payment_intent_id)
-            if payment_intent['status'] != 'succeeded':
-                return Response({'error': 'Payment cannot be refunded because it was not completed'},
-                                status=status.HTTP_400_BAD_REQUEST)
+        # if payment.status == 'Paid' and now < payment.payment_deadline:
+        #     payment_intent = stripe.PaymentIntent.retrieve(
+        #         payment.stripe_payment_intent_id)
+        #     if payment_intent['status'] != 'succeeded':
+        #         return Response({'error': 'Payment cannot be refunded because it was not completed'},
+        #                         status=status.HTTP_400_BAD_REQUEST)
 
-            refund = stripe.Refund.create(
-                payment_intent=payment.stripe_payment_intent_id)
-            if refund['status'] == 'succeeded':
-                payment.status = 'Refunded'
-                payment.payment_date = now
-                payment.save()
-                appointment.status = 'Canceled'
-                appointment.save()
-                return Response({'message': 'Payment refunded and appointment canceled'},
-                                status=status.HTTP_200_OK)
+        #     refund = stripe.Refund.create(
+        #         payment_intent=payment.stripe_payment_intent_id)
+        #     if refund['status'] == 'succeeded':
+        #         payment.status = 'Refunded'
+        #         payment.payment_date = now
+        #         payment.save()
+        #         appointment.status = 'Canceled'
+        #         appointment.save()
+        #         return Response({'message': 'Payment refunded and appointment canceled'},
+        #                         status=status.HTTP_200_OK)
 
-        # Caso 3: Pago realizado pero dentro de las 48 horas antes de la cita
-        if payment.status == 'Paid' and now > payment.payment_deadline:
+        # Caso 2: Pago realizado pero dentro de las 48 horas antes de la cita
+        if payment.status == 'Not Captured' and now > payment.payment_deadline:
             return Response({'error': 'Payment cannot be refunded within 48 hours of the appointment'},
                             status=status.HTTP_400_BAD_REQUEST)
 
-        # Caso 4: Pago ya cancelado o reembolsado
+        # Caso 3: Pago ya cancelado o reembolsado
         if payment.status in ['Canceled', 'Refunded']:
             return Response({'error': 'Payment has already been canceled or refunded'},
                             status=status.HTTP_400_BAD_REQUEST)
@@ -396,27 +394,170 @@ def invoice_pdf_view(request):
 @api_view(['GET'])
 @permission_classes([IsPhysiotherapist])
 def get_physio_invoices(request):
-    physiotherapist = request.user.physio
-    my_appointments = Appointment.objects.filter(physiotherapist=physiotherapist)
-    my_payments = Payment.objects.filter(appointment__in=my_appointments)
-    serializer = PaymentSerializer(my_payments, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-#obtener dinero acumulado de todas las payment pagadas por el fisioterapeuta
-@api_view(['GET'])
-@permission_classes([IsPhysiotherapist])
-def total_money(request):
-    physiotherapist = request.user.physio
-    
-    my_appointments = Appointment.objects.filter(physiotherapist=physiotherapist)
     try:
-        total = Payment.objects.filter(appointment__in=my_appointments, status='Paid').aggregate(Sum('amount'))['amount__sum']
-        if total is None:
-            total = 0
-        return Response({'total': total}, status=status.HTTP_200_OK)
+        if not hasattr(request.user, 'physio'):
+            return Response({"error": "Usuario no es fisioterapeuta"}, status=status.HTTP_403_FORBIDDEN)
+
+        physiotherapist = request.user.physio
+        my_appointments = Appointment.objects.filter(physiotherapist=physiotherapist)
+        my_payments = Payment.objects.filter(appointment__in=my_appointments)
+
+        today = timezone.now()
+
+        not_paid_payments = [
+            payment for payment in my_payments
+            if payment.status == 'Not Paid'
+        ]
+        paid_payments = [
+            payment for payment in my_payments
+            if payment.status == 'Paid'
+        ]
+        redeemed_payments = [
+            payment for payment in my_payments
+            if payment.status == 'Redeemed' or payment.status == 'Completed'
+        ]
+
+        monthly_stats = []
+        for i in range(12):
+            target_date = today - relativedelta(months=i)
+            month = target_date.strftime("%Y-%m")
+            month_earnings = my_payments.filter(
+                status__in=['Redeemed', 'Completed'],
+                payment_date__month=target_date.month,
+                payment_date__year=target_date.year
+            ).aggregate(total_earnings=Sum('amount'))['total_earnings'] or 0
+            month_appointments = my_appointments.filter(
+                start_time__month=target_date.month,
+                start_time__year=target_date.year
+            ).count()
+            monthly_stats.append({
+                "month": month,
+                "total_earnings": float(month_earnings),
+                "appointment_count": month_appointments
+            })
+        monthly_stats = monthly_stats[::-1]
+
+        total_earned = sum(payment.amount for payment in redeemed_payments)
+        total_pending = sum(payment.amount for payment in not_paid_payments) + sum(payment.amount for payment in paid_payments)
+        total_appointments = my_appointments.count()
+        payment_rate = total_earned / (total_earned + total_pending) if (total_earned + total_pending) > 0 else 0
+
+        response_data = {
+            "not_paid_payments": PaymentSerializer(not_paid_payments, many=True).data,
+            "paid_payments": PaymentSerializer(paid_payments, many=True).data,
+            "redeemed_payments": PaymentSerializer(redeemed_payments, many=True).data,
+            "monthly_stats": monthly_stats,
+            "overall_stats": {
+                "total_earned": float(total_earned),
+                "total_pending": float(total_pending),
+                "total_appointments": total_appointments,
+                "payment_rate": payment_rate
+            }
+        }
+
+        return Response(response_data, status=status.HTTP_200_OK)
+
     except Exception as e:
-        return Response({'error': 'An internal error has occurred. Please try again later.'}, status=status.HTTP_400_BAD_REQUEST)
+        logging.error("An error occurred: %s", str(e), exc_info=True)
+        return Response({"error": "An internal error has occurred. Please try again later."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['POST'])
+@permission_classes([IsPhysiotherapist])
+def redeem_physio_payments(request):
+    try:
+        if not hasattr(request.user, 'physio'):
+            return Response({"error": "Usuario no es fisioterapeuta"}, status=status.HTTP_403_FORBIDDEN)
+
+        physiotherapist = request.user.physio
+        my_appointments = Appointment.objects.filter(physiotherapist=physiotherapist)
+        paid_payments = Payment.objects.filter(appointment__in=my_appointments, status='Paid')
+
+        if not paid_payments.exists():
+            return Response({"message": "No hay pagos pendientes de reclamar"}, status=status.HTTP200_OK)
+
+        # Cambiar estado a "Redeemed"
+        updated_count = paid_payments.update(status='Redeemed', payment_date=timezone.now())
+        
+        # Generar factura
+        total_amount = paid_payments.aggregate(total=Sum('amount'))['total'] or 0
+
+        return Response({
+            "message": f"{updated_count} pagos reclamados exitosamente",
+        }, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['POST'])
+@permission_classes([IsPhysiotherapist])
+def collect_payments(request):
+    try:
+        if not hasattr(request.user, 'physio'):
+            return Response({"error": "Usuario no es fisioterapeuta"}, status=status.HTTP_403_FORBIDDEN)
+
+        physiotherapist = request.user.physio
+        my_appointments = Appointment.objects.filter(physiotherapist=physiotherapist)
+        
+        # Verificar si ya existen pagos Redeemed
+        redeemed_payments = Payment.objects.filter(
+            appointment__in=my_appointments,
+            status='Redeemed'
+        )
+        if redeemed_payments.exists():
+            return Response({
+                "error": "No se pueden reclamar pagos porque ya existen pagos redimidos"
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Obtener pagos en estado Paid
+        paid_payments = Payment.objects.filter(
+            appointment__in=my_appointments,
+            status='Paid'
+        )
+        
+        if not paid_payments.exists():
+            return Response({
+                "message": "No hay pagos pendientes de reclamar"
+            }, status=status.HTTP_200_OK)
+
+        # Obtener IBAN del request
+        iban = request.data.get('iban')
+        if not iban:
+            return Response({
+                "error": "Se requiere un IBAN para procesar el cobro"
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Generar invoice_number basado en los IDs de los pagos
+        payment_ids = [str(payment.id) for payment in paid_payments]
+        invoice_number = f"{timezone.now().strftime('%Y')}-{'-'.join(payment_ids)}"
+
+        # Generar PDF usando la clase PaymentPhysioInvoicePDF
+        pdf_generator = PaymentPhysioInvoicePDF(
+            physiotherapist=physiotherapist, 
+            iban=iban,
+            paid_payments=paid_payments,
+            invoice_number=invoice_number
+        )
+        buffer = pdf_generator.generate_pdf()
+
+        # Actualizar todos los pagos a Redeemed
+        updated_count = paid_payments.update(
+            status='Redeemed',
+            payment_date=timezone.now()
+        )
+
+        # Devolver respuesta con el PDF
+        response = FileResponse(
+            buffer,
+            as_attachment=True,
+            filename=f"factura_pagos_{invoice_number}.pdf"
+        )
+        
+        response['X-Message'] = f"{updated_count} pagos reclamados exitosamente"
+        
+        return response
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 #generar un SetupIntent para almacenar el método de pago sin cobrarlo de inmediato
 def create_payment_setup(appointment_id, amount, user):

@@ -119,7 +119,7 @@ const PhysiotherapistModal = ({ physio, isOpen, onClose, renderStars }: Physioth
             }}
             className="mt-6 w-full py-3 bg-gradient-to-r from-[#65C2C9] to-[#65C2C9] hover:from-[#05918F] hover:to-[#05918F] text-white rounded-full font-medium shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1"
           >
-            Confirmar cita
+            Reservar cita
           </button>
         </div>
       </div>

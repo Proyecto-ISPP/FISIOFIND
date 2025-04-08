@@ -26,6 +26,7 @@ urlpatterns = [
     path('api/payments/', include('payment.urls')),
     path('api/ratings/', include('ratings.urls')),
     path('api/cloud/', include('files.urls')),
+    path('api/appointment_ratings/', include('appointment_rating.urls')),
 ]
 
 if settings.DEBUG:

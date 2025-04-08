@@ -2,16 +2,7 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import {
-  Camera,
-  Plus,
-  Trash2,
-  Edit,
-  Save,
-  StarIcon,
-  Film,
-  BicepsFlexed,
-} from "lucide-react";
+import { Camera, Plus, Trash2, Edit, Save, StarIcon, Film, Bell, BicepsFlexed, Lock } from 'lucide-react';
 import ScheduleCalendar from "@/components/ui/ScheduleCalendar";
 import { getApiBaseUrl } from "@/utils/api";
 import { GradientButton } from "@/components/ui/gradient-button";
@@ -19,6 +10,10 @@ import Link from "next/link";
 import styles from "@/components/ratings.module.css";
 import Alert from "@/components/ui/Alert";
 import ConfirmModal from "@/components/ui/ConfirmModal";
+import UpdatePasswordModal from "@/components/user-update-password-modal";
+import PhysioterapistRating from "@/components/ui/PhysioterapistRating";
+import SubscriptionSlider from "@/components/ui/SubscriptionSlider";
+
 
 const getAuthToken = () => {
   return localStorage.getItem("token"); // Obtiene el token JWT
@@ -50,29 +45,33 @@ const FisioProfile = () => {
     custom_questionnaire?: Questionary;
   }
 
-  const [profile, setProfile] = useState({
-    user: {
-      dni: "",
-      email: "",
-      first_name: "",
-      last_name: "",
-      phone_number: "",
-      photo: "",
-      postal_code: "",
-      user_id: "",
-      username: "",
-    },
-    autonomic_community: "",
-    bio: "",
-    birth_date: "",
-    collegiate_number: "",
-    gender: "",
-    rating_avg: "",
-    schedule: "",
-    specializations: "",
-    services: [] as Service[],
-    plan: "",
-  });
+    const [profile, setProfile] = useState({
+        user: {
+            dni: "",
+            email: "",
+            first_name: "",
+            last_name: "",
+            phone_number: "",
+            photo: "",
+            postal_code: "",
+            user_id: "",
+            username: "",
+        },
+        autonomic_community: "",
+        bio: "",
+        birth_date: "",
+        collegiate_number: "",
+        gender: "",
+        rating_avg: "",
+        schedule: "",
+        specializations: "",
+        services: [] as Service[],
+        plan: "",
+        degree: "",
+        university:"",
+        experience: "",
+        workplace:""
+    });
 
   const [editingServiceIndex, setEditingServiceIndex] = useState<number | null>(
     null
@@ -99,6 +98,7 @@ const FisioProfile = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
+  const [showUpdatePasswordModal, setShowUpdatePasswordModal] = useState(false);
   const [schedule, setSchedule] = useState({
     exceptions: {},
     appointments: [],
@@ -156,9 +156,9 @@ const FisioProfile = () => {
 
   const [confirmRatingDelete, setConfirmRatingDelete] =
     useState<boolean>(false);
-
   const [id, setId] = useState<number | null>(null);
-
+  const [physioterapistId, setPhysioterapistId] = useState(null);
+  
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -169,7 +169,6 @@ const FisioProfile = () => {
         setDropdownOpen(false);
       }
     };
-
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, [dropdownOpen]);
@@ -230,47 +229,66 @@ const FisioProfile = () => {
           }
         );
         console.log("response", response.data);
-
         setId(response.data.physio.id);
 
-        setProfile({
-          user: {
-            dni: response.data.physio.user_data.dni,
-            email: response.data.physio.user_data.email,
-            first_name: response.data.physio.user_data.first_name,
-            last_name: response.data.physio.user_data.last_name,
-            phone_number: response.data.physio.user_data.phone_number,
-            photo: response.data.physio.user_data.photo,
-            postal_code: response.data.physio.user_data.postal_code,
-            user_id: response.data.physio.user_data.user_id,
-            username: response.data.physio.user_data.username,
-          },
-          autonomic_community: response.data.physio.autonomic_community,
-          bio: response.data.physio.bio,
-          birth_date: response.data.physio.birth_date,
-          collegiate_number: response.data.physio.collegiate_number,
-          gender: response.data.physio.gender,
-          rating_avg: response.data.physio.rating_avg,
-          schedule: response.data.physio.schedule,
-          specializations: response.data.physio.specializations,
-          services: [],
-          plan: response.data.physio.plan,
-        });
-        try {
-          let parsedServices = [];
-          // Comprobar si los servicios son un string JSON o un array o un objeto
-          if (typeof response.data.physio.services === "string") {
-            try {
-              parsedServices = JSON.parse(response.data.physio.services);
-            } catch (e) {
-              console.error("Error al parsear los servicios:", e);
-            }
-          } else if (Array.isArray(response.data.physio.services)) {
-            parsedServices = response.data.physio.services;
-          } else if (typeof response.data.physio.services === "object") {
-            // Si es un objeto con claves (como en el ejemplo)
-            parsedServices = response.data.physio.services;
-          }
+                setProfile({
+                    user: {
+                        dni: response.data.physio.user_data.dni,
+                        email: response.data.physio.user_data.email,
+                        first_name: response.data.physio.user_data.first_name,
+                        last_name: response.data.physio.user_data.last_name,
+                        phone_number: response.data.physio.user_data.phone_number,
+                        photo: response.data.physio.user_data.photo,
+                        postal_code: response.data.physio.user_data.postal_code,
+                        user_id: response.data.physio.user_data.user_id,
+                        username: response.data.physio.user_data.username,
+                    },
+                    autonomic_community: response.data.physio.autonomic_community,
+                    bio: response.data.physio.bio,
+                    birth_date: response.data.physio.birth_date,
+                    collegiate_number: response.data.physio.collegiate_number,
+                    gender: response.data.physio.gender,
+                    rating_avg: response.data.physio.rating_avg,
+                    schedule: response.data.physio.schedule,
+                    specializations: response.data.physio.specializations,
+                    services: [],
+                    plan: response.data.physio.plan,
+                    degree: response.data.physio.degree,
+                    university: response.data.physio.university,
+                    experience: response.data.physio.experience,
+                    workplace: response.data.physio.workplace,
+                });
+
+                // Verificar si faltan datos profesionales importantes
+                const missingFields = [];
+                if (!response.data.physio.degree) missingFields.push("titulación");
+                if (!response.data.physio.university) missingFields.push("universidad");
+                if (!response.data.physio.experience) missingFields.push("experiencia");
+                if (!response.data.physio.workplace) missingFields.push("centro de trabajo");
+        
+                // Mostrar alerta si faltan campos
+                if (missingFields.length > 0) {
+                  showAlert(
+                    "warning", 
+                    `Tu perfil profesional está incompleto. Por favor, completa los campos de ${missingFields.join(", ")} para mejorar tu visibilidad.`
+                );
+                }
+
+                try {
+                    let parsedServices = [];
+                    // Comprobar si los servicios son un string JSON o un array o un objeto
+                    if (typeof response.data.physio.services === 'string') {
+                        try {
+                            parsedServices = JSON.parse(response.data.physio.services);
+                        } catch (e) {
+                            console.error("Error al parsear los servicios:", e);
+                        }
+                    } else if (Array.isArray(response.data.physio.services)) {
+                        parsedServices = response.data.physio.services;
+                    } else if (typeof response.data.physio.services === 'object') {
+                        // Si es un objeto con claves (como en el ejemplo)
+                        parsedServices = response.data.physio.services;
+                    }
 
           // Procesar los servicios dependiendo de su formato
           let serviceList: Service[] = [];
@@ -340,6 +358,39 @@ const FisioProfile = () => {
       } finally {
         setLoading(false);
       }
+    }
+  };
+
+  const changePasswordSendToApi = async (
+    oldPassword: string,
+    newPassword: string,
+  ): Promise<number | null> => {
+    try {
+      // Preparar el servicio en el formato que espera el backend
+      const passwordsForBackend = {
+        old_password: oldPassword,
+        new_password: newPassword,
+      };
+
+      const response = await axios.post(
+        `${getApiBaseUrl()}/api/app_user/change_password/`,
+        passwordsForBackend,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setShowUpdatePasswordModal(false)
+      showAlert("success", "Contraseña actualizada correctamente");
+      return response.data;
+    } catch (error: unknown) {
+      console.log("Error al añadir cambiar la contraseña:", error);
+      if (axios.isAxiosError(error) && error.response) {
+        console.log("Respuesta de error del backend:", error.response.data);
+        if (error.response.data.detail) {
+          showAlert("error", `${error.response.data.detail}`);
+        }
+      } else {
+        showAlert("error", "Error al cambiar contraseña.");
+      }
+      return null;
     }
   };
 
@@ -617,6 +668,26 @@ const FisioProfile = () => {
         // Only validate max length if bio has content
         if (value && value.length > 500) error = "Máximo 500 caracteres.";
         break;
+      case "degree":
+        if (!value) error = "La titulación es obligatoria.";
+        else if (value.length < 10) error = "Se requiere un mínimo de 10 caracteres.";
+        else if (value.length > 100) error = "Máximo 100 caracteres.";
+        break;
+      case "university":
+        if (!value) error = "La universidad es obligatoria.";
+        else if (value.length < 10) error = "Se requiere un mínimo de 10 caracteres.";
+        else if (value.length > 100) error = "Máximo 100 caracteres.";
+        break;
+      case "experience":
+        if (!value) error = "La experiencia es obligatoria.";
+        else if (value.length < 10) error = "Se requiere un mínimo de 10 caracteres.";
+        else if (value.length > 100) error = "Máximo 100 caracteres.";
+        break;
+      case "workplace":
+        if (!value) error = "El lugar de trabajo es obligatorio.";
+        else if (value.length < 10) error = "Se requiere un mínimo de 10 caracteres.";
+        else if (value.length > 100) error = "Máximo 100 caracteres.";
+        break;
     }
 
     setFormErrors((prevErrors) => ({ ...prevErrors, [name]: error }));
@@ -628,15 +699,23 @@ const FisioProfile = () => {
 
     validateField(name, value); // Validar cada campo en tiempo real
 
-    if (name === "bio") {
-      setProfile((prevProfile) => ({ ...prevProfile, bio: value }));
-    } else {
-      setProfile((prevProfile) => ({
-        ...prevProfile,
-        user: { ...prevProfile.user, [name]: value },
-      }));
-    }
-  };
+        if (name === "bio") {
+            setProfile((prevProfile) => ({ ...prevProfile, bio: value }));
+        } // Si el campo es alguno de los otros, se actualiza dentro de "user"
+        else if (["degree", "university", "experience", "workplace"].includes(name)) {
+            setProfile((prevProfile) => ({
+                ...prevProfile,
+                [name]: value,  // Se actualiza directamente el campo del perfil
+            }));
+        }
+        // Para los campos dentro de "user" se hace de la forma habitual
+        else {
+            setProfile((prevProfile) => ({
+                ...prevProfile,
+                user: { ...prevProfile.user, [name]: value },
+            }));
+        }
+    };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -683,6 +762,11 @@ const FisioProfile = () => {
         "specializations",
         JSON.stringify(selectedSpecializations)
       );
+      formData.append("degree", profile.degree || "");
+      formData.append("university", profile.university || "");
+      formData.append("experience", profile.experience || "");
+      formData.append("workplace", profile.workplace || "");
+
       // Actualizar el schedule con los datos actuales del calendario
       // const { initialized, ...scheduleWithoutInitialized } = schedule;
       // formData.append("schedule", scheduleWithoutInitialized);
@@ -1373,6 +1457,10 @@ const FisioProfile = () => {
           <h2 className="text-xl font-bold mb-2">{profile.user.username}</h2>
           <p className="text-blue-200 mb-4">Profesional</p>
 
+          {/* Sección de valoración general*/}
+
+          {id && <PhysioterapistRating physioterapistId={id} />}
+
           {/* Sección de horario */}
           <div className="w-full mt-4">
             <h3 className="text-lg font-semibold mb-2">Mi Horario</h3>
@@ -1387,6 +1475,15 @@ const FisioProfile = () => {
               onClick={() => setScheduleModalOpen(true)}
             >
               Editar Horario
+            </GradientButton>
+          </div>
+          <div className="w-full mt-4">
+          <GradientButton
+              variant="edit"
+              className="px-6 py-2 font-medium rounded-xl flex items-center gap-2 mx-auto"
+              onClick={() => window.location.href = "/physio-management/balance"}
+            >
+              Consultar Saldo
             </GradientButton>
           </div>
 
@@ -1544,6 +1641,30 @@ const FisioProfile = () => {
                 )}
               </div>
             </div>
+            <div className="py-3 flex items-center flex-column justify-start w-full gap-3">
+              <div className="relative w-[50%] flex items-center flex-column justify-start">
+                <div className="absolute pl-3 flex items-center pointer-events-none text-gray-400">
+                  <Lock size={18} />
+                </div>
+                    <input
+                      disabled
+                      type="password"
+                      name="password"
+                      value={"******"}
+                      className="mb-0 w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm outline-none"
+                    />
+                </div>
+                <GradientButton
+                      variant="create"
+                      className="px-3 py-2 mt-0 font-medium rounded-xl flex items-center gap-2"
+                      onClick={(e) => {
+                        e.preventDefault(); // Esto evita que se envíe el formulario
+                        setShowUpdatePasswordModal(true);
+                      }}
+                    >
+                      <Plus className="w-4 h-4" /> Actualizar contraseña
+                </GradientButton>
+            </div>
 
             {/* Desplegable de especializaciones */}
             <div className="space-y-2">
@@ -1641,6 +1762,86 @@ const FisioProfile = () => {
               )}
             </div>
 
+                        {/* Titulación */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Titulación <span className="text-red-500">*</span>
+                          </label>
+                          <div className="relative">
+                            <input
+                              type="text"
+                              name="degree"
+                              value={profile.degree || ""}
+                              onChange={handleChange}
+                              className={`w-full pl-10 pr-3 py-3 border-2 ${
+                                formErrors.degree ? 'border-red-500' : 'border-gray-200'
+                              } rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD]`}
+                            />
+                          </div>
+                          {formErrors.degree && (
+                            <p className="mt-1 text-sm text-red-600">{formErrors.degree}</p>
+                          )}
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Universidad <span className="text-red-500">*</span>
+                          </label>
+                          <div className="relative">
+                            <input
+                              type="text"
+                              name="university"
+                              value={profile.university || ""}
+                              onChange={handleChange}
+                              className={`w-full pl-10 pr-3 py-3 border-2 ${
+                                formErrors.university ? 'border-red-500' : 'border-gray-200'
+                              } rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD]`}
+                            />
+                          </div>
+                          {formErrors.university && (
+                            <p className="mt-1 text-sm text-red-600">{formErrors.university}</p>
+                          )}
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Experiencia <span className="text-red-500">*</span>
+                          </label>
+                          <div className="relative">
+                            <textarea
+                              name="experience"
+                              value={profile.experience || ""}
+                              onChange={handleChange}
+                              className={`w-full pl-10 pr-3 py-3 border-2 ${
+                                formErrors.experience ? 'border-red-500' : 'border-gray-200'
+                              } rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD]`}
+                            />
+                          </div>
+                          {formErrors.experience && (
+                            <p className="mt-1 text-sm text-red-600">{formErrors.experience}</p>
+                          )}
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Lugar de trabajo <span className="text-red-500">*</span>
+                          </label>
+                          <div className="relative">
+                            <input
+                              type="text"
+                              name="workplace"
+                              value={profile.workplace || ""}
+                              onChange={handleChange}
+                              className={`w-full pl-10 pr-3 py-3 border-2 ${
+                                formErrors.workplace ? 'border-red-500' : 'border-gray-200'
+                              } rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD]`}
+                            />
+                          </div>
+                          {formErrors.workplace && (
+                            <p className="mt-1 text-sm text-red-600">{formErrors.workplace}</p>
+                          )}
+                        </div>
+
             {/* Sección de servicios */}
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4 mb-4 mt-4">
@@ -1660,7 +1861,8 @@ const FisioProfile = () => {
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold mb-2">Ejercicios</h3>
-                  <Link href={`/physio-management/${id}/exercises`} passHref>
+                  {id && (
+                    <Link href={`/physio-management/${id}/exercises`} passHref>
                     <GradientButton
                       variant="create"
                       className="px-3 py-2 font-medium rounded-xl flex items-center gap-2"
@@ -1669,6 +1871,7 @@ const FisioProfile = () => {
                       Ejercicios
                     </GradientButton>
                   </Link>
+                  )}
                 </div>
               </div>
 
@@ -1716,26 +1919,52 @@ const FisioProfile = () => {
               )}
             </div>
 
-            <div>
-              <GradientButton
-                variant="edit"
-                className="mt-8 w-full py-4 px-6 bg-gradient-to-r from-[#1E5ACD] to-[#3a6fd8] text-white font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center"
-              >
-                <Save size={18} className="mr-2" />
-                Actualizar Perfil
-              </GradientButton>
-              <Link href="/physio-management/video" passHref>
-                <GradientButton
-                  variant="edit"
-                  className="w-full py-2 px-4 bg-gradient-to-r from-[#1E5ACD] to-[#3a6fd8] text-white font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center"
-                >
-                  <Film size={22} className="mr-2" />
-                  Subir vídeo
-                </GradientButton>
-              </Link>
-            </div>
-          </form>
-        </div>
+                        <div>
+                            <GradientButton
+                                variant="edit"
+                                className="mt-8 w-full py-4 px-6 bg-gradient-to-r from-[#1E5ACD] to-[#3a6fd8] text-white font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center"
+                            >
+                                <Save size={18} className="mr-2" />
+                                Actualizar Perfil
+                            </GradientButton>
+                            {/* <Link href="/physio-management/video" passHref>
+                                <GradientButton
+                                    variant="edit"
+                                    className="w-full py-2 px-4 bg-gradient-to-r from-[#1E5ACD] to-[#3a6fd8] text-white font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center"
+                                >
+                                    <Film size={22} className="mr-2" />
+                                    Subir vídeo
+                                </GradientButton>
+                            </Link> */}
+                        </div>
+                        <div className="border-t border-gray-200 pt-5 mt-5">
+                <div className="mb-2">
+                  <div className="flex items-center mb-3 gap-2">
+                    <Bell size={16} className="text-gray-500 mr-1" />{" "}
+                    {/* Changed to gray */}
+                    <h3 className="text-base font-semibold text-gray-800">
+                      Preferencias de Notificaciones
+                    </h3>
+                  </div>
+                  <p className="text text-gray-600 mb-3">
+                    {" "}
+                    Configura si deseas recibir notificaciones sobre tus citas y
+                    actualizaciones.
+                  </p>
+                  <SubscriptionSlider />
+                </div>
+              </div>
+                    </form>
+                </div>
+        {showUpdatePasswordModal && (
+          <UpdatePasswordModal
+            onClose={() => {
+              setShowUpdatePasswordModal(false);
+            }}
+            onSave={changePasswordSendToApi}
+            showAlert={showAlert}
+          />
+        )}
 
         {/* Modal para añadir/editar servicios */}
         {showServiceModal && (

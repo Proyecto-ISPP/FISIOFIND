@@ -1,11 +1,13 @@
 from django.urls import path, re_path
 from .views import *
+from .subscription_views import *
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
     path('patient/register/', patient_register_view, name='patient_register'),
     path('login/', custom_token_obtain_view, name='login'),
+    path('change_password/', change_password_view, name='change_password'),
     path('logout/', logout_view, name='logout'),
     path('check-role/', check_role_view, name='check_role'),
     path('physio/register/', physio_register_view, name='physio_register'),
@@ -24,6 +26,10 @@ urlpatterns = [
 
     path('account/delete/request/', request_account_deletion, name='request_account_deletion'),
     path('account/delete/confirm/<str:token>/', confirm_account_deletion, name='confirm_account_deletion'),
+    path('subscription/status/', get_subscription_status, name='get_subscription_status'),
+    path('subscription/update/', update_subscription, name='update_subscription'),
+    path('unsubscribe/', unsubscribe_via_token, name='unsubscribe'),
+
 
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -13,12 +13,17 @@ import {
   Camera,
   Save,
   Check,
+  Plus,
   Lock,
   Film,
+  Bell,
   Trash2
 } from "lucide-react";
 import { GradientButton } from "@/components/ui/gradient-button";
 import Link from "next/link";
+import Alert from "@/components/ui/Alert";
+import UpdatePasswordModal from "@/components/user-update-password-modal";
+import SubscriptionSlider from "@/components/ui/SubscriptionSlider";
 const BASE_URL = `${getApiBaseUrl()}`;
 
 const getAuthToken = () => localStorage.getItem("token");
@@ -40,13 +45,13 @@ const PatientProfile = () => {
     birth_date: "",
   });
 
+  const [showUpdatePasswordModal, setShowUpdatePasswordModal] = useState(false)
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const [isClient, setIsClient] = useState(false);
   const [token, setToken] = useState<string | null>(null);
-  const [showConfirmation, setShowConfirmation] = useState(false);
   const [pendingChanges, setPendingChanges] = useState({});
   const [oldPassword, setOldPassword] = useState(""); // State for old password
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
@@ -75,11 +80,65 @@ const PatientProfile = () => {
     }
   };
 
+  const [alert, setAlert] = useState<{
+    show: boolean;
+    type: "success" | "error" | "info" | "warning";
+    message: string;
+  }>({
+    show: false,
+    type: "info",
+    message: "",
+  });
+
   useEffect(() => {
     setIsClient(true);
     const storedToken = getAuthToken();
     setToken(storedToken);
   }, []);
+
+  const showAlert = (
+    type: "success" | "error" | "info" | "warning",
+    message: string
+  ) => {
+    setAlert({
+      show: true,
+      type,
+      message,
+    });
+  };
+
+  const changePasswordSendToApi = async (
+    oldPassword: string,
+    newPassword: string,
+  ): Promise<number | null> => {
+    try {
+      // Preparar el servicio en el formato que espera el backend
+      const passwordsForBackend = {
+        old_password: oldPassword,
+        new_password: newPassword,
+      };
+
+      const response = await axios.post(
+        `${getApiBaseUrl()}/api/app_user/change_password/`,
+        passwordsForBackend,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setShowUpdatePasswordModal(false)
+      showAlert("success", "Contraseña actualizada correctamente");
+      return response.data;
+    } catch (error: unknown) {
+      console.log("Error al añadir cambiar la contraseña:", error);
+      if (axios.isAxiosError(error) && error.response) {
+        console.log("Respuesta de error del backend:", error.response.data);
+        if (error.response.data.detail) {
+          showAlert("error", `${error.response.data.detail}`);
+        }
+      } else {
+        showAlert("error", "Error al cambiar contraseña.");
+      }
+      return null;
+    }
+  };
 
   useEffect(() => {
     if (isClient && token) {
@@ -182,33 +241,6 @@ const PatientProfile = () => {
     }));
   };
 
-  const confirmSensitiveChanges = async () => {
-    if ("password" in pendingChanges && !oldPassword) {
-      setErrors({
-        password:
-          "Debes ingresar tu contraseña actual para actualizar la contraseña.",
-      });
-      return;
-    }
-
-    setProfile((prevProfile) => ({
-      ...prevProfile,
-      user: {
-        ...prevProfile.user,
-        ...pendingChanges,
-      },
-    }));
-    setPendingChanges({});
-    setShowConfirmation(false);
-
-    await submitProfileUpdate();
-  };
-
-  const cancelSensitiveChanges = () => {
-    setPendingChanges({});
-    setShowConfirmation(false);
-  };
-
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -285,11 +317,6 @@ const PatientProfile = () => {
     setSuccess("");
     setErrors({});
 
-    if (pendingChanges.dni || pendingChanges.password) {
-      setShowConfirmation(true);
-      return;
-    }
-
     await submitProfileUpdate();
   };
 
@@ -310,19 +337,10 @@ const PatientProfile = () => {
 
       // Add user fields, including sensitive fields like DNI and password
       Object.entries(profile.user).forEach(([key, value]) => {
-        if (key !== "photo" && key !== "photoFile" && key !== "preview") {
+        if (key !== "photo" && key !== "photoFile" && key !== "preview" && key !== "dni" && key !== "birth_date" && key !== "account_status") {
           formData.append(`user.${key}`, value || "");
         }
       });
-
-      // Add pending changes for sensitive fields (DNI and password)
-      if (pendingChanges.dni) {
-        formData.append("user.dni", pendingChanges.dni);
-      }
-      if (pendingChanges.password) {
-        formData.append("user.password", pendingChanges.password);
-        formData.append("user.old_password", oldPassword);
-      }
 
       // Add patient fields
       formData.append("gender", profile.gender);
@@ -341,7 +359,7 @@ const PatientProfile = () => {
       });
 
       if (response.status === 200) {
-        setSuccess("Perfil actualizado correctamente");
+        showAlert("success", "Perfil actualizado correctamente"); // Changed from setSuccess to showAlert
         fetchPatientProfile();
       }
     } catch (error) {
@@ -361,15 +379,6 @@ const PatientProfile = () => {
           }
           if (data.user.email) {
             errorMessages.email = data.user.email[0];
-          }
-          if (data.user.dni) {
-            errorMessages.dni = data.user.dni[0];
-          }
-          if (data.user.password) {
-            errorMessages.password = data.user.password[0];
-          }
-          if (data.user.old_password) {
-            errorMessages.old_password = data.user.old_password[0];
           }
         }
 
@@ -420,6 +429,14 @@ const PatientProfile = () => {
       className="min-h-screen flex items-center justify-center p-5"
       style={{ backgroundColor: "rgb(238, 251, 250)" }}
     >
+      {alert.show && (
+        <Alert
+          type={alert.type}
+          message={alert.message}
+          onClose={() => setAlert({ ...alert, show: false })}
+          duration={5000}
+        />
+      )}
       <div
         className="bg-white w-full max-w-3xl rounded-3xl shadow-xl overflow-hidden"
         style={{ boxShadow: "0 20px 60px rgba(0, 0, 0, 0.08)" }}
@@ -533,7 +550,7 @@ const PatientProfile = () => {
                     </p>
                   )}
                 </div>
-
+                
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Código Postal
@@ -630,16 +647,13 @@ const PatientProfile = () => {
                     <FileText size={18} />
                   </div>
                   <input
+                    disabled
                     type="text"
                     name="dni"
-                    value={pendingChanges.dni || profile.user.dni}
-                    onChange={handleSensitiveChange}
+                    value={profile.user.dni}
                     className="w-full pl-10 pr-3 py-3 border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
                   />
                 </div>
-                {errors.dni && (
-                  <p className="mt-1 text-sm text-red-600">{errors.dni}</p>
-                )}
               </div>
 
               <div>
@@ -651,67 +665,24 @@ const PatientProfile = () => {
                     <Lock size={18} />
                   </div>
                   <input
+                    disabled
                     type="password"
                     name="password"
-                    value={pendingChanges.password || "******"}
-                    onChange={handleSensitiveChange}
+                    value={"******"}
                     className="w-full pl-10 pr-3 py-3 border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
                   />
                 </div>
-                {errors.password && (
-                  <p className="mt-1 text-sm text-red-600">{errors.password}</p>
-                )}
+                <GradientButton
+                    variant="create"
+                    className="px-3 py-2 font-medium rounded-xl flex items-center gap-2"
+                    onClick={(e) => {
+                      e.preventDefault(); // Esto evita que se envíe el formulario
+                      setShowUpdatePasswordModal(true);
+                    }}
+                  >
+                    <Plus className="w-4 h-4" /> Actualizar contraseña
+                  </GradientButton>
               </div>
-
-              {showConfirmation && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                  <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-sm">
-                    <h2 className="text-lg font-bold mb-4">
-                      Confirmar Cambios
-                    </h2>
-                    <p className="text-sm text-gray-600 mb-6">
-                      Estás a punto de cambiar información sensible (DNI o
-                      contraseña). Si estás cambiando tu contraseña, ingresa tu
-                      contraseña actual.
-                    </p>
-                    {pendingChanges.password && (
-                      <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Contraseña Actual
-                        </label>
-                        <input
-                          type="password"
-                          value={oldPassword}
-                          onChange={(e) => setOldPassword(e.target.value)}
-                          className="w-full px-3 py-2 border-2 border-gray-200 rounded-xl outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
-                        />
-                        {errors.old_password && (
-                          <p className="mt-1 text-sm text-red-600">
-                            {errors.old_password}
-                          </p>
-                        )}
-                      </div>
-                    )}
-                    <div className="flex justify-end space-x-4">
-                      <GradientButton
-                        variant="grey"
-                        onClick={() => {
-                          setShowConfirmation(false);
-                          cancelSensitiveChanges();
-                        }}
-                      >
-                        Cancelar
-                      </GradientButton>
-                      <GradientButton
-                        variant="danger"
-                        onClick={confirmSensitiveChanges}
-                      >
-                        Confirmar
-                      </GradientButton>
-                    </div>
-                  </div>
-                </div>
-              )}
               {showDeleteConfirmation && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                   <div className="bg-white dark:bg-gray-800 p-6 rounded-lg max-w-md w-full mx-4">
@@ -789,7 +760,33 @@ const PatientProfile = () => {
                   </GradientButton>
                 </Link>
               </div>
+              <div className="border-t border-gray-200 pt-5 mt-5">
+                <div className="mb-2">
+                  <div className="flex items-center mb-3 gap-2">
+                    <Bell size={16} className="text-gray-500 mr-1" />{" "}
+                    {/* Changed to gray */}
+                    <h3 className="text-base font-semibold text-gray-800">
+                      Preferencias de Notificaciones
+                    </h3>
+                  </div>
+                  <p className="text text-gray-600 mb-3">
+                    {" "}
+                    Configura si deseas recibir notificaciones sobre tus citas y
+                    actualizaciones.
+                  </p>
+                  <SubscriptionSlider />
+                </div>
+              </div>
             </form>
+            {showUpdatePasswordModal && (
+          <UpdatePasswordModal
+            onClose={() => {
+              setShowUpdatePasswordModal(false);
+            }}
+            onSave={changePasswordSendToApi}
+            showAlert={showAlert}
+          />
+        )}
           </div>
         </div>
       </div>

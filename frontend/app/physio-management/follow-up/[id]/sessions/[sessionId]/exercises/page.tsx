@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { getApiBaseUrl } from "@/utils/api";
 import { useRouter } from "next/navigation";
-import { use } from "react";
+import React, { use } from "react";
 
 type AreaChoice =
   | "NECK"
@@ -54,17 +54,6 @@ interface Series {
   distance?: number;
 }
 
-// Add this interface for series data
-interface SeriesData {
-  id: number;
-  series_number: number;
-  repetitions: number;
-  weight?: number;
-  time?: number;
-  distance?: number;
-  exercise_session: number;
-}
-
 // Update the ExerciseSessionData interface to include series
 interface SeriesData {
   id: number;
@@ -89,11 +78,19 @@ interface ExerciseLog {
   notes?: string;
 }
 
+interface ExerciseSessionData {
+  exercise: Exercise;
+  exerciseSessionId: number;
+  series: SeriesData[]; 
+}
+
 const ExercisesPage = ({
   params,
 }: {
   params: { id: string; sessionId: string };
 }) => {
+  
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const unwrappedParams = use(params as any);
   const { id, sessionId } = unwrappedParams as { id: string; sessionId: string };
 
@@ -130,8 +127,6 @@ const ExercisesPage = ({
   const [exerciseSessionIdToUnassign, setExerciseSessionIdToUnassign] =
     useState<number | null>(null);
 
-  const [showLogsModal, setShowLogsModal] = useState(false);
-  const [selectedSeries, setSelectedSeries] = useState<SeriesData | null>(null);
   const [expandedSeriesId, setExpandedSeriesId] = useState<number | null>(null);
 
   const formatAreaName = (areaCode: string): string => {
@@ -656,15 +651,15 @@ const ExercisesPage = ({
       const updatedExercises = exercises.map((exercise) => {
         if (
           exercise.series &&
-          exercise.series.some((s) => s.id === seriesIdToDelete)
+          exercise.series.some((s: SeriesData) => s.id === seriesIdToDelete)
         ) {
           // This is the exercise containing the deleted series
           const updatedSeries = exercise.series.filter(
-            (s) => s.id !== seriesIdToDelete
+(s: SeriesData) => s.id !== seriesIdToDelete
           );
 
           // Reorder series numbers
-          const reorderedSeries = updatedSeries.map((s, index) => ({
+          const reorderedSeries = updatedSeries.map((s: SeriesData, index: number) => ({
             ...s,
             series_number: index + 1,
           }));
@@ -735,10 +730,10 @@ const ExercisesPage = ({
       const updatedExercises = exercises.map((exercise) => {
         if (
           exercise.series &&
-          exercise.series.some((s) => s.id === currentSeries.id)
+          exercise.series.some((s: SeriesData) => s.id === currentSeries.id)
         ) {
           // This is the exercise containing the edited series
-          const updatedSeries = exercise.series.map((s) =>
+          const updatedSeries = exercise.series.map((s: SeriesData) =>
             s.id === currentSeries.id ? currentSeries : s
           );
 
@@ -763,11 +758,6 @@ const ExercisesPage = ({
   const handleCancelEditSeries = () => {
     setShowEditSeriesForm(false);
     setCurrentSeries(null);
-  };
-
-  const handleViewLogs = (series: SeriesData) => {
-    setSelectedSeries(series);
-    setShowLogsModal(true);
   };
 
   const formatDuration = (durationString: string) => {
@@ -816,71 +806,111 @@ const ExercisesPage = ({
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="container mx-auto p-6 bg-gray-50 min-h-screen">
-      <div className="max-w-7xl mx-auto">
-        <button
-          onClick={() =>
-            router.push(`/physio-management/follow-up/${id}/sessions`)
-          }
-          className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-xl inline-flex items-center mb-6"
-        >
-          ← Volver
-        </button>
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">
-          Ejercicios de la Sesión
-        </h1>
+    <div
+      className="min-h-screen w-full"
+      style={{ backgroundColor: "rgb(238, 251, 250)" }}
+    >
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex justify-between items-center mb-6">
+          <button
+            onClick={() =>
+              router.push(`/physio-management/follow-up/${id}/sessions`)
+            }
+            className="bg-white hover:bg-gray-100 text-[#05668D] font-semibold py-2 px-4 rounded-xl inline-flex items-center shadow-md transition-all duration-300"
+          >
+            ← Volver
+          </button>
+          <h1 className="text-3xl font-bold text-[#05668D]">
+            Ejercicios de la Sesión
+          </h1>
+          <div className="w-24"></div> {/* Spacer for alignment */}
+        </div>
         {!showForm && !showExistingExercises && (
           <div className="flex space-x-4 mb-8 mt-8">
             <button
               onClick={() => setShowForm(true)}
-              className="px-6 py-3 bg-[#6bc9be] text-white font-medium rounded-xl hover:bg-[#5ab8ad] focus:outline-none focus:ring-2 focus:ring-[#6bc9be] focus:ring-offset-2 transition-colors duration-200 flex items-center space-x-2"
+              className="px-6 py-3 bg-gradient-to-r from-[#6BC9BE] to-[#05668D] text-white font-medium rounded-xl hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#6BC9BE] focus:ring-offset-2 transition-all duration-300 shadow-md flex items-center space-x-2"
             >
-              <span>{"Crear Nuevo Ejercicio"}</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+              <span>Crear Nuevo Ejercicio</span>
             </button>
             <button
               onClick={() => {
                 setShowExistingExercises(true);
                 loadAvailableExercises();
               }}
-              className="px-6 py-3 bg-[#05668d] text-white font-medium rounded-xl hover:bg-[#045a7c] focus:outline-none focus:ring-2 focus:ring-[#05668d] focus:ring-offset-2 transition-colors duration-200 flex items-center space-x-2"
+              className="px-6 py-3 bg-gradient-to-r from-[#05668D] to-[#6BC9BE] text-white font-medium rounded-xl hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#41B8D5] focus:ring-offset-2 transition-all duration-300 shadow-md flex items-center space-x-2"
             >
-              <span>{"Añadir Ejercicio Existente"}</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16m-7 6h7"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M7 20c1.5-1.5 3-3 3-5s-1.5-3.5-3-5c-1.5 1.5-3 3-3 5s1.5 3.5 3 5z"
+                />
+              </svg>
+              <span>Seleccionar Existente</span>
             </button>
           </div>
         )}
 
         {showExistingExercises && (
-          <div className="mb-8 p-6 bg-white rounded-xl shadow-lg transition-all duration-200 hover:shadow-xl">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          <div className="mb-8 p-6 bg-white rounded-2xl shadow-lg transition-all duration-300 hover:shadow-xl">
+            <h2 className="text-2xl font-bold text-[#05668D] mb-6">
               Ejercicios Disponibles
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {availableExercises.map((exercise) => (
                 <div
                   key={exercise.id}
-                  className="bg-gray-50 p-6 rounded-xl shadow transition-all duration-200 hover:shadow-md"
+                  className="bg-gradient-to-br from-white to-gray-50 p-6 rounded-xl shadow-md transition-all duration-300 hover:shadow-lg hover:transform hover:translate-y-[-2px]"
                 >
-                  <h3 className="text-xl font-semibold text-gray-800 mb-3">
+                  <h3 className="text-xl font-semibold text-[#05668D] mb-3">
                     {exercise.title}
                   </h3>
                   <p className="text-gray-600 mb-3">
                     {exercise.description || "Sin descripción"}
                   </p>
-                  <p className="text-gray-500 mb-2">
-                    Área:{" "}
-                    {exercise?.body_region
-                      ? formatAreaName(exercise.body_region)
-                      : "No especificada"}
-                  </p>
-                  <p className="text-gray-500 mb-4">
-                    Tipo:{" "}
-                    {exercise?.exercise_type
-                      ? formatExerciseTypeName(exercise.exercise_type)
-                      : "No especificado"}
-                  </p>
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                      {exercise?.body_region
+                        ? formatAreaName(exercise.body_region)
+                        : "No especificada"}
+                    </span>
+                    <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                      {exercise?.exercise_type
+                        ? formatExerciseTypeName(exercise.exercise_type)
+                        : "No especificado"}
+                    </span>
+                  </div>
                   <button
                     onClick={() => handleAssignExercise(exercise.id)}
-                    className="w-full px-4 py-2 bg-[#6bc9be] text-white font-medium rounded-xl hover:bg-[#5ab8ad] focus:outline-none focus:ring-2 focus:ring-[#6bc9be] focus:ring-offset-2 transition-colors duration-200"
+                    className="w-full px-4 py-2 bg-gradient-to-r from-[#6BC9BE] to-[#05668D] text-white font-medium rounded-xl hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#6BC9BE] focus:ring-offset-2 transition-all duration-300"
                   >
                     Añadir a la Sesión
                   </button>
@@ -889,7 +919,7 @@ const ExercisesPage = ({
             </div>
             <button
               onClick={() => setShowExistingExercises(false)}
-              className="mt-6 px-6 py-3 bg-red-400 text-white font-medium rounded-xl hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-300 focus:ring-offset-2 transition-colors duration-200"
+              className="mt-6 px-6 py-3 bg-white border border-red-400 text-red-500 font-medium rounded-xl hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-300 focus:ring-offset-2 transition-all duration-300 shadow-sm"
             >
               Cancelar
             </button>
@@ -897,10 +927,10 @@ const ExercisesPage = ({
         )}
 
         {showForm && (
-          <div className="mb-8 p-6 bg-white rounded-xl shadow-lg transition-all duration-200 hover:shadow-xl">
+          <div className="mb-8 p-6 bg-white rounded-2xl shadow-lg transition-all duration-300 hover:shadow-xl">
             {formStep === 1 ? (
               <>
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                <h2 className="text-2xl font-bold text-[#05668D] mb-6">
                   Crear Nuevo Ejercicio
                 </h2>
                 <form
@@ -920,7 +950,7 @@ const ExercisesPage = ({
                           title: e.target.value,
                         })
                       }
-                      className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-1 focus:ring-gray-300 focus:border-gray-300 transition-colors duration-200"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300"
                       required
                     />
                   </div>
@@ -936,7 +966,7 @@ const ExercisesPage = ({
                           description: e.target.value,
                         })
                       }
-                      className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-1 focus:ring-gray-300 focus:border-gray-300 transition-colors duration-200"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300"
                       rows={4}
                       required
                     />
@@ -953,30 +983,10 @@ const ExercisesPage = ({
                           body_region: e.target.value as AreaChoice,
                         })
                       }
-                      className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-1 focus:ring-gray-300 focus:border-gray-300 transition-colors duration-200"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300"
                       required
                     >
-                      <option value="NECK">Cuello</option>
-                      <option value="SHOULDER">Hombros</option>
-                      <option value="ARM">Brazos (Bíceps, Tríceps)</option>
-                      <option value="ELBOW">Codo</option>
-                      <option value="WRIST_HAND">Muñeca y Mano</option>
-                      <option value="CHEST">Pecho</option>
-                      <option value="UPPER_BACK">Espalda Alta</option>
-                      <option value="LOWER_BACK">Zona Lumbar</option>
-                      <option value="CORE">Zona Media / Core</option>
-                      <option value="QUADRICEPS">Cuádriceps</option>
-                      <option value="HAMSTRINGS">Isquiotibiales</option>
-                      <option value="KNEE">Rodilla</option>
-                      <option value="CALVES">Pantorrillas</option>
-                      <option value="ANKLE_FOOT">Tobillo y Pie</option>
-                      <option value="UPPER_BODY">
-                        Parte Superior del Cuerpo
-                      </option>
-                      <option value="LOWER_BODY">
-                        Parte Inferior del Cuerpo
-                      </option>
-                      <option value="FULL_BODY">Cuerpo Completo</option>
+                      {/* ... existing options ... */}
                     </select>
                   </div>
                   <div className="space-y-2">
@@ -991,34 +1001,23 @@ const ExercisesPage = ({
                           exercise_type: e.target.value as ExerciseType,
                         })
                       }
-                      className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-1 focus:ring-gray-300 focus:border-gray-300 transition-colors duration-200"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300"
                       required
                     >
-                      <option value="STRENGTH">Fortalecimiento Muscular</option>
-                      <option value="MOBILITY">Movilidad Articular</option>
-                      <option value="STRETCHING">Estiramientos</option>
-                      <option value="BALANCE">Ejercicios de Equilibrio</option>
-                      <option value="PROPRIOCEPTION">Propiocepción</option>
-                      <option value="COORDINATION">Coordinación</option>
-                      <option value="BREATHING">
-                        Ejercicios Respiratorios
-                      </option>
-                      <option value="RELAXATION">Relajación / Descarga</option>
-                      <option value="CARDIO">Resistencia Cardiovascular</option>
-                      <option value="FUNCTIONAL">Ejercicio Funcional</option>
+                      {/* ... existing options ... */}
                     </select>
                   </div>
                   <div className="flex space-x-4 mt-6">
                     <button
                       type="submit"
-                      className="px-6 py-3 bg-[#6bc9be] text-white font-medium rounded-xl hover:bg-[#5ab8ad] focus:outline-none focus:ring-2 focus:ring-[#6bc9be] focus:ring-offset-2 transition-colors duration-200 flex items-center space-x-2"
+                      className="px-6 py-3 bg-gradient-to-r from-[#6BC9BE] to-[#05668D] text-white font-medium rounded-xl hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#6BC9BE] focus:ring-offset-2 transition-all duration-300 shadow-md"
                     >
                       Continuar
                     </button>
                     <button
                       type="button"
                       onClick={handleCancelForm}
-                      className="px-6 py-3 bg-red-400 text-white font-medium rounded-xl hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-300 focus:ring-offset-2 transition-colors duration-200 flex items-center space-x-2"
+                      className="px-6 py-3 bg-white border border-red-700 text-red-500 font-medium rounded-xl hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-300 focus:ring-offset-2 transition-all duration-300 shadow-sm"
                     >
                       Cancelar
                     </button>
@@ -1027,16 +1026,19 @@ const ExercisesPage = ({
               </>
             ) : (
               <>
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                <h2 className="text-2xl font-bold text-[#05668D] mb-6">
                   Configurar Series del Ejercicio
                 </h2>
                 <div className="space-y-6">
                   {series.map((serie, index) => (
-                    <div key={index} className="p-4 bg-gray-50 rounded-lg">
-                      <h3 className="text-lg font-semibold mb-4">
+                    <div
+                      key={index}
+                      className="p-5 bg-gradient-to-br from-[#f8fdfc] to-[#edf8f7] rounded-xl shadow-sm"
+                    >
+                      <h3 className="text-lg font-semibold mb-4 text-[#05668D]">
                         Serie {serie.series_number}
                       </h3>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">
                             Repeticiones
@@ -1051,7 +1053,7 @@ const ExercisesPage = ({
                                 parseInt(e.target.value)
                               )
                             }
-                            className="w-full px-3 py-2 border border-gray-300 rounded-xl"
+                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300"
                             required
                           />
                         </div>
@@ -1069,7 +1071,7 @@ const ExercisesPage = ({
                                 parseFloat(e.target.value)
                               )
                             }
-                            className="w-full px-3 py-2 border border-gray-300 rounded-xl"
+                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300"
                           />
                         </div>
                         <div>
@@ -1086,7 +1088,7 @@ const ExercisesPage = ({
                                 parseInt(e.target.value)
                               )
                             }
-                            className="w-full px-3 py-2 border border-gray-300 rounded-xl"
+                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300"
                           />
                         </div>
                         <div>
@@ -1103,7 +1105,7 @@ const ExercisesPage = ({
                                 parseFloat(e.target.value)
                               )
                             }
-                            className="w-full px-3 py-2 border border-gray-300 rounded-xl"
+                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300"
                           />
                         </div>
                       </div>
@@ -1114,20 +1116,34 @@ const ExercisesPage = ({
                 <div className="mt-6 flex justify-between">
                   <button
                     onClick={handleAddSeries}
-                    className="px-4 py-2 bg-gray-200 text-gray-800 rounded-xl hover:bg-gray-300"
+                    className="px-5 py-2.5 bg-white text-[#05668D] border border-[#05668D] rounded-xl hover:bg-gray-50 transition-all duration-300 shadow-sm flex items-center"
                   >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 mr-2"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 4v16m8-8H4"
+                      />
+                    </svg>
                     Añadir Serie
                   </button>
                   <div className="space-x-4">
                     <button
                       onClick={handleCancelForm}
-                      className="px-4 py-2 bg-red-400 text-white rounded-xl hover:bg-red-500"
+                      className="px-5 py-2.5 bg-white border border-red-400 text-red-500 rounded-xl hover:bg-red-50 transition-all duration-300 shadow-sm"
                     >
                       Cancelar
                     </button>
                     <button
                       onClick={handleCompleteForm}
-                      className="px-4 py-2 bg-[#6bc9be] text-white rounded-xl hover:bg-[#5ab8ad]"
+                      className="px-5 py-2.5 bg-gradient-to-r from-[#6BC9BE] to-[#05668D] text-white rounded-xl hover:opacity-90 transition-all duration-300 shadow-md"
                     >
                       Guardar Series
                     </button>
@@ -1138,23 +1154,24 @@ const ExercisesPage = ({
           </div>
         )}
 
+        {/* Exercise cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {exercises.map(({ exercise, exerciseSessionId, series }) => (
             <div
               key={exerciseSessionId}
-              className="bg-white p-6 rounded-xl shadow-lg transition-all duration-200 hover:shadow-xl hover:transform hover:scale-[1.02]"
+              className="bg-white p-6 rounded-2xl shadow-lg transition-all duration-300 hover:shadow-xl"
             >
-              <h3 className="text-xl font-semibold text-gray-800 mb-3">
+              <h3 className="text-xl font-semibold text-[#05668D] mb-3">
                 {exercise?.title || "Sin título"}
               </h3>
               <p className="text-gray-600 mb-3">
                 {exercise?.description || "Sin descripción"}
               </p>
               <div className="flex flex-wrap gap-2 mb-4">
-                <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
                   {formatAreaName(exercise.body_region)}
                 </span>
-                <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
                   {formatExerciseTypeName(exercise.exercise_type)}
                 </span>
               </div>
@@ -1162,21 +1179,23 @@ const ExercisesPage = ({
               {/* Display series information */}
               {series && series.length > 0 ? (
                 <div className="mt-4 mb-4">
-                  <h4 className="text-lg font-medium text-gray-700 mb-2">
+                  <h4 className="text-lg font-medium text-[#05668D] mb-2">
                     Series:
                   </h4>
                   <div className="space-y-3">
-                    {series.map((serie, index) => (
+                    {series.map((serie: SeriesData, index: number) => (
                       <div
                         key={serie.id}
-                        className="bg-gray-50 p-3 rounded-xl relative"
+                        className="bg-gradient-to-br from-[#f8fdfc] to-[#edf8f7] p-3 rounded-xl relative"
                       >
                         <div className="flex justify-between items-start">
-                          <p className="font-medium">Serie {index + 1}</p>
+                          <p className="font-medium text-[#05668D]">
+                            Serie {index + 1}
+                          </p>
                           <div className="flex space-x-2">
                             <button
                               onClick={() => toggleSeriesLogs(serie.id)}
-                              className={`text-green-500 hover:text-green-700 transition-colors duration-200 ${
+                              className={`text-[#41B8D5] hover:text-[#05668D] transition-colors duration-300 ${
                                 serie.logs && serie.logs.length > 0
                                   ? ""
                                   : "opacity-50 cursor-not-allowed"
@@ -1199,112 +1218,143 @@ const ExercisesPage = ({
                                   strokeLinecap="round"
                                   strokeLinejoin="round"
                                   strokeWidth={2}
-                                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
                                 />
                               </svg>
                             </button>
                             <button
                               onClick={() => handleEditSeries(serie)}
-                              className="text-blue-400 hover:text-blue-600 transition-colors duration-200"
+                              className="text-[#6BC9BE] hover:text-[#05668D] transition-colors duration-300"
                               title="Editar serie"
                             >
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 className="h-5 w-5"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
                               >
-                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                />
                               </svg>
                             </button>
                             <button
                               onClick={() => handleDeleteSeries(serie.id)}
-                              className="text-red-400 hover:text-red-600 transition-colors duration-200"
+                              className="text-red-500 hover:text-red-700 transition-colors duration-300"
                               title="Eliminar serie"
                             >
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 className="h-5 w-5"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
                               >
                                 <path
-                                  fillRule="evenodd"
-                                  d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                                  clipRule="evenodd"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                                 />
                               </svg>
                             </button>
                           </div>
                         </div>
-                        <div className="grid grid-cols-2 gap-2 text-sm mt-1">
-                          <p>Repeticiones: {serie.repetitions}</p>
-                          {serie.weight && <p>Peso: {serie.weight} kg</p>}
-                          {serie.time && <p>Tiempo: {serie.time} seg</p>}
-                          {serie.distance && (
-                            <p>Distancia: {serie.distance} m</p>
-                          )}
+
+                        {/* Series details */}
+                        <div className="mt-2 text-sm text-gray-600">
+                          <div className="grid grid-cols-2 gap-2">
+                            <div>
+                              <span className="font-medium">Repeticiones:</span>{" "}
+                              {serie.repetitions}
+                            </div>
+                            {serie.weight && (
+                              <div>
+                                <span className="font-medium">Peso:</span>{" "}
+                                {serie.weight} kg
+                              </div>
+                            )}
+                            {serie.time && (
+                              <div>
+                                <span className="font-medium">Tiempo:</span>{" "}
+                                {serie.time} seg
+                              </div>
+                            )}
+                            {serie.distance && (
+                              <div>
+                                <span className="font-medium">Distancia:</span>{" "}
+                                {serie.distance} m
+                              </div>
+                            )}
+                          </div>
                         </div>
 
                         {/* Expanded logs section */}
                         {expandedSeriesId === serie.id &&
                           serie.logs &&
                           serie.logs.length > 0 && (
-                            <div className="mt-3 border-t border-gray-200 pt-3">
-                              <h5 className="font-medium text-gray-700 mb-2">
+                            <div className="mt-3 pt-3 border-t border-gray-200">
+                              <h5 className="text-sm font-medium text-gray-700 mb-2">
                                 Registros del paciente:
                               </h5>
-                              <div className="space-y-3 max-h-60 overflow-y-auto pr-1">
+                              <div className="space-y-2 max-h-40 overflow-y-auto pr-2">
                                 {serie.logs.map((log) => (
                                   <div
                                     key={log.id}
-                                    className="bg-white p-3 rounded-lg shadow-sm border border-gray-100"
+                                    className="bg-white p-2 rounded-lg shadow-sm text-xs"
                                   >
-                                    <div className="flex justify-between items-center mb-1">
-                                      <span className="text-xs text-gray-500">
+                                    <div className="flex justify-between mb-1">
+                                      <span className="font-medium">
+                                        Fecha:
+                                      </span>
+                                      <span>
                                         {new Date(
                                           log.date
                                         ).toLocaleDateString()}
                                       </span>
                                     </div>
-                                    <div className="grid grid-cols-2 gap-2 text-sm">
-                                      <p>
-                                        Repeticiones:{" "}
-                                        <span className="font-medium">
-                                          {log.repetitions_done}
-                                        </span>
-                                      </p>
-                                      {log.weight_done !== null && (
-                                        <p>
-                                          Peso:{" "}
-                                          <span className="font-medium">
-                                            {log.weight_done} kg
-                                          </span>
-                                        </p>
-                                      )}
-                                      {log.time_done && (
-                                        <p>
-                                          Tiempo:{" "}
-                                          <span className="font-medium">
-                                            {formatDuration(log.time_done)}
-                                          </span>
-                                        </p>
-                                      )}
-                                      {log.distance_done !== null && (
-                                        <p>
-                                          Distancia:{" "}
-                                          <span className="font-medium">
-                                            {log.distance_done} m
-                                          </span>
-                                        </p>
-                                      )}
+                                    <div className="flex justify-between mb-1">
+                                      <span className="font-medium">
+                                        Repeticiones:
+                                      </span>
+                                      <span>{log.repetitions_done}</span>
                                     </div>
+                                    {log.weight_done && (
+                                      <div className="flex justify-between mb-1">
+                                        <span className="font-medium">
+                                          Peso:
+                                        </span>
+                                        <span>{log.weight_done} kg</span>
+                                      </div>
+                                    )}
+                                    {log.time_done && (
+                                      <div className="flex justify-between mb-1">
+                                        <span className="font-medium">
+                                          Tiempo:
+                                        </span>
+                                        <span>
+                                          {formatDuration(log.time_done)}
+                                        </span>
+                                      </div>
+                                    )}
+                                    {log.distance_done && (
+                                      <div className="flex justify-between mb-1">
+                                        <span className="font-medium">
+                                          Distancia:
+                                        </span>
+                                        <span>{log.distance_done} m</span>
+                                      </div>
+                                    )}
                                     {log.notes && (
-                                      <div className="mt-2 text-sm">
-                                        <p className="text-gray-600">Notas:</p>
-                                        <p className="italic text-gray-700">
-                                          {log.notes}
-                                        </p>
+                                      <div className="mt-1 pt-1 border-t border-gray-100">
+                                        <span className="font-medium">
+                                          Notas:
+                                        </span>{" "}
+                                        {log.notes}
                                       </div>
                                     )}
                                   </div>
@@ -1317,26 +1367,25 @@ const ExercisesPage = ({
                   </div>
                 </div>
               ) : (
-                <p className="text-gray-500 italic mb-4">
-                  No hay series configuradas
-                </p>
+                <div className="mt-4 mb-4 text-center py-4 bg-gray-50 rounded-xl">
+                  <p className="text-gray-500">No hay series configuradas</p>
+                </div>
               )}
 
-              <div className="flex space-x-2">
+              <div className="flex justify-between mt-4 pt-4 border-t border-gray-100">
                 <button
                   onClick={() =>
                     handleAddSeriesToExistingExercise(exerciseSessionId)
                   }
-                  className="px-3 py-2 bg-[#0c7986] text-white font-medium rounded-xl hover:bg-[#0a6875] focus:outline-none focus:ring-2 focus:ring-[#0c7986] focus:ring-offset-2 transition-colors duration-200 flex items-center justify-center space-x-2"
+                  className="px-3 py-1.5 bg-gradient-to-r from-[#41B8D5] to-[#1E5ACD] text-white rounded-xl hover:opacity-90 transition-all duration-300 text-sm shadow-sm"
                 >
-                  <span>Añadir Series</span>
+                  Añadir Serie
                 </button>
-
                 <button
                   onClick={() => handleUnassignExercise(exerciseSessionId)}
-                  className="px-2 py-2 bg-red-400 text-white font-medium rounded-xl hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-300 focus:ring-offset-2 transition-colors duration-200 flex items-center justify-center space-x-2"
+                  className="px-3 py-1.5 bg-white border border-red-400 text-red-500 rounded-xl hover:bg-red-50 transition-all duration-300 text-sm shadow-sm"
                 >
-                  <span>Quitar</span>
+                  Eliminar Ejercicio
                 </button>
               </div>
             </div>
