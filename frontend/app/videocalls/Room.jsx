@@ -101,7 +101,7 @@ const Room = ({ roomCode }) => {
           }
         })
         .catch((err) => {
-          console.error('Error al obtener el rol del usuario:', err);
+          console.log('Error al obtener el rol del usuario:', err);
         })
         .finally(() => {
           setLoading(false);
@@ -122,7 +122,7 @@ useEffect(() => {
       });
       console.log("✅ Acceso validado con backend:", response.data);
     } catch (error) {
-      console.error(" Acceso denegado por backend:", error.response?.data || error.message);
+      console.log(" Acceso denegado por backend:", error.response?.data || error.message);
       alert("No tienes permiso para acceder a esta sala.");
       window.location.href = '/videocalls';
       return;
@@ -231,7 +231,7 @@ useEffect(() => {
       });
       setQuestionnaires(response.data);
     } catch (error) {
-      console.error('Error fetching questionnaires:', error);
+      console.log('Error fetching questionnaires:', error);
     }
   };
 
@@ -396,7 +396,7 @@ useEffect(() => {
       {!webRTC.connected && !webRTC.connecting && (
         <div className={styles.reconnectContainer}>
           <button
-            className={styles.reconnectButton}
+            className="inline-flex items-center gap-2 bg-teal-500 text-white font-semibold py-3 px-6 rounded-xl shadow"
             onClick={() => {
               if (userRole === 'physio') {
                 webRTC.initConnection(webRTC.remoteUserChannelRef.current);
