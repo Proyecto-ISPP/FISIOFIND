@@ -57,9 +57,10 @@ export function prepareScheduleForBackend(schedule) {
 
 
 export function formatDateFromIso(isoDate: string): string {
-   const dt = DateTime.fromISO(isoDate, {
-    zone: "Europe/Madrid",
-  });
+  const date = new Date(isoDate);
+  
+  // Formateamos la fecha en "DD-MM-YYYY HH:mm" en hora local
+  const formattedDate = `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
 
-  return dt.toFormat('dd-MM-yyyy HH:mm');
+  return formattedDate;
 }

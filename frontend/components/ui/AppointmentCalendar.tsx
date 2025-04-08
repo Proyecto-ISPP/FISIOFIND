@@ -60,22 +60,23 @@ const subtractInterval = (
   }));
 };
 
-const combineDateAndTime = (dateStr: string, timeStr: string): string => {
-  const dt = DateTime.fromFormat(`${dateStr} ${timeStr}`, "yyyy-MM-dd HH:mm", {
-    zone: "Europe/Madrid",
-  });
+const toLocalISOStringWithOffset = (date: Date): string => {
+  const pad = (n: number) => n.toString().padStart(2, "0");
 
-  return dt.toFormat("yyyy-MM-dd'T'HH:mm:ss");
-};
+  const year = date.getFullYear();
+  const month = pad(date.getMonth() + 1);
+  const day = pad(date.getDate());
+  const hours = pad(date.getHours());
+  const minutes = pad(date.getMinutes());
+  const seconds = pad(date.getSeconds());
 
-const addMinutesTo = (isoDate: string, minutes: number): string => {
-  const dt = DateTime.fromFormat(isoDate, "yyyy-MM-dd'T'HH:mm:ss", {
-    zone: "Europe/Madrid",
-  });
+  const offsetMinutes = date.getTimezoneOffset(); // minutos desde UTC (negativo si está por delante)
+  const offsetSign = offsetMinutes <= 0 ? "+" : "-";
+  const offsetAbs = Math.abs(offsetMinutes);
+  const offsetHours = pad(Math.floor(offsetAbs / 60));
+  const offsetMins = pad(offsetAbs % 60);
 
-  const result = dt.plus({ minutes });
-
-  return result.toFormat("yyyy-MM-dd'T'HH:mm:ss");
+  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${offsetSign}${offsetHours}:${offsetMins}`;
 };
 
 // ----- Función para calcular los slots disponibles -----
@@ -220,21 +221,21 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
   const handleDateClick = (arg: any) => {
     const dateStr = arg.dateStr;
     const today = new Date();
-    
+
     // Set time to start of day for accurate comparison
     today.setHours(0, 0, 0, 0);
-    
+
     // Calculate the day after tomorrow
     const dayAfterTomorrow = new Date(today);
     dayAfterTomorrow.setDate(today.getDate() + 3);
     dayAfterTomorrow.setHours(0, 0, 0, 0);
-    
+
     const selectedDate = new Date(dateStr);
     selectedDate.setHours(0, 0, 0, 0);
 
     setSelectedDate(dateStr);
     setClickedDate(dateStr);
-    
+
     // Check if selected date is before day after tomorrow
     if (selectedDate < dayAfterTomorrow) {
       setSlots([]);
@@ -257,8 +258,13 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
   const handleSlotClick = (slot: string) => {
     if (!selectedDate) return;
     setSelectedSlot(slot);
-    const startISO = combineDateAndTime(selectedDate, slot);
-    const endISO = addMinutesTo(startISO, serviceDuration);
+    
+    const startDate = new Date(`${selectedDate}T${slot}`);
+    const endDate = new Date(startDate.getTime() + serviceDuration * 60000);
+
+    const startISO = toLocalISOStringWithOffset(startDate);
+    const endISO = toLocalISOStringWithOffset(endDate);
+
     dispatch({
       type: "SELECT_SLOT",
       payload: {
@@ -343,12 +349,12 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
         </div>
       )}
       {alertConfig && (
-      <Alert
-        type={alertConfig.type}
-        message={alertConfig.message}
-        onClose={() => setAlertConfig(null)}
-      />
-    )}
+        <Alert
+          type={alertConfig.type}
+          message={alertConfig.message}
+          onClose={() => setAlertConfig(null)}
+        />
+      )}
     </div>
   );
 };
