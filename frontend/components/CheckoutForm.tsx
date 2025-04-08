@@ -103,7 +103,7 @@ const CheckoutForm = ({ request, token }: CheckoutFormProps) => {
 
       if (data.appointment_data.id) {
         // Eliminamos el borrador unificado
-        localStorage.removeItem("appointmentDraft");
+        sessionStorage.removeItem("appointmentDraft");
         localStorage.removeItem("physioName");
         dispatch({ type: "DESELECT_SERVICE" });
         setAppointmentId(data.appointment_data.id); // Guardamos el appointment_id
@@ -254,7 +254,7 @@ const CheckoutForm = ({ request, token }: CheckoutFormProps) => {
     };
 
     // Guardamos en una sola entrada del localStorage
-    localStorage.setItem("appointmentDraft", JSON.stringify(unifiedDraft));
+    sessionStorage.setItem("appointmentDraft", JSON.stringify(unifiedDraft));
     router.push(redirectPath);
   }
 
@@ -400,7 +400,7 @@ const CheckoutForm = ({ request, token }: CheckoutFormProps) => {
               <button
                 onClick={() => {
                   // Solo removemos la entrada unificada
-                  localStorage.removeItem("appointmentDraft");
+                  sessionStorage.removeItem("appointmentDraft");
                   router.push("/");
                 }}
                 className="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400"

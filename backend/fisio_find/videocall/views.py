@@ -21,13 +21,13 @@ class RoomCreateView(APIView):
         patient_id = request.data.get('patient_id')
 
         if not physiotherapist_id or not patient_id:
-            return Response({'detail': 'physiotherapist_id and patient_id are required'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'physiotherapist_id y patient_id son necesarios'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             physiotherapist = Physiotherapist.objects.get(id=physiotherapist_id)
             patient = Patient.objects.get(id=patient_id)
         except (Physiotherapist.DoesNotExist, Patient.DoesNotExist):
-            return Response({'detail': 'Invalid physiotherapist or patient ID'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'detail': 'ID de fisioterapeuta o paciente inválidos'}, status=status.HTTP_404_NOT_FOUND)
 
         room = Room.objects.create(physiotherapist=physiotherapist, patient=patient)
         serializer = RoomSerializer(room)
@@ -41,7 +41,7 @@ class RoomJoinView(APIView):
         try:
             room = Room.objects.get(code=code)
         except Room.DoesNotExist:
-            return Response({'detail': 'Room not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'detail': 'Sala no encontrada'}, status=status.HTTP_404_NOT_FOUND)
 
         user = request.user
 
@@ -79,10 +79,7 @@ class RoomDeleteView(APIView):
             room.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Room.DoesNotExist:
-            return Response({'detail': 'Room not found'}, status=status.HTTP_404_NOT_FOUND)
-        
-
-
+            return Response({'detail': 'Sala no encontrada'}, status=status.HTTP_404_NOT_FOUND)
 
 class RoomListView(APIView):
     permission_classes = [IsAuthenticated]

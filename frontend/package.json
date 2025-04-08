@@ -32,6 +32,7 @@
     "fullcalendar": "^6.1.15",
     "lottie-web": "^5.12.2",
     "lucide-react": "^0.477.0",
+    "luxon": "^3.6.1",
     "mini-svg-data-uri": "^1.4.4",
     "motion": "^12.6.3",
     "next": "^15.2.3",
