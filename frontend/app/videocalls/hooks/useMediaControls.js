@@ -47,7 +47,7 @@ const useMediaControls = ({
       setConnecting(false);
       return stream;
     } catch (err) {
-      console.error("Error al acceder a cámara/micrófono:", err);
+      console.log("Error al acceder a cámara/micrófono:", err);
       handleMediaError(err);
       throw err;
     }
@@ -58,6 +58,7 @@ const useMediaControls = ({
     if (err.name === 'NotAllowedError') {
       setErrorMessage('Permiso denegado para cámara o micrófono. Habilita los permisos en tu navegador.');
     } else if (err.name === 'NotFoundError') {
+      console.log("Aqui estoy")
       setErrorMessage('No se encontró cámara o micrófono. Verifica la conexión de tus dispositivos.');
     } else {
       setErrorMessage(`Error: ${err.message}`);
