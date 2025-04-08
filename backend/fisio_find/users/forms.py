@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import AppUser
+from .models import AppUser, validate_unique_DNI
 from .util import (
     telefono_no_mide_9,
     codigo_postal_no_mide_5,
@@ -55,13 +55,11 @@ class AppUserCreationForm(UserCreationForm):
         dni = self.cleaned_data.get('dni')
         if not validate_dni_structure(dni):
             raise forms.ValidationError("El DNI debe tener 8 números y una letra válida al final.")
-        if validate_dni_match_letter(dni):
+        elif validate_dni_match_letter(dni):
             raise forms.ValidationError("La letra del DNI no coincide con el número.")
-        qs = AppUser.objects.filter(dni__iexact=dni)
-        if self.instance.pk:
-            qs = qs.exclude(pk=self.instance.pk)
-        if qs.exists():
+        elif validate_unique_DNI(dni):
             raise forms.ValidationError("El DNI ya está en uso.")
+
         return dni
 
     class Meta:
@@ -110,15 +108,18 @@ class AppUserChangeForm(UserChangeForm):
 
     def clean_dni(self):
         dni = self.cleaned_data.get('dni')
+
+        # Saltar validación si el DNI no cambió
+        if self.instance.pk and dni == self.instance.dni:
+            return dni
+
         if not validate_dni_structure(dni):
             raise forms.ValidationError("El DNI debe tener 8 números y una letra válida al final.")
-        if validate_dni_match_letter(dni):
+        elif validate_dni_match_letter(dni):
             raise forms.ValidationError("La letra del DNI no coincide con el número.")
-        qs = AppUser.objects.filter(dni__iexact=dni)
-        if self.instance.pk:
-            qs = qs.exclude(pk=self.instance.pk)
-        if qs.exists():
+        elif validate_unique_DNI(dni):
             raise forms.ValidationError("El DNI ya está en uso.")
+
         return dni
 
     class Meta:
