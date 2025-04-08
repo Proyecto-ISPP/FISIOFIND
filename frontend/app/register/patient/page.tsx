@@ -30,7 +30,6 @@ const GENDER_OPTIONS = [
   { value: "P", label: "Prefiero no decirlo" },
 ];
 
-// Componente reutilizable para los campos del formulario
 const FormField = ({
   name,
   label,
@@ -131,6 +130,31 @@ const FormField = ({
   );
 };
 
+// Modal Component
+const ConfirmationModal = ({ isOpen, onClose, email, onConfirm }: { isOpen: boolean, onClose: () => void, email: string, onConfirm: () => void }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white dark:bg-black p-6 rounded-lg shadow-xl max-w-md w-full">
+        <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">Confirma tu correo</h2>
+        <p className="mb-4 text-gray-700 dark:text-gray-300">
+          Te hemos enviado un correo de confirmación a <strong>{email}</strong>. Por favor, verifica tu buzón y sigue las instrucciones para activar tu cuenta.
+        </p>
+        <button
+          onClick={() => {
+            onClose();
+            onConfirm();
+          }}
+          className="px-4 py-2 bg-[#1E5ACD] text-white font-medium rounded-lg hover:bg-[#1747A0] transition-colors"
+        >
+          Entendido
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const PatientRegistrationForm = () => {
   const router = useRouter();
 
@@ -170,6 +194,8 @@ const PatientRegistrationForm = () => {
     type: "info",
     message: ""
   });
+  const [showModal, setShowModal] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Nuevo estado para rastrear el login
 
   const showAlert = (type: "success" | "error" | "info" | "warning", message: string) => {
     setAlert({
@@ -186,11 +212,10 @@ const PatientRegistrationForm = () => {
     }, 5000);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     setIsClient(true);
   }, []);
 
-  // Memorizar la función para evitar recrearla en cada render
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       const { name, value } = e.target;
@@ -296,15 +321,12 @@ const PatientRegistrationForm = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-
     // Create a new object with only the fields the server expects
     const requestData = { ...formData };
-
     // Remove phone_number if it's empty
     if (!requestData.phone_number.trim()) {
       delete requestData.phone_number;
     }
-
     // Remove confirm_password since the server doesn't expect it
     delete requestData.confirm_password;
 
@@ -317,7 +339,7 @@ const PatientRegistrationForm = () => {
 
       if (response.status === 201) {
         showAlert("success", "¡Registro exitoso! Iniciando sesión...");
-
+        
         // Auto login after registration
         const loginResponse = await axios.post(
           `${getApiBaseUrl()}/api/app_user/login/`,
@@ -327,9 +349,7 @@ const PatientRegistrationForm = () => {
 
         if (loginResponse.status === 200) {
           localStorage.setItem("token", loginResponse.data.access);
-          setTimeout(() => {
-            router.push("/");
-          }, 1000);
+          setIsLoggedIn(true); // Marcar que el usuario está logueado
         }
       }
     } catch (error: any) {
@@ -341,13 +361,6 @@ const PatientRegistrationForm = () => {
       setIsSubmitting(false);
     }
   };
-
-  const getMaxBirthDate = () => {
-    const today = new Date();
-    today.setFullYear(today.getFullYear() - 18);
-    return today.toISOString().split('T')[0]; // formato YYYY-MM-DD
-  };
-
   return (
     <div>
       {alert.show && (
@@ -357,53 +370,51 @@ const PatientRegistrationForm = () => {
           onClose={() => setAlert({ ...alert, show: false })}
         />
       )}
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white dark:from-neutral-900 dark:to-black py-8">
-        <div className="max-w-5xl mx-auto px-4">
-          <div className="text-center mb-8">
-            <Image
-              src="/static/fisio_find_logo.webp"
-              alt="Fisio Find Logo"
-              width={120}
-              height={120}
-              className="mx-auto mb-4"
-            />
-            <h1 className="text-3xl font-bold text-[#1E5ACD]">
-              Registro de Paciente
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-2">
-              Completa el formulario para encontrar fisioterapeutas cerca de ti
-            </p>
-          </div>
-
-          <div className="bg-white dark:bg-black rounded-xl shadow-xl overflow-hidden">
-            {/* Progress Steps */}
-            <div className="px-6 pt-6">
-              <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center w-full">
-                  <div
-                    className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 1
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white dark:from-neutral-900 dark:to-black py-8">
+      <div className="max-w-5xl mx-auto px-4">
+        <div className="text-center mb-8">
+          <Image
+            src="/static/fisio_find_logo.webp"
+            alt="Fisio Find Logo"
+            width={120}
+            height={120}
+            className="mx-auto mb-4"
+          />
+          <h1 className="text-3xl font-bold text-[#1E5ACD]">
+            Registro de Paciente
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">
+            Completa el formulario para encontrar fisioterapeutas cerca de ti
+          </p>
+        </div>
+        <div className="bg-white dark:bg-black rounded-xl shadow-xl overflow-hidden">
+          {/* Progress Steps */}
+          <div className="px-6 pt-6">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center w-full">
+                <div
+                  className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 1
                       ? "bg-[#1E5ACD] text-white"
                       : "bg-gray-200 text-gray-600"
-                      }`}
-                  >
-                    1
-                  </div>
-                  <div
-                    className={`h-1 flex-1 mx-2 ${currentStep >= 2 ? "bg-[#1E5ACD]" : "bg-gray-200"
-                      }`}
-                  ></div>
-                  <div
-                    className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 2
+                    }`}
+                >
+                  1
+                </div>
+                <div
+                  className={`h-1 flex-1 mx-2 ${currentStep >= 2 ? "bg-[#1E5ACD]" : "bg-gray-200"
+                    }`}
+                ></div>
+                <div
+                  className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 2
                       ? "bg-[#1E5ACD] text-white"
                       : "bg-gray-200 text-gray-600"
-                      }`}
-                  >
-                    2
-                  </div>
+                    }`}
+                >
+                  2
                 </div>
               </div>
             </div>
-
+          </div>
             <form onSubmit={handleSubmit} className="p-6">
               {currentStep === 1 && (
                 <div className="space-y-4">
@@ -463,80 +474,70 @@ const PatientRegistrationForm = () => {
                   </div>
                 </div>
               )}
-
-              {currentStep === 2 && (
-                <div className="space-y-4">
-                  <h2 className="text-xl font-semibold mb-4">
-                    Información Personal
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <FormField
-                      name="first_name"
-                      label="Nombre"
-                      value={formData.first_name}
-                      onChange={handleChange}
-                      error={errors.first_name}
-                    />
-                    <FormField
-                      name="last_name"
-                      label="Apellidos"
-                      value={formData.last_name}
-                      onChange={handleChange}
-                      error={errors.last_name}
-                    />
-                    <FormField
-                      name="dni"
-                      label="DNI"
-                      value={formData.dni}
-                      onChange={handleChange}
-                      error={errors.dni}
-                      info="Necesitamos tu DNI para verificar tu identidad."
-                    />
-                    <FormField
-                      name="phone_number"
-                      label="Número de teléfono"
-                      type="tel"
-                      required={false}
-                      value={formData.phone_number || ""}
-                      onChange={handleChange}
-                      error={errors.phone_number}
-                    />
-                    <div className="mb-4 relative">
-                      <label htmlFor="birth_date" className="block text-sm font-medium text-gray-700 dark:text-white mb-1">Fecha de nacimiento
-                        <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        className="w-full px-4 py-2 border border-gray-300 dark:border-neutral-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1E5ACD] dark:bg-neutral-800 dark:text-white"
-                        type="date"
-                        name="birth_date"
-                        id="birth_date"
-                        value={formData.birth_date}
-                        onChange={handleChange}
-                        max={getMaxBirthDate()}
-                        min={"1900-01-01"}
-                      />
-                      {errors.birth_date && <span className="error">{errors.birth_date}</span>}
-                    </div>
-                    <FormField
-                      name="gender"
-                      label="Género"
-                      type="select"
-                      options={GENDER_OPTIONS}
-                      value={formData.gender}
-                      onChange={handleChange}
-                      error={errors.gender}
-                    />
-                    <FormField
-                      name="postal_code"
-                      label="Código Postal"
-                      value={formData.postal_code}
-                      onChange={handleChange}
-                      error={errors.postal_code}
-                    />
-                  </div>
+            {currentStep === 2 && (
+              <div className="space-y-4">
+                <h2 className="text-xl font-semibold mb-4">
+                  Información Personal
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <FormField
+                    name="first_name"
+                    label="Nombre"
+                    value={formData.first_name}
+                    onChange={handleChange}
+                    error={errors.first_name}
+                  />
+                  <FormField
+                    name="last_name"
+                    label="Apellidos"
+                    value={formData.last_name}
+                    onChange={handleChange}
+                    error={errors.last_name}
+                  />
+                  <FormField
+                    name="dni"
+                    label="DNI"
+                    value={formData.dni}
+                    onChange={handleChange}
+                    error={errors.dni}
+                    info="Necesitamos tu DNI para verificar tu identidad." 
+                  />
+                  <FormField
+                    name="phone_number"
+                    label="Número de teléfono"
+                    type="tel"
+                    required={false}
+                    value={formData.phone_number || ""}
+                    onChange={handleChange}
+                    error={errors.phone_number}
+                  />
+                  <FormField
+                    name="birth_date"
+                    label="Fecha de nacimiento"
+                    type="date"
+                    value={formData.birth_date}
+                    onChange={handleChange}
+                    error={errors.birth_date}
+                  />
+                  <FormField
+                    name="gender"
+                    label="Género"
+                    type="select"
+                    options={GENDER_OPTIONS}
+                    value={formData.gender}
+                    onChange={handleChange}
+                    error={errors.gender}
+                  />
+                  <FormField
+                    name="postal_code"
+                    label="Código Postal"
+                    value={formData.postal_code}
+                    onChange={handleChange}
+                    error={errors.postal_code}
+                  />
                 </div>
-              )}
-
+              </div>
+            )}
               <div className="flex justify-between mt-8">
                 {currentStep > 1 && (
                   <button
@@ -547,7 +548,6 @@ const PatientRegistrationForm = () => {
                     Anterior
                   </button>
                 )}
-
                 {currentStep < 2 ? (
                   <button
                     type="button"
@@ -568,7 +568,6 @@ const PatientRegistrationForm = () => {
               </div>
             </form>
           </div>
-
           <div className="text-center mt-6">
             <p className="text-gray-600 dark:text-gray-400">
               ¿Ya tienes una cuenta?{" "}
