@@ -2064,3 +2064,4 @@ input:focus + .slider {
 input:checked + .slider:before {
   transform: translateX(1.9em);
 }
+

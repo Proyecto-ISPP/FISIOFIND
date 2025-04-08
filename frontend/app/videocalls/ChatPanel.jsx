@@ -17,7 +17,7 @@ const ChatPanel = ({
 
   return (
     <div className={styles.chatPanel}>
-      <h4>Chat</h4>
+      <h4 className='text-center pb-2 pt-2 font-bold bg-teal-500 text-white rounded-xl shadow'>Chat</h4>
       <div ref={chatMessagesRef} className={styles.chatMessages}>
         {chatMessages.map((msg, index) => (
           <div key={index} className={styles.chatMessage}>

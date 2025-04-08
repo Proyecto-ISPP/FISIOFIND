@@ -138,11 +138,6 @@ def cancel_payment_patient(payment_id):
         appointment = payment.appointment
         now = timezone.now()
 
-        # No se puede cancelar si la cita ya pasó
-        if now > appointment.start_time:
-            return Response({'error': 'The appointment has already passed'},
-                            status=status.HTTP_400_BAD_REQUEST)
-
         # Caso 1: Pago no realizado antes de las 48 horas antes de la cita
         if payment.status == 'Not Paid' and now < payment.payment_deadline:
             if payment.stripe_payment_intent_id:
@@ -155,30 +150,30 @@ def cancel_payment_patient(payment_id):
             return Response({'message': 'Appointment canceled without charge'}, status=status.HTTP_200_OK)
 
         # Caso 2: Pago realizado y antes de las 48 horas antes de la cita
-        if payment.status == 'Paid' and now < payment.payment_deadline:
-            payment_intent = stripe.PaymentIntent.retrieve(
-                payment.stripe_payment_intent_id)
-            if payment_intent['status'] != 'succeeded':
-                return Response({'error': 'Payment cannot be refunded because it was not completed'},
-                                status=status.HTTP_400_BAD_REQUEST)
+        # if payment.status == 'Paid' and now < payment.payment_deadline:
+        #     payment_intent = stripe.PaymentIntent.retrieve(
+        #         payment.stripe_payment_intent_id)
+        #     if payment_intent['status'] != 'succeeded':
+        #         return Response({'error': 'Payment cannot be refunded because it was not completed'},
+        #                         status=status.HTTP_400_BAD_REQUEST)
 
-            refund = stripe.Refund.create(
-                payment_intent=payment.stripe_payment_intent_id)
-            if refund['status'] == 'succeeded':
-                payment.status = 'Refunded'
-                payment.payment_date = now
-                payment.save()
-                appointment.status = 'Canceled'
-                appointment.save()
-                return Response({'message': 'Payment refunded and appointment canceled'},
-                                status=status.HTTP_200_OK)
+        #     refund = stripe.Refund.create(
+        #         payment_intent=payment.stripe_payment_intent_id)
+        #     if refund['status'] == 'succeeded':
+        #         payment.status = 'Refunded'
+        #         payment.payment_date = now
+        #         payment.save()
+        #         appointment.status = 'Canceled'
+        #         appointment.save()
+        #         return Response({'message': 'Payment refunded and appointment canceled'},
+        #                         status=status.HTTP_200_OK)
 
-        # Caso 3: Pago realizado pero dentro de las 48 horas antes de la cita
-        if payment.status == 'Paid' and now > payment.payment_deadline:
+        # Caso 2: Pago realizado pero dentro de las 48 horas antes de la cita
+        if payment.status == 'Not Captured' and now > payment.payment_deadline:
             return Response({'error': 'Payment cannot be refunded within 48 hours of the appointment'},
                             status=status.HTTP_400_BAD_REQUEST)
 
-        # Caso 4: Pago ya cancelado o reembolsado
+        # Caso 3: Pago ya cancelado o reembolsado
         if payment.status in ['Canceled', 'Refunded']:
             return Response({'error': 'Payment has already been canceled or refunded'},
                             status=status.HTTP_400_BAD_REQUEST)

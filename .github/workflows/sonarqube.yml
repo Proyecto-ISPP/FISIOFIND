@@ -81,3 +81,6 @@ jobs:
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
+    - name: Show coverage summary
+      working-directory: backend/fisio_find
+      run: coverage report

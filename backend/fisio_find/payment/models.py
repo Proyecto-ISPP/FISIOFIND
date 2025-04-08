@@ -15,6 +15,7 @@ class Payment(models.Model):
         ('Canceled', 'Canceled'),
         ('Redeemed', 'Redeemed'), #Pago cobrado por el fisioterapeuta
         ('Completed', 'Completed'), 
+        ('Not Captured', 'Not Captured'), #Pago no cobrado por el fisioterapeuta
     )
     appointment = models.OneToOneField(Appointment, on_delete=models.CASCADE, related_name='payment',verbose_name='Cita')
     amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Cantidad')

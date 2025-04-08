@@ -42,7 +42,7 @@ const useWebSocket = (roomCode, userRole, initialMessageHandler) => {
     };
 
     socket.onerror = (event) => {
-      console.error('Error de WebSocket:', event);
+      console.log('Error de WebSocket:', event);
       setErrorMessage('Error de conexión con el servidor');
     };
 
@@ -59,7 +59,7 @@ const useWebSocket = (roomCode, userRole, initialMessageHandler) => {
           messageHandlerRef.current(data);
         }
       } catch (error) {
-        console.error('Error al procesar mensaje WebSocket:', error);
+        console.log('Error al procesar mensaje WebSocket:', error);
       }
     };
     
@@ -72,7 +72,7 @@ const useWebSocket = (roomCode, userRole, initialMessageHandler) => {
       console.log('Enviando mensaje WebSocket:', data);
       wsRef.current.send(JSON.stringify(data));
     } else {
-      console.error('WebSocket no está conectado');
+      console.log('WebSocket no está conectado');
       setErrorMessage('Error: No hay conexión con el servidor');
     }
   }, []);
