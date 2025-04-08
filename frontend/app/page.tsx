@@ -631,6 +631,7 @@ const Home = () => {
           <div className="flex flex-wrap justify-center gap">
             <p>© 2025 Fisio Find. Bajo licencia MIT</p>
           </div>
+
         </div>
       </footer>
     </div>

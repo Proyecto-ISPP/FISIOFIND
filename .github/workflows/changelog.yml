@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - fix/changelog.yml
 jobs:
   generate-changelog:
     runs-on: ubuntu-latest
@@ -11,23 +12,58 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Necesario para obtener todas las tags
+          fetch-depth: 0  
 
       - name: Get latest tag
         id: get-latest-tag
         run: |
-          latest_tag=$(git tag --sort=-v:refname | head -n 1)
+          # Obtener la última tag semántica válida
+          latest_tag=$(git tag --sort=-v:refname | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1)
           echo "Última tag encontrada: $latest_tag"
+
           if [[ -z "$latest_tag" ]]; then
-            new_tag="1.0.0"
+            major=0
+            minor=0
+            patch=0
+            log_range="HEAD"
           else
-            major=$(echo "$latest_tag" | cut -d. -f1)
-            new_major=$((major + 1))
-            new_tag="${new_major}.0.0"
+            IFS='.' read -r major minor patch <<< "$latest_tag"
+            log_range="$latest_tag..HEAD"
           fi
+
+          feature_count=$(git log --grep="^feat:" --oneline $log_range | wc -l)
+          total_commits=$(git log --oneline $log_range | wc -l)
+
+          # Aplicar lógica de versión:
+          if (( feature_count > 0 )); then
+            minor=$((minor + 1))
+            patch=0
+          elif (( total_commits > 0 )); then
+            patch=$((patch + 1))
+          else
+            echo "No hay cambios desde la última versión. Saliendo."
+            exit 0
+          fi
+
+          new_tag="${major}.${minor}.${patch}"
           echo "NEW_TAG=$new_tag" >> $GITHUB_ENV
-          echo "latest_tag=$latest_tag" >> $GITHUB_ENV  # Guardamos la última tag en env
-          echo "Nueva tag a crear: $new_tag"
+          echo "latest_tag=$latest_tag" >> $GITHUB_ENV
+          echo "🔖 Nueva tag a crear: $new_tag"
+
+      - name: Check if tag exists and create new tag
+        run: |
+          # Verificar si la nueva tag ya existe
+          if git rev-parse "refs/tags/$NEW_TAG" >/dev/null 2>&1; then
+            echo "La tag $NEW_TAG ya existe. Buscando la siguiente versión disponible..."
+            
+            # Si ya existe, incrementamos el patch hasta encontrar una tag no existente
+            while git rev-parse "refs/tags/${major}.${minor}.$((patch+1))" >/dev/null 2>&1; do
+              patch=$((patch+1))
+            done
+
+            NEW_TAG="${major}.${minor}.${patch}"
+            echo "Nueva tag disponible: $NEW_TAG"
+          fi
 
       - name: Generate changelog
         id: generate-changelog
@@ -72,7 +108,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add CHANGELOG.md
-          git commit -m "docs: actualización CHANGELOG para $NEW_TAG"
+          git commit -m "docs: actualizacion CHANGELOG para $NEW_TAG"
           git push
 
       - name: Create new tag
