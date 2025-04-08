@@ -359,7 +359,7 @@ const PatientProfile = () => {
       });
 
       if (response.status === 200) {
-        setSuccess("Perfil actualizado correctamente");
+        showAlert("success", "Perfil actualizado correctamente"); // Changed from setSuccess to showAlert
         fetchPatientProfile();
       }
     } catch (error) {
