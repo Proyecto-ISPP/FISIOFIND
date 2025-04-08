@@ -1740,55 +1740,83 @@ const FisioProfile = () => {
             </div>
 
                         {/* Titulación */}
-                        <div className="space-y-2">
-                            <label className="block text-sm font-large text-gray-700 mb-2 mt-4">Titulación</label>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Titulación <span className="text-red-500">*</span>
+                          </label>
+                          <div className="relative">
                             <input
-                                type="text"
-                                name="degree"
-                                value={profile.degree || ""}
-                                onChange={handleChange}
-                                className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+                              type="text"
+                              name="degree"
+                              value={profile.degree || ""}
+                              onChange={handleChange}
+                              className={`w-full pl-10 pr-3 py-3 border-2 ${
+                                formErrors.degree ? 'border-red-500' : 'border-gray-200'
+                              } rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD]`}
                             />
-                            {formErrors.degree && <span className="text-red-500 text-sm">{formErrors.degree}</span>}
+                          </div>
+                          {formErrors.degree && (
+                            <p className="mt-1 text-sm text-red-600">{formErrors.degree}</p>
+                          )}
                         </div>
 
-                        {/* Universidad */}
-                        <div className="space-y-2">
-                            <label className="block text-sm font-large text-gray-700 mb-2 mt-4">Universidad</label>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Universidad <span className="text-red-500">*</span>
+                          </label>
+                          <div className="relative">
                             <input
-                                type="text"
-                                name="university"
-                                value={profile.university || ""}
-                                onChange={handleChange}
-                                className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+                              type="text"
+                              name="university"
+                              value={profile.university || ""}
+                              onChange={handleChange}
+                              className={`w-full pl-10 pr-3 py-3 border-2 ${
+                                formErrors.university ? 'border-red-500' : 'border-gray-200'
+                              } rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD]`}
                             />
-                            {formErrors.university && <span className="text-red-500 text-sm">{formErrors.university}</span>}
+                          </div>
+                          {formErrors.university && (
+                            <p className="mt-1 text-sm text-red-600">{formErrors.university}</p>
+                          )}
                         </div>
 
-                        {/* Experiencia */}
-                        <div className="space-y-2">
-                            <label className="block text-sm font-large text-gray-700 mb-2 mt-4">Experiencia</label>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Experiencia <span className="text-red-500">*</span>
+                          </label>
+                          <div className="relative">
                             <textarea
-                                name="experience"
-                                value={profile.experience || ""}
-                                onChange={handleChange}
-                                rows={4}
-                                className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+                              name="experience"
+                              value={profile.experience || ""}
+                              onChange={handleChange}
+                              className={`w-full pl-10 pr-3 py-3 border-2 ${
+                                formErrors.experience ? 'border-red-500' : 'border-gray-200'
+                              } rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD]`}
                             />
-                            {formErrors.experience && <span className="text-red-500 text-sm">{formErrors.experience}</span>}
+                          </div>
+                          {formErrors.experience && (
+                            <p className="mt-1 text-sm text-red-600">{formErrors.experience}</p>
+                          )}
                         </div>
 
-                        {/* Centro de trabajo */}
-                        <div className="space-y-2">
-                            <label className="block text-sm font-large text-gray-700 mb-2 mt-4">Centro de trabajo</label>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Lugar de trabajo <span className="text-red-500">*</span>
+                          </label>
+                          <div className="relative">
                             <input
-                                type="text"
-                                name="workplace"
-                                value={profile.workplace || ""}
-                                onChange={handleChange}
-                                className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+                              type="text"
+                              name="workplace"
+                              value={profile.workplace || ""}
+                              onChange={handleChange}
+                              className={`w-full pl-10 pr-3 py-3 border-2 ${
+                                formErrors.workplace ? 'border-red-500' : 'border-gray-200'
+                              } rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD]`}
                             />
-                            {formErrors.workplace && <span className="text-red-500 text-sm">{formErrors.workplace}</span>}
+                          </div>
+                          {formErrors.workplace && (
+                            <p className="mt-1 text-sm text-red-600">{formErrors.workplace}</p>
+                          )}
                         </div>
 
             {/* Sección de servicios */}
