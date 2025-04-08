@@ -253,12 +253,13 @@ const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         
         {/* Back to Treatment Button */}
         <button
-              onClick={handleGoBack}
-              className="mb-6 flex items-center text-blue-600 hover:text-blue-800 transition-colors duration-200 font-medium"
+          onClick={() => router.push(`/patient-management/follow-up/${treatmentId}`)}
+          className="mb-6 flex items-center text-blue-600 hover:text-blue-800 transition-colors duration-200 font-medium"
         >
           <ArrowLeft className="mr-2" size={20} />
-          Volver a mis tratamientos
-        </button>  
+          Volver al tratamiento
+        </button>
+      
       {alert.show && (
         <Alert 
           type={alert.type} 

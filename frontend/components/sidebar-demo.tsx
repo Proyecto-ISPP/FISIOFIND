@@ -1,6 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Sidebar, SidebarBody, SidebarLink, useSidebar } from "@/components/ui/sidebar";
+import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faEdit
+} from '@fortawesome/free-solid-svg-icons';
 import {
   IconArrowLeft,
   IconSearch,
@@ -27,6 +31,9 @@ export function SidebarDemo() {
   const [urlPerfil, setUrlPerfil] = useState<string>("");
   const [isClient, setIsClient] = useState(false);
   const [token, setToken] = useState<string | null>(null);
+  const [userRole, setUserRole] = useState<string | null>(null);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
 
   useEffect(() => {
     setIsClient(true);
@@ -67,24 +74,33 @@ export function SidebarDemo() {
     if (isClient) {
       const storedToken = localStorage.getItem("token");
       setToken(storedToken);
-      setIsAuthenticated(!!token);
-      if (token) {
+      setIsAuthenticated(!!storedToken);
+      
+      if (storedToken) {
         axios
           .get(`${getApiBaseUrl()}/api/app_user/check-role/`, {
             headers: {
-              Authorization: "Bearer " + token,
+              Authorization: "Bearer " + storedToken,
             },
           })
           .then((response) => {
             const role = response.data.user_role;
+            setUserRole(role);
+            
             if (role === "patient") {
               setUrlPerfil("/patient-management/profile/");
             } else if (role === "physiotherapist") {
               setUrlPerfil("/physio-management/profile/");
             }
+            
+            if (role !== "physiotherapist" && pathname === "/questionnaires") {
+              window.location.href = "/";
+            }
           });
+      } else if (pathname === "/questionnaires") {
+        window.location.href = "/";
+        }
       }
-    }
   }, [pathname, isClient, token]);
 
   // Update the links array to separate public and private links
@@ -125,7 +141,16 @@ export function SidebarDemo() {
       icon: (
         <IconPhone className="text-[#1E5ACD] h-5 w-5 flex-shrink-0 mx-auto" />
       ),
-    }
+    },
+    ...(userRole === "physiotherapist" ? [
+      {
+        label: "Cuestionarios",
+        href: "/questionnaires",
+        icon: (
+          <FontAwesomeIcon icon={faEdit} className="text-[#8C4482] h-5 w-5 flex-shrink-0 mx-auto" />
+        ),
+      }
+    ] : []),
   ];
 
   const privateLinks = [
@@ -183,7 +208,7 @@ export function SidebarDemo() {
                   <div key={`mobile-public-${idx}`} className="w-full">
                     <Link
                       href={link.href}
-                      className="flex flex-col items-center gap-2 py-3 px-2 rounded-lg hover:bg-neutral-200 transition-all duration-200 w-full"
+                      className="flex flex-col items-center gap-2 py-3 px-2 rounded-xl hover:bg-neutral-200 transition-all duration-200 w-full"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       <div className="flex items-center justify-center">
@@ -201,7 +226,7 @@ export function SidebarDemo() {
                     <div key={`mobile-private-${idx}`} className="w-full">
                       <Link
                         href={link.href}
-                        className="flex flex-col items-center gap-2 py-3 px-2 rounded-lg hover:bg-neutral-200 transition-all duration-200 w-full"
+                        className="flex flex-col items-center gap-2 py-3 px-2 rounded-xl hover:bg-neutral-200 transition-all duration-200 w-full"
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         <div className="flex items-center justify-center">
@@ -277,7 +302,7 @@ export function SidebarDemo() {
 
 const Logo = () => {
   return (
-    <a
+    <Link
       href="/"
       className="font-normal flex items-center justify-center text-sm text-[#253240] py-1 relative z-300 w-full"
     >
@@ -286,13 +311,13 @@ const Logo = () => {
         alt="Logo"
         className="h-16 w-auto flex-shrink-0"
       />
-    </a>
+    </Link>
   );
 };
 
 export const LogoIcon = () => {
   return (
-    <a
+    <Link
       href="/"
       className="font-normal flex justify-center items-center text-base text-[#253240] py-2 relative z-300 w-full"
     >
@@ -303,6 +328,6 @@ export const LogoIcon = () => {
           className="h-12 w-auto flex-shrink-0 object-contain"
         />
       </div>
-    </a>
+    </Link>
   );
 };

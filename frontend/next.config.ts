@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
+  poweredByHeader: false,
   // Your existing configuration
   eslint: {
     // Warning: This allows production builds to successfully complete even if

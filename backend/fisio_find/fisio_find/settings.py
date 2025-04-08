@@ -96,10 +96,12 @@ INSTALLED_APPS += [
     'appointment',
     'terms',
     'guest_session',
+    'questionnaire',
     'treatments',
     'gestion_survey',
     'payment',
     'files',
+    'appointment_rating',
 ]
 
 INSTALLED_APPS += ['corsheaders', 'django_extensions', 'django_filters']
@@ -269,22 +271,28 @@ else:
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 #Stripe payment
 STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
 
-DIGITALOCEAN_ACCESS_KEY_ID = "DO801T22Y6LWLUV2R4RE"
-DIGITALOCEAN_SECRET_ACCESS_KEY = "hHkSrRsu61YP+BqQP3GL+GtGeqDfzPVpn8sMaLDVkVY"
-DIGITALOCEAN_SPACE_NAME = "fisiofind-repo"
-DIGITALOCEAN_REGION = "fra1"  # Ejemplo: nyc3, ams3, sgp1
-DIGITALOCEAN_ENDPOINT_URL = f"https://{DIGITALOCEAN_SPACE_NAME}.{DIGITALOCEAN_REGION}.digitaloceanspaces.com"
+# Claves de Digital Ocean Spaces
+DIGITALOCEAN_ACCESS_KEY_ID = os.getenv('DIGITALOCEAN_ACCESS_KEY_ID')
+DIGITALOCEAN_SECRET_ACCESS_KEY = os.getenv('DIGITALOCEAN_SECRET_ACCESS_KEY')
+DIGITALOCEAN_SPACE_NAME = os.getenv('DIGITALOCEAN_SPACE_NAME')
+DIGITALOCEAN_REGION = os.getenv('DIGITALOCEAN_REGION')  # Ejemplo: nyc3, ams3, sgp1
+DIGITALOCEAN_ENDPOINT_URL = os.getenv('DIGITALOCEAN_ENDPOINT_URL')  # URL del espacio de DigitalOcean
 
 # Configuración de almacenamiento en DigitalOcean Spaces
 DEFAULT_FILE_STORAGE = "backend.custom_storages.DigitalOceanMediaStorage"
 MEDIA_URL = f"{DIGITALOCEAN_ENDPOINT_URL}/"
+
+PROFILE_PHOTOS_URL = '/media/'
+PROFILE_PHOTOS_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Create profile photos directory if it doesn't exist
+if not os.path.exists(PROFILE_PHOTOS_ROOT):
+    os.makedirs(PROFILE_PHOTOS_ROOT)
 
 
 # Aumentar límite de tamaño de archivos subidos

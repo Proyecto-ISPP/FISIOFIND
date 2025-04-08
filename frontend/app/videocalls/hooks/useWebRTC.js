@@ -86,7 +86,7 @@ const useWebRTC = ({
         peerConnection.addTrack(track, localStreamRef.current);
       });
     } else {
-      console.error('No hay stream local al crear PeerConnection');
+      console.log('No hay stream local al crear PeerConnection');
     }
     
     // Handle ICE candidates
@@ -107,7 +107,7 @@ const useWebRTC = ({
         setConnecting(false);
         addChatMessage('Sistema', `${userRole === 'physio' ? 'Paciente' : 'Fisioterapeuta'} conectado a la videollamada.`);
       } else {
-        console.error('remoteVideoRef no está disponible o no hay stream');
+        console.log('remoteVideoRef no está disponible o no hay stream');
       }
     };
     
@@ -180,7 +180,7 @@ const useWebRTC = ({
         console.log('Oferta enviada en broadcast (no óptimo)');
       }
     } catch (error) {
-      console.error('Error al crear o enviar oferta:', error);
+      console.log('Error al crear o enviar oferta:', error);
       setErrorMessage('Error al establecer la conexión de video');
     }
   }, [createPeerConnection, sendWebSocketMessage]);
@@ -246,7 +246,7 @@ const useWebRTC = ({
         });
       }
     } catch (error) {
-      console.error('Error al manejar oferta:', error);
+      console.log('Error al manejar oferta:', error);
       setErrorMessage('Error al procesar la oferta de conexión');
     }
   }, [createPeerConnection, sendWebSocketMessage]);
@@ -278,7 +278,7 @@ const useWebRTC = ({
         message: { sdp: answer }
       });
     } catch (error) {
-      console.error('Error al manejar oferta V1:', error);
+      console.log('Error al manejar oferta V1:', error);
     }
   }, [createPeerConnection, sendWebSocketMessage]);
 
@@ -287,7 +287,7 @@ const useWebRTC = ({
     console.log('Procesando respuesta recibida:', message);
     try {
       if (!peerConnectionRef.current) {
-        console.error('No hay peerConnection al recibir respuesta');
+        console.log('No hay peerConnection al recibir respuesta');
         return;
       }
       
@@ -301,7 +301,7 @@ const useWebRTC = ({
         console.log('No se puede procesar la respuesta en estado:', peerConnectionRef.current.signalingState);
       }
     } catch (error) {
-      console.error('Error al manejar respuesta:', error);
+      console.log('Error al manejar respuesta:', error);
     }
   }, []);
 
@@ -310,7 +310,7 @@ const useWebRTC = ({
     console.log('Procesando respuesta V1:', message);
     try {
       if (!peerConnectionRef.current) {
-        console.error('No hay peerConnection al recibir respuesta V1');
+        console.log('No hay peerConnection al recibir respuesta V1');
         return;
       }
       
@@ -320,7 +320,7 @@ const useWebRTC = ({
       await peerConnectionRef.current.setRemoteDescription(answer);
       console.log('Respuesta V1 procesada correctamente');
     } catch (error) {
-      console.error('Error al manejar respuesta V1:', error);
+      console.log('Error al manejar respuesta V1:', error);
     }
   }, []);
 
@@ -329,7 +329,7 @@ const useWebRTC = ({
     console.log('Procesando ICE candidate:', message);
     try {
       if (!peerConnectionRef.current) {
-        console.error('No hay peerConnection al recibir ICE candidate');
+        console.log('No hay peerConnection al recibir ICE candidate');
         return;
       }
       
@@ -340,7 +340,7 @@ const useWebRTC = ({
         console.log('ICE candidate añadido correctamente');
       }
     } catch (error) {
-      console.error('Error al añadir ICE candidate:', error);
+      console.log('Error al añadir ICE candidate:', error);
     }
   }, []);
 

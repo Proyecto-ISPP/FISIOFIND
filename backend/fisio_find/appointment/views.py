@@ -145,7 +145,7 @@ def create_appointment_patient(request):
         update_schedule(data)
         if isinstance(payment_data, Response):
             return payment_data
-        # send_appointment_email(appointment.id, 'booked')
+        send_appointment_email(appointment.id, 'booked')
 
         # Crear videollamada
         Room.objects.create(
@@ -568,7 +568,7 @@ def accept_alternative(request, appointment_id):
 
 
 @api_view(['PUT'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsPhysiotherapist])
 def confirm_appointment(request, appointment_id):
     try:
         appointment = Appointment.objects.get(id=appointment_id)
@@ -591,7 +591,7 @@ def confirm_appointment(request, appointment_id):
     # Cambiar el estado a "confirmed"
     appointment.status = "confirmed"
     appointment.save()
-    # send_appointment_email(appointment.id, 'confirmed')
+    send_appointment_email(appointment.id, 'confirmed')
 
     # Serializar la cita actualizada
     serializer = AppointmentSerializer(appointment)
@@ -698,7 +698,7 @@ def delete_appointment(request, appointment_id):
 
     # Verificar si quedan menos de 48 horas para el inicio de la cita
     if hasattr(user, 'patient') and appointment.start_time - now < timedelta(hours=48):
-        return Response({"error": "No puedes borrar una cita con menos de 48 horas de antelación"}, status=status.HTTP_403_FORBIDDEN)
+        return Response({"error": "No puedes borrar una cita con menos de 48 horas de antelación o que ya ha pasado"}, status=status.HTTP_403_FORBIDDEN)
 
     try:
         if hasattr(user, 'patient'):
@@ -708,10 +708,10 @@ def delete_appointment(request, appointment_id):
 
     except Exception as e:
         print(e)
-        return Response({'error': 'An internal error has occurred. Please try again later.'}, status=status.HTTP_400_BAD_REQUEST)
-
+        return Response({'error': 'Ha ocurrido un error al cancelar el pago, contacte con el servicio de asistencia si el error vuelve a producirse'}, status=status.HTTP_400_BAD_REQUEST)
+    
     # Enviar el correo con el rol del usuario
-    send_appointment_email(appointment.id, 'canceled', role)
+    # send_appointment_email(appointment.id, 'canceled', role)
 
     # Eliminar la sala asociada, si existe
     Room.objects.filter(appointment=appointment).delete()
@@ -719,7 +719,7 @@ def delete_appointment(request, appointment_id):
     # Eliminar la cita
     appointment.delete()
     update_schedule(appointment)
-    return Response({"message": "Cita eliminada correctamente"}, status=status.HTTP_204_NO_CONTENT)
+    return Response({"message": "Cita eliminada correctamente"}, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])

@@ -1,9 +1,9 @@
-## 🚀 Changelog - 3.0.0
+## 🚀 Changelog - 7.0.0
 
 ### ✨ Features (0)
 
 ### 🐛 Fixes (1)
-- fix: pruebas en el script (@Benjamín Maureira Flores)
+- fix: eliminar linea de archivo .log (@Ramón Gavira)
 ### 📖 Documentation (0)
 
 ### 🌀 Other Changes (0)

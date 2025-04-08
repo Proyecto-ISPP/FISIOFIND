@@ -58,7 +58,7 @@ const IdentityVerificationStep: React.FC<IdentityVerificationStepProps> = ({
     function initializePersonaClient() {
       if (window.Persona) {
         const client = new window.Persona.Client({
-          templateId: "itmpl_NXuUD3b5bR6jaPnyMjRYTapQ1aLE",
+          templateId: "itmpl_pxbmMwkLweqJaRB18K6avYPfBDVc",
           environmentId: "env_W1FMk5LA8yvTFAmY7rLM67BSAxHf",
           onReady: () => {
             setClientInitialized(true);
@@ -68,7 +68,7 @@ const IdentityVerificationStep: React.FC<IdentityVerificationStepProps> = ({
             console.log(`Completed inquiry ${inquiryId} with status ${status}`);
             try {
               const response = await axios.post(
-                `${getApiBaseUrl()}/api/app_user/physio/verify-identity`,
+                `${getApiBaseUrl()}/api/app_user/physio/verify-identity/`,
                 {
                   inquiryId,
                   formData,
@@ -110,8 +110,8 @@ const IdentityVerificationStep: React.FC<IdentityVerificationStepProps> = ({
       <p className="text-center">Por favor, completa el flujo de verificación.</p>
       <button
         onClick={relaunchVerification}
-        className="absolute bottom-4 right-4 bg-[#1E5ACD] hover:bg-[#1848A3] text-white py-2 px-4 rounded"
-      >
+        className="block mx-auto mt-4 bg-[#1E5ACD] hover:bg-[#1848A3] text-white py-2 px-4 rounded"
+        >
         Reintentar Verificación
       </button>
     </div>

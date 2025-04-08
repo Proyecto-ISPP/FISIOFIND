@@ -1,3 +1,5 @@
+import os
+import requests
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -8,6 +10,9 @@ from .serializers import PhysioSerializer, PatientSerializer, AppUserSerializer
 from .models import AppUser, Physiotherapist, Patient, Specialization
 from django.conf import settings
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+
 
 import logging
 import stripe
@@ -17,10 +22,9 @@ from .permissions import (
     IsPatient,
     IsPhysiotherapist,
 )
-
-from users.util import check_service_json
-from .emailUtils import send_account_deletion_email
+from .emailUtils import send_registration_confirmation_email, send_account_deletion_email
 from django.core import signing
+from users.util import check_service_json
 
 
 class PatientProfileView(generics.RetrieveAPIView):
@@ -82,7 +86,6 @@ def patient_register_view(request):
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
 def verify_user_and_update_status(user_id):
     """
     Función para cambiar el estado del usuario a verified y devolver una Response.
@@ -105,8 +108,7 @@ def verify_user_and_update_status(user_id):
             "error": "Ocurrió un error al verificar el usuario.",
             "status": "error"
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
+    
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def verify_registration(request, token):
@@ -148,6 +150,31 @@ def custom_token_obtain_view(request):
         return Response({'access': response.data['access']})
     return Response(response.data, status=response.status_code)
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def change_password_view(request):
+    user = request.user
+    old_password = request.data.get('old_password')
+    new_password = request.data.get('new_password')
+
+    if not old_password or not new_password:
+        return Response({'detail': 'Se requieren las contraseñas.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if not user.check_password(old_password):
+        return Response({'detail': 'La contraseña antigua es incorrecta.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        validate_password(new_password, user=user)
+    except ValidationError as e:
+        error_message = " ".join(e.messages)
+        return Response(
+            {"detail": f"Error de validación de contraseña: {error_message}"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    user.set_password(new_password)
+    user.save()
+
+    return Response({'detail': 'Contraseña actualizada correctamente.'}, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
 def logout_view(request):
@@ -198,6 +225,56 @@ def validate_physio_registration(request):
     if serializer.is_valid():
         return Response({"valid": True}, status=status.HTTP_200_OK)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def verify_physio_id(request):
+    inquiry_id = request.data.get('inquiryId')
+    form_data = request.data.get('formData')
+
+    if not inquiry_id or not form_data:
+        return Response(
+            {"error": "Faltan campos requeridos (inquiryId o formData)."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # Construimos la URL para llamar a la API de Persona
+    persona_api_url = f"https://api.withpersona.com/api/v1/inquiries/{inquiry_id}"
+    headers = {
+        "Authorization": f"Bearer {os.getenv('PERSONA_API_KEY')}",  # Asegúrate de que la clave API esté configurada en tus variables de entorno
+        "accept": "application/json",
+        "Persona-Version": "2023-01-05"
+    }
+
+    try:
+        persona_response = requests.get(persona_api_url, headers=headers)
+        if persona_response.status_code != 200:
+            return Response(
+                {"error": "Error al obtener la información de Persona."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+    except Exception as e:
+        logging.error(f"Error en la conexión con Persona: {str(e)}")
+        return Response(
+            {"error": "Error en la conexión con Persona."},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+    # Ejemplo de extracción y comparación de datos:
+    # Se asume que la respuesta de Persona tiene un campo "document" con el número del documento.
+    cleaned_response = persona_response.json().get("data", {}).get("attributes", {}) # obtiene el json limpio
+    document_number = cleaned_response.get("identification-number", {}) # obtiene el dni de la respuesta de persona
+    form_dni = form_data.get("dni", "").upper()
+    
+    # para cuando tengamos el entorno de produccion
+    persona_name = cleaned_response.get("name-first", {}) + " " + cleaned_response.get("name-last", {})
+    form_name = form_data.get("first_name", "") + " " + form_data.get("last_name", "")
+
+    # Se compara el número del documento obtenido de Persona con el enviado en formData
+    verifiedDNI = document_number == form_dni
+    verifiedName = persona_name == form_name
+
+    return Response({"verified": True}) # hay que cambiar esto XD
 
 
 @api_view(['POST'])

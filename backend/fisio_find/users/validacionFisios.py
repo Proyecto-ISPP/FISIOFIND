@@ -9,6 +9,7 @@ from selenium.webdriver.common.keys import Keys
 from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
+import undetected_chromedriver as uc
 
 # Cargar las variables de entorno desde el archivo .env
 load_dotenv()
@@ -16,8 +17,7 @@ load_dotenv()
 # Configurar el logger
 logging.basicConfig(
     level=logging.DEBUG,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    filename="/validation.log",  # Cambia esta ruta según tus necesidades
+    format="%(asctime)s - %(levelname)s - %(message)s",  # Cambia esta ruta según tus necesidades
     filemode="a"
 )
 
@@ -37,22 +37,16 @@ class SeleniumScraper:
             )
             logging.info("SeleniumScraper inicializado en modo DEBUG")
         else:
-            options = webdriver.ChromeOptions()
-            options.add_argument("--headless")  # Ejecutar en segundo plano
+            options = uc.ChromeOptions()
+            options.headless = True  # Ejecutar en segundo plano
             options.add_argument("--no-sandbox")
             options.add_argument("--enable-javascript")  # Asegurar que JS está habilitado
             options.add_argument("--disable-gpu")
-            options.add_argument("--window-size=1920x1080")
+            options.add_argument("--window-size=1920,1080")
             options.add_argument("--disable-dev-shm-usage")
-            options.add_argument("--disable-blink-features=AutomationControlled")
-            options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36")
             options.binary_location = "/usr/bin/chromium-browser"
-            chromedriver_path = "/usr/bin/chromedriver"
-            self.driver = webdriver.Chrome(
-                service=Service(executable_path=chromedriver_path),
-                options=options
-            )
-            logging.info("SeleniumScraper inicializado en modo producción")
+            self.driver = uc.Chrome(options=options)  # Usamos undetected-chromedriver
+            logging.info("SeleniumScraper inicializado en modo producción con undetected-chromedriver")
 
     def obtener_colegiado(
         self, valorBusqueda: str, url: str, xpath: str, loadTime: int = 2, general: str = None
@@ -122,8 +116,9 @@ class SeleniumScraper:
         except Exception as e:
             logging.error("Error al cerrar el driver: %s", e, exc_info=True)
         try:
-            self.driver.service.stop()
-            logging.info("Servicio del driver detenido correctamente")
+            if os.getenv("DEBUG") == "True":
+                self.driver.service.stop()
+                logging.info("Servicio del driver detenido correctamente")
         except Exception as e:
             logging.error("Error al detener el servicio del driver: %s", e, exc_info=True)
 
@@ -131,6 +126,25 @@ class SeleniumScraper:
 def quitar_tildes(texto):
     return ''.join(c for c in unicodedata.normalize('NFD', texto) if unicodedata.category(c) != 'Mn')
 
+def quitar_solo_tildes(texto):
+    # Normaliza el texto en forma NFD para separar las letras de sus marcas
+    normalized = unicodedata.normalize('NFD', texto)
+    result_chars = []
+    for i, c in enumerate(normalized):
+        if unicodedata.combining(c):
+            # Si es una marca de combinación...
+            if c == "\u0303":
+                # Si la marca es la tilde y el carácter base es 'n' o 'N', la conservamos
+                if i > 0 and normalized[i-1] in ("n", "N"):
+                    result_chars.append(c)
+                # En otros casos (p. ej. tilde en otra letra) se elimina
+            else:
+                # Elimina cualquier otra marca (como la tilde aguda)
+                continue
+        else:
+            result_chars.append(c)
+    # Recompone la cadena en forma NFC
+    return unicodedata.normalize('NFC', ''.join(result_chars))
 
 def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
     logging.info("Iniciando validación de colegiación para '%s' en %s", nombre, comunidad)
@@ -230,13 +244,11 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
             case "cantabria":
                 url = "https://colfisiocant.org/busqueda-profesionales/"
                 try:
-                    soup = scraper.obtener_colegiado(nombre, url, "//*[@id='tablepress-1_filter']/label/input")
+                    soup = scraper.obtener_colegiado(quitar_solo_tildes(nombre), url, "//*[@id='tablepress-1_filter']/label/input")
                     resultado = soup.find("tbody", class_="row-hover").tr
                     if resultado:
                         datos = [td.text.strip() for td in resultado.find_all("td")]
-                        while len(numero) < 3:
-                            numero = "0" + numero
-                        valid = numero == datos[0].replace("39/", "")
+                        valid = numero == datos[0]
                         logging.info("Validación en Cantabria %s", "exitosa" if valid else "fallida")
                         return valid
                     else:
@@ -305,7 +317,7 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
                 url = "https://cofext.org/cms/colegiados.php"
                 try:
                     xpath = '//*[@id="example_filter"]/label/input'
-                    soup = scraper.obtener_colegiado(quitar_tildes(nombre), url, xpath)
+                    soup = scraper.obtener_colegiado(quitar_solo_tildes(nombre), url, xpath)
                     resultado = soup.find("tr", class_="odd")
                     if resultado:
                         datos = [td.text.strip() for td in resultado.find_all("td")]
@@ -341,17 +353,12 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
             case "la rioja":
                 url = "https://www.coflarioja.org/ciudadanos/listado-de-fisioterapeutas/buscar-colegiados"
                 try:
-                    while len(numero) < 4:
-                        numero = "0" + numero
                     xpath = '//*[@id="busqueda-colegiados-search-input"]/div/input'
-                    soup = scraper.obtener_colegiado(numero, url, xpath)
+                    soup = scraper.obtener_colegiado(quitar_tildes(nombre), url, xpath)
                     resultado = soup.find("tbody").tr
                     if resultado:
                         datos = [td.text.strip() for td in resultado.find_all("td")]
-                        cadena = quitar_tildes(f"{datos[1]} {datos[2]}".upper())
-                        if "Mª" in cadena:
-                            cadena = cadena.replace("Mª", "MARIA")
-                        valid = cadena == quitar_tildes(nombre)
+                        valid = numero == datos[0]
                         logging.info("Validación en La Rioja %s", "exitosa" if valid else "fallida")
                         return valid
                     else:

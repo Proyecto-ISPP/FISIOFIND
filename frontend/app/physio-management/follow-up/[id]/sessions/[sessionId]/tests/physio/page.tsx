@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { getApiBaseUrl } from "@/utils/api";
+import Alert from "@/components/ui/Alert";
 
 interface TestFormData {
   question: string;
@@ -34,6 +35,11 @@ const TestPage = () => {
   }[]>([]);
   const [testAnswered, setTestAnswered] = useState(false);
   
+  const [alert, setAlert] = useState<{
+    show: boolean;
+    type: "success" | "error" | "info" | "warning";
+    message: string;
+  }>({ show: false, type: "success", message: "" });
   // Fetch existing test if available
   useEffect(() => {
     const fetchTest = async () => {
@@ -212,11 +218,21 @@ const TestPage = () => {
         throw new Error("Error al guardar el test");
       }
 
-      alert(existingTest ? "Test actualizado correctamente" : "Test creado correctamente");
-      router.push(`/physio-management/follow-up/${treatmentId}/sessions`);
+      setAlert({
+        show: true,
+        type: "success",
+        message: existingTest ? "Test actualizado correctamente" : "Test creado correctamente"
+      });
+      setTimeout(() => {
+        router.push(`/physio-management/follow-up/${treatmentId}/sessions`);
+      }, 1000);
     } catch (error) {
       console.error("Error al guardar el test:", error);
-      setError("Error al guardar el test");
+      setAlert({
+        show: true,
+        type: "error",
+        message: "Error al guardar el test"
+      });
     } finally {
       setSubmitting(false);
     }
@@ -240,11 +256,21 @@ const TestPage = () => {
         throw new Error("Error al eliminar el test");
       }
 
-      alert("Test eliminado correctamente");
-      router.push(`/physio-management/follow-up/${treatmentId}/sessions`);
+      setAlert({
+        show: true,
+        type: "success",
+        message: "Test eliminado correctamente"
+      });
+      setTimeout(() => {
+        router.push(`/physio-management/follow-up/${treatmentId}/sessions`);
+      }, 1000);
     } catch (error) {
       console.error("Error al eliminar el test:", error);
-      setError("Error al eliminar el test");
+      setAlert({
+        show: true,
+        type: "error",
+        message: "Error al eliminar el test"
+      });
     }
   };
 
@@ -255,6 +281,13 @@ const TestPage = () => {
   // Update the render section to display all responses
   return (
     <div className="container mx-auto p-6 bg-gray-50 min-h-screen">
+      {alert.show && (
+        <Alert
+          type={alert.type}
+          message={alert.message}
+          onClose={() => setAlert({ ...alert, show: false })}
+        />
+      )}
       <div className="max-w-7xl mx-auto">
         <button
           onClick={handleGoBack}
@@ -282,7 +315,7 @@ const TestPage = () => {
                   {patientResponses.length > 0 ? (
                     <div className="space-y-4">
                       {patientResponses.map((response, index) => (
-                        <div key={index} className="bg-white p-4 rounded-lg shadow-sm">
+                        <div key={index} className="bg-white p-4 rounded-xl shadow-sm">
                           <div className="flex justify-between items-center mb-2">
                             <span className="font-medium text-gray-700">Respuesta {index + 1}</span>
                             <span className="text-sm text-gray-500">

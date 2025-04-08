@@ -5,7 +5,12 @@ from django.contrib.auth.password_validation import validate_password
 from django.db.utils import IntegrityError
 from django.db import transaction
 from users.validacionFisios import validar_colegiacion
-from .models import AppUser, Patient, Physiotherapist, PhysiotherapistSpecialization, Specialization, Pricing
+from .models import (
+    AppUser, Patient, 
+    Physiotherapist, PhysiotherapistSpecialization, 
+    Specialization, Pricing,
+    add_dni_to_encryptedvalues,
+    remove_dni_on_delete,validate_unique_DNI)
 from datetime import date, datetime
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
@@ -134,17 +139,25 @@ class PatientSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"username": "El nombre de usuario es obligatorio."})
         if not user_data.get('email'):
             raise serializers.ValidationError({"email": "El email es obligatorio."})
+
+        """
         if not user_data.get('dni'):
             raise serializers.ValidationError({"dni": "El DNI es obligatorio."})
+        """
+
         if not data.get('gender'):
             raise serializers.ValidationError({"gender": "El género es obligatorio."})
+        """
         if not data.get('birth_date'):
             raise serializers.ValidationError({"birth_date": "La fecha de nacimiento es obligatoria."})
+        """
 
         return data
 
     def update(self, instance, validated_data):
-        """Impide la modificación del DNI y actualiza los demás datos"""
+        """Impide la modificación del DNI, fecha de nacimiento y status de la cuenta 
+            y actualiza los demás datos
+        """
         user_data = validated_data.pop('user', None)
         user_instance = instance.user
 
@@ -154,6 +167,9 @@ class PatientSerializer(serializers.ModelSerializer):
 
         if 'birth_date' in validated_data:
             validated_data.pop('birth_date', None)
+        
+        if 'account_status' in validated_data:
+            validated_data.pop('account_status', None)
 
         # Si hay datos de usuario, actualizar solo los campos permitidos
         if user_data:
@@ -210,9 +226,11 @@ class PatientRegisterSerializer(serializers.ModelSerializer):
 
         if not validate_dni_structure(data['dni']):
             validation_errors["dni"] = "El DNI debe tener 8 números seguidos de una letra válida."
-
-        if validate_dni_match_letter(data['dni']):
+        elif validate_dni_match_letter(data['dni']):
             validation_errors["dni"] = "La letra del DNI no coincide con el número."
+
+        if validate_unique_DNI(data['dni']):
+            validation_errors["dni"] = "Ya existe un usuario con este DNI registrado."
 
         if 'phone_number' in data and data['phone_number'] and telefono_no_mide_9(data['phone_number']):
             validation_errors["phone_number"] = "El número de teléfono debe tener 9 caracteres."
@@ -324,8 +342,11 @@ class PhysioRegisterSerializer(serializers.ModelSerializer):
         validation_errors = dict()
         if not validate_dni_structure(data['dni']):
             validation_errors["dni"] = "El DNI debe tener 8 números seguidos de una letra válida."
-        if validate_dni_match_letter(data['dni']):
+        elif validate_dni_match_letter(data['dni']):
             validation_errors["dni"] = "La letra del DNI no coincide con el número."
+        elif validate_unique_DNI(data['dni']):
+            validation_errors["dni"] = "Ya existe un usuario con este DNI registrado."
+
         if 'phone_number' in data and data['phone_number'] and telefono_no_mide_9(data['phone_number']):
             validation_errors["phone_number"] = "El número de teléfono debe tener 9 caracteres."
         if codigo_postal_no_mide_5(data['postal_code']):
@@ -445,21 +466,38 @@ class PhysioUpdateSerializer(serializers.ModelSerializer):
             'invalid': 'Valor de plan inválido'
         }
     )
+    degree = serializers.CharField()
+    university = serializers.CharField()
+    experience = serializers.CharField()
+    workplace = serializers.CharField()
 
     class Meta:
         model = Physiotherapist
         fields = ['email', 'phone_number', 'postal_code', 'bio', 'photo', 'services',
-                  'specializations', 'schedule', 'plan']
+                  'specializations', 'schedule', 'plan', 'degree',
+                  'university', 'experience', 'workplace']
 
     def validate(self, data):
         """Validaciones solo para los campos proporcionados."""
         validation_errors = dict()
+
+        # Validar que estos campos estén informados si aún no existen en el modelo
+        required_fields = ['degree', 'university', 'experience', 'workplace']
+        for field in required_fields:
+            valor_actual = getattr(self.instance, field, None)
+            nuevo_valor = data.get(field)
+
+            if not valor_actual and not nuevo_valor:
+                validation_errors[field] = f"El campo {field} es obligatorio."
         if 'dni' in data:
             if not validate_dni_structure(data['dni']):
                 validation_errors["dni"] = "El DNI debe tener 8 números seguidos de una letra válida."
-
-            if validate_dni_match_letter(data['dni']):
+            elif validate_dni_match_letter(data['dni']):
                 validation_errors["dni"] = "La letra del DNI no coincide con el número."
+            
+            if validate_unique_DNI(data['dni']):
+                validation_errors["dni"] = "Ya existe un usuario con este DNI registrado."
+
 
         if 'phone_number' in data and telefono_no_mide_9(data['phone_number']):
             validation_errors["phone_number"] = "El número de teléfono debe tener 9 caracteres."
@@ -512,6 +550,14 @@ class PhysioUpdateSerializer(serializers.ModelSerializer):
                         specialization, _ = Specialization.objects.get_or_create(name=spec_name)
                         PhysiotherapistSpecialization.objects.create(physiotherapist=instance,
                                                                      specialization=specialization)
+                if "degree" in validated_data:
+                    instance.degree = validated_data.get("degree")
+                if "university" in validated_data:
+                    instance.university = validated_data.get("university")
+                if "experience" in validated_data:
+                    instance.experience = validated_data.get("experience")
+                if "workplace" in validated_data:
+                    instance.workplace = validated_data.get("workplace")
 
                 instance.save()
                 return instance
