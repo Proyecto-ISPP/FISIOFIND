@@ -43,6 +43,7 @@ const QuestionnaireBuilder = ({ addQuestionnaire, editingQuestionnaire, onCancel
     { value: 'select', label: 'Selección' },
   ];
 
+  // All validation functions remain unchanged
   const validateTitle = (value) => {
     if (!value.trim()) {
       setTitleError('El título no puede estar vacío');
@@ -93,6 +94,7 @@ const QuestionnaireBuilder = ({ addQuestionnaire, editingQuestionnaire, onCancel
     return true;
   };
 
+  // All handler functions remain unchanged
   const handleTitleChange = (e) => {
     const value = e.target.value;
     setTitle(value);
@@ -190,6 +192,7 @@ const QuestionnaireBuilder = ({ addQuestionnaire, editingQuestionnaire, onCancel
     }
   };
 
+  // API handling functions remain unchanged
   const handleApiError = (error) => {
     console.error('API Error:', error);
     
@@ -382,227 +385,175 @@ const QuestionnaireBuilder = ({ addQuestionnaire, editingQuestionnaire, onCancel
     }
   };
 
-  const getErrorStyle = () => ({
-    color: 'red',
-    fontSize: '14px',
-    marginTop: '5px'
-  });
-
   return (
-    <div style={{ padding: '20px', border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#f9f9f9' }}>
-      <h2 style={{ fontSize: '24px', marginBottom: '1rem' }}>{editingQuestionnaire ? 'Editar Cuestionario' : 'Nuevo Cuestionario'}</h2>
+    <div className="bg-white rounded-2xl shadow-lg p-6">
+      <h2 className="text-2xl font-semibold text-[#05668D] mb-6">
+        {editingQuestionnaire ? 'Editar Cuestionario' : 'Nuevo Cuestionario'}
+      </h2>
 
-      <div style={{ marginBottom: '1rem' }}>
+      <div className="mb-6">
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Título del cuestionario
+        </label>
         <input
           placeholder="Título del cuestionario"
           value={title}
           onChange={handleTitleChange}
-          style={{
-            width: '100%',
-            padding: '12px',
-            fontSize: '16px',
-            borderRadius: '8px',
-            border: titleError ? '1px solid red' : '1px solid #ccc'
-          }}
+          className={`w-full px-4 py-3 border ${titleError ? 'border-red-500' : 'border-gray-300'} rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300`}
           maxLength={CHARACTER_LIMIT}
         />
-        {titleError && <div style={getErrorStyle()}>{titleError}</div>}
-        <div style={{ fontSize: '12px', textAlign: 'right', color: title.length > CHARACTER_LIMIT * 0.8 ? 'orange' : 'gray' }}>
+        {titleError && <div className="text-red-500 text-sm mt-1">{titleError}</div>}
+        <div className={`text-xs text-right mt-1 ${title.length > CHARACTER_LIMIT * 0.8 ? 'text-orange-500' : 'text-gray-500'}`}>
           {title.length}/{CHARACTER_LIMIT}
         </div>
       </div>
 
-      <div style={{ marginBottom: '1rem' }}>
-        <input
-          placeholder="Pregunta (Ej: ¿Dónde te duele?)"
-          value={newQuestion.label}
-          onChange={handleQuestionLabelChange}
-          style={{
-            marginRight: '1rem',
-            padding: '12px',
-            fontSize: '16px',
-            borderRadius: '8px',
-            border: questionError ? '1px solid red' : '1px solid #ccc',
-            width: '100%'
-          }}
-          maxLength={CHARACTER_LIMIT}
-        />
-        <div style={{ fontSize: '12px', textAlign: 'right', color: newQuestion.label.length > CHARACTER_LIMIT * 0.8 ? 'orange' : 'gray' }}>
-          {newQuestion.label.length}/{CHARACTER_LIMIT}
+      <div className="mb-8 p-5 bg-gradient-to-br from-[#f8fdfc] to-[#edf8f7] rounded-xl border border-gray-200">
+        <h3 className="text-lg font-medium text-[#05668D] mb-4">Añadir nueva pregunta</h3>
+        
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Texto de la pregunta
+          </label>
+          <input
+            placeholder="Pregunta (Ej: ¿Dónde te duele?)"
+            value={newQuestion.label}
+            onChange={handleQuestionLabelChange}
+            className={`w-full px-4 py-3 border ${questionError ? 'border-red-500' : 'border-gray-300'} rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300`}
+            maxLength={CHARACTER_LIMIT}
+          />
+          <div className={`text-xs text-right mt-1 ${newQuestion.label.length > CHARACTER_LIMIT * 0.8 ? 'text-orange-500' : 'text-gray-500'}`}>
+            {newQuestion.label.length}/{CHARACTER_LIMIT}
+          </div>
+          {questionError && <div className="text-red-500 text-sm mt-1">{questionError}</div>}
         </div>
 
-        <select
-          value={newQuestion.type}
-          onChange={(e) => setNewQuestion({ ...newQuestion, type: e.target.value, options: e.target.value === 'select' ? newQuestion.options : [] })}
-          style={{
-            padding: '12px',
-            fontSize: '16px',
-            borderRadius: '8px',
-            border: '1px solid #ccc',
-            marginRight: '1rem',
-            marginTop: '0.5rem'
-          }}
-        >
-          {questionTypes.map((qt) => (
-            <option key={qt.value} value={qt.value}>{qt.label}</option>
-          ))}
-        </select>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Tipo de respuesta
+          </label>
+          <select
+            value={newQuestion.type}
+            onChange={(e) => setNewQuestion({ ...newQuestion, type: e.target.value, options: e.target.value === 'select' ? newQuestion.options : [] })}
+            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300 bg-white"
+          >
+            {questionTypes.map((qt) => (
+              <option key={qt.value} value={qt.value}>{qt.label}</option>
+            ))}
+          </select>
+        </div>
 
         {newQuestion.type === 'select' && (
-          <div style={{ marginTop: '0.5rem' }}>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Opciones de respuesta
+            </label>
             <input
               placeholder="Opciones separadas por coma (Ej: Leve,Moderado,Severo)"
               value={newQuestion.options.join(',')}
               onChange={(e) => handleOptionsChange(e)}
-              style={{
-                width: '100%',
-                padding: '12px',
-                fontSize: '16px',
-                borderRadius: '8px',
-                border: optionsError ? '1px solid red' : '1px solid #ccc'
-              }}
+              className={`w-full px-4 py-3 border ${optionsError ? 'border-red-500' : 'border-gray-300'} rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300`}
             />
-            {optionsError && <div style={getErrorStyle()}>{optionsError}</div>}
+            {optionsError && <div className="text-red-500 text-sm mt-1">{optionsError}</div>}
           </div>
         )}
 
-        {questionError && <div style={getErrorStyle()}>{questionError}</div>}
-
         <button
           onClick={addQuestion}
-          style={{
-            backgroundColor: '#1976d2',
-            color: '#fff',
-            padding: '12px 24px',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            marginTop: '0.5rem',
-            fontSize: '16px'
-          }}
+          className="mt-2 px-6 py-3 bg-[#05668D] text-white font-medium rounded-xl hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#6BC9BE] focus:ring-offset-2 transition-all duration-300 shadow-md flex items-center"
         >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
           Añadir pregunta
         </button>
       </div>
 
-      <h3 style={{ fontSize: '20px', marginBottom: '1rem' }}>Preguntas Añadidas:</h3>
-      {questions.length === 0 ? (
-        <p style={{ color: '#666', fontStyle: 'italic' }}>No hay preguntas añadidas. Añade al menos una pregunta para guardar el cuestionario.</p>
-      ) : (
-        <ul style={{ listStyleType: 'none', padding: 0 }}>
-          {questions.map((q, index) => (
-            <li key={index} style={{
-              backgroundColor: '#f9f9f9',
-              padding: '1rem',
-              borderRadius: '8px',
-              border: '1px solid #ddd',
-              marginBottom: '1rem'
-            }}>
-              <div style={{ marginBottom: '0.5rem' }}>
-                <input
-                  value={q.label}
-                  onChange={(e) => updateQuestion(index, 'label', e.target.value)}
-                  style={{
-                    marginRight: '1rem',
-                    padding: '12px',
-                    fontSize: '16px',
-                    borderRadius: '8px',
-                    border: '1px solid #ccc',
-                    width: '100%'
-                  }}
-                  maxLength={CHARACTER_LIMIT}
-                />
-                <div style={{ fontSize: '12px', textAlign: 'right', color: q.label.length > CHARACTER_LIMIT * 0.8 ? 'orange' : 'gray' }}>
-                  {q.label.length}/{CHARACTER_LIMIT}
-                </div>
-                <div id={`question-error-${index}`} style={getErrorStyle()}></div>
-              </div>
-              
-              <select
-                value={q.type}
-                onChange={(e) => updateQuestion(index, 'type', e.target.value)}
-                style={{
-                  padding: '12px',
-                  fontSize: '16px',
-                  borderRadius: '8px',
-                  border: '1px solid #ccc',
-                  marginRight: '1rem'
-                }}
-              >
-                {questionTypes.map((qt) => (
-                  <option key={qt.value} value={qt.value}>{qt.label}</option>
-                ))}
-              </select>
-              
-              {q.type === 'select' && (
-                <div style={{ marginTop: '0.5rem' }}>
+      <div className="mb-8">
+        <h3 className="text-xl font-medium text-[#05668D] mb-4">Preguntas Añadidas:</h3>
+        {questions.length === 0 ? (
+          <p className="text-gray-500 italic text-center py-6 bg-gray-50 rounded-xl border border-gray-200">
+            No hay preguntas añadidas. Añade al menos una pregunta para guardar el cuestionario.
+          </p>
+        ) : (
+          <ul className="space-y-4">
+            {questions.map((q, index) => (
+              <li key={index} className="bg-gradient-to-br from-[#f8fdfc] to-[#edf8f7] p-5 rounded-xl border border-gray-200 shadow-sm">
+                <div className="mb-3">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Pregunta #{index + 1}
+                  </label>
                   <input
-                    placeholder="Opciones (coma)"
-                    value={q.options.join(',')}
-                    onChange={(e) => handleOptionsChange(e, index)}
-                    style={{
-                      width: '100%',
-                      padding: '12px',
-                      fontSize: '16px',
-                      borderRadius: '8px',
-                      border: '1px solid #ccc'
-                    }}
+                    value={q.label}
+                    onChange={(e) => updateQuestion(index, 'label', e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300"
+                    maxLength={CHARACTER_LIMIT}
                   />
-                  <div id={`options-error-${index}`} style={getErrorStyle()}></div>
+                  <div className={`text-xs text-right mt-1 ${q.label.length > CHARACTER_LIMIT * 0.8 ? 'text-orange-500' : 'text-gray-500'}`}>
+                    {q.label.length}/{CHARACTER_LIMIT}
+                  </div>
+                  <div id={`question-error-${index}`} className="text-red-500 text-sm mt-1"></div>
                 </div>
-              )}
-              
-              <button
-                onClick={() => deleteQuestion(index)}
-                style={{
-                  backgroundColor: '#d32f2f',
-                  color: '#fff',
-                  padding: '8px 16px',
-                  border: 'none',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  marginTop: '0.5rem'
-                }}
-                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#b71c1c'}
-                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#d32f2f'}
-              >
-                Eliminar
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+                
+                <div className="mb-3">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Tipo de respuesta
+                  </label>
+                  <select
+                    value={q.type}
+                    onChange={(e) => updateQuestion(index, 'type', e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300 bg-white"
+                  >
+                    {questionTypes.map((qt) => (
+                      <option key={qt.value} value={qt.value}>{qt.label}</option>
+                    ))}
+                  </select>
+                </div>
+                
+                {q.type === 'select' && (
+                  <div className="mb-3">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Opciones de respuesta
+                    </label>
+                    <input
+                      placeholder="Opciones separadas por coma"
+                      value={q.options.join(',')}
+                      onChange={(e) => handleOptionsChange(e, index)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300"
+                    />
+                    <div id={`options-error-${index}`} className="text-red-500 text-sm mt-1"></div>
+                  </div>
+                )}
+                
+                <div className="flex justify-end">
+                  <button
+                    onClick={() => deleteQuestion(index)}
+                    className="px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-all duration-300 flex items-center"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    Eliminar
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
 
-      <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem' }}>
-        <button
-          onClick={saveQuestionnaire}
-          style={{
-            backgroundColor: '#2e7d32',
-            color: '#fff',
-            padding: '12px 24px',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            fontWeight: 'bold',
-            fontSize: '16px'
-          }}
-        >
-          {editingQuestionnaire ? 'Actualizar Cuestionario' : 'Guardar Cuestionario'}
-        </button>
-
+      <div className="flex flex-wrap gap-3 justify-end">
         <button
           onClick={cancelQuestionnaire}
-          style={{
-            backgroundColor: '#d32f2f',
-            color: '#fff',
-            padding: '12px 24px',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            fontSize: '16px'
-          }}
+          className="px-6 py-3 bg-white border border-red-400 text-red-500 font-medium rounded-xl hover:bg-red-50 transition-all duration-300 shadow-sm"
         >
           Cancelar
+        </button>
+        <button
+          onClick={saveQuestionnaire}
+          className="px-6 py-3 bg-gradient-to-r from-[#6BC9BE] to-[#05668D] text-white font-medium rounded-xl hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#6BC9BE] focus:ring-offset-2 transition-all duration-300 shadow-md"
+        >
+          {editingQuestionnaire ? 'Actualizar Cuestionario' : 'Guardar Cuestionario'}
         </button>
       </div>
     </div>

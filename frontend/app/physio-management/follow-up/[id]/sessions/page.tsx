@@ -461,25 +461,26 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="container mx-auto p-6 bg-gray-50 min-h-screen">
-      <div className="max-w-7xl mx-auto">
-        <button
-          onClick={() =>
-            router.push(`/physio-management/follow-up/${treatmentId}`)
-          }
-          className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-xl inline-flex items-center mb-6"
-        >
-          ← Volver
-        </button>
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">
-          Sesiones del Tratamiento
-        </h1>
+    <div className="min-h-screen w-full" style={{ backgroundColor: "rgb(238, 251, 250)" }}>
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex justify-between items-center mb-6">
+          <button
+            onClick={() =>
+              router.push(`/physio-management/follow-up/${treatmentId}`)
+            }
+            className="bg-white hover:bg-gray-100 text-[#05668D] font-semibold py-2 px-4 rounded-xl inline-flex items-center shadow-md transition-all duration-300"
+          >
+            ← Volver
+          </button>
+          <h1 className="text-3xl font-bold text-[#05668D]">Sesiones del Tratamiento</h1>
+          <div className="w-24"></div> {/* Spacer for alignment */}
+        </div>
 
         <form
           onSubmit={handleCreateSession}
-          className="mb-8 p-6 bg-white rounded-xl shadow-lg transition-all duration-200 hover:shadow-xl"
+          className="mb-8 p-6 bg-white rounded-2xl shadow-lg transition-all duration-300 hover:shadow-xl"
         >
-          <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+          <h2 className="text-2xl font-semibold text-[#05668D] mb-6">
             Crear Nueva Sesión
           </h2>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -493,7 +494,7 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
                 onChange={(e) =>
                   setNewSession({ ...newSession, name: e.target.value })
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300"
                 placeholder="Nombre de la sesión"
               />
             </div>
@@ -513,8 +514,11 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
           </div>
           <button
             type="submit"
-            className="mb-8 mt-8 px-6 py-3 bg-[#6bc9be] text-white font-medium rounded-xl hover:bg-[#5ab8ad] text-white font-medium rounded-xl hover:bg-[#5ab8ad] focus:outline-none focus:ring-2 focus:ring-[#6bc9be] focus:ring-offset-2 transition-colors duration-200 flex items-center space-x-2"
+            className="mt-8 px-6 py-3 bg-gradient-to-r from-[#6BC9BE] to-[#05668D] text-white font-medium rounded-xl hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#6BC9BE] focus:ring-offset-2 transition-all duration-300 shadow-md flex items-center space-x-2"
           >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
             Crear Sesión
           </button>
         </form>
@@ -526,12 +530,12 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
             return (
               <div
                 key={session.id}
-                className="bg-white p-6 rounded-xl shadow-lg transition-all duration-200 hover:shadow-xl hover:transform hover:scale-[1.02] relative"
+                className="bg-white p-6 rounded-2xl shadow-lg transition-all duration-300 hover:shadow-xl hover:transform hover:translate-y-[-2px] relative"
               >
                 <div className="absolute top-4 right-4 flex space-x-2">
                   <button
                     onClick={() => handleEditClick(session)}
-                    className="p-2 text-gray-600 hover:text-[#0c7986] transition-colors duration-200"
+                    className="p-2 text-gray-600 hover:text-[#05668D] transition-colors duration-300"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -544,7 +548,7 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
                   </button>
                   <button
                     onClick={() => handleDeleteClick(session.id)}
-                    className="p-2 text-gray-600 hover:text-red-500 transition-colors duration-200"
+                    className="p-2 text-gray-600 hover:text-red-500 transition-colors duration-300"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -561,7 +565,7 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
                   </button>
                 </div>
 
-                <h3 className="text-xl font-semibold text-gray-800 mb-3">
+                <h3 className="text-xl font-semibold text-[#05668D] mb-3">
                   {session.name || `Sesión ${session.id}`}
                 </h3>
 
@@ -577,37 +581,41 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2.5">
                     <div
-                      className="bg-[#6bc9be] h-2.5 rounded-full"
+                      className="bg-gradient-to-r from-[#41B8D5] to-[#1E5ACD] h-2.5 rounded-full"
                       style={{ width: `${progress}%` }}
                     ></div>
                   </div>
                 </div>
 
                 {/* Details section */}
-                <div className="grid grid-cols-2 gap-2 mb-4 text-sm">
-                  <div className="bg-gray-50 p-2 rounded">
-                    <p className="text-gray-500 border-b-2 mb-1">Ejercicios</p>
-                    <p className="font-medium">
+                <div className="grid grid-cols-2 gap-3 mb-4">
+                  <div className="bg-gradient-to-br from-[#f8fdfc] to-[#edf8f7] p-3 rounded-xl shadow-sm">
+                    <p className="text-gray-600 border-b border-gray-200 pb-1 mb-2 text-sm">
+                      Ejercicios
+                    </p>
+                    <p className="font-medium text-[#05668D]">
                       {session.exercises_count || 0} ejercicios
                     </p>
                     {session.total_logs !== undefined &&
                       session.total_expected_logs !== undefined && (
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-gray-500 mt-1">
                           {session.total_logs} de {session.total_expected_logs}{" "}
                           registros
                         </p>
                       )}
                   </div>
-                  <div className="bg-gray-50 p-2 rounded">
-                    <p className="text-gray-500 border-b-2 mb-1">Cuestionarios</p>
-                    <p className="font-medium">
+                  <div className="bg-gradient-to-br from-[#f8fdfc] to-[#edf8f7] p-3 rounded-xl shadow-sm">
+                    <p className="text-gray-600 border-b border-gray-200 pb-1 mb-2 text-sm">
+                      Cuestionarios
+                    </p>
+                    <p className="font-medium text-[#05668D]">
                       {session.tests_count
                         ? "1 cuestionario"
                         : "Sin cuestionario"}
                     </p>
                     {session.tests_count &&
                       session.completed_tests_count !== undefined && (
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-gray-500 mt-1">
                           {session.completed_tests_count} de{" "}
                           {session.day_of_week.length} respuestas
                         </p>
@@ -615,19 +623,23 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
                   </div>
                 </div>
 
-                <p className="text-gray-600 mb-4">
-                  Días:{" "}
-                  {Array.isArray(session.day_of_week)
-                    ? session.day_of_week
-                        .map(
-                          (day) =>
-                            daysOfWeek.find((d) => d.value === day)?.label
-                        )
-                        .join(", ")
-                    : ""}
-                </p>
+                <div className="bg-gradient-to-br from-[#f8fdfc] to-[#edf8f7] p-3 rounded-xl shadow-sm mb-4">
+                  <p className="text-gray-600 border-b border-gray-200 pb-1 mb-2 text-sm">
+                    Días programados
+                  </p>
+                  <p className="text-[#05668D]">
+                    {Array.isArray(session.day_of_week)
+                      ? session.day_of_week
+                          .map(
+                            (day) =>
+                              daysOfWeek.find((d) => d.value === day)?.label
+                          )
+                          .join(", ")
+                      : ""}
+                  </p>
+                </div>
 
-                <div className="flex flex-col space-y-2">
+                <div className="flex flex-col space-y-2 mt-6">
                   <div className="flex space-x-2">
                     <button
                       onClick={() =>
@@ -635,9 +647,9 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
                           `/physio-management/follow-up/${treatmentId}/sessions/${session.id}/exercises/`
                         )
                       }
-                      className="flex-1 px-6 py-3 bg-gradient-to-r from-[#05668d] to-[#05668d] hover:from-[#045a7d] hover:to-[#034b68] text-white font-medium rounded-xl focus:outline-none focus:ring-2 focus:ring-[#05668d] focus:ring-offset-2 transition-all duration-200 flex items-center justify-center space-x-2"
+                      className="flex-1 px-4 py-3 bg-[#6BC9BE] text-white font-medium rounded-xl hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#6BC9BE] focus:ring-offset-2 transition-all duration-300 shadow-md"
                     >
-                      <span>Ejercicios</span>
+                      Ejercicios
                     </button>
                     <button
                       onClick={() =>
@@ -645,9 +657,9 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
                           `/physio-management/follow-up/${treatmentId}/sessions/${session.id}/tests/physio/`
                         )
                       }
-                      className="flex-1 px-6 py-3 bg-gradient-to-r from-[#05668d] to-[#05668d] hover:from-[#034b68] hover:to-[#045a7d] text-white font-medium rounded-xl focus:outline-none focus:ring-2 focus:ring-[#05668d] focus:ring-offset-2 transition-all duration-200 flex items-center justify-center space-x-2"
+                      className="flex-1 px-4 py-3 bg-[#05668D] text-white font-medium rounded-xl hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#05668D] focus:ring-offset-2 transition-all duration-300 shadow-md"
                     >
-                      <span>Cuestionario</span>
+                      Cuestionario
                     </button>
                   </div>
                 </div>
@@ -659,8 +671,8 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
         {/* Edit Session Modal */}
         {editMode && sessionToEdit && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md">
+              <h2 className="text-2xl font-bold text-[#05668D] mb-6">
                 Editar Sesión
               </h2>
               <form onSubmit={handleUpdateSession} className="space-y-4">
@@ -677,12 +689,14 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
                         name: e.target.value,
                       })
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300"
                     placeholder="Nombre de la sesión"
                   />
                 </div>
                 <div>
-                  {/* En el modal de edición usamos también nuestro DaysDropdown */}
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Días de la semana
+                  </label>
                   <DaysDropdown
                     options={daysOfWeek}
                     selected={sessionToEdit.day_of_week || []}
@@ -699,13 +713,13 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
                   <button
                     type="button"
                     onClick={handleCancelEdit}
-                    className="px-4 py-2 bg-gray-200 text-gray-800 rounded-xl hover:bg-gray-300"
+                    className="px-4 py-2 bg-white border border-red-400 text-red-500 rounded-xl hover:bg-red-50 transition-all duration-300"
                   >
                     Cancelar
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 bg-[#6bc9be] text-white rounded-xl hover:bg-[#5ab8ad]"
+                    className="px-4 py-2 bg-gradient-to-r from-[#6BC9BE] to-[#05668D] text-white rounded-xl hover:opacity-90 transition-all duration-300"
                   >
                     Guardar Cambios
                   </button>
@@ -718,8 +732,8 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
         {/* Delete Confirmation Modal */}
         {showDeleteConfirmation && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-xl shadow-2xl w-full max-w-md">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">
+            <div className="bg-white p-6 rounded-2xl shadow-2xl w-full max-w-md">
+              <h2 className="text-xl font-bold text-[#05668D] mb-4">
                 Confirmar eliminación
               </h2>
               <p className="text-gray-600 mb-6">
@@ -729,13 +743,13 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
               <div className="flex justify-end space-x-3">
                 <button
                   onClick={handleCancelDelete}
-                  className="px-4 py-2 bg-gray-200 text-gray-800 rounded-xl hover:bg-gray-300"
+                  className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all duration-300"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={handleDeleteSession}
-                  className="px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600"
+                  className="px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-all duration-300"
                 >
                   Eliminar
                 </button>
