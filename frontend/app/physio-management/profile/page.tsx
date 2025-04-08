@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Camera, Plus, Trash2, Edit, Save, StarIcon, Film, Bell, BicepsFlexed } from 'lucide-react';
+import { Camera, Plus, Trash2, Edit, Save, StarIcon, Film, Bell, BicepsFlexed, Lock } from 'lucide-react';
 import ScheduleCalendar from "@/components/ui/ScheduleCalendar";
 import { getApiBaseUrl } from "@/utils/api";
 import { GradientButton } from "@/components/ui/gradient-button";
@@ -1632,16 +1632,30 @@ const FisioProfile = () => {
                 )}
               </div>
             </div>
-            <GradientButton
-                    variant="create"
-                    className="px-3 py-2 font-medium rounded-xl flex items-center gap-2"
-                    onClick={(e) => {
-                      e.preventDefault(); // Esto evita que se envíe el formulario
-                      setShowUpdatePasswordModal(true);
-                    }}
-                  >
-                    <Plus className="w-4 h-4" /> Actualizar contraseña
-                  </GradientButton>
+            <div className="py-3 flex items-center flex-column justify-start w-full gap-3">
+              <div className="relative w-[50%] flex items-center flex-column justify-start">
+                <div className="absolute pl-3 flex items-center pointer-events-none text-gray-400">
+                  <Lock size={18} />
+                </div>
+                    <input
+                      disabled
+                      type="password"
+                      name="password"
+                      value={"******"}
+                      className="mb-0 w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm outline-none"
+                    />
+                </div>
+                <GradientButton
+                      variant="create"
+                      className="px-3 py-2 mt-0 font-medium rounded-xl flex items-center gap-2"
+                      onClick={(e) => {
+                        e.preventDefault(); // Esto evita que se envíe el formulario
+                        setShowUpdatePasswordModal(true);
+                      }}
+                    >
+                      <Plus className="w-4 h-4" /> Actualizar contraseña
+                </GradientButton>
+            </div>
 
             {/* Desplegable de especializaciones */}
             <div className="space-y-2">
