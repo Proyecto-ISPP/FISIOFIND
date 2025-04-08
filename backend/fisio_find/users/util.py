@@ -1,9 +1,7 @@
 import re
 import json
 
-
 def validate_dni_structure(data_dni):
-    print(data_dni)
     if len(data_dni) != 9:
         return False
     

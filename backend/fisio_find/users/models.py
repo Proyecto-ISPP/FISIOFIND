@@ -1,9 +1,45 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from encrypted_fields.fields import EncryptedCharField
+from encrypted_fields.fields import EncryptedCharField, EncryptedTextField
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
+
+
+def validate_unique_DNI(data_dni) -> bool:
+    enc = EncryptedValues.objects.all()
+
+    if not enc.exists():
+        return False
+
+    DNIs_enc = enc.get().encrypted_values
+    return data_dni in DNIs_enc
+
+
+def add_dni_to_encryptedvalues(data_dni) -> None:
+    enc = EncryptedValues.objects.first()
+    if enc:
+        if data_dni not in enc.encrypted_values:
+            enc.encrypted_values += data_dni + ";"
+            enc.save()
+    else:
+        EncryptedValues.objects.create(encrypted_values=data_dni + ";")
+
+def delete_DNI_from_encryptedvalues(data_dni):
+    enc = EncryptedValues.objects.all()
+    
+    if not enc.exists():
+        # No se ha utilizado todavia ningun DNI, es el primer usario
+        pass
+    else:
+        DNIs_enc = enc.get()
+        DNIs_enc.encrypted_values = DNIs_enc.encrypted_values.replace(data_dni+";","")
+        if DNIs_enc.encrypted_values in ["", None]:
+            DNIs_enc.delete()
+        else:
+            DNIs_enc.save()
 
 ACCOUNT_STATUS_CHOICES = [
     ('ACTIVE', 'Active'),
@@ -51,10 +87,10 @@ def validate_image_file(value):
 
 class AppUser(AbstractUser):
     photo = models.ImageField(null=True, blank=True, verbose_name='Foto', upload_to='user_photos/', storage=FileSystemStorage(location=settings.PROFILE_PHOTOS_ROOT, base_url=settings.PROFILE_PHOTOS_URL))
-    dni = models.CharField(max_length=255, null=True, unique=True)
-    phone_number = models.CharField(max_length=9, null=True, blank=True)
-    postal_code = models.CharField(max_length=5)
-    account_status = models.CharField(max_length=10, choices=ACCOUNT_STATUS_CHOICES, default='UNVERIFIED')
+    dni = EncryptedCharField(max_length=255, null=True, unique=True, verbose_name='DNI')
+    phone_number = models.CharField(max_length=9, null=True, blank=True, verbose_name='Número de teléfono')
+    postal_code = models.CharField(max_length=5, verbose_name='Código postal')
+    account_status = models.CharField(max_length=10, choices=ACCOUNT_STATUS_CHOICES, default='UNVERIFIED', verbose_name='Estado de la cuenta')
     is_subscribed = models.BooleanField(default=True)
 
     def __str__(self):
@@ -63,6 +99,37 @@ class AppUser(AbstractUser):
     class Meta:
         verbose_name = "Usuario"
         verbose_name_plural = "Usuarios"
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            old_dni = AppUser.objects.get(pk=self.pk).dni
+            if old_dni != self.dni:
+                delete_DNI_from_encryptedvalues(old_dni)
+                add_dni_to_encryptedvalues(self.dni)
+        else:
+            add_dni_to_encryptedvalues(self.dni)
+        super().save(*args, **kwargs)
+
+
+@receiver(post_delete, sender=AppUser)
+def remove_dni_on_delete(sender, instance, **kwargs):
+    if instance.dni:
+        delete_DNI_from_encryptedvalues(instance.dni)
+
+class EncryptedValues(models.Model):
+    # En users se guarda el DNI cifrado pero cada vez que se cifra el resultado es distinto
+    # Ademas de que si intentas buscar un usuario por dni para ver si ya existe pues no puedes
+    # Por eso esta clase, aqui se guardan todos los dnis en un string y se cifran todos a la vez
+    # Entonces, si quiers comprobar si un DNI esta siendo utilizado, buscas en ese string
+    # El formato es: dni;dni;dni;...
+    encrypted_values = EncryptedTextField(blank=False)
+
+    def __str__(self):
+        return "DNIs cifrados"
+
+    class Meta:
+        verbose_name = "DNIs cifrados"
+        verbose_name_plural = "DNIs cifrados"
 
 class Patient(models.Model):
     user = models.OneToOneField(AppUser, on_delete=models.CASCADE, related_name='patient', verbose_name='Usuario')
