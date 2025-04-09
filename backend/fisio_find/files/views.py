@@ -152,6 +152,8 @@ def get_patient_files(request):
     return Response(patient_files, status=status.HTTP_200_OK)
 
 
+@api_view(['GET'])
+@permission_classes([IsPhysioOrPatient])
 def view_or_download_patient_file(request, file_id):
     user = request.user
     try:
