@@ -78,6 +78,7 @@ classoption: "table"
 | Fecha        | Versión  | Realizada por             | Descripción de los cambios                   |
 | ------------ | -------- | ------------------------- | -------------------------------------------- |
 | 06/04/2025   | v1.0     | Antonio Macías Ferrera    | Versión inicial del documento con el feedback para el Sprint 3. |
+| 09/04/2025   | v1.1     | Guadalupe Ridruejo Pineda    | Modificación del formato de la prueba. |
 
 <br>
 
@@ -89,6 +90,10 @@ classoption: "table"
 # 1. INTRODUCCIÓN
 
 En este documento se recogerá el feedback recogido en la fase piloto de Fisio Find. Se analizarán las opiniones y comentarios recibidos, identificando problemas detectados, funcionalidades mejor valoradas y áreas de mejora. También se evaluarán a los usuarios piloto técnicos (estudiantes de la asignatura ISPP).
+
+Debido a la complejidad y al volumen de datos necesarios para preparar una prueba completa dirigida a los usuarios piloto externos (fisioterapeutas y pacientes), se ha decidido posponer dicha prueba hasta el próximo 12 de abril. Para entonces, se contará con una versión completamente estable y definitiva correspondiente al Sprint 3. Los usuarios piloto externos podrán aprovechar el periodo de Semana Santa para realizar la prueba.
+
+Por otro lado, los usuarios piloto técnicos sí llevarán a cabo su prueba. Para ello, se les ha proporcionado un conjunto de credenciales que les permitirá acceder tanto como fisioterapeuta como paciente, con el objetivo de evaluar el funcionamiento de las videoconsultas.
 
 # 2. LISTA DE USUARIOS PILOTO
 
