@@ -5,6 +5,8 @@ import { useParams, useRouter } from "next/navigation";
 import { getApiBaseUrl } from "@/utils/api";
 import { UploadCloud, Edit2, Trash, ArrowLeft } from "lucide-react";
 import Alert from "@/components/ui/Alert";
+import axios from "axios";
+
 
 interface PatientFile {
   id: number;
@@ -17,7 +19,6 @@ interface PatientFile {
 const TreatmentFilesPage = () => {
   const { id: treatmentId } = useParams();
   const router = useRouter();
-
   const [files, setFiles] = useState<PatientFile[]>([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -28,6 +29,8 @@ const TreatmentFilesPage = () => {
   const [isClient, setIsClient] = useState(false);
   const [editingFile, setEditingFile] = useState<PatientFile | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isAuthChecking, setIsAuthChecking] = useState<boolean>(true);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
 
@@ -48,43 +51,73 @@ const TreatmentFilesPage = () => {
       message
     });
   };
-
-  const handleGoBack = () => {
-    router.push("/patient-management/follow-up");
+  const getAuthToken = () => {
+    return localStorage.getItem("token");
   };
 
+    useEffect(() => {
+      const checkAuthAndRole = async () => {
+        setIsAuthChecking(true);
+        const storedToken = getAuthToken();
+  
+        if (!storedToken) {
+          console.log("No token found, redirecting to login");
+          window.location.href = "/login";
+          return;
+        }
+  
+        try {
+          const response = await axios.get(`${getApiBaseUrl()}/api/app_user/check-role/`, {
+            headers: {
+              Authorization: `Bearer ${storedToken}`,
+            },
+          });
+  
+          if (response.data && response.data.user_role === "patient") {
+            setIsAuthenticated(true);
+          } else {
+            console.log("User is not a patient, redirecting to not-found");
+            window.location.href = "/not-found";
+          }
+        } catch (error) {
+          if (error.response?.status === 401) {
+            localStorage.removeItem("token");
+            window.location.href = "/login";
+          } else {
+            window.location.href = "/not-found";
+          }
+        } finally {
+          setIsAuthChecking(false);
+        }
+      };
+  
+      checkAuthAndRole();
+    }, []);
   useEffect(() => {
     setIsClient(true);
   }, []);
+  
 
   useEffect(() => {
-    if (!isClient) return;
-
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setError("Debe iniciar sesión para acceder a esta página");
-      setLoading(false);
-      return;
-    }
-
     const fetchData = async () => {
+      const token = getAuthToken();
       try {
         const roleRes = await fetch(`${getApiBaseUrl()}/api/app_user/check-role/`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const roleData = await roleRes.json();
         setUserRole(roleData.user_role);
-
+  
         if (!["patient", "physio"].includes(roleData.user_role)) {
           setError("Solo pacientes o fisioterapeutas pueden acceder a esta página");
           setLoading(false);
           return;
         }
-
+  
         const fileRes = await fetch(`${getApiBaseUrl()}/api/cloud/files/list-files/`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-
+  
         if (!fileRes.ok) throw new Error("Error al obtener archivos");
         const filesData = await fileRes.json();
         setFiles(filesData);
@@ -94,9 +127,12 @@ const TreatmentFilesPage = () => {
         setLoading(false);
       }
     };
-
-    fetchData();
+  
+    if (isClient) {
+      fetchData();
+    }
   }, [isClient]);
+  
 
   const handleUpload = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();

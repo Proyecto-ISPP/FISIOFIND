@@ -7,9 +7,6 @@ import { Eye, AlertCircle, X, Loader2, ArrowLeft, Download } from 'lucide-react'
 import { useParams, useRouter } from "next/navigation";
 import Alert from "@/components/ui/Alert";
 
-const getAuthToken = () => {
-  return localStorage.getItem("token");
-};
 
 const PhysioFiles = () => {
   const params = useParams();
@@ -35,6 +32,49 @@ const PhysioFiles = () => {
       message
     });
   };
+
+  const getAuthToken = () => {
+      return localStorage.getItem("token");
+    };
+  
+      useEffect(() => {
+        const checkAuthAndRole = async () => {
+          setIsAuthChecking(true);
+          const storedToken = getAuthToken();
+    
+          if (!storedToken) {
+            console.log("No token found, redirecting to login");
+            window.location.href = "/login";
+            return;
+          }
+    
+          try {
+            const response = await axios.get(`${getApiBaseUrl()}/api/app_user/check-role/`, {
+              headers: {
+                Authorization: `Bearer ${storedToken}`,
+              },
+            });
+    
+            if (response.data && response.data.user_role === "physiotherapist") {
+              setIsAuthenticated(true);
+            } else {
+              console.log("User is not a physiotherapist, redirecting to not-found");
+              window.location.href = "/not-found";
+            }
+          } catch (error) {
+            if (error.response?.status === 401) {
+              localStorage.removeItem("token");
+              window.location.href = "/login";
+            } else {
+              window.location.href = "/not-found";
+            }
+          } finally {
+            setIsAuthChecking(false);
+          }
+        };
+    
+        checkAuthAndRole();
+      }, []);
 
   useEffect(() => {
     const checkAuthAndRole = async () => {

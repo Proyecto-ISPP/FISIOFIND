@@ -583,48 +583,6 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
           />
         </div>
       )}
-      <div className="flex justify-between items-center mb-6">
-        <button
-          onClick={handleGoBack}
-          className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-xl inline-flex items-center"
-        >
-          ← Volver
-        </button>
-        <h1 className="text-2xl font-bold">Detalles del Tratamiento</h1>
-        <div className="flex space-x-2">
-          <button
-            onClick={() =>
-              router.push(`/physio-management/follow-up/${id}/sessions`)
-            }
-            className="bg-[#6bc9be] hover:bg-[#5ab8ad] text-white font-semibold py-2 px-4 rounded-xl inline-flex items-center"
-          >
-            Gestionar Sesiones
-          </button>
-          <button
-            onClick={() =>
-              router.push(`/physio-management/follow-up/${id}/videos`)
-            }
-            className="bg-[#6bc9be] hover:bg-[#5ab8ad] text-white font-semibold py-2 px-4 rounded-xl inline-flex items-center"
-          >
-            Gestionar Videos
-          </button>
-          <button
-            onClick={() =>
-              router.push(`/physio-management/follow-up/${id}/files`)
-            }
-            className="bg-[#6bc9be] hover:bg-[#5ab8ad] text-white font-semibold py-2 px-4 rounded-xl inline-flex items-center"
-          >
-            Archivos subidos
-          </button>
-          <button
-            onClick={handleEditToggle}
-            className="bg-[#05668d] hover:bg-[#045272] text-white font-semibold py-2 px-4 rounded-xl inline-flex items-center"
-          >
-            {isEditing ? "Cancelar" : "Editar"}
-          </button>
-        </div>
-      </div>
-
         <div className="flex justify-between items-center mb-6">
           <button
             onClick={handleGoBack}
@@ -653,11 +611,20 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
               Gestionar Videos
             </button>
             <button
+            onClick={() =>
+              router.push(`/physio-management/follow-up/${id}/files`)
+            }
+            className="bg-gradient-to-r from-[#05668D] to-[#6BC9BE] hover:opacity-90 text-white font-semibold py-2 px-4 rounded-xl inline-flex items-center shadow-md transition-all duration-300"
+            >
+            Archivos subidos
+          </button>
+            <button
               onClick={handleEditToggle}
               className="bg-white hover:bg-gray-100 text-[#05668D] border border-[#05668D] font-semibold py-2 px-4 rounded-xl inline-flex items-center shadow-md transition-all duration-300"
             >
               {isEditing ? "Cancelar" : "Editar"}
             </button>
+            
           </div>
         </div>
 
