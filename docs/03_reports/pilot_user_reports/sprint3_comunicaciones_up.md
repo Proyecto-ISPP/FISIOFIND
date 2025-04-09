@@ -26,7 +26,7 @@
 
 Solo te llevará 10-15 minutos y podrás enviarlo hasta el Domingo de Ramos **13 de abril a las 23:59**.
 
-[📅 Si quieres, añade un recordatorio al calendario pulsando AQUÍ](https://calendar.google.com/calendar/u/0/r/eventedit?text=Rellenar+formulario+final&dates=20250409T070000Z/20250410T125900Z&details=Por+favor+rellena+el+formulario+antes+de+la+fecha+l%C3%ADmite.&location=https://forms.gle/U1tcSJGVdjt3x9hz5)
+[📅 Si quieres, añade un recordatorio al calendario pulsando AQUÍ](https://calendar.google.com/calendar/u/0/r/eventedit?text=Rellenar+formulario+final&dates=20250409T070000Z/20250410T125900Z&details=Por+favor+rellena+el+formulario+antes+de+la+fecha+l%C3%ADmite.&location=https://tally.so/r/3E6R8X)
 
 🔄 ¿Qué harás en esta prueba?
 
