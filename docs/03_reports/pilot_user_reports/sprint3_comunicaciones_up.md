@@ -26,7 +26,7 @@
 
 Solo te llevará 10-15 minutos y podrás enviarlo hasta el Domingo de Ramos **13 de abril a las 23:59**.
 
-[📅 Si quieres, añade un recordatorio al calendario pulsando AQUÍ](https://www.google.com/calendar/render?action=TEMPLATE&text=Rellenar+formulario+final&dates=20250412T070000Z/20250413T215900Z&details=Por+favor+rellena+el+formulario+antes+de+la+fecha+l%C3%ADmite.&location=https%3A%2F%2Fforms.gle%2FU1tcSJGVdjt3x9hz5)
+[📅 Si quieres, añade un recordatorio al calendario pulsando AQUÍ](https://calendar.google.com/calendar/u/0/r/eventedit?text=Rellenar+formulario+final&dates=20250409T070000Z/20250410T125900Z&details=Por+favor+rellena+el+formulario+antes+de+la+fecha+l%C3%ADmite.&location=https://forms.gle/U1tcSJGVdjt3x9hz5)
 
 🔄 ¿Qué harás en esta prueba?
 
@@ -58,10 +58,9 @@ Antonio y Guadalupe 💙
 
 Hola [Nombre],
 
-¡Gracias por participar como usuario piloto en esta segunda prueba real de FisioFind! 🎉
-En esta fase, te tocará probar la aplicación desde el rol de [🔵 Fisioterapeuta / 🟢 Paciente].
+¡Gracias por participar como usuario piloto en esta segunda prueba real de FisioFind! 🎉 En esta fase, hemos planteado una nueva dinámica en la que cada uno de vosotros probará a ser 🔵 Fisioterapeuta y 🟢 Paciente a la hora de realiar una videollamada.
 
-📝 En el siguiente enlace encontrarás todas las instrucciones detalladas para completar esta prueba y el formulario para darnos tu *feedback*: 
+📝 En el siguiente enlace encontrarás todas las instrucciones detalladas para completar esta prueba y el formulario para darnos tu feedback:
 
 🔗 Enlace al formulario: https://forms.gle/U1tcSJGVdjt3x9hz5 
 
@@ -69,19 +68,19 @@ En esta fase, te tocará probar la aplicación desde el rol de [🔵 Fisioterape
 
 Solo te llevará 10-15 minutos y podrás enviarlo hasta el miércoles **9 de abril a las 23:59**.
 
-[📅 Si quieres, añade un recordatorio al calendario pulsando AQUÍ](https://www.google.com/calendar/render?action=TEMPLATE&text=Rellenar+formulario+final&dates=20250401T070000Z/20250402T215900Z&details=Por+favor+rellena+el+formulario+antes+de+la+fecha+l%C3%ADmite.&location=https%3A%2F%2Fforms.gle%2FU1tcSJGVdjt3x9hz5)
+[📅 Si quieres, añade un recordatorio al calendario pulsando AQUÍ](https://calendar.google.com/calendar/u/0/r/eventedit?text=Rellenar+formulario+final&dates=20250409T070000Z/20250410T125900Z&details=Por+favor+rellena+el+formulario+antes+de+la+fecha+l%C3%ADmite.&location=https://forms.gle/U1tcSJGVdjt3x9hz5)
 
 
-🔵 Instrucciones para el rol de fisioterapeuta:
-	Para hacer las pruebas deberás registrarte con los siguientes datos de un profesional:
-        - Nombre completo:
-        - Número de colegiado:
-        - Comunidad autónoma: 
+Te dejo aquí las credenciales para ambos roles (ya te hemos creado la cuenta y pedido la cita para que pierdas el menor tiempo posible):
+🔵 Para el rol de fisioterapeuta:
+- nombre de usuario: uvus_fisio
+- correo: uvus_fisio@sample.com
+- contraseña:
 
-🟢 Instrucciones para el rol de paciente:
-	Para hacer las pruebas deberás registratre con los siguientes datos:
-        - X
-        - X
+🟢 Para el rol de paciente:
+- nombre de usuario: uvus_paciente
+- correo: uvus@alum.us.es
+- contraseña: 
         
 ⚠️ Próxima prueba: 
 En la siguiente fase, que será entorno al 3 de mayo (final del #PPL). Si tienes cualquier problema, puedes escribirnos por este correo o directamente por WhatsApp:
@@ -109,7 +108,7 @@ Antonio y Guadalupe 💙
 
 Solo te llevará 10-15 minutos y podrás enviarlo hasta el Domingo de Ramos **13 de abril a las 23:59**.
 
-[📅 Si quieres, añade un recordatorio al calendario pulsando AQUÍ](https://www.google.com/calendar/render?action=TEMPLATE&text=Rellenar+formulario+final&dates=20250412T070000Z/20250413T215900Z&details=Por+favor+rellena+el+formulario+antes+de+la+fecha+l%C3%ADmite.&location=https%3A%2F%2Fforms.gle%2FU1tcSJGVdjt3x9hz5)
+[📅 Si quieres, añade un recordatorio al calendario pulsando AQUÍ](https://calendar.google.com/calendar/u/0/r/eventedit?text=Rellenar+formulario+final&dates=20250409T070000Z/20250410T125900Z&details=Por+favor+rellena+el+formulario+antes+de+la+fecha+l%C3%ADmite.&location=https://forms.gle/U1tcSJGVdjt3x9hz5)
 
 🔄 ¿Qué harás en esta prueba?
 
