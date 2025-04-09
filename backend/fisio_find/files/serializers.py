@@ -46,59 +46,62 @@ class PatientFileSerializer(serializers.ModelSerializer):
         return files
 
     def create(self, validated_data):
-        # Obtener la solicitud para acceder a request.data y request.FILES
         request = self.context["request"]
 
-        # Obtener los campos del formulario directamente desde request.data
-        treatment = request.data.get('treatment')  # Recibimos treatment desde request.data
+        # Obtener campos del formulario
+        treatment = request.data.get('treatment')
         title = request.data.get('title')
         description = request.data.get('description')
 
         if not treatment:
             raise serializers.ValidationError("El tratamiento es obligatorio.")
 
-        # Obtener los archivos
         files = request.FILES.getlist("files")
+        if not files:
+            raise serializers.ValidationError("No se han enviado archivos.")
 
-        # Usar get_or_create para asegurar que el archivo esté asociado con el tratamiento
-        treatment_file, created = PatientFile.objects.get_or_create(
-            treatment_id=treatment,  # Usamos el ID directamente
-            title=title,
-            defaults={"description": description, "file_key": ""}
-        )
-
-        # Obtener las claves de archivo existentes
-        file_keys = treatment_file.file_key.split(",") if treatment_file.file_key else []
-
-        # Crear el cliente de S3
+        # Crear cliente S3
         s3_client = boto3.client(
             "s3",
             aws_access_key_id=settings.DIGITALOCEAN_ACCESS_KEY_ID,
             aws_secret_access_key=settings.DIGITALOCEAN_SECRET_ACCESS_KEY,
             endpoint_url=settings.DIGITALOCEAN_ENDPOINT_URL
         )
+
         try:
             treatment_instance = Treatment.objects.get(id=treatment)
             treatment_patient = treatment_instance.patient.user.username
         except Treatment.DoesNotExist:
             raise serializers.ValidationError("El tratamiento especificado no existe.")
 
-        # Subir cada archivo a DigitalOcean
+        # Verificar si ya existe un archivo con ese título y tratamiento
+        existing_file = PatientFile.objects.filter(treatment_id=treatment, title=title).first()
+
+        if existing_file:
+            treatment_file = existing_file
+            file_keys = treatment_file.file_key.split(",") if treatment_file.file_key else []
+        else:
+            file_keys = []
+            treatment_file = PatientFile(
+                treatment_id=treatment,
+                title=title,
+                description=description,
+            )
+
+        # Subir archivos a S3
         for file in files:
             file_extension = file.name.split(".")[-1]
             file_key = f"patient_files/{treatment_patient}/{uuid.uuid4()}.{file_extension}"
 
             try:
-                # Subir archivo a S3
                 s3_client.upload_fileobj(
                     file,
                     settings.DIGITALOCEAN_SPACE_NAME,
                     file_key,
                     ExtraArgs={"ACL": "private"},
                 )
-                file_keys.append(file_key)  # Agregar el archivo a la lista de claves
+                file_keys.append(file_key)
 
-                # Detectar el tipo de archivo y asignarlo al campo file_type
                 mime_type = file.content_type or guess_type(file.name)[0]
                 treatment_file.file_type = mime_type or "application/octet-stream"
 
@@ -107,7 +110,7 @@ class PatientFileSerializer(serializers.ModelSerializer):
                 logger.error(f"Error al subir archivo: {str(e)}")
                 raise serializers.ValidationError("Error al subir archivo. Por favor, inténtelo de nuevo más tarde.")
 
-        # Guardar las claves de los archivos en el tratamiento
+        # Guardar el archivo actualizado
         treatment_file.file_key = ",".join(file_keys)
         treatment_file.save()
 

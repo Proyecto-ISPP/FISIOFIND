@@ -200,7 +200,7 @@ def view_or_download_patient_file(request, file_id):
     except PatientFile.DoesNotExist:
         return Response({"error": "Archivo no encontrado"}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
-        return Response({"error": f"Error al obtener el archivo: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"error": f"Error al obtener el archivo"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['POST'])
