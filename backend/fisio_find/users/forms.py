@@ -36,6 +36,8 @@ class AppUserCreationForm(UserCreationForm):
 
     def clean_phone_number(self):
         phone = self.cleaned_data.get('phone_number')
+        if phone is None:
+            return phone
         if telefono_no_mide_9(phone):
             raise forms.ValidationError("El número de teléfono debe tener 9 dígitos numéricos.")
         qs = AppUser.objects.filter(phone_number=phone)
@@ -91,6 +93,8 @@ class AppUserChangeForm(UserChangeForm):
 
     def clean_phone_number(self):
         phone = self.cleaned_data.get('phone_number')
+        if phone is None:
+            return phone
         if telefono_no_mide_9(phone):
             raise forms.ValidationError("El número de teléfono debe tener 9 dígitos numéricos.")
         qs = AppUser.objects.filter(phone_number=phone)
