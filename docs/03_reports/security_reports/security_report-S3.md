@@ -38,6 +38,7 @@ classoption: "table"
   - [4.2 CIFRADO](#42-cifrado)
     - [4.2.1 MIGRACIÓN A CRIPTOGRAFÍA POSTCUÁNTICA](#421-migración-a-criptografía-postcuántica)
   - [4.3 ANÁLISIS DE CÓDIGO Y DEPENDENCIAS](#43-análisis-de-código-y-dependencias)
+  - [4.4 POLÍTICA DE SEGURIDAD](#44-política-de-seguridad)
 - [5. CONCLUSIONES](#4-conclusiones)
 
 <!-- COMMENT WHEN EXPORTING TO PDF -->
@@ -50,7 +51,7 @@ classoption: "table"
 
 - **Número de Grupo:** Grupo 6
 
-- **Entregable:** #SPRINT 2
+- **Entregable:** #SPRINT 3
 
 - **Miembros del grupo:** Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes.
 
@@ -137,6 +138,9 @@ El pasado agosto de 2024, el [NIST publicó los primeros estándares postcuánti
 Fisio Find desde antes del S3 implementa worklows que comprueban la seguridad del código y de las dependencias que utilizamos. En este sprint, nos han ido avisando de actualizaciones de dependencias y de malas prácticas de seguridad y vulnerabilidades en el código. Estos avisos han ido siendo resueltos y actualizados durante el sprint tras ser analizados. Github ya nos los clasifican por urgencia/riesgo, pero los avisos que han sido resueltos han sido porque lo ha decidido un miembro del equipo tras analizar riesgos y consecuencias del aviso. 
 
 Por otro lado, hemos decidido que no vamos a utilizar los avisos de seguridad que nos ofrece sonarqube, ya que tiene demasiados falsos positivos. Se seguirá monitorizando, pero no será una prioridad atender a esos avisos.
+
+# 4.4 POLÍTICA DE SEGURIDAD
+Fisio Find en su repositorio ha incluido una política de seguridad de GitHub que ofrece instrucciones detalladas para los usuarios de la aplicación sobre como reportar una vulnerabilidad. El término de política de seguridad es el nombre que le da GitHub al espacio especial que ofrece dentro de los repositorios para este tipo de avisos. Hemos implementado también un mecanismo para que se puedan reportar avisos anónimamente. Se puede ver desde este enlace: [https://github.com/Proyecto-ISPP/FISIOFIND/security](https://github.com/Proyecto-ISPP/FISIOFIND/security).
 
 # 5. CONCLUSIONES
 Después de este sprint, Fisio Find sigue sin presentar vulnerabilidades críticas que puedan ser encontradas con herramientas automáticas de análisis de seguridad. De hecho, realmente no tenemos vulnerabilidades, solo tenemos avisos, y los avisos que nos devuelve ZAP son genéricos(muchas otras webs lo tienen y no hay consecuencias inmediatas) y no necesitan de acciones inminentes. Sin embargo, se deben de seguir tomando medidas correctivas para la siguiente entrega porque se aspira a tener el mínimo número de avisos. En esta entrega se ha intentado reducir este número y se ha conseguido parcialmente, pero se quiere seguir mejorando en este aspecto.
