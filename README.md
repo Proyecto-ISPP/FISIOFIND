@@ -2591,21 +2591,19 @@ After the local backend server is running, we can run the frontend server **in a
 
 ### Sprint 1: Core Use Cases
 - [X] **`Core-1`**: <strike>Team training and onboarding completed.</strike>
-- [ ] **`Core-2`**: <strike>Basic user management system implemented.</strike>
-- [ ] **`Core-3`**: <strike>Core use cases functionality implemented.</strike>
-- [ ] **`Core-4`**: <strike>Aesthetic and accessible landing page deployed.</strike>
+- [X] **`Core-2`**: <strike>Basic user management system implemented.</strike>
+- [X] **`Core-3`**: <strike>Core use cases functionality implemented.</strike>
+- [X] **`Core-4`**: <strike>Aesthetic and accessible landing page deployed.</strike>
 
 ### Sprint 2: Tools & Payment
-- [ ] **`Tools-1`**: Payment and monetization system developed.
-- [ ] **`Tools-2`**: Physiotherapist tools implemented.
+- [X] **`Tools-1`**: <strike>Payment and monetization system developed.</strike>
+- [X] **`Tools-2`**: <strike>Physiotherapist tools implemented.</strike>
 
 ### Sprint 3: Extras & Testing
-- [ ] **`Extra-1`**: Additional application features developed.
-- [ ] **`Extra-2`**: User support tools implemented.
-- [ ] **`Extra-3`**: Comprehensive application testing completed.
-- [ ] **`Task 1`**: Implement feature one.
-- [ ] **`Task 2`**: Implement feature two.
-- [ ] **`Task 3`**: Implement feature three.
+- [X] **`Extra-1`**: <strike>Additional application features developed.</strike>
+- [X] **`Extra-2`**: <strike>User support tools implemented.</strike>
+- [X] **`Extra-3`**: <strike>Comprehensive application testing completed.</strike>
+
 
 
 ---
