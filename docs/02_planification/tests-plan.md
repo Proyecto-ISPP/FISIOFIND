@@ -77,6 +77,7 @@ classoption: "table"
 | Fecha      | Versión | Realizada por          | Descripción de los cambios                  |
 | ---------- | ------- | ---------------------- | ------------------------------------------- |
 | 09/04/2025 | v1.0    | Delfín Santana Rubio   | Creación del documento y primeros cambios.  |
+| 09/04/2025 | v1.1    | Miguel Encina Martínez | Revisión del documento y corrección de faltas de ortografía |
 
 
 <br>
@@ -110,24 +111,24 @@ En este apartado se pretende definir las pruebas que se contemplan en este plan:
 - Pruebas de carga: Pruebas que simulan interacciones con el sistema y miden su respuesta enfatizando resultados relacionados con el rendimiento del sistema. Generalmente, estas intentan probar lo que su propio nombre indica, cómo el sistema se comporta frente a diversas cargas.
 
 Por otro lado, a continuación se especifica en que áreas se utilizará cada tipo prueba:
-- Backend: se harán pruebas unitarias(cuando no tenga más sentido hacer de integración), de integración, de seguridad y de carga.
+- Backend: se harán pruebas unitarias (o, cuando se requiera, de integración), de integración, de seguridad y de carga.
 - Frontend: se harán pruebas de seguridad, de interfaz y de carga.
 
-No vamos a hacer pruebas unitarias o de integración para el frontend porque entendemos que a través de las pruebas de interfaz también se está probando perfectamente la funcionalidad del frontend.
+No vamos a hacer pruebas unitarias o de integración para el frontend porque entendemos que, a través de las pruebas de interfaz, también se está probando perfectamente la funcionalidad del frontend.
 
 # 3. METODOLOGÍA Y POLÍTICA DE PRUEBAS
-No se deben de hacer pruebas sin razón. Es decir, si se sabe que un componente nunca va a ser integrado con otro, no tiene sentido probar eso. Del mismo modo, si un componente siempre se llama a través de otro, lo que tiene sentido es comprobar directamente la integración de estos dos, como si de un solo componente fuera.
+No se deben de hacer pruebas sin razón. Es decir, si se sabe que un componente nunca va a ser integrado con otro, no tiene sentido probarlo. Del mismo modo, si un componente siempre se llama a través de otro, lo que tiene sentido es comprobar directamente la integración de estos dos, como si de un solo componente fuera.
 
-Por otro lado, se entiende que todos los tests deben de pasarse. Sin embargo, durante el desarrollo se podrán dejar tests que no pasan bajo la justificación de dejar constancia de que hay un error no contemplado en el código de la aplicación. Por ejemplo, si une tester está haciendo tests y encuentra un caso no contemplado en el código, tiene la opción de resolverlo directamente elle o de darlo a conocer por un canal apropiado. Independientemente de la decisión que tome, el test se deja. Sin embargo, para la entrega del PPL **todos los test deberán de pasarse**. Se hablará más detenidamente sobre esto en la sección de objetivos.
+Por otro lado, se entiende que todos los tests deben de ejecutarse correctamente. Sin embargo, durante el desarrollo se podrán dejar tests fallidos bajo la justificación de dejar constancia de que hay un error no contemplado en el código de la aplicación. Por ejemplo, si un/a tester está haciendo tests y encuentra un caso no contemplado en el código, tiene la opción de resolverlo directamente o de darlo a conocer por un canal apropiado. Independientemente de la decisión que tome, el test se deja. Sin embargo, para la entrega del PPL **todos los test deberán de pasarse**. Se hablará más detenidamente sobre esto en la sección de objetivos.
 
 El canal apropiado que se menciona en el ejemplo anterior es un chat específico para bugs que tenemos el equipo de Fisio Find.
 
-Las pruebas a implementar plantean obtener el máximo de coverage posible. Además, los tests hechos deberán de aportar casos positivos y negativos, para así asegurar el comportamiento esperado de la aplicación. 
+Las pruebas a implementar plantean obtener el máximo de *coverage* posible. Además, los tests hechos deberán de aportar casos positivos y negativos, para así asegurar el comportamiento esperado de la aplicación. 
 
-Finalmente, las pruebas de seguridad se harán cuando se haga el reporte de seguridad y sus resultados se podrán ver en el documento. En el reporte de seguridad se hacen dos cosas: hacer un análisis de seguridad de la app con ZAP y documentar las nuevas medidas o decisiones de seguridad que se han tomado o implementado en el sprint especificado. Para las pruebas de seguridad solo es pertinente la sección del análisis de seguridad. Por otro lado, el reporte de seguridad está en la carpeta de reportes y solo tendrá vigencia el último generado. Los resultados se podrán ver en la sección de "Resultados del análisis" y "Conclusiones".
+Finalmente, las pruebas de seguridad se harán cuando se haga el reporte de seguridad y sus resultados se podrán ver en el documento. En el reporte de seguridad se hacen dos cosas: un análisis de seguridad de la app con ZAP y documentar las nuevas medidas o decisiones de seguridad que se han tomado o implementado en el sprint especificado. Para las pruebas de seguridad sólo es pertinente la sección del análisis de seguridad. Por otro lado, el reporte de seguridad está en la carpeta de reportes y sólo tendrá vigencia el último generado. Los resultados se podrán ver en la sección de "Resultados del análisis" y "Conclusiones".
 
 ## 3.1 Herramientas que se van a utilizar para las pruebas
-En general, se va a intentar integrar el mínimo número de herramientas externas a los que ya nos dan los frameworks y lenguajes que utilizamos en el desarrollo. Esto es así porque se quiere ahorrar tiempo de configuración e integración. También, tomamos como referencia las herramientas que se han dado en las píldoras teóricas y en otras asignaturas.
+En general, se va a intentar integrar el mínimo número de herramientas externas a los que ya nos dan los *frameworks* y lenguajes que utilizamos en el desarrollo. Esto es así porque se quiere ahorrar tiempo de configuración e integración. También, tomamos como referencia las herramientas que se han dado en las píldoras teóricas y en otras asignaturas.
 
 Las pruebas de seguridad se harán tal y como se hacen en el reporte de seguridad, con la herramienta ZAP.
 
@@ -299,7 +300,7 @@ En cuanto a las pruebas de interfaz, actualmente no están implementadas
 En cuanto a las pruebas de carga, actualmente no están implementadas
 
 ## 4.4 PRUEBAS DE SEGURIDAD
-Finalmente, las pruebas de seguridad sí están implementadas y se hacen durante el sprint. Actualmente Fisio Find no tiene ningún aviso de categoría high.
+Finalmente, las pruebas de seguridad sí están implementadas y se hacen durante el sprint. Actualmente Fisio Find no tiene ningún aviso de categoría **high**.
 
 # 5. OBJETIVOS
 Para el PPL se deberán de tener estas pruebas implementadas:
@@ -311,4 +312,4 @@ Para el PPL se deberán de tener estas pruebas implementadas:
 
 Además, como ya se ha dicho anteriormente, todas las pruebas deberán de pasarse para el PPL. 
 
-Por otro lado, las pruebas de seguridad no ofrecen un valor de pasado o no pasado, sino que dan una categoría de riesgo o de peligro. Nuestro objetivo es no tener ningun aviso que sea de categoría crítica o alta que no esté justificado en el reporte de seguridad(el cual se puede encontrar en la carpeta de reportes).
+Por otro lado, las pruebas de seguridad no ofrecen un valor de pasado o no pasado, sino que dan una categoría de riesgo o de peligro. Nuestro objetivo es no tener ningún aviso que sea de categoría crítica o alta que no esté justificado en el reporte de seguridad (el cual se puede encontrar en la carpeta de reportes).
