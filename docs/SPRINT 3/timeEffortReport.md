@@ -22,7 +22,7 @@ classoption: "table"
 
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
 <p align="center">
-  <img src="../../.img/Logo_FisioFind_Verde_sin_fondo.webp" alt="Logo FisioFind" width="300" />
+  <img src="../.img/Logo_FisioFind_Verde_sin_fondo.webp" alt="Logo FisioFind" width="300" />
 </p>
 
 <h1 align="center" style="font-size: 30px; font-weight: bold;">
@@ -237,7 +237,7 @@ Ordenado de mayor a menor tiempo dedicado en cada proyecto:
 
 Diagrama de sectores para una mejor visualización de la división:
 
-![Diagrama de proyectos](../../.img/projects_diagram_sprint_3.png)
+![Diagrama de proyectos](../.img/projects_diagram_sprint_3.png)
 
 
 <br>
@@ -282,8 +282,8 @@ Ordenado por orden alfabético:
 
 Diagrama de sectores para una mejor visualización:
 
-![Diagrama de integrantes](../../.img/users_diagram_sprint_3_1.png)  
-![Diagrama de integrantes](../../.img/users_diagram_sprint_3_2.png)  
+![Diagrama de integrantes](../.img/users_diagram_sprint_3_1.png)  
+![Diagrama de integrantes](../.img/users_diagram_sprint_3_2.png)  
 
 <br>
 
