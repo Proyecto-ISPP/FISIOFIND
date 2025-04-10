@@ -149,6 +149,7 @@ Este tipo de retrospectiva permite que el equipo reflexione de manera estructura
 
 ## **BAD: ¿Qué NO salió bien?**
 - 🔴 El equipo se enorgullece de no haber encontrado ningún inconveniente durante el sprint.
+- 🔴 **Organización desequilibrada**: En temas de organización, por poner una pega, ha habido personas que han tenido que dedicar mucho esfuerzo al principio del Sprint, mientras que otros miembros han dedicado mucho esfuerzo al final del Sprint, en lugar de dedicar todos un esfuerzo constante a lo largo del Sprint.
 
 ## **START: ¿Qué debemos empezar a hacer?**
 - 🟡 Debemos estar más al tanto del resto de funcionalidades que hacen los compañeros.
