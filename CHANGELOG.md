@@ -1,10 +1,9 @@
-## 🚀 Changelog - 29.0.0
+## 🚀 Changelog - 30.0.0
 
 ### ✨ Features (0)
 
-### 🐛 Fixes (2)
-- Merge pull request #503 from Proyecto-ISPP/hotfix/perfil-paciente (@Guadalupe Ridruejo Pineda)
-- fix: genero fisio (@guaridpin)
+### 🐛 Fixes (1)
+- fix: arreglo en ruta de confirmation email (@Benjamín Maureira Flores)
 ### 📖 Documentation (0)
 
 ### 🌀 Other Changes (0)
