@@ -1,11 +1,11 @@
-## 🚀 Changelog - 15.0.0
+## 🚀 Changelog - 16.0.0
 
 ### ✨ Features (0)
 
 ### 🐛 Fixes (0)
 
 ### 📖 Documentation (1)
-- docs: sprint retrospective grupal (@Benjamín Maureira Flores)
-### 🌀 Other Changes (0)
-
+- docs: retrospectiva del sprint 3 (@MiguelEncina)
+### 🌀 Other Changes (1)
+- Merge branch 'main' of https://github.com/Proyecto-ISPP/FISIOFIND (@MiguelEncina)
 ### 🔗 Pull Requests
