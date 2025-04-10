@@ -130,6 +130,7 @@ Este tipo de retrospectiva permite que el equipo reflexione de manera estructura
 <br>
 
 <br>
+
 # **4. CONCLUSIONES**
 En conclusión, podemos decir que hemos aprendido de Sprints anteriores ya que hemos conseguido reducir en gran medida las cosas que han salido mal, aumentando por otro lado, las cosas que han salido bien.
 
