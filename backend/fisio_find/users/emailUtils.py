@@ -76,7 +76,7 @@ def send_registration_confirmation_email(user_id, email, first_name):
 
         # Configurar el enlace de confirmación con expiración (por ejemplo, 24 horas)
         frontend_domain = settings.FRONTEND_URL
-        confirmation_link = f"{frontend_domain}register/verified/{token}"
+        confirmation_link = f"{frontend_domain}/register/verified/{token}"
 
         # Crear el contenido del correo en HTML profesional
         subject = "✅ Confirma tu registro en FisioFind"
