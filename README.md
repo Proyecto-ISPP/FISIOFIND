@@ -83,6 +83,22 @@ Fisio Find is a specialized online consultation platform designed to connect phy
     ├── backend
     │   ├── .env.example
     │   ├── fisio_find
+	│ 	│   ├── appointment
+	│ 	│   ├── appointment_rating
+	│ 	│   ├── files
+	│ 	│   ├── fisio_find
+	│ 	│   ├── gestion_survey
+	│ 	│   ├── guest_session
+	│ 	│   ├── payment
+	│ 	│   │	├── management/commands
+	│ 	│   │	└── utils
+	│ 	│   ├── questionnaire
+	│ 	│   ├── ratings
+	│ 	│   ├── terms
+	│ 	│   ├── treatments
+	│ 	│   │	└── management/commands
+	│ 	│   ├── users
+	│ 	│   └── videocall
     │   ├── requirements.txt
     │   └── run-backend.ps1
     ├── docs
@@ -94,2361 +110,368 @@ Fisio Find is a specialized online consultation platform designed to connect phy
     │   ├── 03_reports
     │   ├── 04_monitoring
     │   ├── 05_knowledge_base
+    │   ├── 06_terms
     │   ├── Devising a Project
+    │   ├── SPRINT 1
+    │   ├── SPRINT 2
     │   ├── build-pdf-examples.sh
     │   ├── eisvogel.latex
     │   └── templates
     └── frontend
         ├── README.md
         ├── app
+		│   ├── account/delete/confirm/[token]
+		│   ├── advanced-search
+		│   ├── appointments/create/[id]
+		│   ├── confirm-alternative/[token]
+		│   ├── confirm-appointment/[token]
+		│   ├── login
+		│   ├── logout
+		│   ├── modelo
+		│   ├── my-appointments
+		│   ├── patient-management
+		│	│   ├── follow-up
+		│	│   │	├── [id]
+		│	│   │	│	├── sessions
+		│	│   │	│	│	└── [sessionId]
+		│	│   │	│	└── videos
+		│	│   └── profile
+		│   ├── permissions-error
+		│   ├── physio-management
+		│	│   ├── [id]/exercises
+		│	│   ├── balance
+		│	│   ├── follow-up
+		│	│   │	├── [id]
+		│	│   │	│	├── sessions
+		│	│   │	│	│	└── [sessionId]
+		│	│   │	│	└── videos
+		│	│   │	└──	 components
+		│	│   ├── profile
+		│	│   └── video
+		│   ├── questionnaires
+		│   ├── register
+		│	│   ├── patient
+		│	│   ├── physio
+		│	│   └── verified/[token]
+		│   ├── terms
+		│   ├── unsubscribe
+		│   ├── videocalls
+		│	│   ├── [roomCode]
+		│	│   ├── css
+		│	│   ├── end
+		│	│   ├── hooks
+		│	│   ├── tools
+		│	│   │	├── body-highlighter
+		│	│	│   │	├── assests
+		│	│	└── └──	└── components
+		│   ├── globals.css
+		│   ├── layout.tsx
+		│   ├── not-found.tsx
+		│   └── page.tsx
         ├── components
-        ├── eslint.config.mjs
+		│   └── ui
+        ├── context
         ├── lib
-        ├── next.config.ts
-        ├── package-lock.json
-        ├── package.json
-        ├── postcss.config.mjs
         ├── public
-        ├── tailwind.config.ts
-        └── tsconfig.json
+		│   ├── images
+		│   └── pdfs/06_terms
+        ├── services
+        ├── static
+		│   ├── images
+		│   │ 	├── body-regions
+		│   └── └── exercise-types
+        └── utils
 ```
 
 ### Project Index
 
 <details open>
 	<summary><b><code>FISIOFIND/</code></b></summary>
-	<!-- __root__ Submodule -->
-	<details>
-		<summary><b>__root__</b></summary>
-		<blockquote>
-			<div class='directory-path' style='padding: 8px 0; color: #666;'>
-				<code><b>⦿ __root__</b></code>
-			<table style='width: 100%; border-collapse: collapse;'>
-			<thead>
-				<tr style='background-color: #f8f9fa;'>
-					<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-					<th style='text-align: left; padding: 8px;'>Summary</th>
-				</tr>
-			</thead>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='../FISIOFIND/LICENSE'>LICENSE</a></b></td>
-					<td style='padding: 8px;'>- The LICENSE file establishes the projects open-source licensing terms under the MIT License<br>- It grants users broad permissions to use, modify, and distribute the FISIOFIND software, disclaiming any warranties<br>- This ensures legal clarity regarding the softwares usage and distribution within the overall project structure.</td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='../FISIOFIND/licenses.json'>licenses.json</a></b></td>
-					<td style='padding: 8px;'>- The <code>licenses.json</code> file serves as a central repository for license information regarding the third-party dependencies used in the Fisiofind frontend application<br>- It catalogs the licenses, source repositories, and contact information for each dependency, ensuring compliance and facilitating proper attribution within the project.</td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='../FISIOFIND/next.config.js'>next.config.js</a></b></td>
-					<td style='padding: 8px;'>- Next.config.js<code> configures Next.js image optimization<br>- It specifies allowed external image domains, enabling the application to fetch images from </code>ui.aceternity.com<code> and </code>fisiofind-repo.fra1.digitaloceanspaces.com` for display<br>- This ensures correct image loading within the application, contributing to a seamless user experience<br>- The configuration is crucial for the applications visual presentation.</td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='../FISIOFIND/NOTICE'>NOTICE</a></b></td>
-					<td style='padding: 8px;'>- The <code>NOTICE</code> file serves as a comprehensive license registry for the FISIOFIND project<br>- It catalogs the licenses of all third-party dependencies used in the software, ensuring compliance and transparency regarding intellectual property rights<br>- This contributes to the overall projects maintainability and legal soundness.</td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='../FISIOFIND/package-lock.json'>package-lock.json</a></b></td>
-					<td style='padding: 8px;'>- The <code>package-lock.json</code> file in the <code>fisiofind</code> project manages the projects dependencies<br>- It ensures that the correct versions of libraries like FullCalendar (for scheduling), Chart.js (for charting), and Next.js (the React framework) are used consistently across all developers and environments, contributing to the projects build and runtime stability.</td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='../FISIOFIND/package.json'>package.json</a></b></td>
-					<td style='padding: 8px;'>- Package.json` configures the Fisiofind project, specifying project metadata, and defining build and start scripts using Next.js<br>- It lists dependencies including React, charting libraries (Chart.js, react-chartjs-2), and FullCalendar for scheduling, indicating a web application incorporating data visualization and calendar functionalities<br>- The file manages project dependencies for development and production.</td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='../FISIOFIND/startup.sh'>startup.sh</a></b></td>
-					<td style='padding: 8px;'>- Startup.sh initializes the fisio_find application<br>- It activates the virtual environment, optionally applies database migrations, and launches the Gunicorn WSGI server, making the application accessible via port 8000<br>- This script facilitates the deployment and execution of the fisio_find Django project.</td>
-				</tr>
-			</table>
-		</blockquote>
-	</details>
-	<!-- backend Submodule -->
-	<details>
-		<summary><b>backend</b></summary>
-		<blockquote>
-			<div class='directory-path' style='padding: 8px 0; color: #666;'>
-				<code><b>⦿ backend</b></code>
-			<table style='width: 100%; border-collapse: collapse;'>
-			<thead>
-				<tr style='background-color: #f8f9fa;'>
-					<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-					<th style='text-align: left; padding: 8px;'>Summary</th>
-				</tr>
-			</thead>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/.env.example'>.env.example</a></b></td>
-					<td style='padding: 8px;'>- The <code>.env.example</code> file configures the backend environment<br>- It sets crucial database credentials, enabling connection to a PostgreSQL instance<br>- Furthermore, it provides API keys for Stripe payment processing and email services, along with debug and security settings<br>- This file facilitates the applications interaction with external services and manages its operational mode.</td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/custom_storage.py'>custom_storage.py</a></b></td>
-					<td style='padding: 8px;'>- DigitalOceanMediaStorage integrates DigitalOcean Spaces cloud storage into the Django application<br>- It provides a custom storage backend, enabling the application to seamlessly store and retrieve files from DigitalOcean Spaces<br>- The backend handles file uploads, retrieval, existence checks, and URL generation, abstracting away the underlying DigitalOcean Spaces API interactions<br>- Configuration details are managed via Django settings.</td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/deploy.py'>deploy.py</a></b></td>
-					<td style='padding: 8px;'>- Deploy.py` configures the Django application for deployment<br>- It sets the environment variable pointing to the projects settings and retrieves the WSGI application, enabling the backend server to run<br>- This script is crucial for deploying the fisio_find application, acting as the entry point for the WSGI server to interact with the Django framework.</td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/requirements.txt'>requirements.txt</a></b></td>
-					<td style='padding: 8px;'>- The <code>requirements.txt</code> file specifies all Python packages necessary for the backend application<br>- It includes libraries for web framework (Django, Channels), database interaction (psycopg2-binary), authentication (djangorestframework-simplejwt), caching (redis), and various other utilities supporting the projects functionality<br>- The listed packages ensure the backends proper operation and deployment.</td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/run-backend.ps1'>run-backend.ps1</a></b></td>
-					<td style='padding: 8px;'>- The PowerShell script activates a virtual environment, then executes database migrations for a Django project located in the <code>fisio_find</code> directory<br>- Finally, it launches the Django development server, preparing the backend for use<br>- This ensures the applications database schema is up-to-date before starting the server.</td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/run-backend.sh'>run-backend.sh</a></b></td>
-					<td style='padding: 8px;'>- The <code>run-backend.sh</code> script initializes and starts the backend server for the FisioFind application<br>- It performs database migrations to ensure the database schema is up-to-date before launching the Django development server, making the application accessible<br>- This script is crucial for the projects deployment and development workflow, providing a simple way to run the backend.</td>
-				</tr>
-			</table>
-			<!-- fisio_find Submodule -->
+	<ul style="list-style-type: none; padding-left: 20px;">
+		<li>
 			<details>
-				<summary><b>fisio_find</b></summary>
-				<blockquote>
-					<div class='directory-path' style='padding: 8px 0; color: #666;'>
-						<code><b>⦿ backend.fisio_find</b></code>
-					<table style='width: 100%; border-collapse: collapse;'>
-					<thead>
-						<tr style='background-color: #f8f9fa;'>
-							<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-							<th style='text-align: left; padding: 8px;'>Summary</th>
-						</tr>
-					</thead>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/coverage.xml'>coverage.xml</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/manage.py'>manage.py</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-					</table>
-					<!-- appointment Submodule -->
-					<details>
-						<summary><b>appointment</b></summary>
-						<blockquote>
-							<div class='directory-path' style='padding: 8px 0; color: #666;'>
-								<code><b>⦿ backend.fisio_find.appointment</b></code>
-							<table style='width: 100%; border-collapse: collapse;'>
-							<thead>
-								<tr style='background-color: #f8f9fa;'>
-									<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-									<th style='text-align: left; padding: 8px;'>Summary</th>
-								</tr>
-							</thead>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/appointment/admin.py'>admin.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/appointment/apps.py'>apps.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/appointment/emailUtils.py'>emailUtils.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/appointment/models.py'>models.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/appointment/permissions.py'>permissions.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/appointment/serializers.py'>serializers.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/appointment/tests.py'>tests.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/appointment/urls.py'>urls.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/appointment/views.py'>views.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-							</table>
-						</blockquote>
-					</details>
-					<!-- appointment_rating Submodule -->
-					<details>
-						<summary><b>appointment_rating</b></summary>
-						<blockquote>
-							<div class='directory-path' style='padding: 8px 0; color: #666;'>
-								<code><b>⦿ backend.fisio_find.appointment_rating</b></code>
-							<table style='width: 100%; border-collapse: collapse;'>
-							<thead>
-								<tr style='background-color: #f8f9fa;'>
-									<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-									<th style='text-align: left; padding: 8px;'>Summary</th>
-								</tr>
-							</thead>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/appointment_rating/admin.py'>admin.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/appointment_rating/apps.py'>apps.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/appointment_rating/emailUtils.py'>emailUtils.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/appointment_rating/models.py'>models.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/appointment_rating/serializers.py'>serializers.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/appointment_rating/tests.py'>tests.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/appointment_rating/urls.py'>urls.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/appointment_rating/views.py'>views.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-							</table>
-						</blockquote>
-					</details>
-					<!-- files Submodule -->
-					<details>
-						<summary><b>files</b></summary>
-						<blockquote>
-							<div class='directory-path' style='padding: 8px 0; color: #666;'>
-								<code><b>⦿ backend.fisio_find.files</b></code>
-							<table style='width: 100%; border-collapse: collapse;'>
-							<thead>
-								<tr style='background-color: #f8f9fa;'>
-									<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-									<th style='text-align: left; padding: 8px;'>Summary</th>
-								</tr>
-							</thead>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/files/admin.py'>admin.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/files/apps.py'>apps.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/files/models.py'>models.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/files/serializers.py'>serializers.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/files/tests.py'>tests.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/files/urls.py'>urls.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/files/views.py'>views.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-							</table>
-						</blockquote>
-					</details>
-					<!-- fisio_find Submodule -->
-					<details>
-						<summary><b>fisio_find</b></summary>
-						<blockquote>
-							<div class='directory-path' style='padding: 8px 0; color: #666;'>
-								<code><b>⦿ backend.fisio_find.fisio_find</b></code>
-							<table style='width: 100%; border-collapse: collapse;'>
-							<thead>
-								<tr style='background-color: #f8f9fa;'>
-									<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-									<th style='text-align: left; padding: 8px;'>Summary</th>
-								</tr>
-							</thead>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/fisio_find/asgi.py'>asgi.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/fisio_find/exampledata.json'>exampledata.json</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/fisio_find/settings.py'>settings.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/fisio_find/settings_postman.py'>settings_postman.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/fisio_find/urls.py'>urls.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/fisio_find/wsgi.py'>wsgi.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-							</table>
-						</blockquote>
-					</details>
-					<!-- gestion_survey Submodule -->
-					<details>
-						<summary><b>gestion_survey</b></summary>
-						<blockquote>
-							<div class='directory-path' style='padding: 8px 0; color: #666;'>
-								<code><b>⦿ backend.fisio_find.gestion_survey</b></code>
-							<table style='width: 100%; border-collapse: collapse;'>
-							<thead>
-								<tr style='background-color: #f8f9fa;'>
-									<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-									<th style='text-align: left; padding: 8px;'>Summary</th>
-								</tr>
-							</thead>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/gestion_survey/admin.py'>admin.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/gestion_survey/models.py'>models.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/gestion_survey/serializers.py'>serializers.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/gestion_survey/urls.py'>urls.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/gestion_survey/views.py'>views.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-							</table>
-						</blockquote>
-					</details>
-					<!-- guest_session Submodule -->
-					<details>
-						<summary><b>guest_session</b></summary>
-						<blockquote>
-							<div class='directory-path' style='padding: 8px 0; color: #666;'>
-								<code><b>⦿ backend.fisio_find.guest_session</b></code>
-							<table style='width: 100%; border-collapse: collapse;'>
-							<thead>
-								<tr style='background-color: #f8f9fa;'>
-									<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-									<th style='text-align: left; padding: 8px;'>Summary</th>
-								</tr>
-							</thead>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/guest_session/admin.py'>admin.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/guest_session/apps.py'>apps.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/guest_session/models.py'>models.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/guest_session/tests.py'>tests.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/guest_session/urls.py'>urls.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/guest_session/views.py'>views.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-							</table>
-						</blockquote>
-					</details>
-					<!-- payment Submodule -->
-					<details>
-						<summary><b>payment</b></summary>
-						<blockquote>
-							<div class='directory-path' style='padding: 8px 0; color: #666;'>
-								<code><b>⦿ backend.fisio_find.payment</b></code>
-							<table style='width: 100%; border-collapse: collapse;'>
-							<thead>
-								<tr style='background-color: #f8f9fa;'>
-									<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-									<th style='text-align: left; padding: 8px;'>Summary</th>
-								</tr>
-							</thead>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/payment/admin.py'>admin.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/payment/apps.py'>apps.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/payment/models.py'>models.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/payment/serializers.py'>serializers.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/payment/tests.py'>tests.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/payment/urls.py'>urls.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/payment/views.py'>views.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-							</table>
-							<!-- utils Submodule -->
-							<details>
-								<summary><b>utils</b></summary>
-								<blockquote>
-									<div class='directory-path' style='padding: 8px 0; color: #666;'>
-										<code><b>⦿ backend.fisio_find.payment.utils</b></code>
-									<table style='width: 100%; border-collapse: collapse;'>
-									<thead>
-										<tr style='background-color: #f8f9fa;'>
-											<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-											<th style='text-align: left; padding: 8px;'>Summary</th>
-										</tr>
-									</thead>
-										<tr style='border-bottom: 1px solid #eee;'>
-											<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/payment/utils/pdf_generator.py'>pdf_generator.py</a></b></td>
-											<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-										</tr>
-									</table>
-								</blockquote>
-							</details>
-							<!-- management Submodule -->
-							<details>
-								<summary><b>management</b></summary>
-								<blockquote>
-									<div class='directory-path' style='padding: 8px 0; color: #666;'>
-										<code><b>⦿ backend.fisio_find.payment.management</b></code>
-									<!-- commands Submodule -->
-									<details>
-										<summary><b>commands</b></summary>
-										<blockquote>
-											<div class='directory-path' style='padding: 8px 0; color: #666;'>
-												<code><b>⦿ backend.fisio_find.payment.management.commands</b></code>
-											<table style='width: 100%; border-collapse: collapse;'>
-											<thead>
-												<tr style='background-color: #f8f9fa;'>
-													<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-													<th style='text-align: left; padding: 8px;'>Summary</th>
-												</tr>
-											</thead>
-												<tr style='border-bottom: 1px solid #eee;'>
-													<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/payment/management/commands/cancel_unpaid_appointments.py'>cancel_unpaid_appointments.py</a></b></td>
-													<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-												</tr>
-											</table>
-										</blockquote>
-									</details>
-								</blockquote>
-							</details>
-						</blockquote>
-					</details>
-					<!-- questionnaire Submodule -->
-					<details>
-						<summary><b>questionnaire</b></summary>
-						<blockquote>
-							<div class='directory-path' style='padding: 8px 0; color: #666;'>
-								<code><b>⦿ backend.fisio_find.questionnaire</b></code>
-							<table style='width: 100%; border-collapse: collapse;'>
-							<thead>
-								<tr style='background-color: #f8f9fa;'>
-									<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-									<th style='text-align: left; padding: 8px;'>Summary</th>
-								</tr>
-							</thead>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/questionnaire/admin.py'>admin.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/questionnaire/apps.py'>apps.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/questionnaire/models.py'>models.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/questionnaire/serializers.py'>serializers.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/questionnaire/tests.py'>tests.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/questionnaire/urls.py'>urls.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/questionnaire/views.py'>views.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-							</table>
-						</blockquote>
-					</details>
-					<!-- ratings Submodule -->
-					<details>
-						<summary><b>ratings</b></summary>
-						<blockquote>
-							<div class='directory-path' style='padding: 8px 0; color: #666;'>
-								<code><b>⦿ backend.fisio_find.ratings</b></code>
-							<table style='width: 100%; border-collapse: collapse;'>
-							<thead>
-								<tr style='background-color: #f8f9fa;'>
-									<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-									<th style='text-align: left; padding: 8px;'>Summary</th>
-								</tr>
-							</thead>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/ratings/admin.py'>admin.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/ratings/apps.py'>apps.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/ratings/models.py'>models.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/ratings/serializers.py'>serializers.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/ratings/tests.py'>tests.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/ratings/urls.py'>urls.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/ratings/views.py'>views.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-							</table>
-						</blockquote>
-					</details>
-					<!-- terms Submodule -->
-					<details>
-						<summary><b>terms</b></summary>
-						<blockquote>
-							<div class='directory-path' style='padding: 8px 0; color: #666;'>
-								<code><b>⦿ backend.fisio_find.terms</b></code>
-							<table style='width: 100%; border-collapse: collapse;'>
-							<thead>
-								<tr style='background-color: #f8f9fa;'>
-									<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-									<th style='text-align: left; padding: 8px;'>Summary</th>
-								</tr>
-							</thead>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/terms/admin.py'>admin.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/terms/apps.py'>apps.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/terms/models.py'>models.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/terms/serializers.py'>serializers.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/terms/tests.py'>tests.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/terms/urls.py'>urls.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/terms/views.py'>views.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-							</table>
-						</blockquote>
-					</details>
-					<!-- treatments Submodule -->
-					<details>
-						<summary><b>treatments</b></summary>
-						<blockquote>
-							<div class='directory-path' style='padding: 8px 0; color: #666;'>
-								<code><b>⦿ backend.fisio_find.treatments</b></code>
-							<table style='width: 100%; border-collapse: collapse;'>
-							<thead>
-								<tr style='background-color: #f8f9fa;'>
-									<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-									<th style='text-align: left; padding: 8px;'>Summary</th>
-								</tr>
-							</thead>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/treatments/admin.py'>admin.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/treatments/models.py'>models.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/treatments/serializers.py'>serializers.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/treatments/tests.py'>tests.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/treatments/urls.py'>urls.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/treatments/views.py'>views.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-							</table>
-							<!-- management Submodule -->
-							<details>
-								<summary><b>management</b></summary>
-								<blockquote>
-									<div class='directory-path' style='padding: 8px 0; color: #666;'>
-										<code><b>⦿ backend.fisio_find.treatments.management</b></code>
-									<!-- commands Submodule -->
-									<details>
-										<summary><b>commands</b></summary>
-										<blockquote>
-											<div class='directory-path' style='padding: 8px 0; color: #666;'>
-												<code><b>⦿ backend.fisio_find.treatments.management.commands</b></code>
-											<table style='width: 100%; border-collapse: collapse;'>
-											<thead>
-												<tr style='background-color: #f8f9fa;'>
-													<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-													<th style='text-align: left; padding: 8px;'>Summary</th>
-												</tr>
-											</thead>
-												<tr style='border-bottom: 1px solid #eee;'>
-													<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/treatments/management/commands/send_exercise_reminders_local.py'>send_exercise_reminders_local.py</a></b></td>
-													<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-												</tr>
-												<tr style='border-bottom: 1px solid #eee;'>
-													<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/treatments/management/commands/send_exercise_reminders_prod.py'>send_exercise_reminders_prod.py</a></b></td>
-													<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-												</tr>
-											</table>
-										</blockquote>
-									</details>
-								</blockquote>
-							</details>
-						</blockquote>
-					</details>
-					<!-- users Submodule -->
-					<details>
-						<summary><b>users</b></summary>
-						<blockquote>
-							<div class='directory-path' style='padding: 8px 0; color: #666;'>
-								<code><b>⦿ backend.fisio_find.users</b></code>
-							<table style='width: 100%; border-collapse: collapse;'>
-							<thead>
-								<tr style='background-color: #f8f9fa;'>
-									<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-									<th style='text-align: left; padding: 8px;'>Summary</th>
-								</tr>
-							</thead>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/users/admin.py'>admin.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/users/apps.py'>apps.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/users/emailUtils.py'>emailUtils.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/users/forms.py'>forms.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/users/models.py'>models.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/users/permissions.py'>permissions.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/users/serializers.py'>serializers.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/users/subscription_views.py'>subscription_views.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/users/tests.py'>tests.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/users/urls.py'>urls.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/users/util.py'>util.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/users/validacionFisios.py'>validacionFisios.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/users/views.py'>views.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-							</table>
-						</blockquote>
-					</details>
-					<!-- videocall Submodule -->
-					<details>
-						<summary><b>videocall</b></summary>
-						<blockquote>
-							<div class='directory-path' style='padding: 8px 0; color: #666;'>
-								<code><b>⦿ backend.fisio_find.videocall</b></code>
-							<table style='width: 100%; border-collapse: collapse;'>
-							<thead>
-								<tr style='background-color: #f8f9fa;'>
-									<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-									<th style='text-align: left; padding: 8px;'>Summary</th>
-								</tr>
-							</thead>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/videocall/admin.py'>admin.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/videocall/apps.py'>apps.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/videocall/consumers.py'>consumers.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/videocall/models.py'>models.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/videocall/routes.py'>routes.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/videocall/routing.py'>routing.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/videocall/serializers.py'>serializers.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/videocall/tests.py'>tests.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/videocall/urls.py'>urls.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/backend/fisio_find/videocall/views.py'>views.py</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-							</table>
-						</blockquote>
-					</details>
-				</blockquote>
+				<summary><b>.github</b></summary>
+				<ul style="list-style-type: none; padding-left: 20px;">
+					<li><b><a href='../FISIOFIND/.github/ISSUE_TEMPLATE'>ISSUE_TEMPLATE</a></b> - Plantillas para la creación de issues en GitHub</li>
+					<li><b><a href='../FISIOFIND/.github/PULL_REQUEST_TEMPLATE.md'>PULL_REQUEST_TEMPLATE.md</a></b> - Plantilla para pull requests en GitHub</li>
+					<li><b><a href='../FISIOFIND/.github/workflows'>workflows</a></b> - Configuraciones de flujos de trabajo para GitHub Actions</li>
+				</ul>
 			</details>
-		</blockquote>
-	</details>
-	<!-- frontend Submodule -->
-	<details>
-		<summary><b>frontend</b></summary>
-		<blockquote>
-			<div class='directory-path' style='padding: 8px 0; color: #666;'>
-				<code><b>⦿ frontend</b></code>
-			<table style='width: 100%; border-collapse: collapse;'>
-			<thead>
-				<tr style='background-color: #f8f9fa;'>
-					<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-					<th style='text-align: left; padding: 8px;'>Summary</th>
-				</tr>
-			</thead>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/ middleware.ts'> middleware.ts</a></b></td>
-					<td style='padding: 8px;'>- Middleware enhances the Next.js applications security posture<br>- It intercepts all requests, adding crucial HTTP security headers like <code>X-Frame-Options</code>, <code>X-Content-Type-Options</code>, and <code>X-XSS-Protection</code> to protect against common web vulnerabilities<br>- Additionally, it attempts to remove the <code>Server</code> header to prevent revealing server information<br>- This ensures a more secure user experience.</td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components.json'>components.json</a></b></td>
-					<td style='padding: 8px;'>- Components.json` configures the frontends UI framework, specifying styling preferences (New York style), enabling React Server Components (RSC) and TypeScript (TSX), and integrating Tailwind CSS with custom configurations<br>- It defines aliases for commonly used project directories (components, utilities, etc.) and selects Lucide as the icon library, streamlining development and improving code organization within the larger application.</td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/eslint.config.mjs'>eslint.config.mjs</a></b></td>
-					<td style='padding: 8px;'>- The <code>eslint.config.mjs</code> file configures ESLint for the frontend, leveraging Next.jss core web vitals and TypeScript configurations<br>- It uses a compatibility layer to manage ESLint extensions, ensuring consistent linting rules across the project<br>- This standardized linting process enhances code quality and maintainability within the larger frontend application.</td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/netlify.toml'>netlify.toml</a></b></td>
-					<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/next.config.ts'>next.config.ts</a></b></td>
-					<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/package-lock.json'>package-lock.json</a></b></td>
-					<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/package.json'>package.json</a></b></td>
-					<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/postcss.config.mjs'>postcss.config.mjs</a></b></td>
-					<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/tailwind.config.ts'>tailwind.config.ts</a></b></td>
-					<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/tsconfig.json'>tsconfig.json</a></b></td>
-					<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-				</tr>
-			</table>
-			<!-- app Submodule -->
+		</li>
+		<li><b><a href='../FISIOFIND/README.md'>README.md</a></b> - Documento principal del proyecto FISIOFIND</li>
+		<li>
 			<details>
-				<summary><b>app</b></summary>
-				<blockquote>
-					<div class='directory-path' style='padding: 8px 0; color: #666;'>
-						<code><b>⦿ frontend.app</b></code>
-					<table style='width: 100%; border-collapse: collapse;'>
-					<thead>
-						<tr style='background-color: #f8f9fa;'>
-							<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-							<th style='text-align: left; padding: 8px;'>Summary</th>
-						</tr>
-					</thead>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/globals.css'>globals.css</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/layout.tsx'>layout.tsx</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/not-found.tsx'>not-found.tsx</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/page.tsx'>page.tsx</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-					</table>
-					<!-- advanced-search Submodule -->
-					<details>
-						<summary><b>advanced-search</b></summary>
-						<blockquote>
-							<div class='directory-path' style='padding: 8px 0; color: #666;'>
-								<code><b>⦿ frontend.app.advanced-search</b></code>
-							<table style='width: 100%; border-collapse: collapse;'>
-							<thead>
-								<tr style='background-color: #f8f9fa;'>
-									<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-									<th style='text-align: left; padding: 8px;'>Summary</th>
-								</tr>
-							</thead>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/advanced-search/page.tsx'>page.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-							</table>
-						</blockquote>
-					</details>
-					<!-- login Submodule -->
-					<details>
-						<summary><b>login</b></summary>
-						<blockquote>
-							<div class='directory-path' style='padding: 8px 0; color: #666;'>
-								<code><b>⦿ frontend.app.login</b></code>
-							<table style='width: 100%; border-collapse: collapse;'>
-							<thead>
-								<tr style='background-color: #f8f9fa;'>
-									<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-									<th style='text-align: left; padding: 8px;'>Summary</th>
-								</tr>
-							</thead>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/login/page.tsx'>page.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-							</table>
-						</blockquote>
-					</details>
-					<!-- logout Submodule -->
-					<details>
-						<summary><b>logout</b></summary>
-						<blockquote>
-							<div class='directory-path' style='padding: 8px 0; color: #666;'>
-								<code><b>⦿ frontend.app.logout</b></code>
-							<table style='width: 100%; border-collapse: collapse;'>
-							<thead>
-								<tr style='background-color: #f8f9fa;'>
-									<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-									<th style='text-align: left; padding: 8px;'>Summary</th>
-								</tr>
-							</thead>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/logout/page.tsx'>page.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-							</table>
-						</blockquote>
-					</details>
-					<!-- modelo Submodule -->
-					<details>
-						<summary><b>modelo</b></summary>
-						<blockquote>
-							<div class='directory-path' style='padding: 8px 0; color: #666;'>
-								<code><b>⦿ frontend.app.modelo</b></code>
-							<table style='width: 100%; border-collapse: collapse;'>
-							<thead>
-								<tr style='background-color: #f8f9fa;'>
-									<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-									<th style='text-align: left; padding: 8px;'>Summary</th>
-								</tr>
-							</thead>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/modelo/page.jsx'>page.jsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-							</table>
-						</blockquote>
-					</details>
-					<!-- my-appointments Submodule -->
-					<details>
-						<summary><b>my-appointments</b></summary>
-						<blockquote>
-							<div class='directory-path' style='padding: 8px 0; color: #666;'>
-								<code><b>⦿ frontend.app.my-appointments</b></code>
-							<table style='width: 100%; border-collapse: collapse;'>
-							<thead>
-								<tr style='background-color: #f8f9fa;'>
-									<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-									<th style='text-align: left; padding: 8px;'>Summary</th>
-								</tr>
-							</thead>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/my-appointments/my-appointments.css'>my-appointments.css</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/my-appointments/page.tsx'>page.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-							</table>
-						</blockquote>
-					</details>
-					<!-- permissions-error Submodule -->
-					<details>
-						<summary><b>permissions-error</b></summary>
-						<blockquote>
-							<div class='directory-path' style='padding: 8px 0; color: #666;'>
-								<code><b>⦿ frontend.app.permissions-error</b></code>
-							<table style='width: 100%; border-collapse: collapse;'>
-							<thead>
-								<tr style='background-color: #f8f9fa;'>
-									<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-									<th style='text-align: left; padding: 8px;'>Summary</th>
-								</tr>
-							</thead>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/permissions-error/page.tsx'>page.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-							</table>
-						</blockquote>
-					</details>
-					<!-- questionnaires Submodule -->
-					<details>
-						<summary><b>questionnaires</b></summary>
-						<blockquote>
-							<div class='directory-path' style='padding: 8px 0; color: #666;'>
-								<code><b>⦿ frontend.app.questionnaires</b></code>
-							<table style='width: 100%; border-collapse: collapse;'>
-							<thead>
-								<tr style='background-color: #f8f9fa;'>
-									<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-									<th style='text-align: left; padding: 8px;'>Summary</th>
-								</tr>
-							</thead>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/questionnaires/Cuestionarios.jsx'>Cuestionarios.jsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/questionnaires/MyGroupRenderer.jsx'>MyGroupRenderer.jsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/questionnaires/page.tsx'>page.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-							</table>
-						</blockquote>
-					</details>
-					<!-- register Submodule -->
-					<details>
-						<summary><b>register</b></summary>
-						<blockquote>
-							<div class='directory-path' style='padding: 8px 0; color: #666;'>
-								<code><b>⦿ frontend.app.register</b></code>
-							<table style='width: 100%; border-collapse: collapse;'>
-							<thead>
-								<tr style='background-color: #f8f9fa;'>
-									<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-									<th style='text-align: left; padding: 8px;'>Summary</th>
-								</tr>
-							</thead>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/register/page.tsx'>page.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-							</table>
-							<!-- patient Submodule -->
-							<details>
-								<summary><b>patient</b></summary>
-								<blockquote>
-									<div class='directory-path' style='padding: 8px 0; color: #666;'>
-										<code><b>⦿ frontend.app.register.patient</b></code>
-									<table style='width: 100%; border-collapse: collapse;'>
-									<thead>
-										<tr style='background-color: #f8f9fa;'>
-											<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-											<th style='text-align: left; padding: 8px;'>Summary</th>
-										</tr>
-									</thead>
-										<tr style='border-bottom: 1px solid #eee;'>
-											<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/register/patient/page.tsx'>page.tsx</a></b></td>
-											<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-										</tr>
-									</table>
-								</blockquote>
-							</details>
-							<!-- physio Submodule -->
-							<details>
-								<summary><b>physio</b></summary>
-								<blockquote>
-									<div class='directory-path' style='padding: 8px 0; color: #666;'>
-										<code><b>⦿ frontend.app.register.physio</b></code>
-									<table style='width: 100%; border-collapse: collapse;'>
-									<thead>
-										<tr style='background-color: #f8f9fa;'>
-											<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-											<th style='text-align: left; padding: 8px;'>Summary</th>
-										</tr>
-									</thead>
-										<tr style='border-bottom: 1px solid #eee;'>
-											<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/register/physio/page.tsx'>page.tsx</a></b></td>
-											<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-										</tr>
-									</table>
-								</blockquote>
-							</details>
-							<!-- verified Submodule -->
-							<details>
-								<summary><b>verified</b></summary>
-								<blockquote>
-									<div class='directory-path' style='padding: 8px 0; color: #666;'>
-										<code><b>⦿ frontend.app.register.verified</b></code>
-									<!-- [token] Submodule -->
+				<summary><b>backend</b></summary>
+				<ul style="list-style-type: none; padding-left: 20px;">
+					<li><b><a href='../FISIOFIND/backend/.env.example'>.env.example</a></b> - Ejemplo de archivo de entorno</li>
+					<li>
+						<details>
+							<summary><b>fisio_find</b></summary>
+							<ul style="list-style-type: none; padding-left: 20px;">
+								<li><b><a href='../FISIOFIND/backend/fisio_find/appointment'>appointment</a></b> - Módulo para gestionar citas</li>
+								<li><b><a href='../FISIOFIND/backend/fisio_find/appointment_rating'>appointment_rating</a></b> - Módulo para calificaciones de citas</li>
+								<li><b><a href='../FISIOFIND/backend/fisio_find/files'>files</a></b> - Módulo para gestión de archivos</li>
+								<li><b><a href='../FISIOFIND/backend/fisio_find/fisio_find'>fisio_find</a></b> - Configuración principal del proyecto Django</li>
+								<li><b><a href='../FISIOFIND/backend/fisio_find/gestion_survey'>gestion_survey</a></b> - Módulo para gestión de encuestas</li>
+								<li><b><a href='../FISIOFIND/backend/fisio_find/guest_session'>guest_session</a></b> - Módulo para sesiones de invitados</li>
+								<li>
 									<details>
-										<summary><b>[token]</b></summary>
-										<blockquote>
-											<div class='directory-path' style='padding: 8px 0; color: #666;'>
-												<code><b>⦿ frontend.app.register.verified.[token]</b></code>
-											<table style='width: 100%; border-collapse: collapse;'>
-											<thead>
-												<tr style='background-color: #f8f9fa;'>
-													<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-													<th style='text-align: left; padding: 8px;'>Summary</th>
-												</tr>
-											</thead>
-												<tr style='border-bottom: 1px solid #eee;'>
-													<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/register/verified/[token]/page.tsx'>page.tsx</a></b></td>
-													<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-												</tr>
-											</table>
-										</blockquote>
+										<summary><b>payment</b></summary>
+										<ul style="list-style-type: none; padding-left: 20px;">
+											<li><b><a href='../FISIOFIND/backend/fisio_find/payment/management/commands'>management/commands</a></b> - Comandos personalizados para pagos</li>
+											<li><b><a href='../FISIOFIND/backend/fisio_find/payment/utils'>utils</a></b> - Utilidades para el módulo de pagos</li>
+										</ul>
 									</details>
-								</blockquote>
-							</details>
-						</blockquote>
-					</details>
-					<!-- terms Submodule -->
-					<details>
-						<summary><b>terms</b></summary>
-						<blockquote>
-							<div class='directory-path' style='padding: 8px 0; color: #666;'>
-								<code><b>⦿ frontend.app.terms</b></code>
-							<table style='width: 100%; border-collapse: collapse;'>
-							<thead>
-								<tr style='background-color: #f8f9fa;'>
-									<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-									<th style='text-align: left; padding: 8px;'>Summary</th>
-								</tr>
-							</thead>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/terms/page.tsx'>page.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-							</table>
-						</blockquote>
-					</details>
-					<!-- unsubscribe Submodule -->
-					<details>
-						<summary><b>unsubscribe</b></summary>
-						<blockquote>
-							<div class='directory-path' style='padding: 8px 0; color: #666;'>
-								<code><b>⦿ frontend.app.unsubscribe</b></code>
-							<table style='width: 100%; border-collapse: collapse;'>
-							<thead>
-								<tr style='background-color: #f8f9fa;'>
-									<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-									<th style='text-align: left; padding: 8px;'>Summary</th>
-								</tr>
-							</thead>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/unsubscribe/page.tsx'>page.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-							</table>
-						</blockquote>
-					</details>
-					<!-- videocalls Submodule -->
-					<details>
-						<summary><b>videocalls</b></summary>
-						<blockquote>
-							<div class='directory-path' style='padding: 8px 0; color: #666;'>
-								<code><b>⦿ frontend.app.videocalls</b></code>
-							<table style='width: 100%; border-collapse: collapse;'>
-							<thead>
-								<tr style='background-color: #f8f9fa;'>
-									<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-									<th style='text-align: left; padding: 8px;'>Summary</th>
-								</tr>
-							</thead>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/videocalls/ChatPanel.jsx'>ChatPanel.jsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/videocalls/Controls.jsx'>Controls.jsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/videocalls/page.tsx'>page.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/videocalls/Room.jsx'>Room.jsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/videocalls/Room.module.css'>Room.module.css</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/videocalls/RoomHeader.jsx'>RoomHeader.jsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/videocalls/RoomModal.jsx'>RoomModal.jsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/videocalls/SettingsPanel.jsx'>SettingsPanel.jsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/videocalls/ToolPanel.jsx'>ToolPanel.jsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/videocalls/ToolsContainer.jsx'>ToolsContainer.jsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/videocalls/VideoGrid.jsx'>VideoGrid.jsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-							</table>
-							<!-- css Submodule -->
-							<details>
-								<summary><b>css</b></summary>
-								<blockquote>
-									<div class='directory-path' style='padding: 8px 0; color: #666;'>
-										<code><b>⦿ frontend.app.videocalls.css</b></code>
-									<table style='width: 100%; border-collapse: collapse;'>
-									<thead>
-										<tr style='background-color: #f8f9fa;'>
-											<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-											<th style='text-align: left; padding: 8px;'>Summary</th>
-										</tr>
-									</thead>
-										<tr style='border-bottom: 1px solid #eee;'>
-											<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/videocalls/css/AnatomicalModel.css'>AnatomicalModel.css</a></b></td>
-											<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-										</tr>
-									</table>
-								</blockquote>
-							</details>
-							<!-- end Submodule -->
-							<details>
-								<summary><b>end</b></summary>
-								<blockquote>
-									<div class='directory-path' style='padding: 8px 0; color: #666;'>
-										<code><b>⦿ frontend.app.videocalls.end</b></code>
-									<table style='width: 100%; border-collapse: collapse;'>
-									<thead>
-										<tr style='background-color: #f8f9fa;'>
-											<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-											<th style='text-align: left; padding: 8px;'>Summary</th>
-										</tr>
-									</thead>
-										<tr style='border-bottom: 1px solid #eee;'>
-											<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/videocalls/end/page.tsx'>page.tsx</a></b></td>
-											<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-										</tr>
-									</table>
-								</blockquote>
-							</details>
-							<!-- hooks Submodule -->
-							<details>
-								<summary><b>hooks</b></summary>
-								<blockquote>
-									<div class='directory-path' style='padding: 8px 0; color: #666;'>
-										<code><b>⦿ frontend.app.videocalls.hooks</b></code>
-									<table style='width: 100%; border-collapse: collapse;'>
-									<thead>
-										<tr style='background-color: #f8f9fa;'>
-											<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-											<th style='text-align: left; padding: 8px;'>Summary</th>
-										</tr>
-									</thead>
-										<tr style='border-bottom: 1px solid #eee;'>
-											<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/videocalls/hooks/3DModel.js'>3DModel.js</a></b></td>
-											<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-										</tr>
-										<tr style='border-bottom: 1px solid #eee;'>
-											<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/videocalls/hooks/useChat.js'>useChat.js</a></b></td>
-											<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-										</tr>
-										<tr style='border-bottom: 1px solid #eee;'>
-											<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/videocalls/hooks/useMediaControls.js'>useMediaControls.js</a></b></td>
-											<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-										</tr>
-										<tr style='border-bottom: 1px solid #eee;'>
-											<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/videocalls/hooks/useRoomManagement.js'>useRoomManagement.js</a></b></td>
-											<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-										</tr>
-										<tr style='border-bottom: 1px solid #eee;'>
-											<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/videocalls/hooks/useWebRTC.js'>useWebRTC.js</a></b></td>
-											<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-										</tr>
-										<tr style='border-bottom: 1px solid #eee;'>
-											<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/videocalls/hooks/useWebSocket.js'>useWebSocket.js</a></b></td>
-											<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-										</tr>
-									</table>
-								</blockquote>
-							</details>
-							<!-- tools Submodule -->
-							<details>
-								<summary><b>tools</b></summary>
-								<blockquote>
-									<div class='directory-path' style='padding: 8px 0; color: #666;'>
-										<code><b>⦿ frontend.app.videocalls.tools</b></code>
-									<table style='width: 100%; border-collapse: collapse;'>
-									<thead>
-										<tr style='background-color: #f8f9fa;'>
-											<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-											<th style='text-align: left; padding: 8px;'>Summary</th>
-										</tr>
-									</thead>
-										<tr style='border-bottom: 1px solid #eee;'>
-											<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/videocalls/tools/3DModel.jsx'>3DModel.jsx</a></b></td>
-											<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-										</tr>
-										<tr style='border-bottom: 1px solid #eee;'>
-											<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/videocalls/tools/Historial.jsx'>Historial.jsx</a></b></td>
-											<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-										</tr>
-										<tr style='border-bottom: 1px solid #eee;'>
-											<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/videocalls/tools/MapaDolor.jsx'>MapaDolor.jsx</a></b></td>
-											<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-										</tr>
-										<tr style='border-bottom: 1px solid #eee;'>
-											<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/videocalls/tools/PatientQuestionnaire.jsx'>PatientQuestionnaire.jsx</a></b></td>
-											<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-										</tr>
-										<tr style='border-bottom: 1px solid #eee;'>
-											<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/videocalls/tools/QuestionnaireResponseViewer.jsx'>QuestionnaireResponseViewer.jsx</a></b></td>
-											<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-										</tr>
-										<tr style='border-bottom: 1px solid #eee;'>
-											<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/videocalls/tools/Questionnaires.jsx'>Questionnaires.jsx</a></b></td>
-											<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-										</tr>
-										<tr style='border-bottom: 1px solid #eee;'>
-											<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/videocalls/tools/QuestionnaireTool.jsx'>QuestionnaireTool.jsx</a></b></td>
-											<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-										</tr>
-										<tr style='border-bottom: 1px solid #eee;'>
-											<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/videocalls/tools/Templates.jsx'>Templates.jsx</a></b></td>
-											<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-										</tr>
-									</table>
-									<!-- body-highlighter Submodule -->
+								</li>
+								<li><b><a href='../FISIOFIND/backend/fisio_find/questionnaire'>questionnaire</a></b> - Módulo para cuestionarios</li>
+								<li><b><a href='../FISIOFIND/backend/fisio_find/ratings'>ratings</a></b> - Módulo para calificaciones generales</li>
+								<li><b><a href='../FISIOFIND/backend/fisio_find/terms'>terms</a></b> - Módulo para términos y condiciones</li>
+								<li>
 									<details>
-										<summary><b>body-highlighter</b></summary>
-										<blockquote>
-											<div class='directory-path' style='padding: 8px 0; color: #666;'>
-												<code><b>⦿ frontend.app.videocalls.tools.body-highlighter</b></code>
-											<table style='width: 100%; border-collapse: collapse;'>
-											<thead>
-												<tr style='background-color: #f8f9fa;'>
-													<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-													<th style='text-align: left; padding: 8px;'>Summary</th>
-												</tr>
-											</thead>
-												<tr style='border-bottom: 1px solid #eee;'>
-													<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/videocalls/tools/body-highlighter/index.tsx'>index.tsx</a></b></td>
-													<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-												</tr>
-												<tr style='border-bottom: 1px solid #eee;'>
-													<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/videocalls/tools/body-highlighter/LICENSE'>LICENSE</a></b></td>
-													<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-												</tr>
-												<tr style='border-bottom: 1px solid #eee;'>
-													<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/videocalls/tools/body-highlighter/package-lock.json'>package-lock.json</a></b></td>
-													<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-												</tr>
-												<tr style='border-bottom: 1px solid #eee;'>
-													<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/videocalls/tools/body-highlighter/package.json'>package.json</a></b></td>
-													<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-												</tr>
-												<tr style='border-bottom: 1px solid #eee;'>
-													<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/videocalls/tools/body-highlighter/rn-cli.config.js'>rn-cli.config.js</a></b></td>
-													<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-												</tr>
-											</table>
-											<!-- components Submodule -->
-											<details>
-												<summary><b>components</b></summary>
-												<blockquote>
-													<div class='directory-path' style='padding: 8px 0; color: #666;'>
-														<code><b>⦿ frontend.app.videocalls.tools.body-highlighter.components</b></code>
-													<table style='width: 100%; border-collapse: collapse;'>
-													<thead>
-														<tr style='background-color: #f8f9fa;'>
-															<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-															<th style='text-align: left; padding: 8px;'>Summary</th>
-														</tr>
-													</thead>
-														<tr style='border-bottom: 1px solid #eee;'>
-															<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/videocalls/tools/body-highlighter/components/SvgFemaleWrapper.tsx'>SvgFemaleWrapper.tsx</a></b></td>
-															<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-														</tr>
-														<tr style='border-bottom: 1px solid #eee;'>
-															<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/videocalls/tools/body-highlighter/components/SvgMaleWrapper.tsx'>SvgMaleWrapper.tsx</a></b></td>
-															<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-														</tr>
-													</table>
-												</blockquote>
-											</details>
-										</blockquote>
+										<summary><b>treatments</b></summary>
+										<ul style="list-style-type: none; padding-left: 20px;">
+											<li><b><a href='../FISIOFIND/backend/fisio_find/treatments/management/commands'>management/commands</a></b> - Comandos personalizados para tratamientos</li>
+										</ul>
 									</details>
-								</blockquote>
-							</details>
-							<!-- [roomCode] Submodule -->
-							<details>
-								<summary><b>[roomCode]</b></summary>
-								<blockquote>
-									<div class='directory-path' style='padding: 8px 0; color: #666;'>
-										<code><b>⦿ frontend.app.videocalls.[roomCode]</b></code>
-									<table style='width: 100%; border-collapse: collapse;'>
-									<thead>
-										<tr style='background-color: #f8f9fa;'>
-											<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-											<th style='text-align: left; padding: 8px;'>Summary</th>
-										</tr>
-									</thead>
-										<tr style='border-bottom: 1px solid #eee;'>
-											<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/videocalls/[roomCode]/page.jsx'>page.jsx</a></b></td>
-											<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-										</tr>
-									</table>
-								</blockquote>
-							</details>
-						</blockquote>
-					</details>
-					<!-- account Submodule -->
-					<details>
-						<summary><b>account</b></summary>
-						<blockquote>
-							<div class='directory-path' style='padding: 8px 0; color: #666;'>
-								<code><b>⦿ frontend.app.account</b></code>
-							<!-- delete Submodule -->
-							<details>
-								<summary><b>delete</b></summary>
-								<blockquote>
-									<div class='directory-path' style='padding: 8px 0; color: #666;'>
-										<code><b>⦿ frontend.app.account.delete</b></code>
-									<!-- confirm Submodule -->
+								</li>
+								<li><b><a href='../FISIOFIND/backend/fisio_find/users'>users</a></b> - Módulo para gestión de usuarios</li>
+								<li><b><a href='../FISIOFIND/backend/fisio_find/videocall'>videocall</a></b> - Módulo para videollamadas</li>
+							</ul>
+						</details>
+					</li>
+					<li><b><a href='../FISIOFIND/backend/requirements.txt'>requirements.txt</a></b> - Lista de dependencias del backend</li>
+					<li><b><a href='../FISIOFIND/backend/run-backend.ps1'>run-backend.ps1</a></b> - Script para ejecutar el backend</li>
+				</ul>
+			</details>
+		</li>
+		<li>
+			<details>
+				<summary><b>docs</b></summary>
+				<ul style="list-style-type: none; padding-left: 20px;">
+					<li><b><a href='../FISIOFIND/docs/.DS_Store'>.DS_Store</a></b> - Archivo de configuración de macOS</li>
+					<li><b><a href='../FISIOFIND/docs/.backgrounds'>.backgrounds</a></b> - Fondos para documentación</li>
+					<li><b><a href='../FISIOFIND/docs/.img'>.img</a></b> - Imágenes para documentación</li>
+					<li><b><a href='../FISIOFIND/docs/01_organization'>01_organization</a></b> - Documentación sobre organización</li>
+					<li><b><a href='../FISIOFIND/docs/02_planification'>02_planification</a></b> - Documentación sobre planificación</li>
+					<li><b><a href='../FISIOFIND/docs/03_reports'>03_reports</a></b> - Informes del proyecto</li>
+					<li><b><a href='../FISIOFIND/docs/04_monitoring'>04_monitoring</a></b> - Documentación sobre monitoreo</li>
+					<li><b><a href='../FISIOFIND/docs/05_knowledge_base'>05_knowledge_base</a></b> - Base de conocimiento del proyecto</li>
+					<li><b><a href='../FISIOFIND/docs/06_terms'>06_terms</a></b> - Términos y condiciones documentados</li>
+					<li><b><a href='../FISIOFIND/docs/Devising a Project'>Devising a Project</a></b> - Guía para diseñar el proyecto</li>
+					<li><b><a href='../FISIOFIND/docs/SPRINT 1'>SPRINT 1</a></b> - Documentación del Sprint 1</li>
+					<li><b><a href='../FISIOFIND/docs/SPRINT 2'>SPRINT 2</a></b> - Documentación del Sprint 2</li>
+					<li><b><a href='../FISIOFIND/docs/build-pdf-examples.sh'>build-pdf-examples.sh</a></b> - Script para generar PDFs de ejemplo</li>
+					<li><b><a href='../FISIOFIND/docs/eisvogel.latex'>eisvogel.latex</a></b> - Plantilla LaTeX para documentación</li>
+					<li><b><a href='../FISIOFIND/docs/templates'>templates</a></b> - Plantillas para documentación</li>
+				</ul>
+			</details>
+		</li>
+		<li>
+			<details>
+				<summary><b>frontend</b></summary>
+				<ul style="list-style-type: none; padding-left: 20px;">
+					<li><b><a href='../FISIOFIND/frontend/README.md'>README.md</a></b> - Documentación principal del frontend</li>
+					<li>
+						<details>
+							<summary><b>app</b></summary>
+							<ul style="list-style-type: none; padding-left: 20px;">
+								<li>
+									<b><a href='../FISIOFIND/frontend/app/account'>account</a></b> - Gestión de cuentas
+									<ul style="list-style-type: none; padding-left: 20px;">
+										<li>
+											<b><a href='../FISIOFIND/frontend/app/account/delete'>delete</a></b> - Eliminación de cuenta
+											<ul style="list-style-type: none; padding-left: 20px;">
+												<li>
+													<b><a href='../FISIOFIND/frontend/app/account/delete/confirm'>confirm</a></b> - Confirmación
+													<ul style="list-style-type: none; padding-left: 20px;">
+														<li><b><a href='../FISIOFIND/frontend/app/account/delete/confirm/[token]'>[token]</a></b> - Token de confirmación</li>
+													</ul>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+								<li><b><a href='../FISIOFIND/frontend/app/advanced-search'>advanced-search</a></b> - Ruta para búsqueda avanzada</li>
+								<li>
+									<b><a href='../FISIOFIND/frontend/app/appointments'>appointments</a></b> - Gestión de citas
+									<ul style="list-style-type: none; padding-left: 20px;">
+										<li>
+											<b><a href='../FISIOFIND/frontend/app/appointments/create'>create</a></b> - Crear citas
+											<ul style="list-style-type: none; padding-left: 20px;">
+												<li><b><a href='../FISIOFIND/frontend/app/appointments/create/[id]'>[id]</a></b> - Crear cita por ID</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+								<li>
+									<b><a href='../FISIOFIND/frontend/app/confirm-alternative'>confirm-alternative</a></b> - Confirmación alternativa
+									<ul style="list-style-type: none; padding-left: 20px;">
+										<li><b><a href='../FISIOFIND/frontend/app/confirm-alternative/[token]'>[token]</a></b> - Token de alternativa</li>
+									</ul>
+								</li>
+								<li>
+									<b><a href='../FISIOFIND/frontend/app/confirm-appointment'>confirm-appointment</a></b> - Confirmación de citas
+									<ul style="list-style-type: none; padding-left: 20px;">
+										<li><b><a href='../FISIOFIND/frontend/app/confirm-appointment/[token]'>[token]</a></b> - Token de cita</li>
+									</ul>
+								</li>
+								<li><b><a href='../FISIOFIND/frontend/app/login'>login</a></b> - Ruta para inicio de sesión</li>
+								<li><b><a href='../FISIOFIND/frontend/app/logout'>logout</a></b> - Ruta para cerrar sesión</li>
+								<li><b><a href='../FISIOFIND/frontend/app/modelo'>modelo</a></b> - Ruta para modelo</li>
+								<li><b><a href='../FISIOFIND/frontend/app/my-appointments'>my-appointments</a></b> - Ruta para mis citas</li>
+								<li>
 									<details>
-										<summary><b>confirm</b></summary>
-										<blockquote>
-											<div class='directory-path' style='padding: 8px 0; color: #666;'>
-												<code><b>⦿ frontend.app.account.delete.confirm</b></code>
-											<!-- [token] Submodule -->
-											<details>
-												<summary><b>[token]</b></summary>
-												<blockquote>
-													<div class='directory-path' style='padding: 8px 0; color: #666;'>
-														<code><b>⦿ frontend.app.account.delete.confirm.[token]</b></code>
-													<table style='width: 100%; border-collapse: collapse;'>
-													<thead>
-														<tr style='background-color: #f8f9fa;'>
-															<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-															<th style='text-align: left; padding: 8px;'>Summary</th>
-														</tr>
-													</thead>
-														<tr style='border-bottom: 1px solid #eee;'>
-															<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/account/delete/confirm/[token]/page.tsx'>page.tsx</a></b></td>
-															<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-														</tr>
-													</table>
-												</blockquote>
-											</details>
-										</blockquote>
+										<summary><b>patient-management</b></summary>
+										<ul style="list-style-type: none; padding-left: 20px;">
+											<li>
+												<b><a href='../FISIOFIND/frontend/app/patient-management/follow-up'>follow-up</a></b> - Seguimiento de pacientes
+												<ul style="list-style-type: none; padding-left: 20px;">
+													<li>
+														<b><a href='../FISIOFIND/frontend/app/patient-management/follow-up/[id]'>[id]</a></b> - Seguimiento por ID
+														<ul style="list-style-type: none; padding-left: 20px;">
+															<li>
+																<b><a href='../FISIOFIND/frontend/app/patient-management/follow-up/[id]/sessions'>sessions</a></b> - Sesiones
+																<ul style="list-style-type: none; padding-left: 20px;">
+																	<li><b><a href='../FISIOFIND/frontend/app/patient-management/follow-up/[id]/sessions/[sessionId]'>[sessionId]</a></b> - Sesión por ID</li>
+																</ul>
+															</li>
+															<li><b><a href='../FISIOFIND/frontend/app/patient-management/follow-up/[id]/videos'>videos</a></b> - Vídeos de seguimiento</li>
+														</ul>
+													</li>
+												</ul>
+											</li>
+											<li><b><a href='../FISIOFIND/frontend/app/patient-management/profile'>profile</a></b> - Perfil del paciente</li>
+										</ul>
 									</details>
-								</blockquote>
-							</details>
-						</blockquote>
-					</details>
-					<!-- appointments Submodule -->
-					<details>
-						<summary><b>appointments</b></summary>
-						<blockquote>
-							<div class='directory-path' style='padding: 8px 0; color: #666;'>
-								<code><b>⦿ frontend.app.appointments</b></code>
-							<!-- create Submodule -->
-							<details>
-								<summary><b>create</b></summary>
-								<blockquote>
-									<div class='directory-path' style='padding: 8px 0; color: #666;'>
-										<code><b>⦿ frontend.app.appointments.create</b></code>
-									<!-- [id] Submodule -->
+								</li>
+								<li><b><a href='../FISIOFIND/frontend/app/permissions-error'>permissions-error</a></b> - Ruta para errores de permisos</li>
+								<li>
 									<details>
-										<summary><b>[id]</b></summary>
-										<blockquote>
-											<div class='directory-path' style='padding: 8px 0; color: #666;'>
-												<code><b>⦿ frontend.app.appointments.create.[id]</b></code>
-											<table style='width: 100%; border-collapse: collapse;'>
-											<thead>
-												<tr style='background-color: #f8f9fa;'>
-													<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-													<th style='text-align: left; padding: 8px;'>Summary</th>
-												</tr>
-											</thead>
-												<tr style='border-bottom: 1px solid #eee;'>
-													<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/appointments/create/[id]/page.tsx'>page.tsx</a></b></td>
-													<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-												</tr>
-											</table>
-										</blockquote>
+										<summary><b>physio-management</b></summary>
+										<ul style="list-style-type: none; padding-left: 20px;">
+											<li>
+												<b><a href='../FISIOFIND/frontend/app/physio-management/[id]'>[id]</a></b> - Gestión por ID
+												<ul style="list-style-type: none; padding-left: 20px;">
+													<li><b><a href='../FISIOFIND/frontend/app/physio-management/[id]/exercises'>exercises</a></b> - Ejercicios por ID</li>
+												</ul>
+											</li>
+											<li><b><a href='../FISIOFIND/frontend/app/physio-management/balance'>balance</a></b> - Balance de fisioterapeutas</li>
+											<li>
+												<b><a href='../FISIOFIND/frontend/app/physio-management/follow-up'>follow-up</a></b> - Seguimiento
+												<ul style="list-style-type: none; padding-left: 20px;">
+													<li>
+														<b><a href='../FISIOFIND/frontend/app/physio-management/follow-up/[id]'>[id]</a></b> - Seguimiento por ID
+														<ul style="list-style-type: none; padding-left: 20px;">
+															<li>
+																<b><a href='../FISIOFIND/frontend/app/physio-management/follow-up/[id]/sessions'>sessions</a></b> - Sesiones
+																<ul style="list-style-type: none; padding-left: 20px;">
+																	<li><b><a href='../FISIOFIND/frontend/app/physio-management/follow-up/[id]/sessions/[sessionId]'>[sessionId]</a></b> - Sesión por ID</li>
+																</ul>
+															</li>
+															<li><b><a href='../FISIOFIND/frontend/app/physio-management/follow-up/[id]/videos'>videos</a></b> - Vídeos</li>
+														</ul>
+													</li>
+													<li><b><a href='../FISIOFIND/frontend/app/physio-management/follow-up/components'>components</a></b> - Componentes de seguimiento</li>
+												</ul>
+											</li>
+											<li><b><a href='../FISIOFIND/frontend/app/physio-management/profile'>profile</a></b> - Perfil del fisioterapeuta</li>
+											<li><b><a href='../FISIOFIND/frontend/app/physio-management/video'>video</a></b> - Vídeos de fisioterapeutas</li>
+										</ul>
 									</details>
-								</blockquote>
-							</details>
-						</blockquote>
-					</details>
-					<!-- confirm-alternative Submodule -->
-					<details>
-						<summary><b>confirm-alternative</b></summary>
-						<blockquote>
-							<div class='directory-path' style='padding: 8px 0; color: #666;'>
-								<code><b>⦿ frontend.app.confirm-alternative</b></code>
-							<!-- [token] Submodule -->
-							<details>
-								<summary><b>[token]</b></summary>
-								<blockquote>
-									<div class='directory-path' style='padding: 8px 0; color: #666;'>
-										<code><b>⦿ frontend.app.confirm-alternative.[token]</b></code>
-									<table style='width: 100%; border-collapse: collapse;'>
-									<thead>
-										<tr style='background-color: #f8f9fa;'>
-											<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-											<th style='text-align: left; padding: 8px;'>Summary</th>
-										</tr>
-									</thead>
-										<tr style='border-bottom: 1px solid #eee;'>
-											<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/confirm-alternative/[token]/page.tsx'>page.tsx</a></b></td>
-											<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-										</tr>
-									</table>
-								</blockquote>
-							</details>
-						</blockquote>
-					</details>
-					<!-- confirm-appointment Submodule -->
-					<details>
-						<summary><b>confirm-appointment</b></summary>
-						<blockquote>
-							<div class='directory-path' style='padding: 8px 0; color: #666;'>
-								<code><b>⦿ frontend.app.confirm-appointment</b></code>
-							<!-- [token] Submodule -->
-							<details>
-								<summary><b>[token]</b></summary>
-								<blockquote>
-									<div class='directory-path' style='padding: 8px 0; color: #666;'>
-										<code><b>⦿ frontend.app.confirm-appointment.[token]</b></code>
-									<table style='width: 100%; border-collapse: collapse;'>
-									<thead>
-										<tr style='background-color: #f8f9fa;'>
-											<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-											<th style='text-align: left; padding: 8px;'>Summary</th>
-										</tr>
-									</thead>
-										<tr style='border-bottom: 1px solid #eee;'>
-											<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/confirm-appointment/[token]/page.tsx'>page.tsx</a></b></td>
-											<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-										</tr>
-									</table>
-								</blockquote>
-							</details>
-						</blockquote>
-					</details>
-					<!-- patient-management Submodule -->
-					<details>
-						<summary><b>patient-management</b></summary>
-						<blockquote>
-							<div class='directory-path' style='padding: 8px 0; color: #666;'>
-								<code><b>⦿ frontend.app.patient-management</b></code>
-							<!-- follow-up Submodule -->
-							<details>
-								<summary><b>follow-up</b></summary>
-								<blockquote>
-									<div class='directory-path' style='padding: 8px 0; color: #666;'>
-										<code><b>⦿ frontend.app.patient-management.follow-up</b></code>
-									<table style='width: 100%; border-collapse: collapse;'>
-									<thead>
-										<tr style='background-color: #f8f9fa;'>
-											<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-											<th style='text-align: left; padding: 8px;'>Summary</th>
-										</tr>
-									</thead>
-										<tr style='border-bottom: 1px solid #eee;'>
-											<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/patient-management/follow-up/page.tsx'>page.tsx</a></b></td>
-											<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-										</tr>
-									</table>
-									<!-- [id] Submodule -->
+								</li>
+								<li><b><a href='../FISIOFIND/frontend/app/questionnaires'>questionnaires</a></b> - Ruta para cuestionarios</li>
+								<li>
 									<details>
-										<summary><b>[id]</b></summary>
-										<blockquote>
-											<div class='directory-path' style='padding: 8px 0; color: #666;'>
-												<code><b>⦿ frontend.app.patient-management.follow-up.[id]</b></code>
-											<table style='width: 100%; border-collapse: collapse;'>
-											<thead>
-												<tr style='background-color: #f8f9fa;'>
-													<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-													<th style='text-align: left; padding: 8px;'>Summary</th>
-												</tr>
-											</thead>
-												<tr style='border-bottom: 1px solid #eee;'>
-													<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/patient-management/follow-up/[id]/page.tsx'>page.tsx</a></b></td>
-													<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-												</tr>
-											</table>
-											<!-- sessions Submodule -->
-											<details>
-												<summary><b>sessions</b></summary>
-												<blockquote>
-													<div class='directory-path' style='padding: 8px 0; color: #666;'>
-														<code><b>⦿ frontend.app.patient-management.follow-up.[id].sessions</b></code>
-													<table style='width: 100%; border-collapse: collapse;'>
-													<thead>
-														<tr style='background-color: #f8f9fa;'>
-															<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-															<th style='text-align: left; padding: 8px;'>Summary</th>
-														</tr>
-													</thead>
-														<tr style='border-bottom: 1px solid #eee;'>
-															<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/patient-management/follow-up/[id]/sessions/page.tsx'>page.tsx</a></b></td>
-															<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-														</tr>
-													</table>
-													<!-- [sessionId] Submodule -->
-													<details>
-														<summary><b>[sessionId]</b></summary>
-														<blockquote>
-															<div class='directory-path' style='padding: 8px 0; color: #666;'>
-																<code><b>⦿ frontend.app.patient-management.follow-up.[id].sessions.[sessionId]</b></code>
-															<table style='width: 100%; border-collapse: collapse;'>
-															<thead>
-																<tr style='background-color: #f8f9fa;'>
-																	<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-																	<th style='text-align: left; padding: 8px;'>Summary</th>
-																</tr>
-															</thead>
-																<tr style='border-bottom: 1px solid #eee;'>
-																	<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/patient-management/follow-up/[id]/sessions/[sessionId]/page.tsx'>page.tsx</a></b></td>
-																	<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-																</tr>
-															</table>
-														</blockquote>
-													</details>
-												</blockquote>
-											</details>
-											<!-- videos Submodule -->
-											<details>
-												<summary><b>videos</b></summary>
-												<blockquote>
-													<div class='directory-path' style='padding: 8px 0; color: #666;'>
-														<code><b>⦿ frontend.app.patient-management.follow-up.[id].videos</b></code>
-													<table style='width: 100%; border-collapse: collapse;'>
-													<thead>
-														<tr style='background-color: #f8f9fa;'>
-															<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-															<th style='text-align: left; padding: 8px;'>Summary</th>
-														</tr>
-													</thead>
-														<tr style='border-bottom: 1px solid #eee;'>
-															<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/patient-management/follow-up/[id]/videos/page.tsx'>page.tsx</a></b></td>
-															<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-														</tr>
-													</table>
-												</blockquote>
-											</details>
-										</blockquote>
+										<summary><b>register</b></summary>
+										<ul style="list-style-type: none; padding-left: 20px;">
+											<li><b><a href='../FISIOFIND/frontend/app/register/patient'>patient</a></b> - Registro de pacientes</li>
+											<li><b><a href='../FISIOFIND/frontend/app/register/physio'>physio</a></b> - Registro de fisioterapeutas</li>
+											<li>
+												<b><a href='../FISIOFIND/frontend/app/register/verified'>verified</a></b> - Verificación
+												<ul style="list-style-type: none; padding-left: 20px;">
+													<li><b><a href='../FISIOFIND/frontend/app/register/verified/[token]'>[token]</a></b> - Token de verificación</li>
+												</ul>
+											</li>
+										</ul>
 									</details>
-								</blockquote>
-							</details>
-							<!-- profile Submodule -->
-							<details>
-								<summary><b>profile</b></summary>
-								<blockquote>
-									<div class='directory-path' style='padding: 8px 0; color: #666;'>
-										<code><b>⦿ frontend.app.patient-management.profile</b></code>
-									<table style='width: 100%; border-collapse: collapse;'>
-									<thead>
-										<tr style='background-color: #f8f9fa;'>
-											<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-											<th style='text-align: left; padding: 8px;'>Summary</th>
-										</tr>
-									</thead>
-										<tr style='border-bottom: 1px solid #eee;'>
-											<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/patient-management/profile/page.tsx'>page.tsx</a></b></td>
-											<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-										</tr>
-									</table>
-								</blockquote>
-							</details>
-						</blockquote>
-					</details>
-					<!-- physio-management Submodule -->
-					<details>
-						<summary><b>physio-management</b></summary>
-						<blockquote>
-							<div class='directory-path' style='padding: 8px 0; color: #666;'>
-								<code><b>⦿ frontend.app.physio-management</b></code>
-							<!-- balance Submodule -->
-							<details>
-								<summary><b>balance</b></summary>
-								<blockquote>
-									<div class='directory-path' style='padding: 8px 0; color: #666;'>
-										<code><b>⦿ frontend.app.physio-management.balance</b></code>
-									<table style='width: 100%; border-collapse: collapse;'>
-									<thead>
-										<tr style='background-color: #f8f9fa;'>
-											<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-											<th style='text-align: left; padding: 8px;'>Summary</th>
-										</tr>
-									</thead>
-										<tr style='border-bottom: 1px solid #eee;'>
-											<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/physio-management/balance/page.tsx'>page.tsx</a></b></td>
-											<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-										</tr>
-									</table>
-								</blockquote>
-							</details>
-							<!-- follow-up Submodule -->
-							<details>
-								<summary><b>follow-up</b></summary>
-								<blockquote>
-									<div class='directory-path' style='padding: 8px 0; color: #666;'>
-										<code><b>⦿ frontend.app.physio-management.follow-up</b></code>
-									<table style='width: 100%; border-collapse: collapse;'>
-									<thead>
-										<tr style='background-color: #f8f9fa;'>
-											<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-											<th style='text-align: left; padding: 8px;'>Summary</th>
-										</tr>
-									</thead>
-										<tr style='border-bottom: 1px solid #eee;'>
-											<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/physio-management/follow-up/page.tsx'>page.tsx</a></b></td>
-											<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-										</tr>
-									</table>
-									<!-- components Submodule -->
+								</li>
+								<li><b><a href='../FISIOFIND/frontend/app/terms'>terms</a></b> - Ruta para términos y condiciones</li>
+								<li><b><a href='../FISIOFIND/frontend/app/unsubscribe'>unsubscribe</a></b> - Ruta para darse de baja</li>
+								<li>
 									<details>
-										<summary><b>components</b></summary>
-										<blockquote>
-											<div class='directory-path' style='padding: 8px 0; color: #666;'>
-												<code><b>⦿ frontend.app.physio-management.follow-up.components</b></code>
-											<table style='width: 100%; border-collapse: collapse;'>
-											<thead>
-												<tr style='background-color: #f8f9fa;'>
-													<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-													<th style='text-align: left; padding: 8px;'>Summary</th>
-												</tr>
-											</thead>
-												<tr style='border-bottom: 1px solid #eee;'>
-													<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/physio-management/follow-up/components/FilterBar.tsx'>FilterBar.tsx</a></b></td>
-													<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-												</tr>
-												<tr style='border-bottom: 1px solid #eee;'>
-													<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/physio-management/follow-up/components/TreatmentCard.tsx'>TreatmentCard.tsx</a></b></td>
-													<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-												</tr>
-											</table>
-										</blockquote>
+										<summary><b>videocalls</b></summary>
+										<ul style="list-style-type: none; padding-left: 20px;">
+											<li><b><a href='../FISIOFIND/frontend/app/videocalls/[roomCode]'>[roomCode]</a></b> - Videollamada por código de sala</li>
+											<li><b><a href='../FISIOFIND/frontend/app/videocalls/css'>css</a></b> - Estilos para videollamadas</li>
+											<li><b><a href='../FISIOFIND/frontend/app/videocalls/end'>end</a></b> - Finalización de videollamadas</li>
+											<li><b><a href='../FISIOFIND/frontend/app/videocalls/hooks'>hooks</a></b> - Hooks para videollamadas</li>
+											<li>
+												<b><a href='../FISIOFIND/frontend/app/videocalls/tools'>tools</a></b> - Herramientas
+												<ul style="list-style-type: none; padding-left: 20px;">
+													<li>
+														<b><a href='../FISIOFIND/frontend/app/videocalls/tools/body-highlighter'>body-highlighter</a></b> - Resaltador de cuerpo
+														<ul style="list-style-type: none; padding-left: 20px;">
+															<li><b><a href='../FISIOFIND/frontend/app/videocalls/tools/body-highlighter/assests'>assests</a></b> - Recursos</li>
+														</ul>
+													</li>
+													<li><b><a href='../FISIOFIND/frontend/app/videocalls/tools/components'>components</a></b> - Componentes</li>
+												</ul>
+											</li>
+										</ul>
 									</details>
-									<!-- [id] Submodule -->
-									<details>
-										<summary><b>[id]</b></summary>
-										<blockquote>
-											<div class='directory-path' style='padding: 8px 0; color: #666;'>
-												<code><b>⦿ frontend.app.physio-management.follow-up.[id]</b></code>
-											<table style='width: 100%; border-collapse: collapse;'>
-											<thead>
-												<tr style='background-color: #f8f9fa;'>
-													<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-													<th style='text-align: left; padding: 8px;'>Summary</th>
-												</tr>
-											</thead>
-												<tr style='border-bottom: 1px solid #eee;'>
-													<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/physio-management/follow-up/[id]/page.tsx'>page.tsx</a></b></td>
-													<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-												</tr>
-											</table>
-											<!-- sessions Submodule -->
-											<details>
-												<summary><b>sessions</b></summary>
-												<blockquote>
-													<div class='directory-path' style='padding: 8px 0; color: #666;'>
-														<code><b>⦿ frontend.app.physio-management.follow-up.[id].sessions</b></code>
-													<table style='width: 100%; border-collapse: collapse;'>
-													<thead>
-														<tr style='background-color: #f8f9fa;'>
-															<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-															<th style='text-align: left; padding: 8px;'>Summary</th>
-														</tr>
-													</thead>
-														<tr style='border-bottom: 1px solid #eee;'>
-															<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/physio-management/follow-up/[id]/sessions/page.tsx'>page.tsx</a></b></td>
-															<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-														</tr>
-													</table>
-													<!-- [sessionId] Submodule -->
-													<details>
-														<summary><b>[sessionId]</b></summary>
-														<blockquote>
-															<div class='directory-path' style='padding: 8px 0; color: #666;'>
-																<code><b>⦿ frontend.app.physio-management.follow-up.[id].sessions.[sessionId]</b></code>
-															<!-- exercises Submodule -->
-															<details>
-																<summary><b>exercises</b></summary>
-																<blockquote>
-																	<div class='directory-path' style='padding: 8px 0; color: #666;'>
-																		<code><b>⦿ frontend.app.physio-management.follow-up.[id].sessions.[sessionId].exercises</b></code>
-																	<table style='width: 100%; border-collapse: collapse;'>
-																	<thead>
-																		<tr style='background-color: #f8f9fa;'>
-																			<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-																			<th style='text-align: left; padding: 8px;'>Summary</th>
-																		</tr>
-																	</thead>
-																		<tr style='border-bottom: 1px solid #eee;'>
-																			<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/physio-management/follow-up/[id]/sessions/[sessionId]/exercises/page.tsx'>page.tsx</a></b></td>
-																			<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-																		</tr>
-																	</table>
-																</blockquote>
-															</details>
-														</blockquote>
-													</details>
-												</blockquote>
-											</details>
-											<!-- videos Submodule -->
-											<details>
-												<summary><b>videos</b></summary>
-												<blockquote>
-													<div class='directory-path' style='padding: 8px 0; color: #666;'>
-														<code><b>⦿ frontend.app.physio-management.follow-up.[id].videos</b></code>
-													<table style='width: 100%; border-collapse: collapse;'>
-													<thead>
-														<tr style='background-color: #f8f9fa;'>
-															<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-															<th style='text-align: left; padding: 8px;'>Summary</th>
-														</tr>
-													</thead>
-														<tr style='border-bottom: 1px solid #eee;'>
-															<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/physio-management/follow-up/[id]/videos/page.tsx'>page.tsx</a></b></td>
-															<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-														</tr>
-													</table>
-												</blockquote>
-											</details>
-										</blockquote>
-									</details>
-								</blockquote>
-							</details>
-							<!-- profile Submodule -->
-							<details>
-								<summary><b>profile</b></summary>
-								<blockquote>
-									<div class='directory-path' style='padding: 8px 0; color: #666;'>
-										<code><b>⦿ frontend.app.physio-management.profile</b></code>
-									<table style='width: 100%; border-collapse: collapse;'>
-									<thead>
-										<tr style='background-color: #f8f9fa;'>
-											<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-											<th style='text-align: left; padding: 8px;'>Summary</th>
-										</tr>
-									</thead>
-										<tr style='border-bottom: 1px solid #eee;'>
-											<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/physio-management/profile/page.tsx'>page.tsx</a></b></td>
-											<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-										</tr>
-									</table>
-								</blockquote>
-							</details>
-							<!-- video Submodule -->
-							<details>
-								<summary><b>video</b></summary>
-								<blockquote>
-									<div class='directory-path' style='padding: 8px 0; color: #666;'>
-										<code><b>⦿ frontend.app.physio-management.video</b></code>
-									<table style='width: 100%; border-collapse: collapse;'>
-									<thead>
-										<tr style='background-color: #f8f9fa;'>
-											<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-											<th style='text-align: left; padding: 8px;'>Summary</th>
-										</tr>
-									</thead>
-										<tr style='border-bottom: 1px solid #eee;'>
-											<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/physio-management/video/page.tsx'>page.tsx</a></b></td>
-											<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-										</tr>
-									</table>
-								</blockquote>
-							</details>
-							<!-- [id] Submodule -->
-							<details>
-								<summary><b>[id]</b></summary>
-								<blockquote>
-									<div class='directory-path' style='padding: 8px 0; color: #666;'>
-										<code><b>⦿ frontend.app.physio-management.[id]</b></code>
-									<!-- exercises Submodule -->
-									<details>
-										<summary><b>exercises</b></summary>
-										<blockquote>
-											<div class='directory-path' style='padding: 8px 0; color: #666;'>
-												<code><b>⦿ frontend.app.physio-management.[id].exercises</b></code>
-											<table style='width: 100%; border-collapse: collapse;'>
-											<thead>
-												<tr style='background-color: #f8f9fa;'>
-													<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-													<th style='text-align: left; padding: 8px;'>Summary</th>
-												</tr>
-											</thead>
-												<tr style='border-bottom: 1px solid #eee;'>
-													<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/app/physio-management/[id]/exercises/page.tsx'>page.tsx</a></b></td>
-													<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-												</tr>
-											</table>
-										</blockquote>
-									</details>
-								</blockquote>
-							</details>
-						</blockquote>
-					</details>
-				</blockquote>
+								</li>
+								<li><b><a href='../FISIOFIND/frontend/app/globals.css'>globals.css</a></b> - Estilos globales</li>
+								<li><b><a href='../FISIOFIND/frontend/app/layout.tsx'>layout.tsx</a></b> - Diseño principal del frontend</li>
+								<li><b><a href='../FISIOFIND/frontend/app/not-found.tsx'>not-found.tsx</a></b> - Página de no encontrado</li>
+								<li><b><a href='../FISIOFIND/frontend/app/page.tsx'>page.tsx</a></b> - Página principal</li>
+							</ul>
+						</details>
+					</li>
+					<li>
+						<details>
+							<summary><b>components</b></summary>
+							<ul style="list-style-type: none; padding-left: 20px;">
+								<li><b><a href='../FISIOFIND/frontend/components/ui'>ui</a></b> - Componentes de interfaz de usuario</li>
+							</ul>
+						</details>
+					</li>
+					<li><b><a href='../FISIOFIND/frontend/context'>context</a></b> - Gestión de contexto</li>
+					<li><b><a href='../FISIOFIND/frontend/lib'>lib</a></b> - Librerías y utilidades</li>
+					<li>
+						<details>
+							<summary><b>public</b></summary>
+							<ul style="list-style-type: none; padding-left: 20px;">
+								<li><b><a href='../FISIOFIND/frontend/public/images'>images</a></b> - Imágenes públicas</li>
+								<li>
+									<b><a href='../FISIOFIND/frontend/public/pdfs'>pdfs</a></b> - Documentos PDF
+									<ul style="list-style-type: none; padding-left: 20px;">
+										<li><b><a href='../FISIOFIND/frontend/public/pdfs/06_terms'>06_terms</a></b> - Términos y condiciones</li>
+									</ul>
+								</li>
+							</ul>
+						</details>
+					</li>
+					<li><b><a href='../FISIOFIND/frontend/services'>services</a></b> - Servicios del frontend</li>
+					<li>
+						<details>
+							<summary><b>static</b></summary>
+							<ul style="list-style-type: none; padding-left: 20px;">
+								<li>
+									<b><a href='../FISIOFIND/frontend/static/images'>images</a></b> - Imágenes estáticas
+									<ul style="list-style-type: none; padding-left: 20px;">
+										<li><b><a href='../FISIOFIND/frontend/static/images/body-regions'>body-regions</a></b> - Regiones del cuerpo</li>
+										<li><b><a href='../FISIOFIND/frontend/static/images/exercise-types'>exercise-types</a></b> - Tipos de ejercicios</li>
+									</ul>
+								</li>
+							</ul>
+						</details>
+					</li>
+					<li><b><a href='../FISIOFIND/frontend/utils'>utils</a></b> - Utilidades del frontend</li>
+				</ul>
 			</details>
-			<!-- components Submodule -->
-			<details>
-				<summary><b>components</b></summary>
-				<blockquote>
-					<div class='directory-path' style='padding: 8px 0; color: #666;'>
-						<code><b>⦿ frontend.components</b></code>
-					<table style='width: 100%; border-collapse: collapse;'>
-					<thead>
-						<tr style='background-color: #f8f9fa;'>
-							<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-							<th style='text-align: left; padding: 8px;'>Summary</th>
-						</tr>
-					</thead>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/3d-card-demo.tsx'>3d-card-demo.tsx</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/CheckoutForm.tsx'>CheckoutForm.tsx</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ClientWrapper.tsx'>ClientWrapper.tsx</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/CookieConsent.tsx'>CookieConsent.tsx</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/demo-window.tsx'>demo-window.tsx</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/IdentityVerificationStep.tsx'>IdentityVerificationStep.tsx</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ratings.module.css'>ratings.module.css</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ratings.tsx'>ratings.tsx</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/RestrictedAccess.tsx'>RestrictedAccess.tsx</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/service-create-modal.tsx'>service-create-modal.tsx</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/service-edit-modal.tsx'>service-edit-modal.tsx</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/sidebar-demo.tsx'>sidebar-demo.tsx</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/user-update-password-modal.tsx'>user-update-password-modal.tsx</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-					</table>
-					<!-- ui Submodule -->
-					<details>
-						<summary><b>ui</b></summary>
-						<blockquote>
-							<div class='directory-path' style='padding: 8px 0; color: #666;'>
-								<code><b>⦿ frontend.components.ui</b></code>
-							<table style='width: 100%; border-collapse: collapse;'>
-							<thead>
-								<tr style='background-color: #f8f9fa;'>
-									<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-									<th style='text-align: left; padding: 8px;'>Summary</th>
-								</tr>
-							</thead>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/3d-card.tsx'>3d-card.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/Alert.tsx'>Alert.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/alternative-selector.tsx'>alternative-selector.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/AnimatedIcons.tsx'>AnimatedIcons.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/appointment-modal.tsx'>appointment-modal.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/AppointmentCalendar.tsx'>AppointmentCalendar.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/AppointmentComment.tsx'>AppointmentComment.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/bento-grid.tsx'>bento-grid.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/calendar.tsx'>calendar.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/cards.tsx'>cards.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/checkoutButton.jsx'>checkoutButton.jsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/ConfirmModal.tsx'>ConfirmModal.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/dinamic-form-modal.tsx'>dinamic-form-modal.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/draftAppointmentModal.tsx'>draftAppointmentModal.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/EditableStarRatingDisplay.tsx'>EditableStarRatingDisplay.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/focus-cards.tsx'>focus-cards.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/gradient-button.tsx'>gradient-button.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/hero-highlight.tsx'>hero-highlight.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/LoadingStar.css'>LoadingStar.css</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/Modal.tsx'>Modal.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/PaymentSelector.tsx'>PaymentSelector.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/physio-cta-adv.tsx'>physio-cta-adv.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/physio-cta.tsx'>physio-cta.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/PhysioterapistRating.tsx'>PhysioterapistRating.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/PhysiotherapistModal.tsx'>PhysiotherapistModal.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/RatingForm.tsx'>RatingForm.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/restore-filters.tsx'>restore-filters.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/ScheduleCalendar.tsx'>ScheduleCalendar.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/search-button.tsx'>search-button.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/ServiceQuestionary.tsx'>ServiceQuestionary.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/sidebar.tsx'>sidebar.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/StarRating.tsx'>StarRating.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/StarRatingDisplay.tsx'>StarRatingDisplay.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/SubscriptionSlider.tsx'>SubscriptionSlider.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/Wizard.tsx'>Wizard.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/WizardContent.tsx'>WizardContent.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/WizardHeader.tsx'>WizardHeader.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/components/ui/WizardNavigation.tsx'>WizardNavigation.tsx</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-							</table>
-						</blockquote>
-					</details>
-				</blockquote>
-			</details>
-			<!-- context Submodule -->
-			<details>
-				<summary><b>context</b></summary>
-				<blockquote>
-					<div class='directory-path' style='padding: 8px 0; color: #666;'>
-						<code><b>⦿ frontend.context</b></code>
-					<table style='width: 100%; border-collapse: collapse;'>
-					<thead>
-						<tr style='background-color: #f8f9fa;'>
-							<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-							<th style='text-align: left; padding: 8px;'>Summary</th>
-						</tr>
-					</thead>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/context/appointmentContext.tsx'>appointmentContext.tsx</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-					</table>
-				</blockquote>
-			</details>
-			<!-- lib Submodule -->
-			<details>
-				<summary><b>lib</b></summary>
-				<blockquote>
-					<div class='directory-path' style='padding: 8px 0; color: #666;'>
-						<code><b>⦿ frontend.lib</b></code>
-					<table style='width: 100%; border-collapse: collapse;'>
-					<thead>
-						<tr style='background-color: #f8f9fa;'>
-							<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-							<th style='text-align: left; padding: 8px;'>Summary</th>
-						</tr>
-					</thead>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/lib/definitions.ts'>definitions.ts</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/lib/utils.ts'>utils.ts</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-					</table>
-				</blockquote>
-			</details>
-			<!-- public Submodule -->
-			<details>
-				<summary><b>public</b></summary>
-				<blockquote>
-					<div class='directory-path' style='padding: 8px 0; color: #666;'>
-						<code><b>⦿ frontend.public</b></code>
-					<table style='width: 100%; border-collapse: collapse;'>
-					<thead>
-						<tr style='background-color: #f8f9fa;'>
-							<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-							<th style='text-align: left; padding: 8px;'>Summary</th>
-						</tr>
-					</thead>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/public/photo.css'>photo.css</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-					</table>
-				</blockquote>
-			</details>
-			<!-- services Submodule -->
-			<details>
-				<summary><b>services</b></summary>
-				<blockquote>
-					<div class='directory-path' style='padding: 8px 0; color: #666;'>
-						<code><b>⦿ frontend.services</b></code>
-					<table style='width: 100%; border-collapse: collapse;'>
-					<thead>
-						<tr style='background-color: #f8f9fa;'>
-							<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-							<th style='text-align: left; padding: 8px;'>Summary</th>
-						</tr>
-					</thead>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/services/check-role.ts'>check-role.ts</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-					</table>
-				</blockquote>
-			</details>
-			<!-- utils Submodule -->
-			<details>
-				<summary><b>utils</b></summary>
-				<blockquote>
-					<div class='directory-path' style='padding: 8px 0; color: #666;'>
-						<code><b>⦿ frontend.utils</b></code>
-					<table style='width: 100%; border-collapse: collapse;'>
-					<thead>
-						<tr style='background-color: #f8f9fa;'>
-							<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-							<th style='text-align: left; padding: 8px;'>Summary</th>
-						</tr>
-					</thead>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='../FISIOFIND/frontend/utils/api.ts'>api.ts</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-					</table>
-				</blockquote>
-			</details>
-		</blockquote>
-	</details>
-	<!-- .github Submodule -->
-	<details>
-		<summary><b>.github</b></summary>
-		<blockquote>
-			<div class='directory-path' style='padding: 8px 0; color: #666;'>
-				<code><b>⦿ .github</b></code>
-			<!-- ISSUE_TEMPLATE Submodule -->
-			<details>
-				<summary><b>ISSUE_TEMPLATE</b></summary>
-				<blockquote>
-					<div class='directory-path' style='padding: 8px 0; color: #666;'>
-						<code><b>⦿ .github.ISSUE_TEMPLATE</b></code>
-					<table style='width: 100%; border-collapse: collapse;'>
-					<thead>
-						<tr style='background-color: #f8f9fa;'>
-							<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-							<th style='text-align: left; padding: 8px;'>Summary</th>
-						</tr>
-					</thead>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='../FISIOFIND/.github/ISSUE_TEMPLATE/config.yml'>config.yml</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-					</table>
-				</blockquote>
-			</details>
-			<!-- workflows Submodule -->
-			<details>
-				<summary><b>workflows</b></summary>
-				<blockquote>
-					<div class='directory-path' style='padding: 8px 0; color: #666;'>
-						<code><b>⦿ .github.workflows</b></code>
-					<table style='width: 100%; border-collapse: collapse;'>
-					<thead>
-						<tr style='background-color: #f8f9fa;'>
-							<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-							<th style='text-align: left; padding: 8px;'>Summary</th>
-						</tr>
-					</thead>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='../FISIOFIND/.github/workflows/automatic_pr.yml'>automatic_pr.yml</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='../FISIOFIND/.github/workflows/changelog.yml'>changelog.yml</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='../FISIOFIND/.github/workflows/codeql.yml'>codeql.yml</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='../FISIOFIND/.github/workflows/process_payments.yml'>process_payments.yml</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='../FISIOFIND/.github/workflows/s3-back.yml'>s3-back.yml</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='../FISIOFIND/.github/workflows/s3-front.yml'>s3-front.yml</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='../FISIOFIND/.github/workflows/sonarqube.yml'>sonarqube.yml</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-					</table>
-				</blockquote>
-			</details>
-		</blockquote>
-	</details>
+		</li>
+	</ul>
 </details>
-
----
-
 
 ##  Local Deployment
 
