@@ -1,11 +1,11 @@
-## 🚀 Changelog - 17.0.0
+## 🚀 Changelog - 18.0.0
 
 ### ✨ Features (0)
 
 ### 🐛 Fixes (0)
 
 ### 📖 Documentation (1)
-- docs: evaluación de rendiemiento #S3 (@Francisco Mateos Villarejo)
-### 🌀 Other Changes (1)
-- Merge branch 'main' of https://github.com/Proyecto-ISPP/FISIOFIND (@Francisco Mateos Villarejo)
+- docs: update de los sprint retrospectives (@Benjamín Maureira Flores)
+### 🌀 Other Changes (0)
+
 ### 🔗 Pull Requests
