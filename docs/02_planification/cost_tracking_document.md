@@ -408,15 +408,13 @@ El coste real del Sprint 1 ha sido superior al estimado, principalmente por un m
 
 ## **6.2. SPRINT 2**
 
-Nos encontramos en la segunda fase de desarrollo, lo que implica una continuidad en los gastos de personal y fijos. A continuación, se detallan los costes estimados y reales del Sprint 2.
+Procedemos a desglosar el estado económico del proyecto para este segundo Sprint. Haremos un análisis y comparativa entre las estimaciones que planificamos y el resultado real, fruto de las horas trabajadas y los recursos asignados.
 
 ### **Costes estimados**
 
-**Horas estimadas:**
+A fecha de 27/03/2025 las horas estimadas son **34 horas**, tomando el 70% restante del mes de Marzo. Por lo que el coste total del equipo sería: 
 
-A fecha de 15/04/2025, las horas estimadas para el Sprint 2 son **64 horas**, lo que supone el 70% de marzo y el 50% de abril.
-
-**Coste personal** = 64 × [(5 × 30,82) + (1 × 37,25) + (11 × 27)]
+**Coste personal** = 34 × [(5 × 30,82) + (1 × 37,25) + (11 × 27)]
 
 **Coste total (con contingencia)** = Coste personal × 1.10
 
@@ -428,33 +426,36 @@ A fecha de 15/04/2025, las horas estimadas para el Sprint 2 son **64 horas**, lo
 | Project Manager         | 1        | 37,25         | 37,25        |
 | Desarrolladores         | 11       | 27,00         | 297,00       |
 
+
 - **Total por hora:** 488,35 €/hora       
-- **Horas estimadas:**  64 horas  
-- **Coste personal:**  31.254,40 €  
-- **Coste con contingencia (10%):**  34.379,84 €    
+- **Horas estimadas:**  34 horas
+- **Coste personal:**  16.604 € 
+- **Coste con contingencia (10%):**  18.264,29 €    
 
 **Costes adicionales:**
 
+Para este Sprint, añadiremos los costes de las licencias de **ChatGPT Pro** y **Canva Pro**, añadiendo un total de **32€/mes** a los costes de Licencias y Herramientas.
+
 - Reserva de Hardware (440 €/mes)
-- Licencias y Herramientas (360,68 €/mes)
+- Licencias y Herramientas (392,68 €/mes) 
 - Marketing (500 €/mes)
 
-**Resumen del Sprint 2:**
+**Resumen del Sprint 1:**
 | Concepto                | Total (€) |
 |-------------------------|-----------|
-| Coste personal  | 34.379,84 |
+| Coste personal  | 18.264,29 |
 | Coste de Hardware | 440 |
-| Licencias y Herramientas | 360,68 |
+| Licencias y Herramientas | 392,68 |
 | Marketing | 500 |
-| **Total** | 35.680,52 |
+| **Total** | 19.596,97 |
 
 ### **Gastos reales**
 
 **Horas trabajadas:**
 
-Según el seguimiento en **Clockify**, el equipo ha trabajado **72 horas** en promedio por persona.
+Según el seguimiento en **Clockify**, el equipo ha trabajado **29 horas** en promedio por persona.
 
-**Coste personal** = 72 × [(5 × 30,82) + (1 × 37,25) + (11 × 27)]
+**Coste personal** = 29 × [(5 × 30,82) + (1 × 37,25) + (11 × 27)]
 
 **Coste total (con contingencia)** = Coste personal × 1.10
 
@@ -466,49 +467,58 @@ Según el seguimiento en **Clockify**, el equipo ha trabajado **72 horas** en pr
 | Desarrolladores         | 11       | 27,00         | 297,00       |
 
 - **Total por hora:** 488,35 €/hora       
-- **Horas trabajadas:**  72 horas  
-- **Coste personal:**  35.161,20 €  
-- **Coste con contingencia (10%):**  38.677,32 €  
+- **Horas trabajadas:**  29 horas  
+- **Coste personal:**  14.172,15 €  
+- **Coste con contingencia (10%):**  15.589,37 €  
+
+
+Para este Sprint, añadiremos los costes de las licencias de **ChatGPT Pro** y **Canva Pro**, añadiendo un total de **32€/mes** a los costes de Licencias y Herramientas.
 
 **Costes adicionales:**
 - Reserva de Hardware (440 €/mes)
-- Licencias y Herramientas (360,68 €/mes)
+- Licencias y Herramientas (392,68 €/mes)
 - Marketing (500 €/mes)
 
 **Resumen del Sprint 2:**
 | Concepto                | Total (€) |
 |-------------------------|-----------|
-| Coste personal  | 38.677,32 |
+| Coste personal  | 15.589,37 |
 | Coste de Hardware | 440 |
-| Licencias y Herramientas | 360,68 |
+| Licencias y Herramientas | 392,68 |
 | Marketing | 500 |
-| **Total** | 39.978 € |
+| **Total** | 16.922,05 € |
+
+A este total, le sumaremos el exceso de -5.360.85 € que arrastramos del Sprint 1, dándonos un coste de:
+
 
 ### **Comparativa**
 | Concepto                | Estimado (€) | Real (€) | Diferencia (€) |
 |-------------------------|--------------|----------|----------------|
-| Coste personal         | 34.379,84    | 38.677,32| 4.297,48       |
+| Coste personal         | 18.264,29    | 15.589,37| + 2.674,92       |
 | Coste de Hardware      | 440          | 440      | 0              |
-| Licencias y Herramientas | 360,68     | 360,68   | 0              |
+| Licencias y Herramientas | 392,68     | 392,68   | 0              |
 | Marketing              | 500          | 500      | 0              |
-| **Total**              | 35.680,52    | 39.978   | 4.297,48       |
+| Exceso S1               |   X          | X        | - 5.360,85
+| **Total**              | 19.596,97    | 16.922,05   | - 2.685,93€       |
 
 ### **Análisis**
-El coste real del Sprint 2 ha sido superior al estimado, con una diferencia de 4.297,48 €, lo que representa un aumento del 12,05%. Esto se debe a la ampliación de funcionalidades que no estaban contempladas en la planificación inicial, lo que aumentó la carga de trabajo.
+
+El coste real del Sprint 2 ha sido inferior al planificado, sin embargo al arrastrar una deuda de más de 5.000€ seguimos estándo por detrás en cuanto a costes, sin embargo nos hemos recuperado en prácticamente un 50%. El haber contemplado horas extra ha hecho que la carga de trabajo si se reduce esto se traduzca en ahorro para el equipo. Además no olvidemos que aún asi estamos considerando una contingencia del 10% por tanto siempre que estemos por debajo del aumento de 10% en cuanto a costes, seguimos en el buen camino.
+
+Para ser exactos, a finalizar el Sprint 2 seguimos un 13,7% por encima de lo planificado, una reducción de casi 4 puntos respecto al Sprint 1.
 
 ---
 
 ## **6.3. SPRINT 3**
 
-Nos encontramos en la tercera fase de desarrollo, manteniendo los costes recurrentes.
-
+Nos encontramos en la tercera fase de desarrollo. De forma similar a los anteriores sprint, haremos una comparativa entre el coste real y el que estimamos en nuestra fase de planificación. 
 ### **Costes estimados**
 
 **Horas estimadas:**
 
-A fecha de 20/05/2025, las horas estimadas para el Sprint 3 son **60 horas**.
+A fecha de 8/04/2025, las horas estimadas por persona para el Sprint 3 son **22 horas**, contando con un 60% del mes de abril.
 
-**Coste personal** = 60 × [(5 × 30,82) + (1 × 37,25) + (11 × 27)]
+**Coste personal** = 22 × [(5 × 30,82) + (1 × 37,25) + (11 × 27)]
 
 **Coste total (con contingencia)** = Coste personal × 1.10
 
@@ -522,27 +532,71 @@ A fecha de 20/05/2025, las horas estimadas para el Sprint 3 son **60 horas**.
 
 - **Total por hora:** 488,35 €/hora       
 - **Horas estimadas:**  60 horas  
-- **Coste personal:**  29.301 €  
-- **Coste con contingencia (10%):**  32.231,10 €    
+- **Coste personal:**  10.743,7 €  
+- **Coste con contingencia (10%):**  11.818,07 €    
 
 **Costes adicionales:**
+
+Para este Sprint, añadiremos los costes de las licencias de **ChatGPT Pro** y **Canva Pro**, añadiendo un total de **32€/mes** a los costes de Licencias y Herramientas.
+
 - Reserva de Hardware (440 €/mes)
-- Licencias y Herramientas (360,68 €/mes)
+- Licencias y Herramientas (392,68 €/mes)
 - Marketing (500 €/mes)
+
+
 
 **Resumen del Sprint 3:**
 | Concepto                | Total (€) |
 |-------------------------|-----------|
-| Coste personal  | 32.231,10 |
+| Coste personal  | 11.818,07 |
 | Coste de Hardware | 440 |
-| Licencias y Herramientas | 360,68 |
+| Licencias y Herramientas | 392,68 |
 | Marketing | 500 |
-| **Total** | 33.531,78 |
+| **Total** | 13.150,75 |
+
+
+### **Gastos reales**
+
+**Horas trabajadas:**
+
+Según el seguimiento en **Clockify**, el equipo ha trabajado **23 horas** en promedio por persona.
+
+**Coste personal** = 23 × [(5 × 30,82) + (1 × 37,25) + (11 × 27)]
+
+**Coste total (con contingencia)** = Coste personal × 1.10
+
+**Cálculo detallado:**
+| Concepto                | Cantidad | Tarifa €/hora | Total €/hora |
+|-------------------------|----------|---------------|--------------|
+| Analistas               | 5        | 30,82         | 154,10       |
+| Project Manager         | 1        | 37,25         | 37,25        |
+| Desarrolladores         | 11       | 27,00         | 297,00       |
+
+- **Total por hora:** 488,35 €/hora       
+- **Horas trabajadas:**  23 horas  
+- **Coste personal:**  11.232,15 €  
+- **Coste con contingencia (10%):**  12.355,35 €  
+
+
+Para este Sprint, añadiremos los costes de las licencias de **ChatGPT Pro** y **Canva Pro**, añadiendo un total de **32€/mes** a los costes de Licencias y Herramientas.
+
+
+### **Comparativa**
+| Concepto                | Estimado (€) | Real (€) | Diferencia (€) |
+|-------------------------|--------------|----------|----------------|
+| Coste personal         | 11.818,07    | 12.355,35 |-537,28       |
+| Coste de Hardware      | 440          | 440      | 0              |
+| Licencias y Herramientas | 392,68     | 392,68   | 0              |
+| Marketing              | 500          | 500      | 0              |
+| Exceso S2               |   X          | X        | - 2.685,93€  
+| **Total**              | 13.150,75    | 13.688,23  | - 3.233,21       |
 
 
 <br>
 
+El coste estimado para los 3 Sprints fue de **64.130,76€** y el gasto real fue de **67.363,97€**, en porcentaje esto se traduce en un 5% más de coste de lo previsto, dentro de la contingencia establecida de un 10% de los costes.
 
+En cuanto al gasto de Marketing, en todos los sprints siempre incurrimos en un gasto de 500€/mes, el sueldo base de un community manager.
 
 # **7. ESTIMACIÓN DE RETORNO DE INVERSIÓN (ROI)**
 
