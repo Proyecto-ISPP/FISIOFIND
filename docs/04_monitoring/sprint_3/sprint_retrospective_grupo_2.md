@@ -1,6 +1,6 @@
 ---
-title: "SPRINT RETROSPECTIVE #SPRINT 1 - GRUPO 2"                    # CHANGE IF NEEDED
-subtitle: "FISIO FIND - Grupo 6 - #SPRINT 1"
+title: "SPRINT RETROSPECTIVE #SPRINT 3 - GRUPO 2"                    # CHANGE IF NEEDED
+subtitle: "FISIO FIND - Grupo 6 - #SPRINT 3"
 author: [Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Ramón Gavira Sánchez]
 date: "10/03/2025"                                        # CHANGE IF NEEDED
 subject: "ISPP"
@@ -13,7 +13,7 @@ titlepage-rule-height: 0
 colorlinks: true
 linkcolor: blue
 titlepage-background: "../.backgrounds/background4V.pdf"  # CHANGE IF NEEDED
-header-left: "SPRINT RETROSPECTIVE SPRINT X"              # CHANGE IF NEEDED
+header-left: "SPRINT RETROSPECTIVE SPRINT 3"              # CHANGE IF NEEDED
 header-right: "10/03/2025"                                # CHANGE IF NEEDED
 footer-left: "FISIO FIND"
 documentclass: scrartcl
@@ -26,11 +26,10 @@ classoption: "table"
 </p>
 
 <h1 align="center" style="font-size: 30px; font-weight: bold;">
-  FISIO FIND  -  SPRINT RETROSPECTIVE #SPRINT 1 - GRUPO 2
+  FISIO FIND  -  SPRINT RETROSPECTIVE #SPRINT 3 - GRUPO 2
 </h1>
 
 <br>
-
 
 **ÍNDICE**
 - [**1. OBJETIVOS DE LA RETROSPECTIVA**](#1-objetivos-de-la-retrospectiva)
@@ -45,7 +44,6 @@ classoption: "table"
 
 <br>
 
-
 ---
 
 **Ficha del documento**
@@ -54,7 +52,7 @@ classoption: "table"
 
 - **Número de Grupo:** Grupo 6
 
-- **Entregable:** #SPRINT 2
+- **Entregable:** #SPRINT 3
 
 - **Miembros del grupo:** Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes.
 
@@ -66,24 +64,19 @@ classoption: "table"
 
 <br>
 
-
 ---
-
-<!-- \newpage -->
 
 **Histórico de Modificaciones**
 
 | Fecha      | Versión | Realizada por                    | Descripción de los cambios |
 |------------|---------|----------------------------------|----------------------------|
-| 09/04/2025 | v1.0    | Julen Redondo Pacheco           | Elaboración sprint retrospective grupo 2 sprint 3|
-
+| 09/04/2025 | v1.0    | Julen Redondo Pacheco           | Elaboración de la sprint retrospective grupo 2 sprint 3 |
 
 <br>
 
-
 ---
 
- **Participantes**
+**Participantes**
 
 | Nombre completo | Rol | Contacto |
 |----------------|-----|----------|
@@ -100,14 +93,12 @@ classoption: "table"
 
 <br>
 
-
 # **1. OBJETIVOS DE LA RETROSPECTIVA**
 En la Sprint Retrospective tratamos de evaluar de forma grupal el desempeño durante el Sprint, reconocer las áreas en las que hemos tenido éxito, así como identificar y abordar los problemas encontrados, y evaluar los márgenes de mejora para el próximo Sprint.
 
 <br>
 
 <br>
-
 
 # **2. METODOLOGÍA UTILIZADA**
 El equipo utilizó un enfoque basado en cinco secciones clave:
@@ -121,7 +112,6 @@ El equipo utilizó un enfoque basado en cinco secciones clave:
 🟠 **Stop:** Se identificaron procesos o hábitos que han resultado poco efectivos y que deberían ser eliminados o modificados.
 
 🔵 **Actions:** A partir de los hallazgos de las secciones anteriores, se definieron acciones concretas para aplicar en los próximos Sprints, asegurando así un proceso de mejora continua.
-
 
 Este tipo de retrospectiva permite que el equipo reflexione de manera estructurada sobre su rendimiento y fomenta una cultura de aprendizaje y adaptación, proceso crucial en la correcta aplicación de una metodología ágil.
 
@@ -156,13 +146,11 @@ Este tipo de retrospectiva permite que el equipo reflexione de manera estructura
 # **4. CONCLUSIONES**
 A partir de las discusiones anteriores, se han definido las siguientes acciones para mejorar el desempeño en el próximo sprint:
 
-
 <br>
 
 <br>
-
 
 ---
 
 **Aprobado por:**  
-**Scrum Master:** Antonio Macías Ferrera  
+**Scrum Master:** Antonio Macías Ferrera
