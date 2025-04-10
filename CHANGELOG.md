@@ -1,13 +1,11 @@
-## 🚀 Changelog - 20.0.0
+## 🚀 Changelog - 21.0.0
 
-### ✨ Features (3)
-- Merge pull request #493 from Proyecto-ISPP/feat/update-readme (@Guadalupe Ridruejo Pineda)
-- feat: Project Roadmap actualizado (@DaniFdezCab)
-- feat: readme actualizado S3 (@DaniFdezCab)
-### 🐛 Fixes (1)
-- fix: Arreglos sobre estructura de proyecto e indice de proyecto (@DaniFdezCab)
-### 📖 Documentation (0)
+### ✨ Features (0)
 
-### 🌀 Other Changes (0)
+### 🐛 Fixes (0)
 
+### 📖 Documentation (1)
+- docs: Informe de calidad s3 (@Francisco Mateos Villarejo)
+### 🌀 Other Changes (1)
+- Merge branch 'main' of https://github.com/Proyecto-ISPP/FISIOFIND (@Francisco Mateos Villarejo)
 ### 🔗 Pull Requests
