@@ -1,12 +1,13 @@
-## 🚀 Changelog - 19.0.0
+## 🚀 Changelog - 20.0.0
 
-### ✨ Features (0)
+### ✨ Features (3)
+- Merge pull request #493 from Proyecto-ISPP/feat/update-readme (@Guadalupe Ridruejo Pineda)
+- feat: Project Roadmap actualizado (@DaniFdezCab)
+- feat: readme actualizado S3 (@DaniFdezCab)
+### 🐛 Fixes (1)
+- fix: Arreglos sobre estructura de proyecto e indice de proyecto (@DaniFdezCab)
+### 📖 Documentation (0)
 
-### 🐛 Fixes (0)
-
-### 📖 Documentation (2)
-- Merge pull request #498 from Proyecto-ISPP/docs/time-report-sprint-3 (@Guadalupe Ridruejo Pineda)
-- docs: Time report sprint 3 (@albcarsic)
 ### 🌀 Other Changes (0)
 
 ### 🔗 Pull Requests
