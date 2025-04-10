@@ -573,21 +573,16 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
   };
 
   return (
-    <div
-      className="min-h-screen w-full"
-      style={{ backgroundColor: "rgb(238, 251, 250)" }}
-    >
-      <div className="container mx-auto px-4 py-8">
-        {alertMessage && (
-          <div className="mb-6">
-            <Alert
-              type={alertType}
-              message={alertMessage}
-              onClose={() => setAlertMessage(null)}
-            />
-          </div>
-        )}
-
+    <div className="container mx-auto px-4 py-8">
+      {alertMessage && (
+        <div className="mb-6">
+          <Alert
+            type={alertType}
+            message={alertMessage}
+            onClose={() => setAlertMessage(null)}
+          />
+        </div>
+      )}
         <div className="flex justify-between items-center mb-6">
           <button
             onClick={handleGoBack}
@@ -616,11 +611,20 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
               Gestionar Videos
             </button>
             <button
+            onClick={() =>
+              router.push(`/physio-management/follow-up/${id}/files`)
+            }
+            className="bg-gradient-to-r from-[#05668D] to-[#6BC9BE] hover:opacity-90 text-white font-semibold py-2 px-4 rounded-xl inline-flex items-center shadow-md transition-all duration-300"
+            >
+            Archivos subidos
+          </button>
+            <button
               onClick={handleEditToggle}
               className="bg-white hover:bg-gray-100 text-[#05668D] border border-[#05668D] font-semibold py-2 px-4 rounded-xl inline-flex items-center shadow-md transition-all duration-300"
             >
               {isEditing ? "Cancelar" : "Editar"}
             </button>
+            
           </div>
         </div>
 
@@ -965,7 +969,6 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
             )}
           </div>
         )}
-      </div>
     </div>
   );
 };

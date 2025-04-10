@@ -8,7 +8,7 @@ import boto3
 from rest_framework import status
 from users.permissions import IsPatient, IsPhysioOrPatient, IsPhysiotherapist
 from .models import PatientFile, Video
-
+from mimetypes import guess_type
 
 @api_view(['POST'])
 @permission_classes([IsPatient])
@@ -21,7 +21,6 @@ def create_file(request):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # Aquí asumo que Treatment es el nombre del modelo y tiene una relación con el paciente
     try:
         treatment = Treatment.objects.get(id=treatment_id)
     except Treatment.DoesNotExist:
@@ -30,24 +29,31 @@ def create_file(request):
             status=status.HTTP_404_NOT_FOUND
         )
 
-    # Verificar si el paciente asociado al tratamiento es el mismo que el que hace la solicitud
     if treatment.patient != request.user.patient:
         return Response(
             {"message": "No tienes permiso para crear archivos para este tratamiento"},
             status=status.HTTP_403_FORBIDDEN
         )
+
     mutable_data = request.data.copy()
+    uploaded_file = request.FILES.get('file')
+
+    if uploaded_file:
+        mime_type = uploaded_file.content_type or guess_type(uploaded_file.name)[0]
+        mutable_data['file_type'] = mime_type or "application/octet-stream"
+
     serializer = PatientFileSerializer(data=mutable_data, context={'request': request})
 
     if serializer.is_valid():
         file = serializer.save()
         return Response(
             {
-                "mesaage": "Archivo creado correctamente",
+                "message": "Archivo creado correctamente",
                 "file": PatientFileSerializer(file).data
             },
             status=status.HTTP_201_CREATED
         )
+
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -144,6 +150,57 @@ def get_patient_files(request):
                         status=status.HTTP_404_NOT_FOUND)
 
     return Response(patient_files, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([IsPhysioOrPatient])
+def view_or_download_patient_file(request, file_id):
+    user = request.user
+    try:
+        file = PatientFile.objects.get(id=file_id)
+
+        # Verificación de permisos
+        if hasattr(user, 'patient') and file.treatment.patient != user.patient:
+            return Response({"error": "No tienes permiso para ver este archivo"}, status=status.HTTP_403_FORBIDDEN)
+        elif hasattr(user, 'physio') and file.treatment.physiotherapist != user.physio:
+            return Response({"error": "No tienes permiso para ver este archivo"}, status=status.HTTP_403_FORBIDDEN)
+
+        # Cliente S3 para DigitalOcean
+        s3_client = boto3.client(
+            "s3",
+            region_name=settings.DIGITALOCEAN_REGION,
+            endpoint_url=settings.DIGITALOCEAN_ENDPOINT_URL,
+            aws_access_key_id=settings.DIGITALOCEAN_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.DIGITALOCEAN_SECRET_ACCESS_KEY,
+        )
+
+        s3_object = s3_client.get_object(
+            Bucket=settings.DIGITALOCEAN_SPACE_NAME,
+            Key=file.file_key
+        )
+
+        file_size = s3_object["ContentLength"]
+        file_body = s3_object["Body"]
+        file_type = file.file_type or "application/octet-stream"
+        file_name = file.title or "archivo"
+
+        def stream_file():
+            for chunk in file_body.iter_chunks():
+                yield chunk
+
+        response = StreamingHttpResponse(stream_file(), content_type=file_type)
+        response["Content-Length"] = str(file_size)
+        response["Content-Disposition"] = f'inline; filename="{file_name}"'  # cambiar a 'attachment' si quieres forzar descarga
+        response["Cache-Control"] = "no-cache"
+        response["Accept-Ranges"] = "bytes"
+        response["Connection"] = "keep-alive"
+
+        return response
+
+    except PatientFile.DoesNotExist:
+        return Response({"error": "Archivo no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({"error": f"Error al obtener el archivo"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['POST'])

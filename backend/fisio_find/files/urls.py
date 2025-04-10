@@ -5,6 +5,7 @@ from .views import (
     update_patient_file,
     get_patient_file_by_id,
     get_patient_files,
+    view_or_download_patient_file,
     create_video,
     delete_video,
     list_video_by_id,
@@ -19,6 +20,7 @@ urlpatterns = [
     path('files/update-file/<int:file_id>/', update_patient_file, name='update_patient_file'),
     path('files/list-file/<int:file_id>/', get_patient_file_by_id, name='get_patient_file_by_id'),
     path('files/list-files/', get_patient_files, name='get_patient_files'),
+    path('files/view-file/<int:file_id>/', view_or_download_patient_file, name='view_or_download_patient_file'),
 
     path('videos/create-video/', create_video, name='create_video'),
     path('videos/delete-video/<int:video_id>/', delete_video, name='delete_video'),

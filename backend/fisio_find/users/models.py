@@ -29,21 +29,23 @@ def add_dni_to_encryptedvalues(data_dni) -> None:
     else:
         EncryptedValues.objects.create(encrypted_values=data_dni + ";")
 
+
 def delete_DNI_from_encryptedvalues(data_dni):
     if data_dni is None:
         return False
     enc = EncryptedValues.objects.all()
-    
+
     if not enc.exists():
         # No se ha utilizado todavia ningun DNI, es el primer usario
         pass
     else:
         DNIs_enc = enc.get()
-        DNIs_enc.encrypted_values = DNIs_enc.encrypted_values.replace(data_dni+";","")
+        DNIs_enc.encrypted_values = DNIs_enc.encrypted_values.replace(data_dni+";", "")
         if DNIs_enc.encrypted_values in ["", None]:
             DNIs_enc.delete()
         else:
             DNIs_enc.save()
+
 
 ACCOUNT_STATUS_CHOICES = [
     ('ACTIVE', 'Active'),
@@ -79,15 +81,17 @@ AUTONOMIC_COMMUNITY_CHOICES = [
     ('COMUNIDAD VALENCIANA', 'Comunidad Valenciana')
 ]
 
+
 def validate_image_file(value):
     # Check file size
     if value.size > 5 * 1024 * 1024:  # 5MB
         raise ValidationError('Las imágenes no peuden superar los 5MB')
-    
+
     # Check file extension
     ext = value.name.split('.')[-1].lower()
     if ext not in ['jpg', 'jpeg', 'png']:
         raise ValidationError('Solo imágenes en formato JPG, JPEG o PNG son permitidos')
+
 
 class AppUser(AbstractUser):
     photo = models.ImageField(null=True, blank=True, verbose_name='Foto', upload_to='user_photos/', storage=FileSystemStorage(location=settings.PROFILE_PHOTOS_ROOT, base_url=settings.PROFILE_PHOTOS_URL))
@@ -120,6 +124,7 @@ def remove_dni_on_delete(sender, instance, **kwargs):
     if instance.dni:
         delete_DNI_from_encryptedvalues(instance.dni)
 
+
 class EncryptedValues(models.Model):
     # En users se guarda el DNI cifrado pero cada vez que se cifra el resultado es distinto
     # Ademas de que si intentas buscar un usuario por dni para ver si ya existe pues no puedes
@@ -134,6 +139,7 @@ class EncryptedValues(models.Model):
     class Meta:
         verbose_name = "DNIs cifrados"
         verbose_name_plural = "DNIs cifrados"
+
 
 class Patient(models.Model):
     user = models.OneToOneField(AppUser, on_delete=models.CASCADE, related_name='patient', verbose_name='Usuario')
@@ -168,7 +174,7 @@ class PhysiotherapistSpecialization(models.Model):
     specialization = models.ForeignKey(
         'Specialization', on_delete=models.SET_NULL, null=True, blank=True
     )
-    
+
     class Meta:
         verbose_name = "Relación fisio-especialización"
         verbose_name_plural = "Relaciones fisio-especialización"
@@ -204,7 +210,8 @@ class Physiotherapist(models.Model):
     )
     # Campos para integración con Stripe
     stripe_subscription_id = models.CharField(max_length=255, blank=True, null=True, verbose_name='ID Stripe')
-    subscription_status = models.CharField(max_length=20, default='pending', verbose_name='Estado de la suscripción')  # Valores: 'pending', 'active', 'canceled'
+    subscription_status = models.CharField(max_length=20, default='pending', verbose_name='Estado de la suscripción')
+    # Valores: 'pending', 'active', 'canceled'
     degree = models.CharField(max_length=255, blank=True, null=True)
     university = models.CharField(max_length=255, blank=True, null=True)
     experience = models.TextField(blank=True, null=True)
