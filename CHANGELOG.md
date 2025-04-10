@@ -1,12 +1,11 @@
-## 🚀 Changelog - 13.0.0
+## 🚀 Changelog - 16.0.0
 
 ### ✨ Features (0)
 
-### 🐛 Fixes (1)
-- fix: pequeñas correcciones de formato (@Antonio Macías)
+### 🐛 Fixes (0)
+
 ### 📖 Documentation (1)
-- docs: adecuacion primeros documentos para el s3 (@Antonio Macías)
-### 🌀 Other Changes (2)
-- Merge pull request #494 from Proyecto-ISPP/doc/sprint-retrospectiveg2-s3 (@Antonio Macías)
-- doc: sprint retrospective (@Julen Redondo)
+- docs: retrospectiva del sprint 3 (@MiguelEncina)
+### 🌀 Other Changes (1)
+- Merge branch 'main' of https://github.com/Proyecto-ISPP/FISIOFIND (@MiguelEncina)
 ### 🔗 Pull Requests

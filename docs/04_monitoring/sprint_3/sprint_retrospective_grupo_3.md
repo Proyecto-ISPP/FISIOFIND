@@ -1,7 +1,7 @@
 ---
-title: "SPRINT RETROSPECTIVE #SPRINT 3 - GRUPO 2"                    # CHANGE IF NEEDED
+title: "SPRINT RETROSPECTIVE #SPRINT 3 - GRUPO 1"                    # CHANGE IF NEEDED
 subtitle: "FISIO FIND - Grupo 6 - #SPRINT 3"
-author: [Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Ramón Gavira Sánchez]
+author: [Miguel Encina Martínez, Francisco Mateos Villarejo, Daniel Tortorici Bartús, Daniel Vela Camacho, Francisco Capote García]
 date: "10/04/2025"                                        # CHANGE IF NEEDED
 subject: "ISPP"
 lang: "es"
@@ -26,7 +26,7 @@ classoption: "table"
 </p>
 
 <h1 align="center" style="font-size: 30px; font-weight: bold;">
-  FISIO FIND  -  SPRINT RETROSPECTIVE #SPRINT 3 - GRUPO 2
+  FISIO FIND  -  SPRINT RETROSPECTIVE #SPRINT 3 - GRUPO 1
 </h1>
 
 <br>
@@ -56,9 +56,9 @@ classoption: "table"
 
 - **Miembros del grupo:** Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes.
 
-- **Contribuidores:** [Julen Redondo Pacheco](https://github.com/Julenrp) (autor), [Antonio Macías Ferrera](https://github.com/antoniommff) (revisor)
+- **Contribuidores:** [Miguel Encina Martínez](https://github.com/MiguelEncina) (autor), [Francisco Mateos Villarejo](https://github.com/pacomateos10) (revisor)
 
-- **Fecha de Creación:** 09/04/2025 
+- **Fecha de Creación:** 19/04/2025 
 
 - **Versión:** v1.0
 
@@ -70,7 +70,7 @@ classoption: "table"
 
 | Fecha      | Versión | Realizada por                    | Descripción de los cambios |
 |------------|---------|----------------------------------|----------------------------|
-| 09/04/2025 | v1.0    | Julen Redondo Pacheco           | Elaboración de la sprint retrospective grupo 2 sprint 3 |
+| 09/04/2025 | v1.0    | Miguel Encina Martínez, Francisco Mateos Villarejo           | Elaboración de la sprint retrospective grupo 3 sprint 3 |
 
 <br>
 
@@ -80,12 +80,11 @@ classoption: "table"
 
 | Nombre completo | Rol | Contacto |
 |----------------|-----|----------|
-| Antonio Macías Ferrera | -- | antmacfer1@alum.us.es |
-| Benjamín Ignacio Maureira Flores | -- | benmauflo@alum.us.es |
-| Delfín Santana Rubio | -- | delsanrub@alum.us.es |
-| Julen Redondo Pacheco | -- | julredpac@alum.us.es |
-| Guadalupe Ridruejo Pineda | -- | guaridpin@alum.us.es |
-| Ramón Gavira Sánchez | -- | ramgavsan@alum.us.es |
+| Miguel Encina Martínez | -- | migencmar@alum.us.es |
+| Francisco Mateos Villarejo | -- | framatvil@alum.us.es |
+| Daniel Vela Camacho | -- | danvelcam@alum.us.es  |
+| Francisco Capote García | -- | fracapgar@alum.us.es |
+| Daniel Tortorici Bartús | -- | dantorbar1@alum.us.es |
 
 <br>
 
@@ -94,7 +93,7 @@ classoption: "table"
 <br>
 
 # **1. OBJETIVOS DE LA RETROSPECTIVA**
-En la Sprint Retrospective tratamos de evaluar de forma grupal el desempeño durante el Sprint, reconocer las áreas en las que hemos tenido éxito, así como identificar y abordar los problemas encontrados, y evaluar los márgenes de mejora para el próximo Sprint.
+En la Sprint Retrospective tratamos de evaluar de forma grupal el desempeño durante el Sprint, reconocer las áreas en las que hemos tenido éxito, así como identificar y abordar los problemas encontrados.
 
 <br>
 
@@ -107,12 +106,6 @@ El equipo utilizó un enfoque basado en cinco secciones clave:
 
 🔴 **Bad:** Se señalaron aquellos aspectos que no se manejaron de manera óptima, incluyendo desafíos enfrentados y posibles áreas de mejora.  
 
-🟡 **Start:** Se discutieron iniciativas o prácticas que el equipo debería comenzar a implementar para mejorar la dinámica de trabajo.
-
-🟠 **Stop:** Se identificaron procesos o hábitos que han resultado poco efectivos y que deberían ser eliminados o modificados.
-
-🔵 **Actions:** A partir de los hallazgos de las secciones anteriores, se definieron acciones concretas para aplicar en los próximos Sprints, asegurando así un proceso de mejora continua.
-
 Este tipo de retrospectiva permite que el equipo reflexione de manera estructurada sobre su rendimiento y fomenta una cultura de aprendizaje y adaptación, proceso crucial en la correcta aplicación de una metodología ágil.
 
 <br>
@@ -123,28 +116,22 @@ Este tipo de retrospectiva permite que el equipo reflexione de manera estructura
 
 ## **GOOD: ¿Qué salió bien?**
 - ✅ **Ambiente y comunicación**: El grupo al completo está satisfecho con el ambiente y la comunicación fluida que se ha generado entre los compañeros.
-- ✅ **Trabajo en equipo**: Estamos muy orgullosos de que, si un compañero necesitaba ayuda, sin pensarlo, algún otro compañero le ayudaba a resolverla.
+- ✅ **Trabajo en equipo**: Estamos muy orgullosos de que, si un compañero necesitaba ayuda, algún otro compañero le ayudaba a resolverla.
 - ✅ **Compromiso**: Todos los miembros del equipo mostraron una actitud proactiva y se mantuvieron enfocados en cumplir con las metas establecidas, aunque a veces de forma tardía.
 - ✅ **Cambio en la aplicación**: Durante este sprint, la aplicación ha experimentado una transformación significativa, lo que demuestra el avance del equipo en el desarrollo de nuevas funcionalidades y mejoras.
-- ✅ **Disgregación del equipo**: Aunque el equipo se dividió en varios grupos para cumplir con los objetivos establecidos, esta disgregación fue necesaria y resultó ser efectiva para avanzar en las funcionalidades críticas.
 - ✅ **Creación de grupo de bugs**: Se creó un grupo enfocado en la gestión y resolución de bugs, lo que ayudó a agilizar el proceso de corrección.
-- ✅ **Estrategia de presión para tener todo listo el martes**: Poner presión para tener todo listo el martes fue una estrategia efectiva, ya que permitió tener tiempo suficiente para revisiones y despliegue sin presiones de última hora.
 - ✅ **Mejora de personas con menos horas**: Las personas que llevaban menos horas han logrado mejorar su rendimiento y alcanzar las expectativas del equipo.
-- ✅ **Bajos reportes de errores**: No se han reportado muchos errores durante este sprint, lo que muestra un buen nivel de calidad en el trabajo realizado.
 - ✅ **Cumplimiento de tareas a tiempo**: Las tareas se han cumplido a tiempo, lo que refleja un buen nivel de organización y cumplimiento de plazos.
 
 ## **BAD: ¿Qué NO salió bien?**
 
-## **START: ¿Qué debemos empezar a hacer?**
-
-## **STOP: ¿Qué debemos dejar de hacer?**
+- 🔴 **Organización desequilibrada**: En temas de organización, por poner una pega, ha habido personas que han tenido que dedicar mucho esfuerzo al principio del Sprint, mientras que otros miembros han dedicado mucho esfuerzo al final del Sprint, en lugar de dedicar todos un esfuerzo constante a lo largo del Sprint.
 
 <br>
 
 <br>
-
 # **4. CONCLUSIONES**
-A partir de las discusiones anteriores, se han definido las siguientes acciones para mejorar el desempeño en el próximo sprint:
+En conclusión, podemos decir que hemos aprendido de Sprints anteriores ya que hemos conseguido reducir en gran medida las cosas que han salido mal, aumentando por otro lado, las cosas que han salido bien.
 
 <br>
 
