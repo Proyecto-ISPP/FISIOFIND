@@ -1,12 +1,12 @@
-## 🚀 Changelog - 13.0.0
+## 🚀 Changelog - 14.0.0
 
 ### ✨ Features (0)
 
-### 🐛 Fixes (1)
-- fix: pequeñas correcciones de formato (@Antonio Macías)
-### 📖 Documentation (1)
-- docs: adecuacion primeros documentos para el s3 (@Antonio Macías)
-### 🌀 Other Changes (2)
-- Merge pull request #494 from Proyecto-ISPP/doc/sprint-retrospectiveg2-s3 (@Antonio Macías)
-- doc: sprint retrospective (@Julen Redondo)
+### 🐛 Fixes (0)
+
+### 📖 Documentation (2)
+- Merge pull request #500 from Proyecto-ISPP/docs/sprint-retrospective-grupo-3 (@Benjamín Maureira Flores)
+- docs: Retrospectiva S3 Grupo 1 (@albcarsic)
+### 🌀 Other Changes (0)
+
 ### 🔗 Pull Requests
