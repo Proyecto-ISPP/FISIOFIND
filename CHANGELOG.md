@@ -1,13 +1,12 @@
-## 🚀 Changelog - 10.0.0
+## 🚀 Changelog - 12.0.0
 
 ### ✨ Features (0)
 
-### 🐛 Fixes (1)
-- fix: revision del documento y correccion de faltas de ortografia (@Miguel Encina)
-### 📖 Documentation (3)
-- Merge pull request #492 from Proyecto-ISPP/docs/plan-de-pruebas (@Delfin)
-- docs: añadido link a carpeta reportes seguridad a plan de pruebas (@Delfin)
-- docs: creado plan de pruebas (@Delfin)
+### 🐛 Fixes (0)
+
+### 📖 Documentation (2)
+- Merge pull request #497 from Proyecto-ISPP/feat/doc-ia-report-Sprint-3 (@Daniel Ruiz López)
+- docs: Reporte de ia del Sprint 3 (@DaniFdezCab)
 ### 🌀 Other Changes (0)
 
 ### 🔗 Pull Requests
