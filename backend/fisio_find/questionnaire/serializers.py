@@ -18,7 +18,6 @@ class QuestionnaireSerializer(serializers.ModelSerializer):
         if 'questions' in data:
             for question in data['questions']:
                 label = question.get('label', '')  # Obtiene el texto de la pregunta
-                print(f"Pregunta: {label} (Longitud: {len(label)})")  # Depuración
 
                 if len(label) > 76:
                     raise serializers.ValidationError(

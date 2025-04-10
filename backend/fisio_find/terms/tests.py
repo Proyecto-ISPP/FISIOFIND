@@ -60,11 +60,31 @@ class TermsCreateTests(APITestCase):
         self.assertEqual(response.data["version"], "2.0")
         self.assertEqual(response.data["tag_display"], "Terms of Use")
 
-    def test_create_term_missing_fields(self):
-        response = self.client.post(self.url, {})
+    def test_create_term_missing_content(self):
+        data = {
+            "version": "2.0",
+            "tag": "terms"
+        }
+        response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 400)
         self.assertIn("content", response.data)
+
+    def test_create_term_missing_version(self):
+        data = {
+            "content": "Términos nuevos",
+            "tag": "terms"
+        }
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, 400)
         self.assertIn("version", response.data)
+
+    def test_create_term_missing_tag(self):
+        data = {
+            "content": "Términos nuevos",
+            "version": "2.0",
+        }
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, 400)
         self.assertIn("tag", response.data)
 
     def test_create_term_invalid_tag(self):
