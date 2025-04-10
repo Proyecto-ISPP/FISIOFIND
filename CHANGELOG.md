@@ -1,12 +1,12 @@
-## 🚀 Changelog - 11.0.0
+## 🚀 Changelog - 12.0.0
 
 ### ✨ Features (0)
 
 ### 🐛 Fixes (0)
 
-### 📖 Documentation (0)
+### 📖 Documentation (2)
+- Merge pull request #497 from Proyecto-ISPP/feat/doc-ia-report-Sprint-3 (@Daniel Ruiz López)
+- docs: Reporte de ia del Sprint 3 (@DaniFdezCab)
+### 🌀 Other Changes (0)
 
-### 🌀 Other Changes (2)
-- Merge pull request #495 from Proyecto-ISPP/feat/valoraciones-tests (@Miguel Encina)
-- test: suite de tests de appointment_ratings (alto coverage) (@DanTorBar)
 ### 🔗 Pull Requests
