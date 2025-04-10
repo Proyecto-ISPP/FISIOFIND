@@ -54,7 +54,7 @@ classoption: "table"
 
 - **Miembros del grupo:** Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes.
 
-- **Autores:** [Delfín Santana Rubio](https://github.com/DelfinSR) (autor)
+- **Autores:** [Delfín Santana Rubio](https://github.com/DelfinSR) (autor) y [Guadalupe Ridruejo Pineda](https://github.com/guaridpin) (revisora)
 
 - **Fecha de Creación:** 10/04/2025  
 
@@ -188,13 +188,13 @@ Si se registra como fisio, mientras se registra le aparecerá una sección para 
 
 Si inicia sesión como fisioterapeuta, en el navbar desplegable, verá un botón con título "Mi perfil". Si accede a esa vista verá el perfil de fisio, dónde podrá modificar su información, su horario y sus servicios. También, es en esta vista donde un fisio puede valorar la aplicación, dando al botón que aparece en la sección de "Tu valoración de la App" debajo del horario del fisio. Cuando el fisio crea una valoración, esta se verá en la home para todo aquel que visite la app. El fisio también puede editar y eliminar su valoración.
 
-Si entra en la secciónd de videollamdas podrá crear una sala de prueba para probar la funcionalidad antes de utilizarlo. Es sólo cuando un fisioterapeuta tenga una cita que aparecerá la sala para contectarse un tiempo antes de la hora de la cita. Si entra en la videollamada podrá ver distintas herramientas: "Historial","Pantalla", etc. El historial **ES UN MOCKUP**, no está implementado. Sin embargo, si puede compartir pantalla, acceder a modelos 3D(todos desde la misma sección), compartir con el usuario un mapa de dolor y cuestionarios.
+Si entra en la sección de videollamdas podrá crear una sala de prueba para probar la funcionalidad antes de utilizarlo. Es sólo cuando un fisioterapeuta tenga una cita que aparecerá la sala para contectarse un tiempo antes de la hora de la cita. Si entra en la videollamada podrá ver distintas herramientas: "Historial","Pantalla", etc. El historial **ES UN MOCKUP**, no está implementado. Sin embargo, si puede compartir pantalla, acceder a modelos 3D(todos desde la misma sección), compartir con el usuario un mapa de dolor y cuestionarios.
 
 Cuando una cita se termina, en la pantalla de tratamientos aparece la opción de crear un tratamiento.
 
 Dentro del tratamiento el fisio puede gestionar sesiones de ejercicios para distintos días de la semana. Estas sesiones se componen de ejércitos creados específicamente para la sesión u otros ya creados por el fisio anteriormente, además de cuestionarios de control.
 
-Cuando un paciente tiene una videollamada con un paciente, al lado del botón de acceder aparece un botón para valorar. Si el usuario rellena la valoración, esto tiene un efecto que puede verse en el perfil de fisio.
+Cuando un paciente tiene una videollamada con un fisioterapeuta, al lado del botón de acceder aparece un botón para valorar. Si el usuario rellena la valoración, esto tiene un efecto que puede verse en el perfil de fisio.
 
 Un paciente para buscar un fisioterapeuta puede acceder a la sección de buscar a través del botón de "Buscar" del desplegable.
 
@@ -211,7 +211,7 @@ Caso de uso:
 3. El usuario rellena el cuestionario, avanza en la vista y termina de reservar la cita.
 
 Caso de uso:
-1. Un fisioterapeuta accede a su la vista de edición de su perfil.
+1. Un fisioterapeuta accede a la vista de edición de su perfil.
 2. Hay una sección para modificar sus servicios y sus cuestionarios de preintervención asociados.
 3. El fisioterapeuta crea o edita un servicio o un cuestionario de preintervención.
 4. Cuando el fisioterapeuta guarda, el sistema queda actualizado.
@@ -240,16 +240,11 @@ Actualmente esta funcionalidad tiene una sección que está mockeada en la vista
 
 Caso de uso:
 1. Un fisioterapeuta abre la sección de videollamadas.
-2. El sistema detecta que es un usuario con rol de fisioterapeuta y le deja crear una sala.
-3. Al crear la sala se crea un código de sala (necesario para que el paciente pueda acceder).
-4. El fisioterapeuta envía el código al paciente por un método fuera de la plataforma.
-5. El fisioterapeuta puede ver al paciente y hablar con él cuando este se conecte.
+2. Si tiene citas programadas para ese día, desde 2 horas previas y hasta 2 horas después, podrá acceder a la sala correspondiente a esa cita (las citas deben reservarse al menos con 48 horas de antelación).
 
 Caso de uso:
 1. Un paciente abre la sección de videollamadas.
-2. El sistema detecta que es un paciente y le permite introducir el código que le ha facilitado el fisioterapeuta.
-2. Se une a la sala con el código que le ha pasado el fisioterapeuta.
-3. El paciente puede ver al fisioterapeuta y hablar con él cuando este se conecta.
+2. De forma análoga al fisioterapeuta, si tiene citas programadas para ese día, podrá acceder a la sala correspondiente a esa cita. 
 
 Caso de uso:
 1. Un fisioterapeuta se conecta con un paciente a una videollamada.
@@ -303,7 +298,7 @@ Caso de uso:
 Caso de uso:
 1. Un fisioterapeuta entra en la sección de tratamientos.
 2. En ella puede ver aquellos pacientes con los que tiene un tratamiento, que son aquellos con los que tiene una cita finalizada.
-3. El fisioterapeuta entra en uno de los tratamientos y ve un resumen de la información tratamiento (algunos elementos, como la gráfica, están mockeados).
+3. El fisioterapeuta entra en uno de los tratamientos y ve un resumen de la información del tratamiento (estos solo se mostrarán si hay registros hechos por el paciente).
 4. Entra en la sección de nuevo ejercicio y puede crear un nuevo ejercicio desde cero o seleccionar uno existente.
 
 Caso de uso:
