@@ -40,6 +40,7 @@ PyJWT==2.10.1
 pyOpenSSL==25.0.0
 PySocks==1.7.1
 python-dotenv==1.0.1
+pytz==2025.2
 redis==5.2.1
 requests==2.32.3
 selenium==4.29.0
