@@ -59,33 +59,34 @@ classoption: "table"
     - [4.1.6. Ideando un proyecto](#416-ideando-un-proyecto)
     - [4.1.7. Términos](#417-términos)
     - [4.1.8. Sprint 1](#418-sprint-1)
+    - [4.1.9. Sprint 2](#419-sprint-2)
+    - [4.1.10. Sprint 3](#410-sprint-3)
   - [4.2 CONTRIBUCIONES A LA BASE DE CONOCIMIENTO GENERAL](#42-contribuciones-a-la-base-de-conocimiento-general)
   - [4.2.1. Feedback individual del grupo 6](#421-feedback-individual-del-grupo-6)
-    - [Semana 6](#semana-6)
+    - [Semana 8](#semana-8)
       - [Feedback relacionado con la presentación](#feedback-relacionado-con-la-presentación)
       - [Feedback relacionado con el desarrollo del proyecto](#feedback-relacionado-con-el-desarrollo-del-proyecto)
       - [Tareas a realizar para la siguiente semana](#tareas-a-realizar-para-la-siguiente-semana)
-    - [Semana 7](#semana-7)
+    - [Semana 9](#semana-9)
       - [Feedback relacionado con la presentación](#feedback-relacionado-con-la-presentación-1)
       - [Feedback relacionado con el desarrollo del proyecto](#feedback-relacionado-con-el-desarrollo-del-proyecto-1)
       - [Tareas a realizar para la siguiente semana](#tareas-a-realizar-para-la-siguiente-semana-1)
   - [4.2.2. Aportaciones generales](#422-aportaciones-generales)
     - [Apartado Presentaciones](#apartado-presentaciones)
-      - [Semana 10/03](#semana-1003)
+    - [Apartado Killer opener](#apartado-killer-opener)
     - [Apartado Idea de Negocio](#apartado-idea-de-negocio)
-      - [Semana 03/02](#semana-0302)
-      - [Semana 10/03](#semana-1003-1)
+    - [Apartado Usuarios piloto](#apartado-usuarios-piloto)
+    - [Apartado Storyboards](#apartado-storyboards)
 - [5. ACCIONES TOMADAS A PARTIR DEL FEEDBACK](#5-acciones-tomadas-a-partir-del-feedback)
-  - [5.1. Resumen de mejoras tras el feedback del 14/03/2025](#51-resumen-de-mejoras-tras-el-feedback-del-14032025)
-    - [5.1.1. Redefinición de las estimaciones](#511-redefinición-de-las-estimaciones)
-    - [5.1.2. Mecanismo de puntos, asvisos y penalizaciones](#512-mecanismo-de-puntos-asvisos-y-penalizaciones)
-    - [5.1.3. Historias de usuario provenientes de feedback](#513-historias-de-usuario-provenientes-de-feedback)
-  - [5.2. Resumen de mejoras tras el feedback del 07/03/2025](#52-resumen-de-mejoras-tras-el-feedback-del-07032025)
-    - [5.2.1. Request for Change](#521-request-for-change)
-    - [5.2.2. Rendimiento del equipo](#522-rendimiento-del-equipo)
-    - [5.2.3. Gráficas](#523-gráficas)
+  - [5.1. Resumen de mejoras tras el feedback del 28/03/2025](#51-resumen-de-mejoras-tras-el-feedback-del-28032025)
+    - [5.1.1. Ratio de respuesta de usuarios piloto](#511-ratio-de-respuesta-de-usuarios-piloto)
+    - [5.1.2. Análisis de costes](#512-análisis-de-costes)
+  - [5.2. Resumen de mejoras tras el feedback del 04/04/2025](#52-resumen-de-mejoras-tras-el-feedback-del-04042025)
+    - [5.2.1. Iconos en la demo](#521-iconos-en-la-demo)
+    - [5.2.2. Priorización del feedback](#522-priorización-del-feedback)
+    - [5.2.3. Redifinición tareas PPL](#523-redifinición-tareas-ppl)
 - [**6. ANEXO - RESUMEN DEL FEEDBACK POR GRUPO**](#6-anexo---resumen-del-feedback-por-grupo)
-    - [6.1. Feedback del día 14/03/2025 (semana 6)](#61-feedback-del-día-14032025-semana-6)
+    - [6.1. Feedback del día 28/03/2025 (semana 8)](#61-feedback-del-día-28032025-semana-8)
 - [**1. RESUMEN DEL FEEDBACK POR GRUPO**](#1-resumen-del-feedback-por-grupo)
   - [**Primer grupo (Holos):**](#primer-grupo-holos)
   - [**Segundo grupo (Gastrostock):**](#segundo-grupo-gastrostock)
@@ -99,7 +100,7 @@ classoption: "table"
   - [Discusión para la siguiente clase.](#discusión-para-la-siguiente-clase)
       - [PRÓXIMA SEMANA](#próxima-semana)
 - [**CONCLUSIONES Y OBSERVACIONES**](#conclusiones-y-observaciones)
-- [6.2. Feedback del día 21/03/2025 (semana 7)](#62-feedback-del-día-21032025-semana-7)
+- [6.2. Feedback del día 04/04/2025 (semana 9)](#62-feedback-del-día-04042025-semana-9)
 - [**1. RESUMEN DEL FEEDBACK POR GRUPO**](#1-resumen-del-feedback-por-grupo-1)
   - [**Primer grupo (Holos):**](#primer-grupo-holos-1)
   - [**Segundo grupo (Gastrostock):**](#segundo-grupo-gastrostock-1)
@@ -145,6 +146,7 @@ classoption: "table"
 | Fecha      | Versión | Realizada por                    | Descripción de los cambios |
 |------------|---------|----------------------------------|----------------------------|
 | 10/04/2025 | v1.0    | Alberto Carmona Sicre | Creación del informe de base de conocimiento del sprint 3 |
+| 10/04/2025 | v1.1    | Alberto Carmona Sicre | Finalización puntos 4 y 5 |
 
 <br>
 
@@ -220,29 +222,15 @@ En esta sección encontramos tres subapartados: Reuniones, Sprint 1 y Sprint 2.
 
 ### 3.2.8. SPRINT 1
 
-- En la carpeta **Sprint 1** se pueden encontrar juntos todos los documentos generados o modificados durante esta fase, los cuales son:  
-    - Informe de uso de la IA.  
-    - Acuerdo de compromiso.  
-    - Informe de la base de conocimiento.  
-    - Usuarios piloto.  
-    - Acuerdo de compromiso de usuarios piloto.  
-    - Evaluación del rendimiento de los usuarios piloto.  
-    - Una presentación en pdf.  
-    - Guía de uso y revisión.  
-    - Informe del esfuerzo de tiempo.  
+- En la carpeta **Sprint 1** se pueden encontrar juntos todos los documentos generados o modificados durante esta fase del proyecto.
 
 ### 3.2.9. SPRINT 2
 
-- En la carpeta **Sprint 2** se pueden encontrar juntos todos los documentos generados o modificados durante esta fase, los cuales son:  
-    - Informe de uso de la IA.  
-    - Acuerdo de compromiso.  
-    - Informe de la base de conocimiento.  
-    - Usuarios piloto.  
-    - Acuerdo de compromiso de usuarios piloto.  
-    - Evaluación del rendimiento de los usuarios piloto.  
-    - Una presentación en pdf.  
-    - Guía de uso y revisión.  
-    - Informe del esfuerzo de tiempo.  
+- En la carpeta **Sprint 2** se pueden encontrar juntos todos los documentos generados o modificados durante esta fase del proyecto.
+
+### 3.2.10. SPRINT 3
+
+- En la carpeta **Sprint 3** se pueden encontrar juntos todos los documentos generados o modificados durante esta fase del proyecto.
 
 <br>
 
@@ -290,7 +278,9 @@ A continuación, se muestran las contribuciones del equipo a la base de conocimi
 
 <br>
 
-- Informe de IA de la 9.
+- Informe de IA de la semana 9.
+
+- Informe de IA del sprint 3.
 
 <br>
 
@@ -300,7 +290,7 @@ A continuación, se muestran las contribuciones del equipo a la base de conocimi
 
 <br>
 
-- Informe de la calidad del Sprint 3.
+- Informe de calidad del Sprint 3.
 
 <br>
 
@@ -316,11 +306,11 @@ A continuación, se muestran las contribuciones del equipo a la base de conocimi
 
 ### 4.1.4. Seguimiento
 
-- Acta de reunión del día 19 de marzo de 2025.
+En la carpeta sprint_3:
 
-- Planificación del Sprint 2.
+- Planificación del Sprint 3.
 
-- Retrospectiva global del Sprint 2.
+- Retrospectiva global del Sprint 3.
 
 - Retrospectiva del Sprint del grupo 1.
 
@@ -328,15 +318,15 @@ A continuación, se muestran las contribuciones del equipo a la base de conocimi
 
 - Retrospectiva del Sprint del grupo 3.
 
-- Retrospectiva de mitad del Sprint 2.
+- Retrospectiva de mitad del Sprint 3.
 
-### 4.1.5. Recursos (Conocimiento base en el repositorio oficial de Fisio Find)
+### 4.1.5. Recursos ("Base de conocimiento" en el repositorio oficial de Fisio Find)
 
-- Feedback de la clase del día 14 de marzo de 2025.
+- Feedback de la clase del día 28 de marzo de 2025.
 
-- Feedback de la clase del día 21 de marzo de 2025.
+- Feedback de la clase del día 4 de abril de 2025.
 
-- Informe de la base de conocimiento del Sprint 2.
+- Informe de la base de conocimiento del Sprint 3.
 
 En el anexo, se muestra tanto el feedback grupal como las anotaciones generales.
 
@@ -376,6 +366,50 @@ En el anexo, se muestra tanto el feedback grupal como las anotaciones generales.
 
 - Informe del esfuerzo de tiempo.
 
+### 4.1.9 Sprint 2
+
+- Informe de uso de la Inteligencia Artificial.
+
+- Informe de la base de conocimiento.
+
+- Acuerdo de compromiso con las modificaciones del sprint.
+
+- Documento de evaluación del rendimiento.
+
+- Documento de usuarios piloto.
+
+- Documento de acuerdo de compromiso de usuarios piloto.
+
+- Documento de evaluación del rendimiento de usuarios piloto.
+
+- Presentación del sprint en formato pdf.
+
+- Guía de uso y revisión.
+
+- Informe del esfuerzo de tiempo.
+
+### 4.1.10. Sprint 3
+
+- Informe de uso de la Inteligencia Artificial.
+
+- Informe de la base de conocimiento.
+
+- Acuerdo de compromiso con las modificaciones del sprint.
+
+- Documento de evaluación del rendimiento.
+
+- Documento de usuarios piloto.
+
+- Documento de acuerdo de compromiso de usuarios piloto.
+
+- Documento de evaluación del rendimiento de usuarios piloto.
+
+- Presentación del sprint en formato pdf.
+
+- Guía de uso y revisión.
+
+- Informe del esfuerzo de tiempo.
+
 <br>
 
 Para consultar la documentación, visita [Documentación Fisio Find](https://fisiofind.vercel.app/docs/Inicio). En esta sección, encontrarás un panel lateral izquierdo que muestra todos los documentos subidos. Si desea una versión actualizada en todo momento, acceda al siguiente enlace con el apartado de documentos del [repositorio oficial de Fisio Find](https://github.com/Proyecto-ISPP/FISIOFIND/tree/main/docs).
@@ -383,137 +417,130 @@ Para consultar la documentación, visita [Documentación Fisio Find](https://fis
 
 ## 4.2 CONTRIBUCIONES A LA BASE DE CONOCIMIENTO GENERAL
 
-A continuación, se muestran las contribuciones a la base de conocimiento general. Cabe destacar que, para los demás grupos, el feedback es igual al que se añade en el feedback de la base de conocimiento grupal, por lo que solo se va a añadir el feedback del grupo 6. Además, aunque resulte parecida, la información añadida en la base de conocimiento general tiene una estructura parecida pero diferente a la recogida en el feedback grupal, por ello, este feedback individual si se muestra como parte de una contribución a nivel general.
+A continuación, se muestran las contribuciones a la base de conocimiento general. Cabe destacar que, para los demás grupos, el feedback es igual al que se añade en el feedback de la base de conocimiento grupal, por lo que solo se va a añadir el feedback del grupo 6. Además, aunque resulte parecida, la información añadida en la base de conocimiento general tiene una estructura similar pero un poco diferente a la recogida en el feedback grupal, por ello, este feedback individual si se muestra como parte de una contribución a nivel general.
 
 ## 4.2.1. Feedback individual del grupo 6
 
 En este apartado se encuentra la información relacionada con el feedback de las semanas 6 y 7.
 
-### Semana 6
+### Semana 8
 #### Feedback relacionado con la presentación
 
-- Han empezado muy rápido. Al final también fue rápido.
+- Hay que diferenciar entre anuncio y demo. No hace falta conectarlas.
 
-- Muy profesional el killer opener.
+- Buen inicio efectivo y elevator pitch. No hace falta cambiarlos semana a semana, si funciona, funciona.
 
-- "Perder un día entero para ir al fisio", poder ver al usuario en el fisio esperando, en vez de simplemente sentado en el suelo del gym (hablando del video).
-
-- El elevator pitch debería de ser un poquito más lento, hay que hacer un buen énfasis en este.
-
-- Muy bien las gráficas de costes, pero la de pesimista debe de ser menos pesimista.
-
-- Más énfasis en porcentaje de suscripción.
-
-- Muy bien que la demo esté hilada con el killer opener. Se ve razonablemente bien, aunque no se ve el epígrafe de cada párrafo.
+- La demo está muy bien hecha. Además, proporcionar contexto también en el anuncio, para Cristina, está correcto.
 
 #### Feedback relacionado con el desarrollo del proyecto
 
-- Muy bien el análisis de rendimiento de los compañeros. Extraño mecanismos de quitar puntos. Deben de funcionar en términos de motivación y no de penalización. Funcionar con strikes, 3 strikes.
+- El anuncio final está realmente bien. Además nos vemos muy profesionales.
 
-- Bien planteado el tema de los riesgos. Hay que decir si son nuevos o son ya identificados. También definir si los problemas son ajenos a los riesgos o no.
+- Con respecto al análisis de costes, el análisis en la gráfica es raro, porque las HU deben ser muy variables según lo que quieren los usuarios. Si quieren hacer una estimación de puntos de HU puede estar bien, pero es bastante complejo. Depende mucho del feedback. Pablo estaría dispuesto a dos finales: un final de características avanzadas (mucho esfuerzo), y otro final de mayor captación de usuarios piloto (Bajo esfuerzo).
 
-- Medir el FAQ, si bajan las dudas o si todas se resuelven está funcionando, si se quedan así y no se responden no funciona.
+- Tenemos una funcionalidad más compleja que los demás, pero muy bien desarrollada y llevada.
 
-- ¿El feedback de usuarios piloto se ha implementado? Al principio no, porque esta semana no se ha planteado, pero la siguiente ya sí. Recomendable indicar las HU que provengan de usuarios piloto con algún icono,por ejemplo.
-
-#### Tareas a realizar para la siguiente semana
-
-- Mejorar el énfasis en el elevator pitch.
-
-- Mejorar el mecanismo de puntos.
-
-- Definir si los problemas son ajenos o no a los riesgos.
-
-- Medir el FAQ.
-
-- Considerar el feedback de usuarios piloto e implementarlo a ser posible.
-
-### Semana 7
-#### Feedback relacionado con la presentación
-
-- Dani debería hablar con más fuerza.
-
-- Buen inicio efectivo destacando que NO existe en el mercado y por qué nos diferenciamos. Complementando al anuncio de la semana anterior.
-
-- Han respondido al feedback del killer opener.
-
-- Los competidores deben pasar más rápido.
-
-- Buen guiño a las píldoras teóricas.
-
-- Quizás se deberían usar otras gráficas que se dieron en otras asignaturas.
-
-- La gráfica sobre tareas realizadas debería ser de barras, en lugar de área.
-
-- La demo se veía muy pequeña, debería tener audio incluido (diferenciando por rol), los títulos de cada funcionalidad deberían ser estáticos y pequeños que se deberían mostrar más tiempo.
-
-- Muy bien el canal de denuncias.
-
-- ¿Como miden el rendimiento del equipo? Deberian poner cómo se hace. Además de mostrar una gráfica.
-
-- Detallar un poco más la gráfica de evaluación de la calidad.
-
-- Añadir apartado de evolución de los problemas (problema -> métrica -> objetivo -> estado).
-
-- Algunas métricas son objetivos. 
-
-- Se ha mejorado estéticamente la presentación.
-
-- En costes, falta indicar qué porcentaje de fisios tienen qué plan.
-
-#### Feedback relacionado con el desarrollo del proyecto
-
-- Revisar qué es una RfC (debe ser una petición que realiza un usuario para cambiar o añadir funcionalidad).
-
-- Sistema de recompensas: hay que intentar buscar un sistema que no cueste dinero. Por ejemplo, que elija la tarea.
+- En cuanto al bajo ratio de respuestas de los usuarios piloto, hemos dado muy poco margen para responder. Es más problema nuestro.
 
 #### Tareas a realizar para la siguiente semana
 
 - Mejorar la presentación y la demo con las varias sugerencias del profesor.
 
-- Realizar una redefinición de lo que es una RfC para usarla en contextos correctos.
+- Reorganizar el análisis de costes.
 
-- Mejorar el sistema de recompensas.
+- Redefinir las tareas para entregar un producto funcional mucho antes a los usuarios piloto.
+
+### Semana 9
+#### Feedback relacionado con la presentación
+
+- Guadalupe y Antonio presentan de manera inmejorable. Mezclan comunicación y chascarrillos perfectamente.
+
+- Inicio efectivo no estridente pero muy buena forma de captar al público porque la gente puede empatizar. Empieza con tono muy bueno y muy claro. 
+
+- La forma de presentar el equipo es perfecta.
+
+- En la demo, muy bien las mejoras de UX, pero te puedes perder un poco por el cambio entre tipos de usuario, la mejor forma es poniendo un icono. Quizás un poco más lenta la mejoraría.
+
+- Demo muy profesional, en funcionalidad y apariencia (demasiadas horas en el grupo), pero resultado muy profesional.
+
+- De los costes, estimación de beneficios, la curva de costes solo hay punto de corte con la optimista, no hay con esperada y pesimista. Ayuda sobre todo en el esperado.
+
+- Si el feedback se ha priorizado hay que decirlo, aunque sea muy general.
+
+#### Feedback relacionado con el desarrollo del proyecto
+
+- En el PPL hay muchas tareas de implementación, cuando en este caso hay que hacer tareas de marketing.
+
+- No es realista que todos los usuarios tengan la misma foto de perfil.
+
+- Customer agreement, en el SLA no hemos hablado demasiado, falta de priorización del feedback de usuarios piloto.
+
+#### Tareas a realizar para la siguiente semana
+
+- Mostrar la priorización del feedback.
+
+- Cambiar el PPL añadiendo más tareas de marketing.
 
 ## 4.2.2. Aportaciones generales
 
-En este apartado se encuentras las aportaciones que se han realizado a la Base de Conocimiento grupal en función de las semanas y puntos que se han pedido según la organización grupal de aportaciones. En concreto, el grupo 6 se hizo responsable de añadir información en los apartados Presentaciones e Idea de negocio durante la semana 10/03, y de las primeras dos semanas en caso de que no hubiese información ya recogida.
+En este apartado se encuentras las aportaciones que se han realizado a la Base de Conocimiento grupal en función de las semanas y puntos que se han pedido según la organización grupal de aportaciones. En concreto, el grupo 6 se hizo responsable de añadir información en los apartados Presentaciones, Killer opener, Idea de negocio, Usuarios piloto y Storyboards durante la semana de la sesión del día 4 de abril de 2025..
 
 ### Apartado Presentaciones
-#### Semana 10/03
+#### Feedback del día 04/04
 
-- Mejorar el opener e introducción, fortalecer el inicio de la presentación con un “killer opener” y un "elevator pitch" impactantes que cuenten una historia atractiva, logrando un mayor dinamismo y captación de la atención desde el principio.
+ - La presentación debe ser diseñada de forma que sea entendida por alguien de fuera de la asignatura.
 
-- Mejorar el diseño empleando fondos y gráficos que aseguren legibilidad y resalten la información clave (por ejemplo, usando colores llamativos).
+ - Aglutinar la información de manera clara y concisa. Un ejemplo claro fue que había varias diapositivas con varías gráficas de costes distintas, que podían incluirse en una sola.
 
-- Acortar la duración de la introducción, debe ser más ligera, sin perder el importante énfasis que hay que hacer en esta.
+ - Tener cuidado con el momento del desarrollo el que nos encontramos. Ejemplo: hubo un grupo que puso Sprint 2 en algunas diapositivas, cuando estamos ya en el 3.
 
-- Incluir en la diapositiva final un enlace a la "landing page" o a la web del proyecto, las posibles redes sociales y un enlace al vídeo demo del proyecto.
+ - Cuidado con las imágenes con Copyright.
 
-- El feedback de los usuarios piloto debe quedar reflejado. Esto es, si hay alguna HU que provenga de algún comentario de los usuarios piloto, debe indicarse en la presentación, por ejemplo, con un icono.
+ - No usar muletillas.
 
-- Es recomendable poner el aumento de características que se dan en los sprints, reflejándose con colores distintos a las características inicialmente pensadas, para que así destaquen más.
+ - No incluir suposiciones al presentar datos, en todo caso aproximaciones.
 
-- Debe de haber elasticidad en la forma de presentar, tener pensado qué cosas de las que se cuentan sobran, para no perjudicar el ritmo. Se puede volver a transparencias anteriores si sobra tiempo.
+ - Tener cuidado con el uso de ciertos gráficos que no son claros indicadores de lo que se quiere expresar.
 
-- Hay veces que no hay que traducir ciertas expresiones, como code smells -> código que apesta.
+ - Reducir al máximo el texto en las diapositivas y hacer uso de metáforas gráficas.
 
-### Apartado Idea de Negocio
-#### Semana 03/02
+ ### Apartado Killer opener
+ #### Feedback del día 04/04
 
-- Tener cuidado con las ideas demasiado ambiciosas.
+ - Realizar un inicio efectivo que siga la estructura de un anuncio puede captar la atención fácilmente.
 
-- Hay que tener muy claro nuestros casos de uso y en quénos diferenciamos de los competidores.
+ - Por otro lado, el análisis de esta semana muestra que los comentarios recibidos por los grupos siguen líneas similares a feedbacks anteriores, sin aportar observaciones fundamentalmente nuevas. Entre las áreas de mejora mencionadas y ya identificadas en sesiones previas encontramos: mejorar la conexión con el elevator pitch.
 
-- Invertir una gran cantidad de recursos y tiempo en el análisis de competidores para asegurar una solución competitiva es esencial.
+### Apartado Idea de negocio
+#### Feedback del día 04/04
 
-#### Semana 10/03
+ - El volumen de mercado debe aparecer en los hitos.
 
-- Al explicar las estimaciones, es necesario indicar con qué usuarios se ha validado, así como hacer un mayor énfasis en los porcentajes de suscripción, si procede.
+ - Es esencial transmitir claramente la funcionalidad principal.
 
-- En los riesgos, hay que decir si son nuevos o son ya identificados. También definir si los problemas son ajenos a los riesgos o no.
+### Apartado Usuarios piloto
+#### Feedback del día 04/04
 
-- Hay que tener cuidado con los cambios repentinos de planteamiento del producto a mitad del proyecto, sobre todo si generas dudas al explicarlo en las presentaciones.
+ - Es importante mostrar el feedback específico que hancasuado acciones concretas de los usuarios piloto para mejorar el producto.
+
+ - Algunos clientes pilotos han dejado de contestar, lo que puede afectar la validación continua del producto. Es esencial tener contar con una planificación óptima de manera que los usuarios piloto puedan seguir participando en el proyecto con un producto funcional. 
+
+ - Si en la demo se ven mejoras en la experiencia de usuario gracias a los comentarios de usuarios piloto, es importante recalcarlo.
+
+ - Hay que tener cuidado al mezclar clasificaciones del feedback de usuarios piloto. Por ejemplo: no mezclar el tipo con la prioridad.
+
+ - Hay que poner en la presentación cuánto feedback reciben de cada tipo.
+
+### Apartado Storyboards
+#### Feedback del día 04/04
+
+ - Cuidar el tono y la coherencia del anuncio. Puede haber humor, pero debe estar bien medido y no distraer del propósito.
+
+ - Por mucho que la ejecución técnica de un anuncio se vea agradable, si este no representa una situación creíble o relevante, no vale la pena. Alinear mejor el caso mostrado con un escenario realista y relevante para el usuario objetivo.
+
+ - Tener cuidado con los sonidos: música muy alta, voces muy bajas, etc.
+
+ - Hacer un anuncio muy largo con una mezcla de temas diferentes puede hacer que este sea pesado, poco llamativo y difícil de entender. Hay que mantener un hilo conductor claro y objetivo.
 
 <br>
 
@@ -525,37 +552,33 @@ En este apartado se encuentras las aportaciones que se han realizado a la Base d
 
 En esta sección se muestra un resumen de las acciones que se han tomado a partir del feedback dado. Se muestra un resumen ya que se entiende que existe un proceso de interiorización del feedback que hace que se tomen acciones de forma inconsciente. Es decir, si por ejemplo se valora mucho una presentación en concreto, lógicamente se va a intentar mejorar dicha presentación en los puntos en los que se haya dado feedback positivo. Se puede obtener un análisis mucho más detallado del feedback y de las presentaciones en los documentos de feedback de nuestra base de conocimiento.
 
-## 5.1. Resumen de mejoras tras el feedback del 14/03/2025
+## 5.1. Resumen de mejoras tras el feedback del 28/03/2025
 
-Tras el _feedback_ recibido en la sesión del 14/03/2025, se tomaron medidas para mejorar aquellos aspectos de la presentación que presentaban fallos, al mismo tiempo que se reforzaron los puntos que fueron elogiados.
+Tras el _feedback_ recibido en la sesión del 28/03/2025, se tomaron medidas para mejorar aquellos aspectos de la presentación que presentaban fallos, al mismo tiempo que se reforzaron los puntos que fueron elogiados.
 
-### 5.1.1. Redefinición de las estimaciones
+### 5.1.1. Ratio de respuesta de usuarios piloto
 
-- Se nos comentó que, en las estimaciones de costes, la estimación pesimista era demasiado pesimista, por lo que se hizo un reajuste para la siguiente presentación teniendo en cuenta este comentario, corrigiéndose este pequeño fallo.
+- Ante el comentario de tener cuidado con el ratio de respuesta de usuarios piloto, se decidió dejar una fecha límite para tener las funcionalidades funcionando correctamente en main, y así poder desplegar más rápidamente y que los usuarios piloto diesen un feedback positivo.
 
-### 5.1.2. Mecanismo de puntos, asvisos y penalizaciones
+### 5.1.2. Análisis de costes
 
-- Aunque en el feedback del 14/03 se destacó el análisis de rendimiento de los compañeros, se generaron dudas acerca del mecanismo de quitar puntos, por lo que se hizo un reajuste para que se motivase con extras en vez de penalizar con menos puntos. Además, se implementaron los avisos, para no activar las penalizaciones tras el primer fallo.
+- La gráfica de costes con las HU se redireccionó para seguir el feedback sugerido por Pablo: un final de características avanzadas (mucho esfuerzo), y otro final de mayor captación de usuarios piloto (Bajo esfuerzo).
 
-### 5.1.3. Historias de usuario provenientes de feedback
+## 5.2. Resumen de mejoras tras el feedback del 04/04/2025
 
-- Como comentario común, se destacó la importancia de resaltar aquellas historias de usuario provenientes del feedback de los usuarios piloto, por lo que se tuvo en cuenta para la siguiente presentación.
+Tras el _feedback_ recibido en la sesión del 04/04/2025, se tomaron medidas para mejorar aquellos aspectos de la presentación que presentaban fallos, al mismo tiempo que se reforzaron los puntos que fueron elogiados.
 
-## 5.2. Resumen de mejoras tras el feedback del 07/03/2025
+### 5.2.1. Iconos en la demo
 
-Tras el _feedback_ recibido en la sesión del 07/03/2025, se tomaron medidas para mejorar aquellos aspectos de la presentación que presentaban fallos, al mismo tiempo que se reforzaron los puntos que fueron elogiados.
+- Nos comentaron que el público se puede perder un poco al cambiar entre usuarios, por lo que se tuvo en cuenta el poner iconos haciendo referencias a los distintos usuarios para que no se pierda el contexto.
 
-### 5.2.1. Request for Change
+### 5.2.2. Priorización del feedback
 
-- Se comentó que los Request for Change no se habían realizado en los contextos adecuados, por lo que se realizó una reestructura para que se puedan realizar en los contextos adecuados, y se tuvo en cuenta para futuros sprints.
+- El feedback priorizado apenas se comentó en la presentación, por lo que se tuvo en cuenta para la siguiente semana. Se añadió más información acerca de este apartado del feedback.
 
-### 5.2.2. Rendimiento del equipo
+### 5.2.3. Redifinición tareas PPL
 
-- Se hizo hizo hincapié en que debía haber más información acerca del rendimiento del equipo, por lo que se añadieron más diapositivas e información que se adecuase a lo solicitado.
-
-### 5.2.3. Gráficas
-
-- Durante la presentación, también se mencionó la necesidad de una mayor diversidad en el tipo de gráfica usada, por lo que se tuvo en cuenta para la siguiente presentación.
+- Se incluyeron más tareas de marketing y menos de implementación.
 
 <br>
 
@@ -568,859 +591,353 @@ Tras el _feedback_ recibido en la sesión del 07/03/2025, se tomaron medidas par
 
 # **6. ANEXO - RESUMEN DEL FEEDBACK POR GRUPO**
 
-### 6.1. Feedback del día 14/03/2025 (semana 6)
+### 6.1. Feedback del día 28/03/2025 (semana 8)
 
 # **1. RESUMEN DEL FEEDBACK POR GRUPO**
 
 ## **Primer grupo (Holos):**
 **Feedback alumnos**
 
-- Han sabido atraer la atención del público desde el principio. Consigue que empaticemos con la solución.
+- El enfoque que le han dado a la demo ha sido muy divertido. Además, han usado zoom para mostrar bien las partes de la aplicación menos visibles a gran distancia. 
 
-- Bien identificados los problemas.
+- Muy buen inicio efectivo.
 
-- Muy buena la estética en general y costes.
+- Los aspectos legales del GDPR han gustado.
 
-- Se mide la satisfacción dentro del grupo, cosa que los profesores recomendaban.
- 
 **Feedback recibido (resumen de los comentarios de los profesores)**
 
-- Si cuando se pide que se levante la mano nadie la levanta puede quedar mal.
+- Han empezado muy lento y después ha acelerado descontroladamente, por lo que ha habido partes de la presentación que no se han podido ver ni entender bien. Sugerencia: meter menos diapositivas y practicar más la presentación.
 
-- Muy bueno lo de "tablero scrum para artistas".
+- El killer opener ha resultado demasiado dramático. Hay que tratar de rebajar el tono para no deprimir al público.
 
-- ¿Cómo se rastrean las IAS?  
+- Lo de pagos anónimos y personalizados no ha quedado claro.
 
-    - Lo hace con los reportes y los administradores.
+- El storyboard de usuarios muy bien. Al de inversores le faltan datos. Hay que poner números, datos, cuánto invierto y cuánto gano. Hay que coordinarse con los dibujos del storyboard, comentar las viñetas. Se anima a que sea la dibujante la que comente los storyboards.
 
-- Las estimaciones de costes no están muy claras, el CapEx y el OpEx están un poco liados.
+- Lo del trabajador de la semana está muy bien. Así como hay un hall of fame, puede haber uno de shame. 
 
-- Muy bien el plan B del video. Iba muy lento y lo han adelantado a mano.
+- La demo espectacular. El comentar lo que se va a ver en la demo antes de mostrarla es importante, aunque sea por encima. Por otro lado, falta que el admin diga que él es el admin, y no cualquier usuario aleatorio.
 
-- No se ve del todo bien la demo desde el final.
+- Las diapositivas 9 y 10 se pueden juntar.
 
-- Métrica del número de commits muy pervertible, por ejemplo, haciendo muchos commits muy pequeños. Número de commits - entrega de issues.
+- Apartado de problemas:
 
-- ¿Cómo solucionan los problemas? Hay que convertir la solución en una métrica. 
+    - Si hace falta recortar el alcance se recorta, porque la carga de trabajo no debe ser mayor de 10 horas semanales.
 
-- No han podido desplegar bien. 
+    - Hay que mostrar una gráfica que muestre cómo ha evolucionado la trazabilidad de la diapositiva 36.
 
-- FEEDBACK GENERAL PARA LA CLASE: cuidado con el despliegue por si se acaban los créditos.  
+- Muy bien la gráfica de rendimiento y esfuerzo, así como la de rendimiento individual. 
 
+- Que el testing sea del 0% no es bueno.
 
 **Puntos positivos destacados**
 
-- Buena estética en general.
+- Buen storyboard de usuarios.
 
-- Muy bueno lo de "tablero scrum para artistas".
+- El destacar al trabajador de la semana.
 
-- Muy bien el plan B del video.
+- Demo espectacular.
+
+- Buenas gráficas.
 
 **Áreas de mejora sugeridas**
 
-- Aclarar las estimaciones de costes.
+- Gestionar mejor los tiempos.
 
-- Demo mejorable visualmente.
+- Killer opener más positivo.
 
-- Sustituir la métrica de número de commits.
+- Hace falta comentar lo que se va a ver en la demo.
+
+- Las diapositivas 9 y 10 se pueden juntar.
+
+- Falta una gráfica de evolución de la trazabilidad.
+
+- Aumentar el porcentaje de testing.
 
 <br>
 
 ## **Segundo grupo (Gastrostock):** 
 **Feedback alumnos**:
 
--	El killer opener muy bien conectado con la gente.
+- El desglose de los costes y los problemas están muy bien detallados.
 
--	Muy bien explicado lo que hacen y los objetivos.
+- Se ha destacado el uso de Claudette para evitar las cláusulas abusivas en el SLA, recomendado en las píldoras teóricas.
 
--	Mucha calma a pesar de los errores.
+- Se ha notado la mejoría respecto de la semana anterior.
 
--	Está bien que hayan dicho que tienen muchos problemas sin que les de vergüenza, además de detallar cuales han sido y las soluciones.
-
-- Gráficas muy buenas, color rojo y animaciones bien en conjunto.
+- Ha gustado cómo han gestionado el feedback de los usuarios piloto.
 
 **Feedback recibido (resumen de los comentarios de los profesores)**
 
--	El killer opener está razonablemente bien, se pueden usar memes. Falta sacar alguna sonrisa.
+- El inicio efectivo no está bien hilado, ya que la parte de la hostelería es muy amplia, no pueden solo nombrar eso, hay que centrarse también en el problema, y no solo mencionar que la hostelería está muy sacrificada.
 
--	Deberían haber dedicado más tiempo a la retrospectiva, que es lo más importante. Que no esté desplegado el producto es muy malo. Hay que comentar más cuáles han sido los problemas y cómo solucionarlos. 
+- Hay partes de la presentación que son muy originales, por lo que deberían aplicarlo también en el killer opener.
 
--	Ha habido falta de comunicación clara. Y la solución de hacer un grupo grande no es la mejor. Otros compañeros ya han recibido ese feedback anteriormente.
+- En las diapositivas iniciales de tantas gráficas (4 y 5), podrían aglutinarlas en menos, ya que ayuda a la comprensión.
 
--	El cambio a TPV genera dudas, el coste del hardware es dudoso, así como los proveedores si no es página web. 
+- En la demo hay cositas que no se ven, letras muy pequeñas. Hay que usar el zoom.
 
-- Explicación PM:
+- Duda: ¿Cómo evaluáis el rendimiento, solo commits?
 
-    - Usuarios piloto no quisieron pasar datos reales para la ia. ¿Estaba contemplado en riesgos? Sí, escrepear ¿Se ha empezado a usar?
+    - No, la métrica es también qué ha hecho cada uno, cuántas horas le ha echado. Profesor: Esta forma es un poco floja. En el siguiente sprint deberían evaluar las gráficas que aporta Zenhub.
 
-    - Que sea solo web no funciona en bares porque se debe de usar dos veces. Por eso el TPV.
+- El número de commits no sirve para evaluar correctamente, ya que es muy pervertible.
 
-- Se puede simular la funcionalidad de la IA o pueden crearlos ellos mismos. 
+- Alabar que tengan una actitud positiva, aunque haya dificultades. Los problemas pasan, y pasan siempre, lo importante es afrontarlos y buscar soluciones, y ellos lo han llevado muy bien.
 
-- Cuidado con el lenguaje sexista. Solo se han referido a camareros hombres.
+- Otra mención a usar Claudette.
 
-- Las animaciones no pueden fallar. En general deben de tener muchos planes B para que si falla algo se pueda solucionar rápidamente, como venir a reuniones de prueba.
+- Al storyboard de inversores le faltan datos. Hay que poner números, datos, cuánto invierto y cuánto gano.
 
--	Alabar la sinceridad y honestidad al contar los problemas.
+- La caja de problemas y soluciones está bien.
 
-- ¿De qué forma se puede castigar?
-
-    - Si alguien tiene una falta grave, haces toda la funcionalidad. Es algo peligroso.
-
-  -	Avisar con tiempo de los strikes.
-
--	El sprint parece que lleva un progreso de más del 50%.
-
+- Hay que plantear soluciones que puedan medirse y tienen que mostrar cuánto avanza.
 
 **Puntos positivos destacados**
 
-- Sinceridad y honestidad.
+- Presentación con mucha originalidad.
 
--	El killer opener está razonablemente bien.
+- Actitud positiva alabable.
 
-**Áreas de mejora sugeridas**
+- Uso acertado de Claudette.
 
-- Dedicar más tiempo a la retrospectiva.
-
-- Aumentar la comunicación sin formar un grupo grande.
-
-- Funcionalidad de la IA simulable.
-
-- Plan B para las presentaciones.
-
-- Redefinir los castigos y avisos.
-
-<br>
-
-## **Tercer grupo (Eventbride):** 
-**Feedback alumnos**
-
-- Inicio efectivo original y bueno. Muy buen diseño. Analisis de competidores lo han trabajado. Problemas encontrados muy bien también. 
-
-- El documento de IA muy bien. Muy buenos zooms y mejora.
-
--	Al análisis de competidores tiene pinta de haberse echado muchas horas.
-
-- Han tenido plan B para el video, además de traer altavoz propio para que se escuche bien.
-
-- Rendimiento mediante fórmula clara. 
-
-- Retrospectiva clara.
-
-- Muy bien la centralización de información por el problema del aislamiento.
-
-- Me gusta la transparencia con la que se muestra el esfuerzo del equipo.
-
-- Muy bien la diapositiva de la IA, miden si se tiene que editar y miden el tiempo ahorrado. Incluso quitan una IA.
-
-
-**Feedback recibido (resumen de los comentarios de los profesores)**
-
-- Muy buen killer opener. Se sugiere seguir con la historia.
-
-- Cuando no te acuerdas de algo, puedes beber agua de la botella que **está en la mesa**. Si está en la mano siempre la atención se va allí.
-
--	Las estimaciones deberían haberse explicado un poco mejor, ha faltado comentar detalles como de dónde sale la gráfica, con qué usuarios de cada tipo, etc.
-
-- Las demos deben de tener datos realistas, para así evitar la falta de profesionalidad.
-
--	Intentar audios más homogéneos: misma velocidad, mismo tono, etc. Sobre todo si hablan distintas personas.
-
-- Se debe comentar lo que va a aparecer en la demo, para así seguir mejor el hilo de esta.
-
--	La fórmula de rendimiento está bien trabajada, pero falta poner los números de cada uno de los miembros, al menos anonimizados. Se recomienda incluso añadir una evolución entre sprints usando gráficas de barras.
-
--	El procedimiento de cómo resolver problemas es muy genérico (en las diapositivas). Está bien poner ejemplos, como el problema de las estimaciones.
-
-- Debe de haber elasticidad en la forma de presentar, tener pensado qué cosas de las que se cuentan sobran, para no perjudicar el ritmo. Se puede volver a transparencias si sobra tiempo.
-
-**Puntos positivos destacados**
-
-- Killer opener espectacular.
-
-- Fórmula de rendimiento bien trabajada.
+- Caja de problemas y soluciones bien planteadas.
 
 **Áreas de mejora sugeridas**
 
-- Mejor explicación de las estimaciones.
+- Hilar mejor el inicio efectivo con la solución que aporta la app.
 
-- Audios más homogéneos.
-
-- Comentarlo que va a aparecer en la demo.
-
-- Evitar diapositivas muy genéricas. Incluir ejemplos es recomendable.
-
-- Ensayar más las presentaciones para conseguir una mayor elasticidad.
-
-<br>
-
-## **Cuarto grupo (BORROO):** 
-**Feedback alumnos**
-
-- Buen desglose de los costes.
-
-- El estudio que han hecho, amortización en base a encuestas, hace que la suposición tenga menos riesgo (estimación de costes).
-
-- Muy buen ritmo.
-
-- Problemas, se han solucionado casi todos. Son transparentes en que hay riesgos que no estaban previstos y en el ritmo de completar las tareas.
-
-- Simple pero claro las alucinaciones de la IA.
-
-- Tabla comparativa, diferencias con los competidores, costes han puesto K para los miles, gráfica de coste muy visual, responsabilidades muy claras.
-
-- Buena estética, cómo se han mostrado los problemas y se han solucionado la mayoría.
-
-**Feedback recibido (resumen de los comentarios de los profesores)**
-
-- El killer opener no está tan enlazado porque Doraemon tenía muchas cosas que prestar, el nuevo personaje no tiene eso. Habría que mejorarlo.
-
--	El análisis de los costes es muy bueno, pero hay que tener en cuenta cómo evolucionará el avance real de costes.
-
-- Muy buen formato, pero puede ser un problema. No han puesto las medidas para resolver y el cómo miden (métricas).
-
-- Hay que resaltar la característica que están mostrando en la demo.
-
-- La demo parecía en tiempo real, que es algo muy bueno.
-
-- Muy bien haber puesto el incremento de características para el segundo sprint. Lo podrían poner en otro color para que resaltase más.
-
-- ¿Por qué la IA alucina tanto? ¿Por qué sucede eso? No lo saben, pero es raro.
-
-**Puntos positivos destacados**
-
-- Análisis de costes muy bueno.
-
-- La naturalidad de la demo.
-
-- Inclusión del incremento de características en futuros sprints.
-
-**Áreas de mejora sugeridas**
-
-- Falta algo de enlace entre el killer opener y la presentación.
-
-- Tener en cuenta la evolución del avance real de los costes.
-
-- No han puesto las medidas para resolver y el cómo miden.
-
-- Resaltar la funcionalidad que se muestra en la demo.
-
-- Realizar análisis de las alucinaciones de la IA.
-
-<br>
-
-## **Quinto grupo (CAMYO):** 
-**Feedback alumnos**:
-
--	Está bien como han mostrado los problemas, sus soluciones y los resultados.
-
-- Muy bien bots y métricas utilizas para la IA. Muy bien la estética.
-
-**Feedback recibido (resumen de los comentarios de los profesores)**
-
--	Las métricas muy bien.
-
--	Los íconos en la demo, que indican qué usuario está usando la app en cada momento, son una muy buena idea. Estaría bien que en el killer opener se conectasen los presentadores con dichos iconos, para así enlazar el killer opener con la demo y todo lo demás.
-
--	Debería ser el empleado el que piense en que ojalá haya una app que haga tal y cual, no el empleador, al menos en este caso.
-
--	Revisar CapEx y OpEx, hay que desglosar bien las cosas.
-
--	Hay veces que no hay que traducir ciertas cosas, como code smells -> código que apesta.
-
--	El tema de plantear el problema, la solución, cómo se mide y el avance es superior a todos los grupos. Usar hasta CodiumIA para automatizar métricas de problemas es muy útil. Ayuda a que la obtención de métricas sea lo más barato y automatizado posible.
-
--	Resaltar la gráfica que se cruza de costes y presupuestos.
-
--	La gestión de usuarios pilotos, la gestión del feedback, se asume que todo tiene errores, lo cual no tiene por qué ser así. Hay que generalizar adecuadamente.
-
-**Puntos positivos destacados**
-
-- Buenas métricas.
-
-- Iconos de usuarios en la demo.
-
-- La gestión de problemas es superior a todos los grupos.
-
-- Gráfica de costes y presupuestos.
-
-**Áreas de mejora sugeridas**
-
-- Estaría bien que en el killer opener se conectasen los presentadores con los iconos.
-
-- Revisar CapEx y OpEx.
-
-- Cuidado al traducir literalmente.
-
-- Generalizar adecuadamente.
-
-<br>
-
-## **Sexto grupo (FISIO FIND):** 
-**Feedback alumnos**
-
-- Inicio muy bien explicado.
-
-- Ha gustado mucho el video y cómo manejamos el tema de la seguridad de la verificación por DNI de las personas.
-
-- Gama de colores muy bien usada.
-
--	Hemos desarrollado muy bien el sprint. Parece que se ha planificado muy bien.
-
--	Las redes sociales tienen buena pinta.
-
--	El vídeo está muy bien.
-
--	La gama de colores esta mu bien.
-
--	Hemos metido mas animaciones y le da un buen toque.
-
--	Se han notado las prisas, pero está muy bien preparado. Hay una buena conexión entre diapositivas, buen flujo.
-
-
-**Feedback recibido (resumen de los comentarios de los profesores)**
-
-- Han empezado muy rápido. Al final también fue rápido.
-
-- Muy profesional el killer opener.
-
-- "Perder un día entero para ir al fisio", poder ver al usuario en el fisio esperando, en vez de simplemente sentado en el suelo del gym (hablando del video).
-
-- El elevator pitch debería de ser un poquito más lento, hay que hacer un buen énfasis en este.
-
-- Muy bien las gráficas de costes, pero la de pesimista debe de ser menos pesimista.
-
-- Más énfasis en porcentaje de suscripción.
-
-- Muy bien que la demo esté hilada con el killer opener. Se ve razonablemente bien, aunque no se ve el epígrafe de cada párrafo.
-
-- Muy bien el análisis de rendimiento de los compañeros. Extraño mecanismos de quitar puntos. Deben de funcionar en términos de motivación y no de penalización. Funcionar con strikes, 3 strikes.
-
-- Bien planteado el tema de los riesgos. Hay que decir si son nuevos o son ya identificados. También definir si los problemas son ajenos a los riesgos o no.
-
-- Medir el FAQ, si bajan las dudas o si todas se resuelven está funcionando, si se quedan así y no se responden no funciona.
-
-- ¿El feedback de usuarios piloto se ha implementado? Al principio no, porque esta semana no se ha planteado, pero la siguiente ya sí. Recomendable indicar las HU que provengan de usuarios piloto con algún icono,por ejemplo.
-
-**Puntos positivos destacados**
-
-- Killer opener muy profesional.
-
-- Muy bien las gráficas de costes.
-
-- Muy bien el enlace entre killer opener y demo.
-
-- Muy bien el análisis de rendimiento de los compañeros.
-
-- Bien planteado el tema de los riesgos.
-
-**Áreas de mejora sugeridas**
-
-- Mayor énfasis en el elevator pitch
-
-- La estimación pesimista debe ser menos pesimista.
-
-- Replantear el mecanismo de puntos, avisos y penalizaciones.
-
-- Información del equipo más resumida.
-
-- Medir el FAQ.
-
-- Destacar las HU provenientes de feedback.
-
-<br>
-
-
-# **ANÁLISIS DEL FEEDBACK**
-
-## **TENDENCIAS GENERALES**
-**Factores comunes en los comentarios de los profesores**
-
-- Importancia del killer opener: En la mayoría de los grupos se ha valorado positivamente la introducción, aunque se han dado sugerencias para mejorar su conexión con el resto de la presentación.
-
-- Demos y presentaciones bien estructuradas: Se ha insistido en que la demo debe estar bien enlazada con la presentación y que debe haber un plan B en caso de fallos técnicos.
-
-- Uso de métricas: Se ha valorado mucho la inclusión de métricas para evaluar el progreso y la efectividad de las soluciones propuestas.
-
-- Claridad en la comunicación: Se ha recomendado que las explicaciones sean claras y bien organizadas, evitando información excesivamente genérica.
-
-- Estimaciones de costes: La mayoría de los grupos han recibido observaciones sobre la necesidad de mejorar la presentación y desglose de los costes.
-
-- Uso de IA y su justificación: Se han señalado dudas sobre cómo funciona la IA en algunos casos y cómo se podría mejorar su implementación.
-
-- Lenguaje y comunicación inclusiva: En algunos casos, se ha sugerido mejorar la inclusión en la comunicación, evitando sesgos de género en las explicaciones.
-
-
-**Puntos de fortaleza general en los equipos**
-
-- Buena preparación de las presentaciones: En general, los equipos han demostrado haber trabajado en la presentación, con materiales bien organizados y estructurados.
-
-- Uso de gráficos y métricas: Varios equipos han incorporado gráficos bien diseñados para respaldar su análisis, lo cual ha sido valorado positivamente.
-
-- Capacidad de adaptación: Algunos equipos han demostrado una buena capacidad de reacción ante problemas imprevistos, como dificultades técnicas en los videos o demos.
-
-- Sinceridad y transparencia: Se ha valorado que los equipos admitan sus errores y expliquen cómo han trabajado para solucionarlos.
-
-**Áreas de mejora recurrentes**
-
-- Tiempo dedicado a la retrospectiva: Se ha mencionado en varios grupos que no se ha dedicado suficiente tiempo a la retrospectiva del proyecto, algo clave para evaluar el aprendizaje.
-
-- Claridad en las estimaciones de costes: Muchos equipos han recibido comentarios sobre la falta de precisión en los cálculos de costes y su desglose.
-
-- Mejora en la presentación de datos y métricas: Aunque hay un buen uso de métricas, se ha sugerido mejorar la forma de presentarlas para que sean más claras y útiles.
-
-- Ritmo y fluidez de la presentación: Algunos equipos han recibido recomendaciones sobre la velocidad de su discurso y la necesidad de estructurar mejor su presentación.
-
-- Mayor planificación para mitigar errores: Se ha enfatizado la importancia de tener planes B para evitar problemas en demos, animaciones y presentaciones en general.
-
-
-<br>
-
-## **COMPARACIÓN DEL FEEDBACK DE NUESTRO GRUPO VS LOS OTROS**
-
-**¿Qué estamos haciendo bien en comparación con otros?**
-
-- Killer opener muy profesional: Nuestro grupo ha recibido elogios por la introducción, destacando su calidad profesional y su capacidad para captar la atención.
-
-- Buen uso de gráficos de costes: Aunque se sugiere mejorar la estimación pesimista, en general, los gráficos han sido bien valorados, a diferencia de otros grupos que han recibido críticas más severas sobre la claridad de los costes.
-
-- Buena conexión entre el killer opener y la demo: Algo que ha sido una recomendación para otros grupos (como CAMYO y BORROO) se ha valorado positivamente en nuestro caso.
-
-- Buen análisis de rendimiento del equipo: Se ha destacado que el análisis del rendimiento ha sido sólido y detallado, algo que no ha sido tan mencionado en otros grupos.
-
-- Enfoque claro en la planificación de riesgos: Nuestro equipo ha sido reconocido por plantear bien los riesgos y diferenciarlos de los problemas, lo cual ha sido un punto débil en otros grupos.
-
-**¿Qué aspectos debemos mejorar respecto a los demás?**
-
-- Mayor énfasis en el elevator pitch: Aunque nuestro killer opener ha sido profesional, se sugiere hacer un poco más lento el elevator pitch para enfatizar mejor los puntos clave.
-
-- Ajustar la estimación pesimista de los costes: Aunque hemos recibido elogios por los gráficos de costes, se ha señalado que la estimación pesimista es demasiado pesimista y debe ser ajustada.
-
-- Replantear el sistema de puntos y penalizaciones: Se ha sugerido que los mecanismos de penalización no sean punitivos, sino motivacionales. Otros equipos han tenido enfoques diferentes en este aspecto.
-
-- Mejorar la medición del impacto del FAQ: Se ha sugerido medir mejor la efectividad del FAQ para comprobar si realmente está resolviendo dudas o si es necesario hacer ajustes.
-
-- Destacar mejor las HU provenientes del feedback de usuarios piloto: Se nos ha recomendado indicar con algún icono qué HU vienen de los usuarios piloto.
-
-<br>
-
-## Discusión para la siguiente clase.
-
--	De cara a la KB y a los documentos md: se pueden poner enlaces, así que usémoslos. Por ejemplo, esfuerzo de los compañeros y se mencionan las horas de cada uno, pues un enlace a otro documento donde estén esas horas. En el docusaurus, el repo da info sobre las personas que han contribuido, pues tener un README con aquellos que lo hayan hecho.
-
--	Información de licencias, de SLA con usuarios piloto, se pueden ir poniendo.
-
--	Respecto a la KB, debería haber un protocolo de aportaciones y un buscador.
-
--	Queremos evidencias de lo que ha hecho cada uno.
-
--	Recomendable el uso de changelogs de conventional commits para automatizar cosas.
-
--	Todo lo que se pueda automatizar y de métricas gratis, bienvenido es.
-
--	Es interesante ver la evolución en esfuerzo de tiempo a lo largo de la asignatura.
-
--	Destacar el empleado de la semana, o algo así. Que en base al rendimiento se pongan rankings.
-
--	El feedback positivo (métricas bien medidas, las soluciones detalladas de los problemas y la evolución de estos) debe ser tenido en cuenta por los grupos.
-
-#### PRÓXIMA SEMANA
-
-- 15 min de duración.
-
-- Introducción inicial.
-
-- Refinamiento del negocio
-
-  -	Killer opener de 1 minuto como máximo.
-
-  -	Elevator pitch directo.
-
-  -	Que el killer opener enlace con el elevator pitch. Este último puede incluso sobrar.
-
-  -	Análisis de competidores.
-  
-  -	Pensar en el guión, un story board, de un anuncio. Anuncio de usuarios, anuncio de clientes y anuncio de inversores (totalmente distinto a los otros 2, dar un resumen y DATOS).
-
-  -	Ir pensando en implicaciones legales: GDPR, licencias, etc. Pensar en cómo se implementarían.
-
-- TCO
-
-  -	CapEx es todo aquello que capitalizas, cosa que compra tu empresa y que puedes incluso vender a posteriori. Servidores (no en la nube, que eso se “alquila”), 
-
-  -	Situación actual frente a la prevista
-
-  -	Estimaciones pesimistas, esperadas y optimistas
-
--	Demo de la mitad del sprint 2: el incremento de las características de demos anteriores es interesante. Usar datos realistas.
-
-  -	La demo debe tener pago real.
-
-- Retrospectiva de mitad del sprint 2.
-
-- Gestión de usuarios piloto.
-
-- Planificación reestimando el sprint 2 si a mitad vamos mal. Justificar recortes si son necesarios y centrarse en funcionalidades core.
-
-- Usuario de IAs.
-
-- Diapositiva final.
-
-# **CONCLUSIONES Y OBSERVACIONES**
-
-- Nuestra presentación ha sido bien valorada en cuanto a estructura y claridad, pero debemos mejorar el ritmo, especialmente en el elevator pitch, haciéndolo más pausado para enfatizar los puntos clave.
-
-- El killer opener ha sido considerado profesional y bien ejecutado, pero podemos mejorar la conexión entre la introducción y el problema que queremos resolver para que el mensaje sea aún más impactante.
-
-- Nuestro uso de gráficos y métricas ha sido destacado, pero se nos ha sugerido hacer la estimación pesimista menos extrema, ajustando los valores para reflejar mejor la realidad del proyecto.
-
-- El sistema de puntos y penalizaciones necesita ser replanteado. En lugar de enfocarnos en sanciones, podríamos orientarlo hacia un mecanismo de motivación para mejorar el compromiso del equipo sin generar un impacto negativo en la moral.
-
-- La gestión del feedback de los usuarios piloto ha sido reconocida como un aspecto importante, pero se nos recomienda hacer más visible qué cambios han surgido a partir de ese feedback. Podemos incorporar iconos o indicadores en las HU para resaltar su origen.
-
-- Se nos ha valorado por una buena conexión entre el killer opener y la demo, lo cual ha sido una debilidad en otros grupos. Debemos seguir reforzando este punto y asegurarnos de que cada parte de la presentación fluya de manera coherente.
-
-- La demo ha sido bien recibida, pero se ha señalado la importancia de medir la efectividad del FAQ. Implementar métricas que evalúen si realmente está resolviendo dudas nos permitirá validar su impacto en la experiencia del usuario.
-
-- Aunque hemos manejado bien los riesgos y problemas, debemos dejar más claro si los problemas son ajenos a los riesgos previstos o si han surgido de manera inesperada. Esto nos permitirá demostrar un mejor control del proyecto y una capacidad de respuesta más efectiva.
-
-<br>
-
-# 6.2. Feedback del día 21/03/2025 (semana 7)
-
-# **1. RESUMEN DEL FEEDBACK POR GRUPO**
-
-## **Primer grupo (Holos):**
-**Feedback alumnos**
-
-- Buen inicio efectivo.
-
-- El GDPR está muy bien descrito.
- 
-**Feedback recibido (resumen de los comentarios de los profesores)**
-
-- En el inicio efectivo no quedaba claro quién era el cliente. No se ha enfocado bien al publico de la presentación, ya que nosotros seríamos un público “usuario” y no un público “artista”. Además, debería ser más específico, para que no se pierda tiempo.
-
-- En Costes, las licencias.
-
-- La gráfica para los costes incurridos no es intuitiva.
-
-- La demo se veía y se oía bien. Sobre todo se entendía bien, mostraba un CU fácil de seguir.
-
-- Las soluciones son propuestas, no son compromisos.
-
-- Pequeño fallo: hasta ahora no tenían Github Project.
-
-- En cumplimiento de plazos poner claramente si alguien ha sido marcado por no cumplir con plazos.
-
-- En el apartado de IA, no parece que esté bien planteado porque actualmente no hay formas de detectar si se usa o no.
-
-- Los costes tienen defectos que deberían corregirse.
-
-**Puntos positivos destacados**
-
-- Buena demo.
-
-**Áreas de mejora sugeridas**
-
-- Mejorar costes y licencias.
-
-- Inicio efectivo más específico.
-
-- Replantear cómo se detecta el uso de IAs.
-
-<br>
-
-## **Segundo grupo (Gastrostock):** 
-**Feedback alumnos**:
-
-- Buen inicio efectivo.
-
-- Responden al feedback explicando correctamente la funcionalidad y los distintos dispositivos donde quieren desplegar/hacer una app.
-
-- Siguen poniendo las cifras de precios sin Ks.
-
-**Feedback recibido (resumen de los comentarios de los profesores)**
-
-- Tiene que apoyar las cosas que dice en información cuantitativa que evidencie lo dicho y que sea fácil de entender (que permita saber si es creíble, etc). No es recomendable que el público tenga que dejar de atender para calcular/entender los datos.
-
-- Buen inicio efectivo, pero un poco largo.
-
-- Ha empezado con mucha energía, pero un poco monótono.
-
-- En el gráfico de costes, poner colores que tengan un significado estándar. Por ejemplo, no poner una línea de valoración pesimista en verde, cuando este se suele usar para indicar beneficios.
-
-- La demo es bastante mejorable.
-
-- Los anuncios no se ven bien.
-
-- Rendimiento del equipo, problemas encontrados, storyboard no han puesto.
-
-**Puntos positivos destacados**
-
-- Buen inicio efectivo.
-
-**Áreas de mejora sugeridas**
-
-- Apoyarse en datos.
-
-- Colores en las gráficas con sentido, aunque pueda parecer una tontería.
+- Aglutinar más la información.
 
 - Demo mejorable.
 
-- Faltan métricas cuantitativas de calidad.
+- Usar gráficas de Zenhub y no usar el número de commits como métrica.
+
+- Faltan datos en el storyboard de inversores.
+
+- Soluciones mejor planteadas.
 
 <br>
 
 ## **Tercer grupo (Eventbride):** 
 **Feedback alumnos**
 
-- Inicio efectivo chulo. 
+- Matriz de rendimiento muy buena y bien hilada con los empleados de la semana.
 
-- Dos tardes haciendo el storyboard.
+- La música usada en la demo le da un toque.
 
-- Muy informal la demo.
+- Story boards muy trabajadas.
 
-- No se ve muy bien la demo, pero parece que va al target.
+- Se ha destacado el team building.
+
+- Han dejado muy claro de qué va la presentación desde el primer momento.
+
+- las presentaciones minimalistas, centrándose en el contenido, han gustado.
+
+- Muy buen el tono y ritmo y las formas de presentar.
 
 **Feedback recibido (resumen de los comentarios de los profesores)**
 
-- Deberían usar un aparato para cambiar de diapositiva.
+- La demo se veía poco, hay que aumentar el zoom. Error frecuente en las demos: mostrar todo a tiempo real, o acelerado para que se vea todo. Se pueden meter cortes sin problema. La música la quitaría, no aporta mucho. Ayudaría que hubiese distintos narradores cuando hay distintos roles. Además, hay que meter cosas positivas, no hablar de cancelaciones en medio de la demo y cosas así.
 
-- Muy buena conexion entre killer openers.
+- Justificar las previsiones económicas con el impacto en el mercado. ¿Las líneas están hechas al tuntún? ¿O hay un estudio firme detrás? Recomendación: dar un par de puntos con distintos casos y distintos usuarios y evaluar el porcentaje del mercado que se uniría a nuestra aplicación.
 
-- No hacer referencia a las semanas pasadas.
+- Han pasado muy de perfil el pivotar con los clientes. Hay que sacar muchísima más información de los usuarios piloto, sobre todo de los clientes reales, para ordeñar la vaca al máximo, y tener una app mucho más adecuada a lo que piden realmente.
 
-- Buen desarrollo de los storyboards (a mano, directos, claros, no demasiadas escenas).
+- El inicio efectivo está muy bien, se nota que los motiva. Hay una historia muy buena detrás.
 
-- Parece que no es multievento en la presentación.
+- Hablando del rendimiento, es normal que el rendimiento baje en ocasiones. No hay que tener vergüenza a la hora de indicar las desviaciones del rendimiento.
 
-- Mostrar más claramente las líneas de corte de los costes.
+- En el segundo storyboard, el de inversores, faltan cifras.
 
-- Equipo: no está puesto el responsable de GDPR.
+- ¿Hay política de cancelación? Porque ha habido una cancelación en la demo. Han dicho que en semanas siguientes se explayarán.
 
-- Muy buena demo. Se escuchaba alto y claro, se definían bien los roles y era relativamente cómico. Quizás mejorar la experiencia de usuario.
+- Han mejorado en el seguimiento de los problemas.
 
-- Destacar el workflow.
+- Las horas mínimas de trabajo en realidad son horas exigidas. Hay que ceñirse a las 10 horas. Es un objetivo.
 
-- Hay que ser capaz de medir las soluciones.
+- En la diapositiva 36, se han equivocado un poco con las métricas enseñadas, pero Daniel ha contestado bien a la pregunta.
 
-- Es necesario una gráfica de barras para mostrar la evolución cuantitativa del rendimiento del equipo.
 
 **Puntos positivos destacados**
 
-- Buena conexión entre killers openers.
+- El inicio efectivo es muy bueno.
 
-- Muy buena demo.
-
-- Workflow destacable.
-
-- Muy buenos storyboards.
+- Seguimiento de problemas muy mejorado.
 
 **Áreas de mejora sugeridas**
 
-- Mostrar mejor las líneas de corte de los costes.
+- Demo muy mejorable: usar distintas voces, quitar la música, etc.
 
-- Mejorar la experiencia de usuario en la demo (que se vea bien).
+- Justificar las previsiones económicas.
 
-- Soluciones medibles.
+- Hay que sacar más información de los usuarios piloto.
 
-- Gráfica de barras de evolución cuantitativa del rendimiento del equipo.
+- Faltan cifras en el storyboard de inversores.
+
+- Ceñirse a las horas mínimas de trabajo.
 
 <br>
 
 ## **Cuarto grupo (BORROO):** 
 **Feedback alumnos**
 
-- Muy buena esa comparación entre las gráficas "burn down".
+- Muy buen killer opener y demo. 
 
-- Han mejorado mucho la forma de presentación, ahora tiene un ritmo más calmado.
+- Muy bien cómo enseñan las funcionalidades. 
+
+- Han mantenido a don Ramón.
+
+- Muy buena la métrica del software. 
+
+- Muy bien presentado el uso de la IA.
 
 **Feedback recibido (resumen de los comentarios de los profesores)**
 
-- Personajes poco acertados en la demo y el killer opener.
+- Si el killer opener es generalista, que pueda llegar a cualquier persona, ahí hay problemas de falta de profesionalidad. Es decir, si la demo y el killer opener están en un contexto distinto al de tener como público a alumnos en una clase, puede tener consecuencias muy malas.
 
-- Pequeño fallo: ponen mil en vez de k para representar cifras grandes.
+- La demo tiene que estar adecuada a las necesidades y situaciones de los usuarios piloto. Si tienes usuarios piloto mayoritariamente de entre 19 y 25 años, no pongas un taladro como ejemplo.
 
-- En las gráficas de costes, es importante poner de dónde salen los números, porque el público se va a preguntar si es realista. Se tiene que poner el número de usuarios/transacciones en cada punto.
+- Si realmente se enfocan en algo tan grande, debería haber más objetos en la plataforma de BORROO. ¿Se han hecho transacciones reales? Si, hasta 10. Pablo lo ve poco para el potencial que tienen.
 
-- Los usuarios piloto deberían probar la aplicación. Tienen que poner su valor diferencial y lo que valoran los usuarios piloto.
+- El inicio efectivo es bueno, pero falta algo en el elevator pitch. Necesitan una frase que solucione el problema de don Ramón.
 
-- Muchas cosas que han dicho no están apoyadas en datos cuantitativos.
+- En la diapositiva 15, está bien aglutinar la información, pero hay que tener en cuenta cómo se muestran las cosas. Si metes animaciones, úsalas para ir mostrando cosas poco a poco.
 
-- Han puesto dos storyboards, pero parecen poco ocurrentes (expresión literal).
+- La demo se puede agilizar en muchos apartados, como los formularios de pago, donde puede haber hasta cortes.
 
-- La demo se puede poner más grande.
+- Son de los pocos que usan Niko Niko. No es un método que sirve mucho para el rendimiento, pero si aporta información acerca del estado emocional.
 
-- Diapositiva de IA poco genérica. Solo había tres textos. Se podría haber puesto de herramientas usadas, métricas… Faltan más transparencias en este apartado.
+- En el feedback de los usuarios piloto, estaría bien mostrar la cantidad, no solo el porcentaje, de los distintos tipos de feedback.
 
-- No se deben hacer afirmaciones absolutas que se apliquen a todos los proyectos sin excepción.
-
-- Han mejorado la presentación poniendo títulos en todas las diapositivas.
-
-- Es importante detallar más el proceso de evaluación del rendimiento individual del equipo.
+- La fianza debería haber sido prioritario, y parece que se ha dejado como secundario, cuando es algo trascendental en apps como esta.
 
 **Puntos positivos destacados**
 
-- Han mejorado la presentación poniendo títulos en todas las diapositivas.
+- Buen inicio efectivo.
+
+- Usan el Niko Niko.
 
 **Áreas de mejora sugeridas**
 
-- Buscar personajes adecuados para el killer opener y la demo.
+- Tener cuidado con las informalidades en el inicio efectivo y la demo.
 
-- Usar la k en los costes.
+- La demo debe estar adecuada al contexto de los usuarios piloto.
 
-- Poner de dónde salen los números en las gráficas de costes.
+- Les falta algo en el elevator pitch.
 
-- Que los usuarios piloto prueben la app.
+- Usar animaciones para mostrar poco a poco mucha información aglutinada en una diapositiva.
 
-- Apoyarse en datos cuantitativos.
+- La demo debe agilizarse.
 
-- Los storyboards son poco ocurrentes.
-
-- Más diapositivas de IA.
-
-- Detallar el proceso de evaluación del rendimiento individual del equipo.
+- Mostrar más información del feedback de los usuarios piloto.
 
 <br>
 
 ## **Quinto grupo (CAMYO):** 
 **Feedback alumnos**:
 
-- Buen inicio efectivo como si fuera un simulacro de incendios.
+- Muy buena presentación, buen storyboard, muy buena demo, comentarios graciosos.
 
-- Se ha equivocado un poco al explicar los derechos sobre los datos.
+- Demo acelerada, muy buen contexto de los inversores.
 
-- Muy bien el top 3 de rendimiento semanal.
+- Muy buena demo, enlazado con el killer opener, en el final han continuado con la broma. 
+
+- Se ha destacado que en el uso de la IA haya propuestas de cómo reaccionar.
 
 **Feedback recibido (resumen de los comentarios de los profesores)**
 
-- El principio muy rápido. Parece casi que no ha dicho el elevator pitch. Quizás ha sido por los problemas técnicos iniciales.
+- Muy muy bien, Carlos se ha levantado y ha aplaudido.
 
-- ¿A quién va dirigido el storyboard? Parece que va a varios targets y eso puede hacer que no funcione. Debería ser dirigido a solo un target.
+- Han hilado muy bien todas las partes de la presentación, increíble.
 
-- Muy buen killer opener por lo de la alarma, ha captado la atención completamente. Sin embargo, ha faltado que conecte con la demo.
+- Hacen el feedback suyo, recogen todo lo positivo y lo aplican.
 
-- El impacto legal está muy bien, tanto las conclusiones como lo que afecta al usuario.
+- La demo debe tener un poco más de zoom.
 
-- CapEx y OpEx están bien.
+- ¿El bot de las pull request es el de copilot añadido hace poco? Es un poco parecido, revisa el código de la pr, ve si hay errores y genera un texto descriptivo con los cambios, ayudando al revisor. Comentario de Carlos: Copilot ha metido un bot para revisar las pull request automáticamente, estaría bien tenerlo en cuenta.
 
-- Falta una gráfica de corte para mostrar cuándo se empieza a ganar más de lo que se gasta.
+- ¿Hay algún beneficio para los empleados de la semana? El reconocimiento público ya es suficiente (broma). Carlos sugiere incentivos como elegir issues en próximos sprints y cosas del estilo.
 
-- ¿Han priorizado el feedback? 
+- Muy buenos killer opener y elevator pitch, los dos presentan muy bien.
 
-    - Está en proceso de priorización porque es reciente.
+- El storyboard transmite muy bien lo que se desea transmitir.
 
-- En la gestión de usuarios piloto han dicho muchas cosas sin apoyo visual. Hace falta apoyo (seguramente será porque es reciente).
+- La trazabilidad de los problemas está muy bien explicada.
 
-- Además del QR, poner un email de contacto.
+- Diapositiva 18: se han autoevaluado, cuando debería haber ya métricas de rendimiento. Se evalúan el autoesfuerzo. Es un tanto raro.
 
-- La demo se escucha poco y se ve poco. 
+- El rendimiento podría evaluarse con métricas ya mostradas.
 
-- Una propuesta de mejora es que los audios en las demos sean grabados por varias personas, para identificar aun mejor cuando se cambie entre distintos usuarios.
-
-- No han dicho ningún problema. Parece que es porque no hay ninguno.
-
-    - Esta semana están probando una solución, por lo que no saben si está funcionando o no.
-
-- La trasparencia de historias de usuario tiene demasiada incertidumbre, porque depende de los últimos dias del sprint.
 
 **Puntos positivos destacados**
 
-- Buena captación de atención en el killer opener.
+- La presentación en general.
 
-- Muy bien definido el impacto legal.
+- Muy bien hilada toda la presentación.
 
-- Bien el CapEx y el OpEx.
+- Se nota que tienen en cuenta todo el feedback generado en las clases.
+
+- Muy buenos killer opener y elevator pitch.
+
+- Los presentadores presentan muy bien.
+
+- El storyboard está muy bien trabajado.
+
+- Trazabilidad de problemas bien explicada.
 
 **Áreas de mejora sugeridas**
 
-- Principio demasiado rápido.
+- Más zoom en la demo.
 
-- Dirigir el storyboard a un solo target.
+- Hacer uso de incentivos para motivar.
 
-- Falta una gráfica de corte para mostrar cuándo se empieza a ganar más de lo que se gasta.
-
-- Usar apoyo visual.
-
-- Demo mejorable audiovisualmente. Además de añadir distintas voces.
-
-- No se ha hablado expresamente de problemas/soluciones/estado.
+- Rendimiento evaluable con métricas ya mostradas.
 
 <br>
 
 ## **Sexto grupo (FISIO FIND):** 
 **Feedback alumnos**
 
-- Muy chulo el inicio efectivo.
+- Genial, todo muy profesional. 
 
-- Dani habla un poco bajo.
+- Perfectamente desplegable. 
 
-- La demo no se ve nada.
+- Han destacado que haya una persona grabando la presentación.
 
-- Los números en la dedicación individual no se ven bien.
+- Destacar la demo, muy bueno todo.
 
 **Feedback recibido (resumen de los comentarios de los profesores)**
 
-- Dani debería hablar con más fuerza.
+- El anuncio final está realmente bien. Además nos vemos muy profesionales.
 
-- Buen inicio efectivo destacando que NO existe en el mercado y por qué nos diferenciamos. Complementando al anuncio de la semana anterior.
+- Hay que diferenciar entre anuncio y demo. No hace falta conectarlas.
 
-- Han respondido al feedback del killer opener.
+- Con respecto al análisis de costes, el análisis en la gráfica es raro, porque las HU deben ser muy variables según lo que quieren los usuarios. Si quieren hacer una estimación de puntos de HU puede estar bien, pero es bastante complejo. Depende mucho del feedback. Pablo estaría dispuesto a dos finales: un final de características avanzadas (mucho esfuerzo), y otro final de mayor captación de usuarios piloto (Bajo esfuerzo).
 
-- Los competidores deben pasar más rápido.
+- Buen inicio efectivo y elevator pitch. No hace falta cambiarlos semana a semana, si funciona, funciona.
 
-- Revisar qué es una RfC (debe ser una petición que realiza un usuario para cambiar o añadir funcionalidad).
+- La demo está muy bien hecha. Además, proporcionar contexto también en el anuncio, para Cristina, está correcto.
 
-- Buen guiño a las píldoras teóricas.
+- Tenemos una funcionalidad más compleja que los demás, pero muy bien desarrollada y llevada.
 
-- Quizás se deberían usar otras gráficas que se dieron en otras asignaturas.
-
-- La gráfica sobre tareas realizadas debería ser de barras, en lugar de área.
-
-- La demo se veía muy pequeña, debería tener audio incluido (diferenciando por rol), los títulos de cada funcionalidad deberían ser estáticos y pequeños que se deberían mostrar más tiempo.
-
-- Muy bien el canal de denuncias.
-
-- ¿Como miden el rendimiento del equipo? Deberian poner cómo se hace. Además de mostrar una gráfica.
-
-- Detallar un poco más la gráfica de evaluación de la calidad.
-
-- Sistema de recompensas: hay que intentar buscar un sistema que no cueste dinero. Por ejemplo, que elija la tarea.
-
-- Añadir apartado de evolución de los problemas (problema -> métrica -> objetivo -> estado).
-
-- Algunas métricas son objetivos. 
-
-- Se ha mejorado estéticamente la presentación.
-
-- En costes, falta indicar qué porcentaje de fisios tienen qué plan.
+- En cuanto al bajo ratio de respuestas de los usuarios piloto, hemos dado muy poco margen para responder. Es más problema nuestro.
 
 **Puntos positivos destacados**
 
-- Buen inicio efectivo.
+- Presentación, demo y anuncio muy profesionales.
 
-- Bien el canal de denuncias.
+- Buenos killer opener y elevator pitch.
 
-- Mejora estética de la presentación.
+- Proporcionar contexto en el anuncio.
+
+- Hemos sabido gestionar bien la compleja funcionalidad.
 
 **Áreas de mejora sugeridas**
 
-- Los competidores deben pasar más rápido.
+- Reorganizar el análisis de coste respecto a los puntos de HUs.
 
-- Revisión de las RfC.
-
-- Hacer uso de otras gráficas.
-
-- Demo mejorable. Que sea más grande y se usen distintas voces para distintos roles.
-
-- Añadir más información sobre el rendimiento del equipo.
-
-- Buscar un sistema de recompensas que no cueste dinero.
-
-- Añadir apartado de evolución de los problemas.
-
-- En costes, indicar cuánto porcentaje de fisios tienen qué plan.
+- Dar más margen de respuesta a los usuarios piloto.
 
 <br>
 
@@ -1430,97 +947,88 @@ Tras el _feedback_ recibido en la sesión del 07/03/2025, se tomaron medidas par
 ## **TENDENCIAS GENERALES**
 **Factores comunes en los comentarios de los profesores**
 
-- Inicio efectivo: La mayoría de los grupos han logrado captar la atención del público al inicio, aunque en algunos casos fue demasiado largo o no se conectó con la demo.
+- Presentaciones iniciales potentes: La mayoría de los grupos ha hecho un esfuerzo por crear un killer opener llamativo. Sin embargo, se destaca la necesidad de que esté bien alineado con el contexto y el público. En algunos casos, se señala que el tono es demasiado dramático, informal o genérico.
 
-- Necesidad de apoyo cuantitativo: Muchos equipos hicieron afirmaciones sin sustentarlas con datos claros o gráficas comprensibles.
+- Storyboards de inversores incompletos: Casi todos los grupos han recibido comentarios sobre la falta de datos cuantitativos en los storyboards dirigidos a inversores (cuánto se invierte, cuánto se gana).
 
-- Gráficas mejorables: Hay errores frecuentes en el diseño o uso de gráficas, como colores mal elegidos, falta de contexto, o formatos poco intuitivos.
+- Problemas de visualización en las demos: Es un problema recurrente que las demos no se vean bien (letras pequeñas, poco zoom, demasiado rápidas o sin cortes). También se menciona la importancia de contextualizar lo que se va a ver antes de mostrarlo.
 
-- Demos poco visibles o poco audibles: Es una queja generalizada. En varios casos, no se ve bien la demo o no se escucha, o es mejorable la diferenciación de los roles.
+- Uso y evaluación de métricas: Hay cierta crítica generalizada al uso de métricas poco robustas como el número de commits. Se sugiere en su lugar usar herramientas como Zenhub para tener métricas más sólidas. También se valora cuando se mide la trazabilidad de los problemas y el rendimiento.
 
-- Evaluación del rendimiento del equipo poco detallada: Varios grupos no explican claramente cómo miden el rendimiento, o bien no lo representan visualmente.
+- Gestión del feedback de usuarios piloto: Se valora mucho cuando los equipos recogen bien el feedback de usuarios piloto y lo utilizan de forma activa para pivotar o mejorar. Al mismo tiempo, se señala como área de mejora la necesidad de sacar mayor provecho de esa información (más cantidad, más profundidad).
 
 **Puntos de fortaleza general en los equipos**
 
-- Buenos killer openers en general, creativos y capaces de captar la atención.
+- Buen uso del storytelling en los storyboards los dirigidos a usuarios.
 
-- Algunas presentaciones han mejorado estética y estructuralmente con respecto a semanas anteriores.
+- Esfuerzo por hacer presentaciones dinámicas, con demos entretenidas.
 
-- En varios grupos, el impacto legal o la gestión de privacidad (como el GDPR) se ha tratado con seriedad y claridad.
+- Uso de herramientas de trazabilidad y planificación, como Zenhub, gráficos de rendimiento, o métricas visuales.
 
 **Áreas de mejora recurrentes**
 
-- Demo técnica: Mejorar su visibilidad, calidad de audio y claridad del caso de uso.
+- Mejorar la visibilidad de las demos: añadir zoom, eliminar partes irrelevantes o acelerar con cortes.
 
-- Justificación de costes: Muchos grupos deben explicar mejor el origen de los datos económicos y cómo se proyectan.
+- Incluir más datos cuantitativos en el storyboard de inversores.
 
-- Más métricas y datos: Se necesita un mayor uso de datos cuantitativos, tanto en resultados como en la presentación de problemas y soluciones.
+- Evitar métricas engañosas o poco relevantes como commits para evaluar el rendimiento.
 
-- Evaluación del rendimiento del equipo: Hacer más visible y clara esta parte, con gráficos u otros sistemas que muestren progreso.
+- Aprovechar mejor el feedback de usuarios piloto: obtener más respuestas, analizarlas mejor, y aplicarlas al producto.
 
-- Uso de IA y métricas: Apartado generalmente débil, con poca profundidad y escasa presentación visual o analítica.
+- Agilizar la demo y adecuarla al público objetivo.
+
+- Revisar el análisis de costes.
+
 
 <br>
 
-## **COMPARACIÓN DEL FEEDBACK DE NUESTRO GRUPO VS LOS OTROS**
-
 **¿Qué estamos haciendo bien en comparación con otros?**
 
-- Inicio efectivo claro y diferenciador: Se destacó positivamente la introducción, por presentar de forma contundente que no hay una solución similar en el mercado, y complementar con el anuncio de la semana anterior.
+- Alta profesionalidad: Se ha destacado que tanto la presentación, como la demo y el anuncio final están a un nivel muy profesional, algo que no todos los grupos han logrado.
 
-- Canal de denuncias: Es un elemento muy valorado que no se ha mencionado en otros equipos.
+- Demo muy sólida: A diferencia de otros grupos, donde se critica la falta de zoom o el ritmo demasiado rápido, nuestra demo ha sido muy bien valorada.
 
-- Impacto legal bien trabajado: Al igual que algún otro grupo, se ha abordado con claridad la parte legal y cómo afecta al usuario, lo cual no es un estándar en todos los equipos.
+- Elevator pitch y killer opener sólidos: Se ha confirmado que funcionan bien, por lo que no es necesario reinventarlos cada semana.
 
-- Mejora estética de la presentación: Se ha notado una evolución positiva en la parte visual, lo que ha sido reconocido.
-
-- Respuesta al feedback anterior: Se ha trabajado conscientemente en incorporar sugerencias previas.
+- Gestión adecuada de la complejidad técnica: A pesar de tener una funcionalidad más compleja que otros grupos, la hemos sabido llevar muy bien, lo cual se ha valorado especialmente.
 
 **¿Qué aspectos debemos mejorar respecto a los demás?**
 
-- Demo: Aunque algunos grupos también han tenido problemas aquí, en nuestro caso la demo se ve muy pequeña y no incluye voces diferenciadas por rol. Otros grupos han logrado una demo más clara y comprensible.
+- Análisis de coste más riguroso: Se nos ha señalado que la gráfica de análisis de coste según HU es algo confusa. Otros grupos también tienen este problema, pero deberíamos ser de los que lo resuelven con más claridad.
 
-- Datos de rendimiento del equipo: Falta detallar mejor cómo se mide y presentar alguna gráfica que lo represente.
+- Feedback de usuarios piloto: Debemos trabajar en tener la aplicación funcionando mucho antes para ampliar las respuestas de ese feedback.
 
-- Presentación de problemas y evolución: Hay que incluir un apartado claro con problemas, métricas asociadas, objetivos y estado actual.
-
-- Gráficas: Aún podemos mejorar el tipo de gráficas usadas (como reemplazar áreas por barras cuando corresponde) y hacerlas más intuitivas, algo que también se ha señalado en muchos grupos.
-
-- Porcentaje de planes en los costes: Es un detalle importante no incluido aún y que aportaría claridad a la sostenibilidad del modelo.
+- Explorar vías de mejora en el storytelling hacia inversores: Al igual que todos, podemos reforzar nuestro storyboard de inversores incluyendo cifras claras de inversión y retorno.
 
 <br>
 
 ## Discusión para la siguiente clase.
 
-- La próxima semana la presentación deberá tener más o menos lo mismo.
-
-- Se aconseja tener un calendario compartido para las reuniones.
-
-- Se recomienda tener changelog.
-
-- Hay que hacer acuerdo de usuario piloto con los usuarios de la asignatura.
+- Simplemente se ha destacado lo bien que se han hecho las demos.
 
 #### PRÓXIMA SEMANA
 
 - Introducción:
 
-    - Killer oppener de 1 minuto.
+    - Killer opener de 1 minuto.
 
     - Elevator pitch de 30 segundos.
 
     - Presentar los competidores más al grano.
 
-    - Storyboard de otro target (inversor mejor no).
+    - Storyboards.
 
-    - Customer agreement, licencias, términos y condiciones del servicio, evitar clausulas abusivas, acuerdos de nivel de servicio, implicaciones otras apis, pricing, gdpr.
+    - Customer agreement, licencias, términos y condiciones del servicio, evitar cláusulas abusivas, acuerdos de nivel de servicio, implicaciones otras apis, pricing, gdpr.
 
     - TCO, CapEx OpEx, github, optimista, realista y pesimista. Mejorar con el feedback dado.
 
-    - Equipo igual: resumen, roles, commitment agreement status (ver si se esta cumpliendo).
+    - Equipo igual: resumen, roles, commitment agreement status (ver si se está cumpliendo).
 
 - Demo
 
     - Mejorar la calidad visual y auditiva, así como una buena diferenciación de roles: usar distintas voces si hay distintos usuarios.
+
+- Prototipo: decir si ha mejorado la usabilidad o interfaz (experiencia de usuario) y decir lo que estamos haciendo para tratar las regulaciones.
 
 - Retrospectiva 40%-50%
 
@@ -1536,33 +1044,512 @@ Tras el _feedback_ recibido en la sesión del 07/03/2025, se tomaron medidas par
 
     - Gestión del feedback, comunicación.
 
-- Replanificación:
+- Retrospectiva sprint 3:
 
-    - Sprint 3, aspectos de seguridad (validación de los formularios, correos). Ver si la validación de correos tiene repercusión en el OpEx.
+	- Análisis de código, rendimiento, problemas encontrados. Hay que decir cómo van las soluciones, hay que explicar para cada problema las acciones CONCRETAS (no mejorar las cosas, no reunirnos más, si puede ser reunirnos una vez más para reducir x) y después el cómo sabéis que está funcionando (poniendo medidas como el número diario de pull requests) hay que poner un objetivo (medir si la media de pull requests es tanto, ese sería el objetivo, dentro de x días, así sí se puede decir si están funcionando o no).
 
-- Uso IA:
+		- Los problemas se repiten, hay que tomarse en serio el cómo se mide.
 
-    - Decir que si se ha mejorado el uso de la IA desde el principio, lecciones aprendidas, alucionaciones. 
+	- Hacer plan de pruebas previo al WPL.
 
-    - Evitar cosas genéricas.
+- Reloj.
+
+- Acciones en un ranking que se va a hacer, categorizar el feedback y priorizarlo.
+
+- Replanificación con los apartados de seguridad.
+
+- Entrega PPL: publicidad, de cara al lanzamiento y refinamiento del MVP.
+
+- Uso de la IA:
+
+    - Decir que si se ha mejorado el uso de la IA desde el principio, lecciones aprendidas, alucinaciones. 
+
+    - Evitar generalizaciones.
+
+- Diapositiva final.
+
+NUEVO: anuncio en video, demo hincapié en regulaciones y usabilidad, plan de pruebas para el WPL, seguimiento cuantitativo de la evaluación de las soluciones a problemas, categorización del feedback, y lo dicho en la entrega para el PPL.
+
+# **CONCLUSIONES Y OBSERVACIONES**
+
+- El feedback global es muy positivo hacia nuestro grupo (Fisio Find), destacando la profesionalidad, la calidad de la demo, la organización y el cuidado en los detalles. Esto nos sitúa como uno de los equipos con mayor madurez en la presentación del proyecto.
+
+- A nivel general, se observan tendencias comunes en los comentarios de los profesores, como la necesidad de mejorar los storyboards para inversores, el uso adecuado de métricas de rendimiento, y la optimización de las demos (más zoom, cortes, menos aceleración).
+
+- Nuestro grupo ha acertado en muchas decisiones clave, como mantener un killer opener sólido, diferenciar claramente entre demo y anuncio, y gestionar con éxito una funcionalidad técnicamente compleja. Todo esto genera una imagen de equipo profesional y bien cohesionado.
+
+- Aunque la respuesta de los usuarios piloto ha sido baja, se reconoce que se debe a factores logísticos (poco margen de tiempo). Aun así, mejorar la recolección y explotación del feedback de usuarios será clave para próximos sprints.
+
+- El análisis de costes y las métricas de esfuerzo pueden reorganizarse y clarificarse, diferenciando claramente la autoevaluación del esfuerzo de las métricas objetivas de rendimiento. Esto evitará confusiones y dará mayor solidez al apartado de análisis del equipo.
+
+- Incluir datos cuantitativos en el storyboard de inversores (costes, beneficios, proyección de mercado) es un paso necesario para estar al nivel de exigencia que se ha planteado de forma transversal en todos los equipos.
+
+- Si bien el feedback sugiere que no hace falta cambiar elementos que funcionan bien (como el killer opener), debemos estar atentos a que el mensaje siga conectado con el progreso del proyecto y no pierda actualidad o coherencia con el avance técnico.
+
+<br>
+
+# 6.2. Feedback del día 21/03/2025 (semana 7)
+
+# **1. RESUMEN DEL FEEDBACK POR GRUPO**
+
+## **Primer grupo (Holos):**
+**Feedback alumnos**
+
+- Muy bien el cambio de horas.
+
+**Feedback recibido (resumen de los comentarios de los profesores)**
+
+- Los costes se pueden explicar mejor. No se ha puesto el % de clientes.
+
+- La demo al principio no se oye bien, y deberían hacer más zoom. También era complicada de seguir. Necesita fluir de una manera más natural.
+
+- Las métricas están puestas sin valor en el SLA.
+
+- No han empezado con el testing (el testing salva entregas).
+
+- El anuncio no ha convencido, la temática era complicada, no bien hilada. Hay que medir bien el humor.
+
+- La presentación va en buena dirección (visualmente).
+
+- En cuanto los problemas, han seguido el guión propuesto por los profesores, pero no han logrado indagar en aquellos puntos que deberían ser tratados con más detalle. 
+
+- Mejora continua, hay una mejora en cuanto a decir las soluciones y cosas así. Sin embargo, algunas medidas no son concretas.
+
+- No dar por asumido algunos conceptos impartidos en otras asignaturas.
+
+- Las presentaciones tienen que ser entendibles por alguien de fuera de la asignatura (por ejemplo, los costes).
+
+- Usuarios piloto, parece no aparecer el feedback específico que han causado acciones específicas, que es algo necesario de la mejora continua.
+
+**Puntos positivos destacados**
+
+- Buena presentación (visualmente).
+
+- Han mejorado en la manera de contar soluciones.
+
+**Áreas de mejora sugeridas**
+
+- Costes.
+
+- Empezar el testing.
+
+- Darle vuelta a los anuncios.
+
+- Presentaciones entendibles de fuera de la asignatura.
+
+- Más importancia a la mejora continua.
+
+<br>
+
+## **Segundo grupo (Gastrostock):** 
+**Feedback alumnos**:
+
+- El anuncio está chulo.
+
+**Feedback recibido (resumen de los comentarios de los profesores)**
+
+- ¿La app lleva control de cuánto tiempo llevan los productos? Sí.
+
+- Las gráficas de costes deberían estar en solo una diapositiva.
+
+- Anuncio muy bueno. Pero el caso que se ha dado quizás no es el más indicado al no ser el más realista.
+
+- Han puesto sprint 2 en algun sito que debería de estar sprint 3.
+
+- No se han cumplido las horas mínimas en el sprint.
+
+- Algunos clientes pilotos ya no están contestando.
+
+- La gráfica de rendimiento/esfuerzo es preocupante (para las personas que no se esfuercen).
+
+- Cuidado con las imágenes con copyright.
+
+- El volumen de mercado en los hitos parece faltar.
+
+- No se llega a transmitir la funcionalidad principal parece. Deberían priorizar esto (si la funcionalidad es hacer inventario, para eso puedes hacerte un excel, la funcionalidad podría ser que sea súper fácil en la app).
+
+**Puntos positivos destacados**
+
+- Muy buen anuncio.
+
+**Áreas de mejora sugeridas**
+
+- Agrupar los costes.
+
+- Buscar realismo en los anuncios.
+
+- Cumplir con las horas mínimas.
+
+- Cuidado con el copyright.
+
+- Transmitir correctamente la funcionalidad principal.
+
+<br>
+
+## **Tercer grupo (Eventbride):** 
+**Feedback alumnos**
+
+- El killer opener muy entretenido.
+
+**Feedback recibido (resumen de los comentarios de los profesores)**
+
+- Muy buen inicio efectivo.
+
+- Anuncio: música alta, voz baja, popurrí de cosas que se puede hacer largo. Empieza hablando sobre la app como si fuera para un usuario, después gastos demasiado internos (a un inversor quizás no le interesa), y vuelven hablar de la app. Hay que centrarse más en análisis de mercado, el nicho y cómo va a crecer en los próximos meses: invierte tanto, gana tanto en X meses.
+
+- Visualmente muy bueno el anuncio, pero hay que hacer más hincapié en el beneficio, quizás dando ejemplo. Se suele hacer respecto a % de acciones. El inversor en principio solo quiere saber cuánto tiene que meter y cuánto va a sacar (y el por qué va a ser bueno).
+
+- Muy buen SLA, pero ha tardado mucho en decirlo (a partir de la semana que viene puede omitirse).
+
+- Hay que poner datos realistas (a partir de un análisis) en el plan de costes y en el anuncio de inversores.
+
+- Demo, no se ve muy bien. Debería ser más rápido el formulario. El narrador tiene que explicar lo que hay en pantalla si no se ve bien.
+
+- Diapositiva de problemas ha ido demasiado rápido, no ha visto la evolución.
+
+- Alegra que estén orgullosos con el equipo.
+
+**Puntos positivos destacados**
+
+- Muy buen inicio efectivo.
+
+- Anuncio muy bueno visualmente.
+
+- Alegra que estén orgullosos con el equipo.
+
+- Muy buen SLA.
+
+**Áreas de mejora sugeridas**
+
+- El contenido del anuncio.
+
+- Datos realistas en costes e inversores.
+
+- Demo mejorable.
+
+<br>
+
+## **Cuarto grupo (BORROO):** 
+**Feedback alumnos**
+
+- Intencionalmente en blanco.
+
+**Feedback recibido (resumen de los comentarios de los profesores)**
+
+- Cuidado con el uso de muletillas.
+
+- Buen Killer Opener, pero mejorar la conexión con el elevator pitch.
+
+- Elevator Pitch algo más largo, deberían encontrar un mantra de Borroo.
+
+- El anuncio genial, muy profesional.
+
+- En los costes deberían poner el número de usuarios según el tipo de caso en el que estamos: pesimista, optimista y realista.
+
+- Falta recalcar en la demo la mejora en la experencia de usuario, ya que dicha mejora viene por el feedback dado de los usuarios piloto.
+
+- Bien hecho al usar Selenium.
+
+- En el feedback de los usuarios piloto han mezclado clasificaciones, como el tipo de feedback con la prioridad.
+
+**Puntos positivos destacados**
+
+- Buen inicio efectivo.
+
+- Anuncio genial.
+
+- Buen uso de Selenium.
+
+**Áreas de mejora sugeridas**
+
+- No usar muletillas.
+
+- Conectar killer opener con elevator pitch.
+
+- Elevator pitch algo más largo.
+
+- Recalcar en la demo la mejora en la experiencia de usuario.
+
+- No mezclar clasificaciones en el feedback de los usuarios piloto.
+
+- Poner número de usuarios en los costes.
+
+<br>
+
+## **Quinto grupo (CAMYO):** 
+**Feedback alumnos**:
+
+- Intencionalmente en blanco.
+
+**Feedback recibido (resumen de los comentarios de los profesores)**
+
+- Inicio muy bueno con como un anuncio.
+
+- Maria y Claudia presentan muy bien.
+
+- El número de empresas de transportistas no es una suposición y se debería poner como tal.
+
+- La demo parece que no es demo pero si lo es. Algo corta de funcionalidad.
+
+- En cuanto a la persona que no se esfuerza, esa persona debe mejorar.
+
+- En problemas, habría que hacer un poco más de hincapié.
+
+- Feedback usuarios piloto, no está puesto cuanto feedback reciben de cada tipo.
+
+- Cambio positivo a lo largo del tiempo.
+
+- Cambiar el uso de ciertos gráficos que no son claros indicadores de lo que se quiere expresar.
+
+- Respecto a la mejora continua, antes de la trazabilidad está el objetivo y el periodo (cuando quieren alcanzar el objetivo). No solo debería aplicarse a problemas sino también a mejoras.
+
+- En algunas diapositivas reducir al máximo el texto y más metáforas gráficas.
+
+- Métricas de calidad tienen que estar en perspectiva (venimos de aquí y vamos aquí y queremos ir hacia allá).
+
+
+**Puntos positivos destacados**
+
+- Inicio muy bueno.
+
+- Los presentadores presentan muy bien.
+
+**Áreas de mejora sugeridas**
+
+- No indicar datos aproximados como suposiciones.
+
+- La demo necesita mostrar más funcionalidad.
+
+- Más hincapié en los problemas.
+
+- Mejorar la trazabilidad.
+
+- Cambiar las gráficas que no expresen claramente lo que se dea transmitir.
+
+- Reducción de texto y más metáforas gráficas.
+
+- Métricas de calidad en perspectiva.
+
+<br>
+
+## **Sexto grupo (FISIO FIND):** 
+**Feedback alumnos**
+
+- Enhorabuena por el anuncio.
+
+**Feedback recibido (resumen de los comentarios de los profesores)**
+
+- Guadalupe y Antonio presentan de manera inmejorable. Mezclan comunicación y chascarrillos perfectamente.
+
+- Inicio efectivo no estridente pero muy buena forma de captar al público porque la gente puede empatizar. Empieza con tono muy bueno y muy claro. 
+
+- La forma de presentar el equipo es perfecta.
+
+- En el PPL hay muchas tareas de implementación, cuando en este caso hay que hacer tareas de marketing.
+
+- En la demo, muy bien las mejoras de UX, pero te puedes perder un poco por el cambio entre tipos de usuario, la mejor forma es poniendo un icono. Quizás un poco más lenta la mejoraría.
+
+- Demo muy profesional, en funcionalidad y apariencia (demasiadas horas en el grupo), pero resultado muy profesional.
+
+- No es realista que todos los usuarios tengan la misma foto de perfil.
+
+- De los costes, estimación de beneficios, la curva de costes solo hay punto de corte con la optimista, no hay con esperada y pesimista. Ayuda sobre todo en el esperado.
+
+- Customer agreement, en el SLA no hemos hablado demasiado, falta de priorización del feedback de usuarios piloto.
+
+- Si el feedback se ha priorizado hay que decirlo, aunque sea muy general.
+
+**Puntos positivos destacados**
+
+- Muy buenos presentadores.
+
+- Inicio efectivo muy bueno y claro.
+
+- Presentación del equipo perfecta.
+
+- Demo muy profesional.
+
+**Áreas de mejora sugeridas**
+
+- En el PPL debe haber tareas de marketing.
+
+- Usar iconos para distintos usuarios en la demo.
+
+- Todos los usuarios con la misma foto de perfil no queda realista.
+
+- Mejorar la curva de costes.
+
+- Priorizar el feedback de usuarios piloto.
+
+<br>
+
+
+# **ANÁLISIS DEL FEEDBACK**
+
+## **TENDENCIAS GENERALES**
+**Factores comunes en los comentarios de los profesores**
+
+- Muchas presentaciones tienen buenos inicios o killer openers, lo que indica que los grupos están mejorando en captar la atención desde el principio.
+
+- En varios casos, los anuncios están bien producidos visualmente, pero el contenido necesita mejor enfoque (realismo, claridad de mensaje).
+
+- La demo es un punto crítico en todos los grupos: suele haber problemas de ritmo, claridad o visibilidad.
+
+- Falta claridad en las métricas (costes, calidad, beneficios, etc.) y en cómo estas se comunican.
+
+- La mejora continua se menciona como un área donde se ha mejorado, pero aún falta trazabilidad clara y priorización del feedback.
+
+- Se detectan errores comunes como uso de suposiciones sin justificar, gráficos poco claros o confusión en los tipos de feedback de usuarios piloto.
+
+**Puntos de fortaleza general en los equipos**
+
+- Presentaciones visuales bien cuidadas.
+
+- Mejora progresiva en la estructura de los discursos.
+
+- Se nota esfuerzo en la parte de producción audiovisual (anuncios, intros).
+
+- Capacidad de trabajar en equipo y demostrar orgullo por el trabajo realizado.
+
+**Áreas de mejora recurrentes**
+
+- Justificación realista de costes y beneficios.
+
+- Priorización y trazabilidad del feedback de usuarios piloto.
+
+- Claridad y enfoque en los anuncios.
+
+- Mayor realismo en demos (escenarios, tiempos, datos, imágenes...).
+
+- Menor dependencia de suposiciones no sustentadas.
+
+- Evitar jergas internas o conceptos no explicados para audiencias externas.
+
+<br>
+
+## **COMPARACIÓN DEL FEEDBACK DE NUESTRO GRUPO VS LOS OTROS**
+
+**¿Qué estamos haciendo bien en comparación con otros?**
+
+- Presentadores muy sólidos: Guadalupe y Antonio destacan por una comunicación excelente, equilibrando profesionalidad con un toque cercano y entretenido.
+
+- Inicio efectivo muy bueno, que logra captar la atención del público sin ser estridente.
+
+- Presentación del equipo especialmente bien realizada, con claridad y simpatía.
+
+- Nuestra demo destaca como una de las más profesionales en términos de funcionalidad, fluidez y diseño visual.
+
+- El anuncio ha gustado tanto al público como al profesorado, lo cual no ha sido tan común en otros grupos.
+
+- A diferencia de otros grupos, no se nos han señalado problemas con el killer opener ni con la claridad general de la presentación.
+
+**¿Qué aspectos debemos mejorar respecto a los demás?**
+
+- PPL poco equilibrado: demasiadas tareas técnicas, falta incluir más acciones de marketing (otros grupos también tienen este error, pero debemos corregirlo).
+
+- La demo, aunque profesional, puede mejorar en usabilidad (por ejemplo, uso de iconos para diferenciar roles) y ritmo narrativo.
+
+- Realismo visual: todos los usuarios tenían la misma foto, lo cual rompe la ilusión de diversidad.
+
+- Curva de costes y beneficios: falta mostrar el punto de equilibrio para todos los escenarios (pesimista, esperado y optimista).
+
+- No se está priorizando explícitamente el feedback de usuarios piloto en el SLA ni en la mejora continua, o al menos no se comunica claramente.
+
+- Aunque estamos muy bien posicionados, debemos cuidar los detalles de fondo y el storytelling estratégico para diferenciarnos todavía más.
+
+<br>
+
+## Discusión para la siguiente clase.
+
+- Simplemente se ha destacado lo bien que se han hecho las demos.
+
+#### PRÓXIMA SEMANA
+
+- Introducción:
+
+    - Killer opener de 1 minuto.
+
+    - Elevator pitch de 30 segundos.
+
+    - Presentar los competidores más al grano.
+
+    - Anuncio de otro target. Puede haber dos anuncios.
+
+    - TCO, CapEx OpEx, github, optimista, realista y pesimista. Mejorar con el feedback dado.
+
+    - Equipo igual: resumen, roles, commitment agreement status (ver si se está cumpliendo). Hay que meter roles de gestion del marketing: community manager y generales
+
+- Demo
+
+    - Mejorar la calidad visual y auditiva, así como una buena diferenciación de roles: usar distintas voces si hay distintos usuarios.
+
+- Prototipo: decir si ha mejorado la usabilidad o interfaz (experiencia de usuario) y decir lo que estamos haciendo para tratar las regulaciones.
+
+- Retrospectiva 40%-50%
+
+    - Casi lo mismo.
+
+    - Añadir gráficas rendimiento/esfuerzo: Mucho esfuerzo poco rendimiento, poco esfuerzo mucho rendimiento, etc.
+
+    - Gráficas rendimiento personal, análisis software.
+
+    - En el apartado de Problemas igual pero decir, además del problema, el estado de este (si es de antes, solucionado, no solucionado, etc), las acciones concretas y ver alguna forma de evaluar esa solución. Analizar las soluciones. Añadir unas lecciones aprendidas del análisis.
+
+- Gestión de usuarios piloto: Nada nuevo parece.
+
+    - Gestión del feedback, comunicación.
+
+- Retrospectiva sprint 3:
+
+    - Análisis de código, rendimiento, problemas encontrados. Hay que decir cómo van las soluciones, hay que explicar para cada problema las acciones CONCRETAS (no mejorar las cosas, no reunirnos más, si puede ser reunirnos una vez más para reducir x) y después el cómo sabéis que está funcionando (poniendo medidas como el número diario de pull requests) hay que poner un objetivo (medir si la media de pull requests es tanto, ese sería el objetivo, dentro de x días, así sí se puede decir si están funcionando o no).
+
+        - Los problemas se repiten, hay que tomarse en serio el cómo se mide.
+
+    - Hacer plan de pruebas previo al WPL.
+
+- Reloj.
+
+- Acciones en un ranking que se va a hacer, categorizar el feedback y priorizarlo.
+
+- Replanificación con los apartados de seguridad.
+
+- Entrega PPL: publicidad, de cara al lanzamiento y refinamiento del MVP.
+
+- Tareas de marketing preliminares, gestión de la atracción inicial en el mercado.
+
+- Uso de la IA:
+
+    - Decir que si se ha mejorado el uso de la IA desde el principio, lecciones aprendidas, alucinaciones. 
+
+    - Evitar generalizaciones.
+
+- Diapositiva final.
+
+NUEVO: anuncio diferente, tareas de marketing, customer agreement puede no ponerse.
+
+preguntas alumos/respuesta:
+
+- Si se necesita contratar a alguien de asesoramiento también se pone en costes de marketing.
+
+- En anuncio de inversores, poner cuanto necesitaríamos. Hay que valorar cuanto cuesta nuestro sistema, ver aplicaciones parecidas, interés al tiempo, etc. Se puede preguntar a Jose María que parece que lo entiende.
+
+- Lo que hay que hacer es un plan de negocio, para ser rentable de tal manera se necesita tanto dinero. Lo que hay que hacer es plantear el escenario de los inversores, estudiando cual nos rentaría.
+
+- Lo que vale la app no es solo el capex, necesita una valoración: nosotros valoramos nuestra aplicación con lo que hemos invertido y nada más (sería poco), también hay que valorar el conocimiento adquirido mientras se desarrolla. Hay que decir las acciones que se van a tomar en ese plan de negocio, cómo llegar a esos objetivos, lo que hay que decir es cómo se va a conseguir el dinero: inversiones, préstamos, crédito a fondo perdido, etc. También hay que decir lo que conseguiría el inversor.
 
 
 # **CONCLUSIONES Y OBSERVACIONES**
 
-- Nuestra presentación ha sido valorada positivamente por su estética y por haber respondido al feedback previo, pero debemos seguir trabajando en la proyección de voz y en asegurar que todos los miembros del equipo se escuchen con claridad durante la exposición.
+- El feedback recibido sitúa a Fisio Find como uno de los grupos con mayor grado de madurez en la presentación del proyecto. Se valora especialmente la calidad profesional de la demo, la claridad en la exposición, y el dominio escénico de los presentadores, elementos que transmiten solidez y confianza en el producto.
 
-- El killer opener ha sido bien recibido por su originalidad y capacidad de diferenciación, destacando la ausencia de soluciones similares en el mercado. Aun así, se sugiere trabajar una mejor conexión entre esa introducción y la demo, para que el hilo narrativo sea más fluido.
+- A nivel general, los comentarios reflejan la necesidad común de reforzar aspectos como la claridad en las métricas (especialmente de costes y beneficios), la trazabilidad del feedback, y la coherencia en los anuncios (en cuanto a mensaje, realismo y foco en la funcionalidad principal). Esto refuerza la idea de que no solo importa la forma, sino también la profundidad del contenido.
 
-- Se ha valorado positivamente nuestro enfoque en el canal de denuncias y el impacto legal del proyecto, dos apartados que no han sido tan desarrollados por otros equipos. Debemos mantener esta línea e incluso reforzarla como un valor diferencial.
+- Nuestro equipo ha acertado en decisiones estratégicas como mantener un inicio empático y eficaz, cuidar el detalle visual de todos los elementos, y realizar una demo técnicamente elaborada. Además, hemos sabido separar correctamente la estructura narrativa entre pitch, demo y anuncio, lo que ha facilitado la comprensión.
 
-- La demo ha sido uno de los puntos más débiles. Es necesario aumentar su tamaño visual, mejorar el audio y añadir voces diferenciadas según los roles. Además, los títulos deben mostrarse de forma clara y constante para facilitar la comprensión del caso de uso.
+- Un punto a reforzar es la gestión del feedback de usuarios piloto: aunque se ha recogido y aplicado, no se ha priorizado ni mostrado con suficiente claridad. Esto es clave para evidenciar mejora continua de forma tangible y demostrar que el desarrollo responde a necesidades reales.
 
-- Aunque se reconocen nuestros esfuerzos por incluir métricas, se nos ha recomendado mejorar el tipo de gráficas utilizadas, optando por formatos más adecuados como barras en vez de áreas para representar tareas o rendimiento.
+- También debemos replantear el análisis de costes y beneficios, asegurándonos de incluir todos los escenarios (pesimista, esperado, optimista) con sus correspondientes puntos de equilibrio. Además, es importante que los datos transmitan realismo y coherencia con la estrategia de crecimiento.
 
-- El sistema de recompensas necesita ser replanteado. En lugar de implicar costes, podemos explorar alternativas motivadoras como permitir que el miembro destacado elija tareas o influya en decisiones del equipo.
+- La diferenciación visual de tipos de usuario en la demo, junto con un ritmo narrativo más pausado y explicativo, puede ayudar a que el mensaje se entienda mejor sin necesidad de detenerse a interpretar lo que se ve.
 
-- Nos falta mostrar con más claridad cómo se mide el rendimiento del equipo. Incluir una gráfica específica y explicar el proceso de evaluación ayudaría a demostrar mejor nuestra organización interna.
-
-- Es importante que incorporemos un apartado visual sobre la evolución de los problemas del proyecto, mostrando cómo estos se identifican, cómo se miden, qué objetivos se fijan y cuál es su estado actual. Esto no solo mejora la transparencia, sino también nuestra capacidad de reacción ante imprevistos.
-
-- En el apartado de costes, debemos especificar el porcentaje de fisioterapeutas que se espera que adopten cada tipo de plan, para dar mayor realismo y credibilidad al modelo de negocio.
+- Finalmente, aunque algunos elementos como el killer opener están muy bien ejecutados, es importante revisar su coherencia con el avance del proyecto para que no pierdan fuerza ni se desvinculen del mensaje global. La narrativa debe evolucionar al mismo ritmo que el producto.
