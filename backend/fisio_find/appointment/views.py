@@ -281,44 +281,37 @@ def edit_weekly_schedule(request):
 
         # Validar la estructura del weekly_schedule
         if not isinstance(data, dict) or 'weekly_schedule' not in data:
-            raise ValidationError(
-                "Debe enviar un objeto JSON con el campo 'weekly_schedule'.")
+            return Response({"error": "Debe enviar un objeto JSON con el campo 'weekly_schedule'."}, status=status.HTTP_400_BAD_REQUEST)
 
         weekly_schedule = data['weekly_schedule']
         if not isinstance(weekly_schedule, dict):
-            raise ValidationError("weekly_schedule debe ser un diccionario.")
+            return Response({"error": "weekly_schedule debe ser un diccionario."}, status=status.HTTP_400_BAD_REQUEST)
         valid_days = ['monday', 'tuesday', 'wednesday',
                       'thursday', 'friday', 'saturday', 'sunday']
         for day, schedules in weekly_schedule.items():
             if day.lower() not in valid_days:
-                raise ValidationError(
-                    f"{day} no es un día válido. Usa: {', '.join(valid_days)}.")
+                return Response({"error": f"{day} no es un día válido. Usa: {', '.join(valid_days)}."}, status=status.HTTP_400_BAD_REQUEST)
             if not isinstance(schedules, list):
-                raise ValidationError(
-                    f"Los horarios para {day} deben ser una lista.")
+                return Response({"error": f"Los horarios para {day} deben ser una lista."}, status=status.HTTP_400_BAD_REQUEST)
             for schedule in schedules:
                 if not isinstance(schedule, dict) or 'start' not in schedule or 'end' not in schedule:
-                    raise ValidationError(
-                        f"El horario {schedule} no es válido. Debe ser un objeto con 'start' y 'end'.")
+                    return Response({"error": f"El horario {schedule} no es válido. Debe ser un objeto con 'start' y 'end'."}, status=status.HTTP_400_BAD_REQUEST)
                 start, end = schedule['start'], schedule['end']
                 if not _is_valid_time(start) or not _is_valid_time(end):
-                    raise ValidationError(
-                        f"Los horarios {start} o {end} no son válidos. Usa formato 'HH:MM'.")
+                    return Response({"error": f"Los horarios {start} o {end} no son válidos. Usa formato 'HH:MM'."}, status=status.HTTP_400_BAD_REQUEST)
                 if not _is_valid_time_range(start, end):
-                    raise ValidationError(
-                        f"El rango {start}-{end} no es válido. La hora de inicio debe ser anterior a la de fin.")
+                    return Response({"error": f"El rango {start}-{end} no es válido. La hora de inicio debe ser anterior a la de fin."}, status=status.HTTP_400_BAD_REQUEST)
 
         # Actualizar solo el weekly_schedule en el schedule existente
         current_schedule['weekly_schedule'] = weekly_schedule
 
         # Validar la estructura de exceptions
         if not isinstance(data, dict) or 'exceptions' not in data:
-            raise ValidationError(
-                "Debe enviar un objeto JSON con el campo 'exceptions'.")
+            return Response({"error": "Debe enviar un objeto JSON con el campo 'exceptions'."}, status=status.HTTP_400_BAD_REQUEST)
 
         exceptions = data['exceptions']
         if not isinstance(exceptions, dict):
-            raise ValidationError("exceptions debe ser un diccionario.")
+            return Response({"error": "exceptions debe ser un diccionario."}, status=status.HTTP_400_BAD_REQUEST)
 
         weekday_map = {
             0: "monday",
@@ -334,27 +327,24 @@ def edit_weekly_schedule(request):
             try:
                 date_obj = datetime.strptime(date_str, "%Y-%m-%d")
             except ValueError:
-                raise ValidationError(f"La fecha {date_str} no tiene el formato válido YYYY-MM-DD.")
+                return Response({"error": f"La fecha {date_str} no tiene el formato válido YYYY-MM-DD."}, status=status.HTTP_400_BAD_REQUEST)
 
             if not isinstance(blocks, list):
-                raise ValidationError(f"Los bloques para la fecha {date_str} deben ser una lista.")
+                return Response({"error": f"Los bloques para la fecha {date_str} deben ser una lista."}, status=status.HTTP_400_BAD_REQUEST)
 
             weekday_name = weekday_map[date_obj.weekday()]
             weekday_blocks = weekly_schedule.get(weekday_name, [])
 
             for block in blocks:
                 if not isinstance(block, dict) or 'start' not in block or 'end' not in block:
-                    raise ValidationError(
-                        f"El bloque {block} en la fecha {date_str} no es válido. Debe ser un objeto con 'start' y 'end'.")
+                    return Response({"error": f"El bloque {block} en la fecha {date_str} no es válido. Debe ser un objeto con 'start' y 'end'."}, status=status.HTTP_400_BAD_REQUEST)
 
                 start, end = block['start'], block['end']
                 if not _is_valid_time(start) or not _is_valid_time(end):
-                    raise ValidationError(
-                        f"Los horarios {start} o {end} en la fecha {date_str} no son válidos. Usa formato 'HH:MM'.")
+                    return Response({"error": f"Los horarios {start} o {end} en la fecha {date_str} no son válidos. Usa formato 'HH:MM'."}, status=status.HTTP_400_BAD_REQUEST)
 
                 if not _is_valid_time_range(start, end):
-                    raise ValidationError(
-                        f"El rango {start}-{end} en la fecha {date_str} no es válido. La hora de inicio debe ser anterior a la de fin.")
+                    return Response({"error": f"El rango {start}-{end} en la fecha {date_str} no es válido. La hora de inicio debe ser anterior a la de fin."}, status=status.HTTP_400_BAD_REQUEST)
 
                 # Obtener la fecha actual sin hora
                 today = dt.date.today()
@@ -377,9 +367,7 @@ def edit_weekly_schedule(request):
                 )
 
                 if not matches_schedule:
-                    raise ValidationError(
-                        f"La excepción del {date_str} ({start}-{end}) no coincide con ningún horario habitual del día {weekday_name}."
-                    )
+                    return Response({"error": f"La excepción del {date_str} ({start}-{end}) no coincide con ningún horario habitual del día {weekday_name}."}, status=status.HTTP_400_BAD_REQUEST)
 
         # Actualizar solo las exceptions en el schedule existente
         current_schedule['exceptions'] = exceptions

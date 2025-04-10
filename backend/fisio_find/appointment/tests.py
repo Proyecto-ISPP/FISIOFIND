@@ -2511,7 +2511,7 @@ class PatchDeleteAppointmentTests(APITestCase):
 
         response = self.client.delete(f'/api/appointment/delete/{self.close_appointment.id}/', format='json')
         self.assertEqual(response.status_code, 403)
-        self.assertEqual(response.data['error'], 'No puedes borrar una cita con menos de 48 horas de antelación')
+        self.assertEqual(response.data['error'], 'No puedes borrar una cita con menos de 48 horas de antelación o que ya ha pasado')
 
 
 class GetPhysioScheduleByIdTests(APITestCase):
@@ -2683,13 +2683,7 @@ class EditWeeklyScheduleTests(APITestCase):
         payload = {
             "schedule": {
                 "weekly_schedule": {
-                    "monday": [{"start": "09:00", "end": "13:00"}],
-                    "tuesday": [],
-                    "wednesday": [],
-                    "thursday": [],
-                    "friday": [],
-                    "saturday": [],
-                    "sunday": []
+                    (now_spain + timedelta(days=2)).strftime("%A").lower(): [{"start": "09:00", "end": "13:00"}],
                 },
                 "exceptions": {
                     (now_spain + timedelta(days=2)).strftime("%Y-%m-%d"): [
@@ -2699,7 +2693,6 @@ class EditWeeklyScheduleTests(APITestCase):
             }
         }
         response = self.client.put(self.url, payload, format="json")
-        print(response.data)
         physiotherapist = Physiotherapist.objects.get(id=self.physio.id)
         physio_schedule = physiotherapist.schedule
         self.assertEqual(response.status_code, 200)
@@ -2732,7 +2725,6 @@ class EditWeeklyScheduleTests(APITestCase):
             }
         }
         response = self.client.put(self.url, payload, format="json")
-        print(response.data)
         self.assertEqual(response.status_code, 401)
         self.assertEqual(response.data["detail"], "Las credenciales de autenticación no se proveyeron.")
 
@@ -2953,7 +2945,6 @@ class EditWeeklyScheduleTests(APITestCase):
             }
         }
         response = self.client.put(self.url, payload, format="json")
-        print(response.data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data["error"], "El bloque {'start_time': '09:30', 'end_time': '10:30'} en la fecha 2025-04-10 no es válido. Debe ser un objeto con 'start' y 'end'.")
 
@@ -3025,6 +3016,5 @@ class EditWeeklyScheduleTests(APITestCase):
             }
         }
         response = self.client.put(self.url, payload, format="json")
-        print(response.data)
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data["error"], "La excepción del 2025-04-06 (08:00-08:30) no coincide con ningún horario habitual del día sunday.")
+        self.assertEqual(response.data["error"], f"La excepción del {(now_spain + timedelta(days=1)).strftime("%Y-%m-%d")} (08:00-08:30) no coincide con ningún horario habitual del día {(now_spain + timedelta(days=1)).strftime("%A").lower()}.")
