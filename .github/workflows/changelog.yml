@@ -3,7 +3,7 @@ name: Generate Changelog and Tag
 on:
   push:
     branches:
-      - main
+      - feat/test-main
       - fix/changelog.yml
 jobs:
   generate-changelog:
@@ -14,10 +14,9 @@ jobs:
         with:
           fetch-depth: 0  
 
-      - name: Get latest tag
+      - name: Get latest tag and calculate new version
         id: get-latest-tag
         run: |
-          # Obtener la última tag semántica válida
           latest_tag=$(git tag --sort=-v:refname | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1)
           echo "Última tag encontrada: $latest_tag"
 
@@ -25,23 +24,33 @@ jobs:
             major=0
             minor=0
             patch=0
-            log_range="HEAD"
           else
             IFS='.' read -r major minor patch <<< "$latest_tag"
-            log_range="$latest_tag..HEAD"
           fi
 
-          feature_count=$(git log --grep="^feat:" --oneline $log_range | wc -l)
-          total_commits=$(git log --oneline $log_range | wc -l)
+          log_range="${latest_tag}..HEAD"
+          source_branch="${GITHUB_REF#refs/heads/}"
 
-          # Aplicar lógica de versión:
-          if (( feature_count > 0 )); then
-            minor=$((minor + 1))
+          echo "🔍 Rama actual: $source_branch"
+
+          if [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
+            major=$((major + 1))
+            minor=0
             patch=0
-          elif (( total_commits > 0 )); then
-            patch=$((patch + 1))
+            echo "📦 Se incrementará la versión MAJOR"
+          elif [[ "$GITHUB_REF" == "refs/heads/develop" ]]; then
+            pr_branch=$(git log -1 --pretty=format:'%s' | grep -oE '(feat|fix|style)/[^ ]+' || echo "")
+
+            if [[ "$pr_branch" == feat/* ]]; then
+              minor=$((minor + 1))
+              patch=0
+              echo "🚀 Se incrementará la versión MINOR por feature"
+            else
+              patch=$((patch + 1))
+              echo "🛠️ Se incrementará la versión PATCH por fix/style/otros"
+            fi
           else
-            echo "No hay cambios desde la última versión. Saliendo."
+            echo "⚠️ Rama no considerada para versionado. Saliendo."
             exit 0
           fi
 
@@ -49,6 +58,7 @@ jobs:
           echo "NEW_TAG=$new_tag" >> $GITHUB_ENV
           echo "latest_tag=$latest_tag" >> $GITHUB_ENV
           echo "🔖 Nueva tag a crear: $new_tag"
+
 
       - name: Check if tag exists and create new tag
         run: |
