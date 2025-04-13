@@ -42,20 +42,19 @@ jobs:
             patch=0
             echo "📦 Se incrementará la versión MAJOR"
           elif [[ "$source_branch" == "develop" || "$source_branch" == "fix/changelog.yml" ]]; then
-            pr_branch=$(git log -1 --pretty=format:'%s' | grep -oE '(feat|fix|style)/[^ ]+' || echo "")
+            log_range="${latest_tag}..HEAD"
 
-            if [[ "$pr_branch" == feat/* ]]; then
+            feature_count=$(git log --grep="^feat:" --oneline $log_range | wc -l)
+
+            if (( feature_count > 0 )); then
               minor=$((minor + 1))
               patch=0
-              echo "🚀 Se incrementará la versión MINOR por feature"
+              echo "🚀 Se incrementará la versión MINOR por commits feat:"
             else
               patch=$((patch + 1))
-              echo "🛠️ Se incrementará la versión PATCH por fix/style/otros"
+              echo "🛠️ Se incrementará la versión PATCH por otros cambios"
             fi
-          else
-            echo "⚠️ Rama no considerada para versionado. Saliendo."
-            exit 0
-          fi
+
 
 
           new_tag="${major}.${minor}.${patch}"
