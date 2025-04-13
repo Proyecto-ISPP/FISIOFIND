@@ -33,12 +33,15 @@ jobs:
 
           echo "🔍 Rama actual: $source_branch"
 
-          if [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
+          source_branch="${GITHUB_REF#refs/heads/}"
+
+          # Simulación de ramas para pruebas
+          if [[ "$source_branch" == "main" || "$source_branch" == "feat/test-main" ]]; then
             major=$((major + 1))
             minor=0
             patch=0
             echo "📦 Se incrementará la versión MAJOR"
-          elif [[ "$GITHUB_REF" == "refs/heads/develop" ]]; then
+          elif [[ "$source_branch" == "develop" || "$source_branch" == "fix/changelog.yml" ]]; then
             pr_branch=$(git log -1 --pretty=format:'%s' | grep -oE '(feat|fix|style)/[^ ]+' || echo "")
 
             if [[ "$pr_branch" == feat/* ]]; then
@@ -53,6 +56,7 @@ jobs:
             echo "⚠️ Rama no considerada para versionado. Saliendo."
             exit 0
           fi
+
 
           new_tag="${major}.${minor}.${patch}"
           echo "NEW_TAG=$new_tag" >> $GITHUB_ENV
