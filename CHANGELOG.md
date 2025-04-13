@@ -1,10 +1,11 @@
-## 🚀 Changelog - 
+## 🚀 Changelog - 3.0.1
 
 ### ✨ Features (3)
 - feat: prueba (@Julen Redondo)
 - feat: copyright (@guaridpin)
 - feat: prueba (@Julen Redondo)
-### 🐛 Fixes (17)
+### 🐛 Fixes (18)
+- fix: prueba con ramas nuevas (@Julen Redondo)
 - fix: intento de arreglo (@Julen Redondo)
 - fix: prueba nueva (@Julen Redondo)
 - fix: prueba de nuevo (@Julen Redondo)
@@ -22,7 +23,8 @@
 - fix: pequeño cambio para comprobar el chagelog (@guaridpin)
 - fix: intento arreglo changelog (@Julen Redondo)
 - fix: versionado cambiado (@Julen Redondo)
-### 📖 Documentation (23)
+### 📖 Documentation (24)
+- docs: actualizacion CHANGELOG para (@github-actions[bot])
 - docs: actualizacion CHANGELOG para 2.92.0 (@github-actions[bot])
 - docs: actualizacion CHANGELOG para 2.91.0 (@github-actions[bot])
 - docs: actualizacion CHANGELOG para 2.90.2 (@github-actions[bot])
