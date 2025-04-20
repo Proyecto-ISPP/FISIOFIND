@@ -299,19 +299,18 @@ def has_availability_any_day(weekly_schedule, req_start_min, req_end_min):
     """Verifica si hay disponibilidad en cualquier día que se solape con el rango solicitado."""
     for day_schedule in weekly_schedule.values():
         for slot in day_schedule:
-            if isinstance(slot, list) and slot:  # Verifica que slot sea una lista no vacía
-                slot = slot[0]  # Toma el primer elemento de la lista
+            if isinstance(slot, dict):
                 start_str = slot.get('start', '00:00')
                 end_str = slot.get('end', '00:00')
 
-                # Si start y end están vacíos, asumir todo el día (00:00 - 23:59)
                 if not start_str and not end_str:
-                    slot_start_min = time_to_minutes('00:00')  # 0 minutos
-                    slot_end_min = time_to_minutes('23:59')    # 1439 minutos
+                    slot_start_min = time_to_minutes('00:00')
+                    slot_end_min = time_to_minutes('23:59')
                 else:
                     slot_start_min = time_to_minutes(start_str)
                     slot_end_min = time_to_minutes(end_str)
 
+                # Comprobamos si hay intersección con la franja solicitada
                 if slot_start_min <= req_end_min and slot_end_min >= req_start_min:
                     return True
     return False
