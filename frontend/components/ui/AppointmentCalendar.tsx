@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import FullCalendar, { DatesSetArg } from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -157,27 +157,32 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
   const [backgroundEvents, setBackgroundEvents] = useState<any[]>([]);
   const { dispatch } = useAppointment();
   const { id } = useParams();
-  const [schedule, setSchedule] = useState<any>(null); // Datos del schedule desde la API
+  const [schedule, setSchedule] = useState<any>(null);
   const [alertConfig, setAlertConfig] = useState<{
     show: boolean;
     type: "success" | "error" | "info" | "warning";
     message: string;
   } | null>(null);
+
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
+  const [clickedDate, setClickedDate] = useState<string>("");
+  const [hoveredDate, setHoveredDate] = useState<string | null>(null);
+  // Add calendar ref to force rerenders
+  const calendarRef = useRef<any>(null);
+
   const showAlert = (type: "success" | "error" | "info" | "warning", message: string) => {
     setAlertConfig({ show: true, type, message });
   };
 
-  // Traer el schedule desde la API usando la id del fisioterapeuta
   useEffect(() => {
     const fetchSchedule = async () => {
       try {
         const response = await axios.get(
           `${getApiBaseUrl()}/api/appointment/schedule/${id}/`
         );
-        if (response.status === 200) {
-          if (response.data.schedule) {
-            setSchedule(response.data.schedule);
-          }
+        if (response.status === 200 && response.data.schedule) {
+          setSchedule(response.data.schedule);
         }
       } catch (error) {
         console.error("Error fetching schedule:", error);
@@ -186,46 +191,48 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
     fetchSchedule();
   }, [id]);
 
-  // Estado para el slot seleccionado y la fecha clicada
-  const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
-  const [clickedDate, setClickedDate] = useState<string>("");
+  // Update background events whenever selection changes
+  useEffect(() => {
+    if (schedule && calendarRef.current) {
+      updateBackgroundEvents();
+    }
+  }, [selectedDate, selectedSlot, hoveredDate, clickedDate, schedule]);
 
-  // Add new state for hover
-  const [hoveredDate, setHoveredDate] = useState<string | null>(null);
-
-  // Add mouse event handlers
   const handleDateHover = (info: any) => {
-    const dateStr = info.dateStr;
-    setHoveredDate(dateStr);
+    setHoveredDate(info.dateStr);
   };
 
   const handleDateLeave = () => {
     setHoveredDate(null);
   };
 
-  // Modify getDayColor to include hover state
-  const getDayColor = (count: number, isSelected: boolean, isHovered: boolean) => {
-    if (isSelected || isHovered) {
-      return "#05AC9C33"; // Semi-transparent version of your theme color for both hover and selected
-    }
-    if (count === 0) return "#333333"; // Gris oscuro si no hay disponibilidad
+  const getDayColor = (count: number, isSelected: boolean, isHovered: boolean, hasSelectedSlot: boolean) => {
+    if (hasSelectedSlot) return "#41B8D5";
+    if (isSelected || isHovered) return "#05AC9C33";
+    if (count === 0) return "#333333";
     if (count === 1) return "#b6d9b0";
     if (count === 2) return "#8fcf8c";
     if (count === 3) return "#66c266";
     if (count === 4) return "#4CAF60";
-    if (count >= 5) return "#0B6B31"; // Verde bosque
+    if (count >= 5) return "#0B6B31";
     return "#333333";
   };
 
-  // Al hacer click en una fecha del calendario
+  const formatDate = (dateStr: string) => {
+    const options: Intl.DateTimeFormatOptions = { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    };
+    return new Date(dateStr).toLocaleDateString('es-ES', options);
+  };
+
   const handleDateClick = (arg: any) => {
     const dateStr = arg.dateStr;
     const today = new Date();
-
-    // Set time to start of day for accurate comparison
     today.setHours(0, 0, 0, 0);
 
-    // Calculate the day after tomorrow
     const dayAfterTomorrow = new Date(today);
     dayAfterTomorrow.setDate(today.getDate() + 3);
     dayAfterTomorrow.setHours(0, 0, 0, 0);
@@ -233,15 +240,13 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
     const selectedDate = new Date(dateStr);
     selectedDate.setHours(0, 0, 0, 0);
 
-    setSelectedDate(dateStr);
-    setClickedDate(dateStr);
-
-    // Check if selected date is before day after tomorrow
     if (selectedDate < dayAfterTomorrow) {
       setSlots([]);
       showAlert("warning", "Solo se pueden reservar citas con al menos 3 días de antelación.");
       return;
     }
+
+    setClickedDate(dateStr);
 
     if (schedule) {
       const available = getAvailableSlots(
@@ -251,15 +256,33 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
         schedule
       );
       setSlots(available);
+      setShowModal(true);
     }
   };
 
-  // Al seleccionar un slot, se envía la información al contexto de la cita
   const handleSlotClick = (slot: string) => {
-    if (!selectedDate) return;
-    setSelectedSlot(slot);
+    if (!clickedDate) return;
     
-    const startDate = new Date(`${selectedDate}T${slot}`);
+    // Clear selection if clicking the same slot
+    if (selectedSlot === slot && clickedDate === selectedDate) {
+      setSelectedSlot(null);
+      setSelectedDate("");
+      setClickedDate("");
+      
+      // Clear the appointment selection in the global state
+      dispatch({
+        type: "SELECT_SLOT",
+        payload: { start_time: "", end_time: "", is_online: false },
+      });
+      
+      setShowModal(false);
+      return;
+    }
+    
+    setSelectedSlot(slot);
+    setSelectedDate(clickedDate);
+
+    const startDate = new Date(`${clickedDate}T${slot}`);
     const endDate = new Date(startDate.getTime() + serviceDuration * 60000);
 
     const startISO = toLocalISOStringWithOffset(startDate);
@@ -273,43 +296,129 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
         is_online: true,
       },
     });
+
+    setShowModal(false);
   };
 
-  // Actualiza los eventos de fondo en el calendario (colores según disponibilidad)
-  const handleDatesSet = (arg: DatesSetArg) => {
+  // New function to update background events
+  const updateBackgroundEvents = () => {
+    if (!calendarRef.current || !schedule) return;
+    
+    const calendarApi = calendarRef.current.getApi();
+    const viewStart = calendarApi.view.activeStart;
+    const viewEnd = calendarApi.view.activeEnd;
+    
     const events = [];
     const today = new Date();
-    const currentDate = new Date(arg.start);
-    while (currentDate < arg.end) {
+    const currentDate = new Date(viewStart);
+    
+    while (currentDate < viewEnd) {
       const dateStr = currentDate.toISOString().split("T")[0];
-      if (schedule) {
-        const available = getAvailableSlots(
-          dateStr,
-          serviceDuration,
-          slotInterval,
-          schedule
-        );
-        const count = available.length;
-        const isPast = currentDate < today;
-        const isSelectedDay = dateStr === clickedDate;
-        const isHoveredDay = dateStr === hoveredDate;
-        const bgColor = isPast ? "#666666" : getDayColor(count, isSelectedDay, isHoveredDay);
-        events.push({
-          id: dateStr,
-          start: dateStr,
-          allDay: true,
-          display: "background",
-          backgroundColor: bgColor,
-        });
-      }
+      const available = getAvailableSlots(
+        dateStr,
+        serviceDuration,
+        slotInterval,
+        schedule
+      );
+      
+      const count = available.length;
+      const isPast = currentDate < today;
+      const isSelectedDay = dateStr === clickedDate;
+      const isHoveredDay = dateStr === hoveredDate;
+      const hasSelectedSlot = dateStr === selectedDate && selectedSlot !== null;
+      
+      const bgColor = isPast 
+        ? "#666666" 
+        : getDayColor(count, isSelectedDay, isHoveredDay, hasSelectedSlot);
+      
+      events.push({
+        id: dateStr,
+        start: dateStr,
+        allDay: true,
+        display: "background",
+        backgroundColor: bgColor,
+      });
+      
       currentDate.setDate(currentDate.getDate() + 1);
     }
+    
     setBackgroundEvents(events);
+  };
+
+  const handleDatesSet = (arg: DatesSetArg) => {
+    // Initial load of background events when the calendar view changes
+    if (schedule) {
+      updateBackgroundEvents();
+    }
+  };
+
+  const SlotsModal = () => {
+    if (!showModal) return null;
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-2xl shadow-lg p-6 w-full max-w-md">
+        <div className="flex justify-between items-center mb-4">
+        <h3 className="text-xl font-semibold text-gray-800">
+          Horarios disponibles
+        </h3>
+        <button 
+          onClick={() => {
+            setShowModal(false);
+            setClickedDate("");
+          }}
+          className="text-gray-500 transition-all duration-500 transform hover:text-red-500 focus:outline-none rounded-full hover:scale-105"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+        </div>
+        
+        <p className="text-sm text-gray-500 mb-4">
+        Selecciona un horario para {formatDate(clickedDate)}
+        </p>
+        
+        {slots.length > 0 ? (
+        <div className="grid grid-cols-3 gap-3">
+          {slots.map((slot, index) => (
+          <button
+            key={index}
+            onClick={() => handleSlotClick(slot)}
+            className={`px-3 py-2 rounded-full border text-center transition-all duration-200 transform ${
+            selectedSlot === slot && clickedDate === selectedDate
+              ? "bg-[#05AC9C] text-white border-[#05AC9C] scale-105 shadow-md"
+              : "bg-white text-black border-gray-300 hover:bg-[#05AC9C] hover:text-white hover:border-[#05AC9C] hover:scale-105"
+            }`}
+          >
+            {slot}
+          </button>
+          ))}
+        </div>
+        ) : (
+        <p className="text-center py-4 text-gray-600">No hay horarios disponibles</p>
+        )}
+        
+        <div className="flex justify-end mt-6">
+        <button
+          onClick={() => {
+            setShowModal(false);
+            setClickedDate("");
+          }}
+          className="px-4 py-2 bg-gray-200 text-gray-800 rounded-full hover:bg-gray-300 transition-all duration-200 transform hover:scale-105 shadow-md"
+        >
+          Cerrar
+        </button>
+        </div>
+      </div>
+      </div>
+    );
   };
 
   return (
     <div>
       <FullCalendar
+        ref={calendarRef}
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
         dateClick={handleDateClick}
@@ -323,31 +432,15 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
           info.el.addEventListener('mouseleave', handleDateLeave);
         }}
       />
-      {selectedDate && (
-        <div className="mt-4">
-          <h4 className="text-lg font-semibold">
-            Horarios disponibles para {selectedDate}:
-          </h4>
-          {slots.length > 0 ? (
-            <div className="grid grid-cols-4 gap-2 mt-2">
-              {slots.map((slot, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleSlotClick(slot)}
-                  className={`px-3 py-1 rounded border text-center transition-colors ${selectedSlot === slot
-                    ? "bg-[#05AC9C] text-white border-[#05AC9C]"
-                    : "bg-white text-black border-gray-300 hover:bg-gray-100"
-                    }`}
-                >
-                  {slot}
-                </button>
-              ))}
-            </div>
-          ) : (
-            <p className="mt-2">No hay horarios disponibles</p>
-          )}
+      
+      {selectedDate && selectedSlot && (
+        <div className="mt-4 p-4 bg-blue-100 text-blue-800 rounded-lg">
+          Fecha y hora seleccionadas: {formatDate(selectedDate)} a las {selectedSlot}
         </div>
       )}
+      
+      <SlotsModal />
+      
       {alertConfig && (
         <Alert
           type={alertConfig.type}
