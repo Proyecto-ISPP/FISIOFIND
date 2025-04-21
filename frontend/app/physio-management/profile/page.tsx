@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Camera, Plus, Trash2, Edit, Save, StarIcon, Film, Bell, BicepsFlexed, Lock } from 'lucide-react';
+import { Camera, Plus, Trash2, Edit, Save, StarIcon, Film, Bell, BicepsFlexed, Lock, X } from 'lucide-react';
 import ScheduleCalendar from "@/components/ui/ScheduleCalendar";
 import { getApiBaseUrl } from "@/utils/api";
 import { GradientButton } from "@/components/ui/gradient-button";
@@ -1168,201 +1168,252 @@ const FisioProfile = () => {
 
     return (
       <div className="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
-        <div className="modal-content">
-          <div className="modal-header flex justify-between items-center">
-            <h2>{editingService ? "Editar servicio" : "Añadir servicio"}</h2>
-            <button
-              className="schedule-modal-close text-white bg-white rounded-full"
-              onClick={onClose}
-              aria-label="Cerrar"
-            >
-              &times;
-            </button>
+        <div className="modal-content bg-white rounded-2xl shadow-xl w-full max-w-3xl mx-4 overflow-hidden">
+          {/* Header */}
+          <div className="modal-header bg-gradient-to-r from-teal-500 to-blue-600 px-8 py-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-white">
+                {editingService ? "Editar servicio" : "Añadir servicio"}
+              </h2>
+              <button
+                className="text-white hover:text-gray-200 transition-colors"
+                onClick={onClose}
+                aria-label="Cerrar"
+              >
+                <X size={24} />
+              </button>
+            </div>
           </div>
 
-          <label>Tipo de servicio:</label>
-          <select
-            value={tipo}
-            onChange={(e) => setTipo(e.target.value as string)}
-          >
-            <option value="PRIMERA_CONSULTA">Primera consulta</option>
-            <option value="CONTINUAR_TRATAMIENTO">Continuar tratamiento</option>
-            <option value="OTRO">Otro</option>
-          </select>
+          {/* Content */}
+          <div className="p-8 space-y-6">
+            {/* Service Type */}
+            <div className="space-y-2">
+              <label className="text-gray-700 font-medium block">Tipo de servicio:</label>
+              <select
+                value={tipo}
+                onChange={(e) => setTipo(e.target.value as string)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+              >
+                <option value="PRIMERA_CONSULTA">Primera consulta</option>
+                <option value="CONTINUAR_TRATAMIENTO">Continuar tratamiento</option>
+                <option value="OTRO">Otro</option>
+              </select>
+            </div>
 
-          <label>
-            Título: <span className="required">*</span>
-          </label>
-          <input
-            type="text"
-            value={titulo}
-            onChange={(e) => setTitulo(e.target.value)}
-            disabled={tipo !== "OTRO"}
-            className={!titulo.trim() ? "error-input" : ""}
-          />
-
-          <label>Descripción:</label>
-          <textarea
-            value={descripcion}
-            onChange={(e) => setDescripcion(e.target.value)}
-            placeholder="Describe brevemente en qué consiste este servicio"
-          />
-
-          <label>
-            Precio por consulta: <span className="required">*</span>
-          </label>
-          <input
-            type="text"
-            value={precio}
-            onChange={(e) => setPrecio(e.target.value)}
-            placeholder="€"
-            className={!precio.trim() ? "error-input" : ""}
-          />
-
-          <label>
-            Duración (minutos): <span className="required">*</span>
-          </label>
-          <input
-            type="number"
-            value={duracion}
-            onChange={(e) => {
-              // Get the current value as a number
-              const currentValue = parseInt(e.target.value) || 0;
-
-              // Round to the nearest multiple of 5
-              const roundedValue = Math.max(
-                5,
-                Math.round(currentValue / 5) * 5
-              );
-
-              // Update the state with the rounded value
-              setDuracion(roundedValue.toString());
-            }}
-            onBlur={(e) => {
-              // Ensure the value is at least 5 when the input loses focus
-              const currentValue = parseInt(e.target.value) || 0;
-              if (currentValue < 5) {
-                setDuracion("5");
-              }
-            }}
-            min="0"
-            step="5"
-            placeholder="60"
-            className={
-              !duracion || parseInt(duracion) <= 0 ? "error-input" : ""
-            }
-          />
-
-          <div className="questionnaire-toggle">
-            <label>
-              Incluir cuestionario pre-intervención
+            {/* Title */}
+            <div className="space-y-2">
+              <label className="text-gray-700 font-medium block">
+                Título <span className="text-red-500">*</span>
+              </label>
               <input
-                type="checkbox"
-                checked={showQuestionnaireSection}
-                onChange={() =>
-                  setShowQuestionnaireSection(!showQuestionnaireSection)
-                }
+                type="text"
+                value={titulo}
+                onChange={(e) => setTitulo(e.target.value)}
+                disabled={tipo !== "OTRO"}
+                className={`w-full px-4 py-3 border rounded-xl transition-all ${
+                  !titulo.trim() 
+                    ? "border-red-300 focus:ring-red-500" 
+                    : "border-gray-300 focus:ring-teal-500"
+                } focus:border-transparent focus:ring-2`}
               />
-              <span></span>
-            </label>
-            <p className="toggle-description">
-              Agrega un formulario personalizado que el paciente rellenará antes
-              de su cita
-            </p>
-          </div>
+            </div>
 
-          {showQuestionnaireSection && (
-            <div className="questionnaire-section">
-              <p className="note">
-                Las siguientes preguntas ya están incluidas por defecto:
-              </p>
+            {/* Description */}
+            <div className="space-y-2">
+              <label className="text-gray-700 font-medium block">Descripción:</label>
+              <textarea
+                value={descripcion}
+                onChange={(e) => setDescripcion(e.target.value)}
+                placeholder="Describe brevemente en qué consiste este servicio"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all min-h-[120px]"
+              />
+            </div>
 
-              <ul className="questions-list">
-                {questionary && questionary.elements ? (
-                  questionary.elements.map((element, index) => (
-                    <li
-                      key={index}
-                      className={index < 5 ? "default-question" : ""}
-                    >
-                      {element.label}
-                      <span className="question-type-badge">
-                        {element.type === "Number" ? "Numérico" : "Texto"}
-                      </span>
-                      {index >= 5 && (
-                        <GradientButton
-                          variant="danger"
-                          className="remove-question"
-                          onClick={() => removeQuestion(index)}
-                        >
-                          ×
-                        </GradientButton>
-                      )}
-                    </li>
-                  ))
-                ) : (
-                  <li>No hay preguntas definidas en este cuestionario.</li>
-                )}
-              </ul>
-
-              <div className="add-question">
-                <label>Añadir nueva pregunta:</label>
-                <div className="question-input-group">
-                  <div className="question-type-select">
-                    <select
-                      value={questionType}
-                      onChange={(e) => setQuestionType(e.target.value)}
-                      className="question-type-dropdown"
-                    >
-                      <option value="Control">Texto</option>
-                      <option value="Number">Numérico</option>
-                    </select>
-                  </div>
-                  <div className="question-input">
-                    <input
-                      type="text"
-                      value={newQuestion}
-                      onChange={(e) => {
-                        if (e.target.value.length <= 100) {
-                          setNewQuestion(e.target.value);
-                        }
-                      }}
-                      placeholder="Ej. ¿Tiene alguna lesión previa?"
-                    />
-                    {newQuestion.length > 100 && (
-                      <p className="text-red-500 text-sm">
-                        Máximo 100 caracteres permitidos.
-                      </p>
-                    )}
-                    <GradientButton
-                      variant="create"
-                      onClick={addQuestion}
-                      disabled={!newQuestion.trim()}
-                      className="add-question-button"
-                    >
-                      Añadir
-                    </GradientButton>
-                  </div>
+            {/* Price and Duration Row */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-gray-700 font-medium block">
+                  Precio por consulta <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={precio}
+                    onChange={(e) => setPrecio(e.target.value)}
+                    className={`w-full pl-8 pr-4 py-3 border rounded-xl transition-all ${
+                      !precio.trim() 
+                        ? "border-red-300 focus:ring-red-500" 
+                        : "border-gray-300 focus:ring-teal-500"
+                    } focus:border-transparent focus:ring-2`}
+                  />
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">€</span>
                 </div>
-                <p className="type-hint">
-                  {questionType === "Control"
-                    ? "El campo de texto permite cualquier respuesta textual."
-                    : "El campo numérico solo permitirá introducir números."}
-                </p>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-gray-700 font-medium block">
+                  Duración (minutos) <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="number"
+                  value={duracion}
+                  onChange={(e) => {
+                    const currentValue = parseInt(e.target.value) || 0;
+                    const roundedValue = Math.max(5, Math.round(currentValue / 5) * 5);
+                    setDuracion(roundedValue.toString());
+                  }}
+                  min="5"
+                  step="5"
+                  className={`w-full px-4 py-3 border rounded-xl transition-all ${
+                    !duracion || parseInt(duracion) <= 0
+                      ? "border-red-300 focus:ring-red-500"
+                      : "border-gray-300 focus:ring-teal-500"
+                  } focus:border-transparent focus:ring-2`}
+                />
               </div>
             </div>
+
+            {/* Questionnaire Toggle */}
+            <div className="bg-gray-50 rounded-xl p-6 space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-medium text-gray-900">Cuestionario pre-intervención</h3>
+                  <p className="text-sm text-gray-500">
+                    Agrega un formulario personalizado que el paciente rellenará antes de su cita
+                  </p>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={showQuestionnaireSection}
+                    onChange={() => setShowQuestionnaireSection(!showQuestionnaireSection)}
+                    className="sr-only peer"
+                  />
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-600"></div>
+                </label>
+              </div>
+            </div>
+          </div>
+        
+          {showQuestionnaireSection && (
+  <div className="border-t border-gray-200 p-6">
+    {/* Default Questions Section */}
+    <div className="mb-8">
+      <div className="bg-gray-50 p-6 rounded-xl">
+        <h3 className="text-lg font-medium text-gray-900 mb-4">
+          Las siguientes preguntas ya están incluidas por defecto:
+        </h3>
+        <div className="space-y-3">
+          {questionary.elements.slice(0, 5).map((element, index) => (
+            <div
+              key={index}
+              className="flex items-center justify-between bg-white p-4 rounded-lg border border-gray-100 shadow-sm"
+            >
+              <span className="text-gray-700 font-medium">{element.label}</span>
+              <span className={`px-3 py-1 text-sm rounded-full ${
+                element.type === "Number" 
+                  ? "bg-blue-50 text-blue-700" 
+                  : "bg-teal-50 text-teal-700"
+              }`}>
+                {element.type === "Number" ? "Numérico" : "Texto"}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    {/* Custom Questions Section */}
+    <div className="space-y-4">
+      {questionary.elements.slice(5).length > 0 && (
+        <div className="mb-6">
+          <h3 className="text-lg font-medium text-gray-900 mb-4">Preguntas personalizadas</h3>
+          <div className="space-y-3">
+            {questionary.elements.slice(5).map((element, index) => (
+              <div
+                key={index + 5}
+                className="flex items-center justify-between bg-white p-4 rounded-lg border border-gray-200 group hover:border-gray-300 transition-colors shadow-sm"
+              >
+                <span className="text-gray-700">{element.label}</span>
+                <div className="flex items-center gap-3">
+                  <span className={`px-3 py-1 text-sm rounded-full ${
+                    element.type === "Number" 
+                      ? "bg-blue-50 text-blue-700" 
+                      : "bg-teal-50 text-teal-700"
+                  }`}>
+                    {element.type === "Number" ? "Numérico" : "Texto"}
+                  </span>
+                  <button
+                    onClick={() => removeQuestion(index + 5)}
+                    className="text-red-500 opacity-0 group-hover:opacity-100 transition-opacity hover:text-red-700"
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Add New Question Section */}
+      <div className="bg-white border border-gray-200 rounded-xl p-6">
+        <h4 className="text-base font-medium text-gray-900 mb-4">Añadir nueva pregunta:</h4>
+        <div className="flex gap-4">
+          <select
+            value={questionType}
+            onChange={(e) => setQuestionType(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent w-40"
+          >
+            <option value="Control">Texto</option>
+            <option value="Number">Numérico</option>
+          </select>
+          <div className="flex-1 relative">
+            <input
+              type="text"
+              value={newQuestion}
+              onChange={(e) => {
+                if (e.target.value.length <= 100) {
+                  setNewQuestion(e.target.value);
+                }
+              }}
+              placeholder="Ej. ¿Tiene alguna lesión previa?"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent pr-16"
+            />
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">
+              {newQuestion.length}/100
+            </span>
+          </div>
+          <GradientButton
+            variant="create"
+            onClick={addQuestion}
+            disabled={!newQuestion.trim()}
+            className="px-6 py-2 whitespace-nowrap"
+          >
+            Añadir
+          </GradientButton>
+        </div>
+        <p className="mt-3 text-sm text-gray-500">
+          El campo de texto permite cualquier respuesta textual.
+        </p>
+      </div>
+    </div>
+  </div>
           )}
 
           <div className="modal-buttons">
-            <GradientButton variant="edit" onClick={handleSave}>
-              Guardar
-            </GradientButton>
+            
             <GradientButton variant="grey" onClick={onClose}>
               Cancelar
             </GradientButton>
+            <GradientButton variant="edit" onClick={handleSave}>
+              Guardar
+            </GradientButton>
           </div>
         </div>
-      </div>
-    );
+      </div>   
+    ); // End of ServiceModal component
   };
 
   const saveScheduleToAPI = async () => {
@@ -2053,7 +2104,7 @@ const FisioProfile = () => {
                                 {service.duracion} min
                               </span>
                               <span className="text-sm font-medium text-gray-900">
-                                {service.precio}€
+                                {service.precio}
                               </span>
                             </div>
                           </div>
