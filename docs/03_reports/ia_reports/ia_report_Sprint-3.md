@@ -66,7 +66,7 @@ classoption: "table"
 
 ## Prompts Utilizados
 
-A continuación se presentan los distintos prompts evaluados junto con sus respectivas puntuaciones, cantidad de prompts y porcentaje de alucinaciones. Los datos se dividen entre la primera y segunda.
+A continuación se presentan los distintos prompts evaluados junto con sus respectivas puntuaciones, cantidad de prompts y porcentaje de alucinaciones. Los datos se dividen entre la primera y segunda semana.
 
 ### Primera semana
 
