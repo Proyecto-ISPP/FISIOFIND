@@ -13,6 +13,7 @@ import ConfirmModal from "@/components/ui/ConfirmModal";
 import UpdatePasswordModal from "@/components/user-update-password-modal";
 import PhysioterapistRating from "@/components/ui/PhysioterapistRating";
 import SubscriptionSlider from "@/components/ui/SubscriptionSlider";
+import { useRouter } from "next/navigation";
 
 
 const getAuthToken = () => {
@@ -124,6 +125,7 @@ const FisioProfile = () => {
     type: "info",
     message: "",
   });
+  const router = useRouter();
 
   // Función helper para mostrar alertas
   const showAlert = (
@@ -1481,7 +1483,7 @@ const FisioProfile = () => {
           <GradientButton
               variant="edit"
               className="px-6 py-2 font-medium rounded-xl flex items-center gap-2 mx-auto"
-              onClick={() => window.location.href = "/physio-management/balance"}
+              onClick={() => router.push("/physio-management/balance")}	
             >
               Consultar Saldo
             </GradientButton>

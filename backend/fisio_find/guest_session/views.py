@@ -175,7 +175,7 @@ def advanced_search(request):
     time_ranges = {
         'mañana': (time_to_minutes('06:00'), time_to_minutes('14:00')),
         'tarde': (time_to_minutes('14:00'), time_to_minutes('20:00')),
-        'noche': (time_to_minutes('20:00'), time_to_minutes('23:59'))
+        'noche': (time_to_minutes('20:00'), time_to_minutes('23:00'))
     }
 
     if schedule and schedule in time_ranges:

@@ -1,7 +1,7 @@
 "use client";
 
 import { getApiBaseUrl } from "@/utils/api";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function ConfirmAlternativePage() {
@@ -9,7 +9,7 @@ export default function ConfirmAlternativePage() {
   const [message, setMessage] = useState("Validando tu selección...");
   const [startTime, setStartTime] = useState<string | null>(null);
   const [endTime, setEndTime] = useState<string | null>(null);
-
+  const router = useRouter();
 
   useEffect(() => {
     // Extraemos los parámetros start_time y end_time de la URL
@@ -44,7 +44,7 @@ const confirmAppointment = async () => {
         "Debes iniciar sesión para confirmar tu cita. Por favor, inicia sesión y vuelve a acceder al enlace de confirmación que recibiste en tu correo."
       );
       setTimeout(() => {
-        window.location.href = "/login";
+        router.push("/login");
       }, 4000);
       return;
     } else if (!response.ok) {
@@ -54,7 +54,7 @@ const confirmAppointment = async () => {
       const data = await response.json();
       setMessage(data.message);
       setTimeout(() => {
-        window.location.href = "/my-appointments";
+        router.push("/my-appointments");
       }, 2000);
     }
   } catch (error) {

@@ -51,7 +51,7 @@ const Pacientes = () => {
       
       if (!storedToken) {
         console.log("No token found, redirecting to login");
-        window.location.href = "/login";
+        router.push("/login");
         return;
       }
 
@@ -67,16 +67,16 @@ const Pacientes = () => {
           setIsAuthenticated(true);
         } else {
           console.log("User is not a patient, redirecting to not-found");
-          window.location.href = "/not-found";
+          router.push("/not-found");
         }
       } catch (error) {
         if (error.response?.status === 401) {
           // Token expired or invalid
           localStorage.removeItem("token");
-          window.location.href = "/login";
+          router.push("/login");
         } else {
           // Other errors, redirect to not-found
-          window.location.href = "/not-found";
+          router.push("/not-found");
         }
       } finally {
         setIsAuthChecking(false);

@@ -27,6 +27,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
 import { getApiBaseUrl } from '@/utils/api';
 
+import { useRouter } from 'next/navigation';
+
 const Room = ({ roomCode }) => {
   const [userRole, setUserRole] = useState(null);
   const [token, setToken] = useState(null);
@@ -78,6 +80,7 @@ const Room = ({ roomCode }) => {
     sendWebSocketMessage: webSocket.sendWebSocketMessage,
     addChatMessage: chat.addChatMessage,
   });
+  const router = useRouter();
 
   // Cargar token y rol desde backend
   useEffect(() => {
@@ -124,7 +127,7 @@ useEffect(() => {
     } catch (error) {
       console.log(" Acceso denegado por backend:", error.response?.data || error.message);
       alert("No tienes permiso para acceder a esta sala.");
-      window.location.href = '/videocalls';
+      router.push('/videocalls');
       return;
     }
 
@@ -275,7 +278,7 @@ useEffect(() => {
             🔒 Necesitas iniciar sesión para acceder a las videollamadas.
           </p>
           <button
-            onClick={() => (window.location.href = '/login')}
+            onClick={() => (router.push('/login'))}
             className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
           >
             Iniciar Sesión
@@ -299,7 +302,7 @@ useEffect(() => {
         userRole={userRole}
         onConfirm={roomManagement.confirmDeleteRoom}
         onCancel={roomManagement.cancelDelete}
-        onClose={() => (window.location.href = '/videocalls/')}
+        onClose={() => (router.push('/videocalls'))}
       />
 
       <VideoGrid
