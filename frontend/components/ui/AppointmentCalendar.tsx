@@ -246,21 +246,16 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
   // Modify getDayColor to include hover state
   const getDayColor = (count: number, isSelected: boolean, isHovered: boolean, date: Date) => {
     if (isWithinFirstThreeDays(date)) {
-      return "#666666"; // Gris para días bloqueados
+      return "#666666"; // Gray for blocked days
     }
     if (isSelected) {
-      return "#05668D"; // Stronger blue color for selected date
+      return "#05668D";
     }
     if (isHovered) {
-      return "#05AC9C33"; // Keep the same hover color
+      return "#05AC9C33";
     }
     if (count === 0) return "#666666";
-    if (count === 1) return "#4CAF60";
-    if (count === 2) return "#4CAF60";
-    if (count === 3) return "#4CAF60";
-    if (count === 4) return "#4CAF60";
-    if (count >= 5) return "#4CAF60";
-    return "#666666";
+    return "#4CAF60"; // Simplified color logic for available slots
   };
 
   // Al hacer click en una fecha del calendario
@@ -323,31 +318,34 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
 
   // Actualiza los eventos de fondo en el calendario (colores según disponibilidad)
   const handleDatesSet = (arg: DatesSetArg) => {
+    if (!schedule) return; // Don't proceed if schedule isn't loaded yet
+    
     const events = [];
     const today = new Date();
     const currentDate = new Date(arg.start);
     while (currentDate < arg.end) {
       const dateStr = currentDate.toISOString().split("T")[0];
-      if (schedule) {
-        const available = getAvailableSlots(
-          dateStr,
-          serviceDuration,
-          slotInterval,
-          schedule
-        );
-        const count = available.length;
-        const isPast = currentDate < today;
-        const isSelectedDay = dateStr === clickedDate;
-        const isHoveredDay = dateStr === hoveredDate;
-        const bgColor = isPast ? "#666666" : getDayColor(count, isSelectedDay, isHoveredDay);
-        events.push({
-          id: dateStr,
-          start: dateStr,
-          allDay: true,
-          display: "background",
-          backgroundColor: bgColor,
-        });
-      }
+      const available = getAvailableSlots(
+        dateStr,
+        serviceDuration,
+        slotInterval,
+        schedule
+      );
+      const count = available.length;
+      const isPast = currentDate < today;
+      const isSelectedDay = dateStr === clickedDate;
+      const isHoveredDay = dateStr === hoveredDate;
+      const bgColor = isPast 
+        ? "#666666" 
+        : getDayColor(count, isSelectedDay, isHoveredDay, new Date(dateStr));
+      
+      events.push({
+        id: dateStr,
+        start: dateStr,
+        allDay: true,
+        display: "background",
+        backgroundColor: bgColor,
+      });
       currentDate.setDate(currentDate.getDate() + 1);
     }
     setBackgroundEvents(events);
@@ -368,8 +366,8 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
           info.el.addEventListener('mouseenter', () => handleDateHover(info));
           info.el.addEventListener('mouseleave', handleDateLeave);
         }}
-        lazyFetching={false} // Asegura que los eventos se carguen inmediatamente
-        firstDay={1} // Semana empieza en lunes
+        lazyFetching={false}
+        firstDay={1}
       />
       {selectedDate && (
         <div className="mt-4">
