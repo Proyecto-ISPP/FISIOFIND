@@ -29,6 +29,9 @@ interface AppointmentModalProps {
   setEditionMode: (mode: boolean) => void;
   isClient: boolean;
   token: string | null;
+  // Añadir la función showAlert como prop
+  showAlert: (type: "success" | "error" | "info" | "warning", message: string) => void;
+  fetchAppointments: () => void; // Función para recargar las citas
 }
 
 const AppointmentModal: React.FC<AppointmentModalProps> = ({
@@ -38,7 +41,10 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
   setEditionMode,
   isClient,
   token,
+  showAlert,
+  fetchAppointments,
 }) => {
+  
   const [isClosing, setIsClosing] = useState(false);
   const [modalMaxHeight, setModalMaxHeight] = useState("85vh"); // Estado para la altura máxima
   const modalContentRef = useRef<HTMLDivElement>(null); // Referencia para medir el contenido
@@ -175,7 +181,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
 
       if (!response.ok) {
         const errorData = await response.json();
-        alert(`Error: ${errorData.error || "No se pudo descargar la factura"}`);
+        showAlert("error", `Error: ${errorData.error || "No se pudo descargar la factura"}`);
         return;
       }
 
@@ -190,7 +196,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
       document.body.removeChild(a);
     } catch (error) {
       console.error("Error al descargar la factura:", error);
-      alert("Error al descargar la factura.");
+      showAlert("error", "Error al descargar la factura.");
     }
   };
 
@@ -230,31 +236,11 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
   };
 
   if (!selectedEvent) return null;
+
   const deleteEvent = (selectedEvent: CalendarProps | null) => {
     if (!selectedEvent) return;
     if (isClient) {
       if (token) {
-        // let url = ""
-        // if (currentRole === "patient") {
-        //   url = `${getApiBaseUrl()}/api/payments/${selectedEvent.id}/cancel/`;
-        // } else if (currentRole === "physiotherapist") {
-        //   url = `${getApiBaseUrl()}/api/payments/${selectedEvent.id}/cancel-physio/`;
-        // }
-        // axios
-        //   .post(
-        //     url,
-        //     {},
-        //     {
-        //       headers: {
-        //         Authorization: "Bearer " + token,
-        //       },
-        //     }
-
-        //   ).then((response) =>
-        //     {
-        // const status = response.status;
-        // console.log(status);
-
         axios
           .delete(
             `${getApiBaseUrl()}/api/appointment/delete/${selectedEvent.id}/`,
@@ -266,26 +252,18 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
           )
           .then((response) => {
             const status = response.status;
-            if (status == 204) {
-              alert("La cita fue cancelada correctamente.");
+            if (status == 200) {
+              showAlert("success", "Cita cancelada exitosamente.");
               setSelectedEvent(null);
-              window.location.reload();
+              fetchAppointments();
             }
           })
           .catch((error) => {
             if (error.response) {
               const msg = error.response.data.error;
-              alert(msg);
+              showAlert("error", msg);
             }
           });
-
-        // })
-        // .catch((error) => {
-        //   if (error.response) {
-        //     const msg = error.response.data.error;
-        //     alert(msg);
-        //   }
-        // });
       }
     }
   };
@@ -313,20 +291,20 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
         }
       )
       .then((response) => {
-        alert("La cita se actualizó correctamente.");
+        showAlert("success", "La cita se actualizó correctamente.");
         console.log("Cita actualizada correctamente", response);
         setSelectedEvent(null);
-        window.location.reload();
+        fetchAppointments();
       })
       .catch((error) => {
         console.error("Error en la actualización de la cita:", error);
-        alert("Hubo un problema con la conexión. Intenta nuevamente.");
+        showAlert("error", "Hubo un problema con la conexión. Intenta nuevamente.");
       });
   };
 
   const confirmAppointment = () => {
     if (!selectedEvent || !token) return;
-
+  
     axios
       .put(
         `${getApiBaseUrl()}/api/appointment/update/${
@@ -343,14 +321,14 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
       )
       .then((response) => {
         const message = response.data.message;
-        alert(message);
+        showAlert("success", message);
         setSelectedEvent(null);
-        window.location.reload();
+        fetchAppointments();
       })
       .catch((error) => {
         if (error.response) {
           const msg = error.response.data.error;
-          alert(msg);
+          showAlert("error", msg);
         }
       });
   };

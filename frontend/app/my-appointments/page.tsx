@@ -6,6 +6,7 @@ import Calendar from "@/components/ui/calendar";
 import { getApiBaseUrl } from "@/utils/api";
 import { CalendarProps } from "@/lib/definitions";
 import { AppointmentModal } from "@/components/ui/appointment-modal";
+import Alert from "@/components/ui/Alert";
 
 interface APIResponse {
   message: string;
@@ -24,6 +25,17 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   // State to track which status category is expanded
   const [expandedStatus, setExpandedStatus] = useState<string | null>(null);
+  // Add alert state
+  const [alertConfig, setAlertConfig] = useState<{
+    show: boolean;
+    type: "success" | "error" | "info" | "warning";
+    message: string;
+  } | null>(null);
+
+  // Add function to show alerts
+  const showAlert = (type: "success" | "error" | "info" | "warning", message: string) => {
+    setAlertConfig({ show: true, type, message });
+  };
 
   useEffect(() => {
     setIsClient(true);
@@ -94,7 +106,7 @@ export default function Home() {
         setEvents(transformedEvents);
       } catch (error) {
         console.error("Error fetching data:", error);
-        setData({ message: "Error al cargar las citas", status: "error" });
+        showAlert("error", "Error al cargar las citas. Por favor, intenta nuevamente más tarde.");
       } finally {
         setIsLoading(false);
       }
@@ -124,14 +136,14 @@ export default function Home() {
         }
       )
       .then((response) => {
-        alert("La cita se actualizó correctamente.");
+        showAlert("success", "La cita se actualizó correctamente.");
         setEditionMode(false);
         setSelectedEvent(null);
         fetchAppointments();
       })
       .catch((error) => {
         console.error("Error en la actualización de la cita:", error);
-        alert("Hubo un problema con la conexión. Intenta nuevamente.");
+        showAlert("error", "Hubo un problema con la conexión. Intenta nuevamente.");
       });
   };
 
@@ -180,7 +192,7 @@ export default function Home() {
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
-        setData({ message: "Error al cargar las citas", status: "error" });
+        showAlert("error", "Error al cargar las citas. Por favor, intenta nuevamente más tarde.");
       });
   };
 
@@ -583,15 +595,18 @@ export default function Home() {
             setEditionMode={setEditionMode}
             isClient={isClient}
             token={token}
+            showAlert={showAlert}
+            fetchAppointments={fetchAppointments}
           />
         )}
       </div>
 
-      {data && (
-        <div className="mt-4 text-center p-4 bg-red-50 text-red-700 rounded-lg">
-          <p className="text-lg font-semibold">{data.message}</p>
-          <p>Por favor, intenta nuevamente más tarde.</p>
-        </div>
+      {alertConfig && alertConfig.show && (
+        <Alert
+          type={alertConfig.type}
+          message={alertConfig.message}
+          onClose={() => setAlertConfig(null)}
+        />
       )}
     </>
   );
