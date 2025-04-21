@@ -1,11 +1,12 @@
-## 🚀 Changelog - 5.0.0
+## 🚀 Changelog - 6.0.0
 
 ### ✨ Features (0)
 
 ### 🐛 Fixes (0)
 
-### 📖 Documentation (1)
-- docs: primera versión de análisis de costes de marketing y SEO (@guaridpin)
-### 🌀 Other Changes (0)
+### 📖 Documentation (0)
 
+### 🌀 Other Changes (2)
+- Merge branch 'main' of github.com:Proyecto-ISPP/FISIOFIND (@guaridpin)
+- doc: modificado análisis de costes de marketing (@guaridpin)
 ### 🔗 Pull Requests
