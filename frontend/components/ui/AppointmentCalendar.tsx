@@ -173,6 +173,15 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
     setAlertConfig({ show: true, type, message });
   };
 
+  const formatDate = (dateStr: string): string => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('es-ES', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  };
+
 
   // Traer el schedule desde la API usando la id del fisioterapeuta
   // Modificar el useEffect existente para incluir la generación inicial de eventos
@@ -372,7 +381,7 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
       {selectedDate && (
         <div className="mt-4">
           <h4 className="text-lg font-semibold">
-            Horarios disponibles para {selectedDate}:
+            Horarios disponibles para {formatDate(selectedDate)}:
           </h4>
           {slots.length > 0 ? (
             <div className="grid grid-cols-4 gap-2 mt-2">
