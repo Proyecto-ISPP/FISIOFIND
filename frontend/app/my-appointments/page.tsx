@@ -6,6 +6,7 @@ import Calendar from "@/components/ui/calendar";
 import { getApiBaseUrl } from "@/utils/api";
 import { CalendarProps } from "@/lib/definitions";
 import { AppointmentModal } from "@/components/ui/appointment-modal";
+import RestrictedAccess from "@/components/RestrictedAccess";
 
 interface APIResponse {
   message: string;
@@ -201,8 +202,14 @@ export default function Home() {
     setExpandedStatus(expandedStatus === status ? null : status);
   };
 
+  if (!token || !userRole) {
+    return (
+      <RestrictedAccess message="Necesitas iniciar sesión para acceder tus citas" />
+    );
+  }
+
   return (
-    <>
+    <RestrictedAccess>
       <div className="container mx-auto px-4 py-8">
         <br />
         <br />
@@ -593,6 +600,6 @@ export default function Home() {
           <p>Por favor, intenta nuevamente más tarde.</p>
         </div>
       )}
-    </>
+    </RestrictedAccess>
   );
 }

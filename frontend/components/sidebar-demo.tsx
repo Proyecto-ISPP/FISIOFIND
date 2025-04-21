@@ -121,7 +121,7 @@ export function SidebarDemo() {
     },
     {
       label: "Mis citas",
-      href: isAuthenticated ? "/my-appointments" : "/register",
+      href: "/my-appointments",
       icon: (
         <IconCalendar className="text-[#0A7487] h-5 w-5 flex-shrink-0 mx-auto" />
       ),
@@ -142,15 +142,7 @@ export function SidebarDemo() {
         <IconPhone className="text-[#1E5ACD] h-5 w-5 flex-shrink-0 mx-auto" />
       ),
     },
-/*     ...(userRole === "physiotherapist" ? [
-      {
-        label: "Cuestionarios",
-        href: "/questionnaires",
-        icon: (
-          <FontAwesomeIcon icon={faEdit} className="text-[#8C4482] h-5 w-5 flex-shrink-0 mx-auto" />
-        ),
-      }
-    ] : []), */
+
   ];
 
   const privateLinks = [
