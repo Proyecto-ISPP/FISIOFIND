@@ -1226,8 +1226,28 @@ const FisioProfile = () => {
           <input
             type="number"
             value={duracion}
-            onChange={(e) => setDuracion(e.target.value)}
-            min="1"
+            onChange={(e) => {
+              // Get the current value as a number
+              const currentValue = parseInt(e.target.value) || 0;
+
+              // Round to the nearest multiple of 5
+              const roundedValue = Math.max(
+                5,
+                Math.round(currentValue / 5) * 5
+              );
+
+              // Update the state with the rounded value
+              setDuracion(roundedValue.toString());
+            }}
+            onBlur={(e) => {
+              // Ensure the value is at least 5 when the input loses focus
+              const currentValue = parseInt(e.target.value) || 0;
+              if (currentValue < 5) {
+                setDuracion("5");
+              }
+            }}
+            min="0"
+            step="5"
             placeholder="60"
             className={
               !duracion || parseInt(duracion) <= 0 ? "error-input" : ""
