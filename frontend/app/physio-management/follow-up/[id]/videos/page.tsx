@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, ChangeEvent, FormEvent, useRef } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { getApiBaseUrl } from "@/utils/api";
 import axios from "axios";
 import { UploadCloud, Edit2, Trash } from "lucide-react";
@@ -21,6 +21,8 @@ const PhysioVideo = () => {
   const [editTitle, setEditTitle] = useState<string>("");  // Título del video a editar
   const [editDescription, setEditDescription] = useState<string>("");  // Descripción del video a editar
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const router = useRouter();
+  const [editModalOpen, setEditModalOpen] = useState(false);
 
   const [alert, setAlert] = useState<{
     show: boolean;
@@ -168,6 +170,7 @@ const PhysioVideo = () => {
     setEditingVideo(video.id);
     setEditTitle(video.title);
     setEditDescription(video.description);
+    setEditModalOpen(true);
   };
 
   const handleUpdate = async (event) => {
@@ -326,7 +329,20 @@ const PhysioVideo = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-5" style={{ background: "rgb(238, 251, 250)" }}>
+    <div className="min-h-screen w-full" style={{ backgroundColor: "rgb(238, 251, 250)" }}>
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex justify-between items-center mb-6">
+            <button
+              onClick={() =>
+                router.push(`/physio-management/follow-up/${id}`)
+              }
+              className="bg-white hover:bg-gray-100 text-[#05668D] font-semibold py-2 px-4 rounded-xl inline-flex items-center shadow-md transition-all duration-300"
+            >
+              ← Volver
+            </button>
+            <h1 className="text-3xl font-bold text-[#05668D]">Videos del Tratamiento</h1>
+            <div className="w-24"></div> {/* Spacer for alignment */}
+          </div>
       {alert.show && (
         <Alert 
           type={alert.type} 
@@ -358,65 +374,54 @@ const PhysioVideo = () => {
           </div>
         </div>
       )}
-      
-      <div className="bg-white w-full max-w-3xl rounded-3xl shadow-xl p-10 transition-all duration-300" style={{ boxShadow: "0 20px 60px rgba(0, 0, 0, 0.08)" }}>
-        <div className="text-center mb-9">
-          <h1 className="text-3xl font-bold mb-2" style={{
-            background: "linear-gradient(90deg, #1E5ACD, #3a6fd8)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-          }}>
-            Videos del Tratamiento
-          </h1>
-          <p className="text-gray-600">Administra los videos para tus pacientes</p>
-        </div>
+      <div className="flex justify-center">
+        <div className="bg-white w-full max-w-3xl rounded-3xl shadow-xl p-10 transition-all duration-300" style={{ boxShadow: "0 20px 60px rgba(0, 0, 0, 0.08)" }}>
 
-        {/* Videos list moved to the top */}
-        <div className="mb-8">
-          <h2 className="text-xl font-bold mb-4">Videos Disponibles</h2>
+          {/* Videos list moved to the top */}
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold text-[#05668D] mb-4">Videos Disponibles</h2>
 
-          {loadingVideos ? (
-            <p className="text-center">Cargando videos...</p>
-          ) : (
-            <>
-              {videos.length > 0 ? (
-                <ul className="space-y-4">
-                  {videos.map((video) => (
-                    <li key={video.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl shadow-md">
-                      <div>
-                        <h3 className="font-semibold">{video.title}</h3>
-                        <p>{video.description}</p>
-                      </div>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleEdit(video)}
-                          className="bg-[#05AC9C] text-white p-2 rounded-xl hover:bg-[#05918F] transition-all duration-200"
-                          title="Editar video"
-                        >
-                          <Edit2 size={18} />
-                        </button>
-                        
-                        <button
-                          onClick={() => confirmDelete(video.id)}
-                          className="bg-red-500 text-white p-2 rounded-xl hover:bg-red-600 transition-all duration-200"
-                          title="Eliminar video"
-                        >
-                          <Trash size={18} />
-                        </button>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-center">No hay videos disponibles para este tratamiento.</p>
-              )}
-            </>
-          )}
-        </div>
-
+            {loadingVideos ? (
+              <p className="text-center">Cargando videos...</p>
+            ) : (
+              <>
+                {videos.length > 0 ? (
+                  <ul className="space-y-4">
+                    {videos.map((video) => (
+                      <li key={video.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl shadow-md">
+                        <div>
+                          <h3 className="font-semibold">{video.title}</h3>
+                          <p>{video.description}</p>
+                        </div>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleEdit(video)}
+                            className="bg-[#05AC9C] text-white p-2 rounded-xl hover:bg-[#05918F] transition-all duration-200"
+                            title="Editar video"
+                          >
+                            <Edit2 size={18} />
+                          </button>
+                          
+                          <button
+                            onClick={() => confirmDelete(video.id)}
+                            className="bg-red-500 text-white p-2 rounded-xl hover:bg-red-600 transition-all duration-200"
+                            title="Eliminar video"
+                          >
+                            <Trash size={18} />
+                          </button>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-center">No hay videos disponibles para este tratamiento.</p>
+                )}
+              </>
+            )}
+          </div>
         {/* Upload form made smaller */}
         <div className="border-t pt-6">
-          <h2 className="text-xl font-bold mb-4">Subir Nuevo Video</h2>
+          <h2 className="text-2xl font-semibold text-[#05668D] mb-6">Subir Nuevo Video</h2>
           <form onSubmit={handleSubmit} className="space-y-3">
             <div className="relative">
               <input
@@ -466,58 +471,73 @@ const PhysioVideo = () => {
             </button>
           </form>
         </div>
+        </div>
 
-        {editingVideo && (
-          <div className="mt-8 border-t pt-6">
-            <h2 className="text-xl font-bold mb-4">Editar Video</h2>
-            <form onSubmit={handleUpdate} className="space-y-3">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Título"
-                  value={editTitle}
-                  onChange={(e) => setEditTitle(e.target.value)}
-                  className="w-full py-3 px-4 text-sm border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
-                  maxLength={100}
-                />
-                <div className="text-right text-xs text-gray-500 mt-1">
-                  {editTitle.length}/100 caracteres
+        {editModalOpen && editingVideo && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md">
+              <h2 className="text-2xl font-bold text-[#05668D] mb-6">
+                Editar Video
+              </h2>
+              <form onSubmit={handleUpdate} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Título del Video
+                  </label>
+                  <input
+                    type="text"
+                    value={editTitle}
+                    onChange={(e) => setEditTitle(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300"
+                    placeholder="Título"
+                    maxLength={100}
+                  />
+                  <div className="text-right text-xs text-gray-500 mt-1">
+                    {editTitle.length}/100 caracteres
+                  </div>
                 </div>
-              </div>
 
-              <div className="relative">
-                <textarea
-                  placeholder="Descripción"
-                  value={editDescription}
-                  onChange={(e) => setEditDescription(e.target.value)}
-                  className="w-full py-3 px-4 text-sm border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
-                  rows={2}
-                  maxLength={255}
-                />
-                <div className="text-right text-xs text-gray-500 mt-1">
-                  {editDescription.length}/255 caracteres
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Descripción del Video
+                  </label>
+                  <textarea
+                    value={editDescription}
+                    onChange={(e) => setEditDescription(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300"
+                    placeholder="Descripción"
+                    rows={2}
+                    maxLength={255}
+                  />
+                  <div className="text-right text-xs text-gray-500 mt-1">
+                    {editDescription.length}/255 caracteres
+                  </div>
                 </div>
-              </div>
 
-              <div className="flex space-x-3">
-                <button
-                  type="button"
-                  onClick={() => setEditingVideo(null)}
-                  className="w-1/2 border border-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-xl hover:bg-gray-100 transition-all duration-200"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  className="w-1/2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-2 px-4 rounded-xl transition-all duration-200"
-                >
-                  Actualizar
-                </button>
-              </div>
-            </form>
+                <div className="flex justify-end space-x-3 mt-6">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditModalOpen(false);
+                      setEditingVideo(null);
+                    }}
+                    className="px-4 py-2 bg-white border border-red-400 text-red-500 rounded-xl hover:bg-red-50 transition-all duration-300"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-gradient-to-r from-[#6BC9BE] to-[#05668D] text-white rounded-xl hover:opacity-90 transition-all duration-300"
+                  >
+                    Guardar Cambios
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         )}
       </div>
+    </div>
     </div>
   );
 };

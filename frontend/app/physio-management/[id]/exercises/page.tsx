@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { getApiBaseUrl } from "@/utils/api";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 // Define interfaces for our data
 interface Exercise {
@@ -127,6 +128,7 @@ const ExercisesPage = () => {
   );
   const [exerciseUsage, setExerciseUsage] = useState<ExerciseUsage[]>([]);
   const [loadingUsage, setLoadingUsage] = useState(false);
+  const router = useRouter();
 
   const fetchExerciseUsage = async (exerciseId: number) => {
     try {
@@ -310,7 +312,22 @@ const ExercisesPage = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-6">Biblioteca de Ejercicios</h1>
+      <div className="relative mb-8">
+      {/* Botón de volver a la izquierda */}
+      <div className="absolute left-0 top-1/2 transform -translate-y-1/2">
+        <button
+          onClick={() => router.push(`/physio-management/profile`)}
+          className="bg-white hover:bg-gray-100 text-[#05668D] font-semibold py-2 px-4 rounded-xl inline-flex items-center shadow-md transition-all duration-300"
+        >
+          ← Volver
+        </button>
+      </div>
+
+      {/* Título centrado */}
+      <h1 className="text-4xl font-bold text-[#05668D] text-center">
+        Biblioteca de Ejercicios
+      </h1>
+    </div>
 
       {/* Search and Filter Section */}
       <div className="bg-white rounded-xl shadow-md p-6 mb-6">

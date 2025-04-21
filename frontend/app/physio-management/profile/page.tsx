@@ -1418,7 +1418,7 @@ const FisioProfile = () => {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center px-6"
+      className="min-h-screen flex items-center justify-center px-6 py-12"
       style={{ backgroundColor: "rgb(238, 251, 250)" }}
     >
       <div className="w-full max-w-5xl bg-white shadow-lg rounded-2xl overflow-hidden grid grid-cols-3">
