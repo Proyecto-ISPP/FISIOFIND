@@ -1,7 +1,7 @@
-## 🚀 Changelog - 7.0.0
+## 🚀 Changelog - 8.0.0
 
 ### ✨ Features (1)
-- feat: Añadir nuevos origines para despliegue ppl (@Ramón Gavira)
+- feat: workflow PPL (@Benjamín Maureira Flores)
 ### 🐛 Fixes (0)
 
 ### 📖 Documentation (0)
