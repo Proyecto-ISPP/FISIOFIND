@@ -122,18 +122,15 @@ const PhysioFiles = () => {
     if (selectedFile) {
       setFile(selectedFile);
 
-      const fileUrl = URL.createObjectURL(selectedFile);
-      setFilePreview(fileUrl);
-
       const fileType = selectedFile.type.split('/')[0];
       const fileExtension = selectedFile.name.split('.').pop()?.toLowerCase();
 
-      if (fileType === 'image') {
-        setFilePreview(fileUrl);
-      } else if (fileExtension === 'pdf') {
+      if (fileType === 'image' || fileExtension === 'pdf') {
+        const fileUrl = URL.createObjectURL(selectedFile);
         setFilePreview(fileUrl);
       } else {
         setFilePreview(null);
+        showAlert("error", "Tipo de archivo no soportado. Por favor, sube una imagen o un PDF.");
       }
     }
   };
@@ -361,7 +358,7 @@ const PhysioFiles = () => {
                 required={!editingFile}
               />
               {filePreview && file?.type.includes('image') && (
-                <img src={filePreview} alt="Vista previa" className="mt-2 max-h-60" />
+                <img src={filePreview} alt="Vista previa" className="mt-2 max-h-60" onError={() => setFilePreview(null)} />
               )}
               {filePreview && file?.type === 'application/pdf' && (
                 <embed src={filePreview} type="application/pdf" width="100%" height="400px" />
