@@ -1,7 +1,7 @@
-## 🚀 Changelog - 8.0.0
+## 🚀 Changelog - 9.0.0
 
 ### ✨ Features (1)
-- feat: workflow PPL (@Benjamín Maureira Flores)
+- feat: despliegue continuo back PPL (@Ramón Gavira)
 ### 🐛 Fixes (0)
 
 ### 📖 Documentation (0)
