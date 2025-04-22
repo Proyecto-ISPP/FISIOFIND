@@ -65,12 +65,16 @@ const FisioProfile = () => {
         schedule: "",
         specializations: "",
         services: [] as Service[],
-        plan: "",
+        plan: 0,
         degree: "",
         university:"",
         experience: "",
         workplace:""
     });
+
+  if (profile) {
+    console.log("type of plan", typeof profile.plan);
+  }
 
   const [editingServiceIndex, setEditingServiceIndex] = useState<number | null>(
     null
@@ -490,48 +494,56 @@ const FisioProfile = () => {
   };
 
   const handleSubmitRating = async () => {
+    if (!newRating.opinion.trim()) {
+      showAlert("error", "Por favor, escribe una opinión");
+      return;
+    }
+
+    if (newRating.opinion.trim().length > 140) {
+      showAlert("error", "La opinión no puede exceder los 140 caracteres.");
+      return;
+    }
+
     try {
-      if (!newRating.opinion.trim()) {
-        showAlert("error", "Por favor, proporciona una opinión.");
-        return;
-      }
-
-      if (newRating.opinion.trim().length > 140) {
-        showAlert("error", "La opinión no puede exceder los 140 caracteres.");
-        return;
-      }
-
+      const url = hasRated
+        ? `${getApiBaseUrl()}/api/ratings/update/${rating?.id}/`
+        : `${getApiBaseUrl()}/api/ratings/create/`;
+      
+      const method = hasRated ? "put" : "post";
+      
       const payload = {
         punctuation: newRating.punctuation,
         opinion: newRating.opinion,
         physiotherapist: profile.user.user_id,
       };
 
-      if (hasRated && rating) {
-        await axios.put(
-          `${getApiBaseUrl()}/api/ratings/update/${rating.id}/`,
-          payload,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-      } else {
-        await axios.post(`${getApiBaseUrl()}/api/ratings/create/`, payload, {
-          headers: { Authorization: `Bearer ${token}` },
+      const response = await axios({
+        method,
+        url,
+        data: payload,
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.status === 200 || response.status === 201) {
+        setShowRatingForm(false);
+        setHasRated(true);
+
+        if (newRating.punctuation >= 3) {
+          showAlert("success", "¡Gracias por valorar nuestra app!");
+        } else {
+          showAlert("success", "Valoración enviada correctamente.");
+        }
+        
+        // Update local state
+        setRating({
+          id: response.data.id || rating?.id,
+          punctuation: newRating.punctuation,
+          opinion: newRating.opinion,
         });
+        
+        // Refresh rating data
+        checkIfPhysioHasRated();
       }
-
-      setShowRatingForm(false);
-      setHasRated(true);
-
-      if (newRating.punctuation >= 3) {
-        showAlert("success", "¡Gracias por valorar nuestra app!");
-      } else {
-        showAlert("success", "Valoración enviada correctamente.");
-      }
-
-      // Reload the page after successful submission
-      window.location.reload();
     } catch (error) {
       console.error("Error submitting rating:", error);
       if (axios.isAxiosError(error) && error.response) {
@@ -586,7 +598,7 @@ const FisioProfile = () => {
 
     try {
       const response = await axios.get(
-        `${getApiBaseUrl()}/api/ratings/has-rated/`,
+        `${getApiBaseUrl()}/api/ratings/my-rating/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -594,10 +606,12 @@ const FisioProfile = () => {
         }
       );
 
-      if (response.data && response.data.has_rated) {
+      if (response.data) {
         setHasRated(true);
+        setRating(response.data);
       } else {
         setHasRated(false);
+        setRating(null);
       }
     } catch (err) {
       setHasRated(false);
@@ -1166,254 +1180,322 @@ const FisioProfile = () => {
       onSave(newService);
     };
 
+    const [isClosing, setIsClosing] = useState(false);
+
+    const handleClose = () => {
+      setIsClosing(true);
+      setTimeout(() => {
+        onClose();
+      }, 300);
+    };
+
     return (
-      <div className="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
-        <div className="modal-content bg-white rounded-2xl shadow-xl w-full max-w-3xl mx-4 overflow-hidden">
-          {/* Header */}
-          <div className="modal-header bg-gradient-to-r from-teal-500 to-blue-600 px-8 py-6">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-white">
-                {editingService ? "Editar servicio" : "Añadir servicio"}
-              </h2>
-              <button
-                className="text-white hover:text-gray-200 transition-colors"
-                onClick={onClose}
-                aria-label="Cerrar"
-              >
-                <X size={24} />
-              </button>
-            </div>
+      <div
+        className={`fixed inset-0 z-50 flex items-center justify-center transition-opacity duration-300 ${
+          isClosing ? "opacity-0" : "opacity-100"
+        }`}
+        onClick={handleClose}
+      >
+        {/* Enhanced Backdrop with blur effect */}
+        <div className="absolute inset-0 bg-gray-900 bg-opacity-50 backdrop-blur-sm"></div>
+
+        {/* Modal Container with improved styling */}
+        <div
+          className={`relative bg-white rounded-xl shadow-2xl max-w-xl w-full mx-4 overflow-hidden transition-all duration-300 ${
+            isClosing ? "scale-95 opacity-0" : "scale-100 opacity-100"
+          }`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Header with gradient background */}
+          <div className="bg-gradient-to-r from-[#41B8D5] to-[#1E5ACD] p-4 text-white flex justify-between items-center">
+            <h2 className="text-xl font-bold">
+              {editingService ? "Editar Servicio" : "Añadir Servicio"}
+            </h2>
+            <span className="bg-white bg-opacity-20 text-white text-xs px-3 py-1 rounded-full">
+              Servicio
+            </span>
           </div>
 
-          {/* Content */}
-          <div className="p-8 space-y-6">
-            {/* Service Type */}
-            <div className="space-y-2">
-              <label className="text-gray-700 font-medium block">Tipo de servicio:</label>
-              <select
-                value={tipo}
-                onChange={(e) => setTipo(e.target.value as string)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
-              >
-                <option value="PRIMERA_CONSULTA">Primera consulta</option>
-                <option value="CONTINUAR_TRATAMIENTO">Continuar tratamiento</option>
-                <option value="OTRO">Otro</option>
-              </select>
-            </div>
-
-            {/* Title */}
-            <div className="space-y-2">
-              <label className="text-gray-700 font-medium block">
-                Título <span className="text-red-500">*</span>
+          <div className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Título
               </label>
               <input
                 type="text"
                 value={titulo}
                 onChange={(e) => setTitulo(e.target.value)}
-                disabled={tipo !== "OTRO"}
-                className={`w-full px-4 py-3 border rounded-xl transition-all ${
-                  !titulo.trim() 
-                    ? "border-red-300 focus:ring-red-500" 
-                    : "border-gray-300 focus:ring-teal-500"
-                } focus:border-transparent focus:ring-2`}
+                className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] focus:border-transparent"
+                placeholder="Nombre del servicio"
               />
             </div>
 
-            {/* Description */}
-            <div className="space-y-2">
-              <label className="text-gray-700 font-medium block">Descripción:</label>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Descripción
+              </label>
               <textarea
                 value={descripcion}
                 onChange={(e) => setDescripcion(e.target.value)}
-                placeholder="Describe brevemente en qué consiste este servicio"
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all min-h-[120px]"
+                className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] focus:border-transparent"
+                rows={3}
+                placeholder="Descripción del servicio"
               />
             </div>
 
-            {/* Price and Duration Row */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-gray-700 font-medium block">
-                  Precio por consulta <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={precio}
-                    onChange={(e) => setPrecio(e.target.value)}
-                    className={`w-full pl-8 pr-4 py-3 border rounded-xl transition-all ${
-                      !precio.trim() 
-                        ? "border-red-300 focus:ring-red-500" 
-                        : "border-gray-300 focus:ring-teal-500"
-                    } focus:border-transparent focus:ring-2`}
-                  />
-                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">€</span>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center text-gray-600">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 mr-2 text-[#41B8D5]"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  <span className="font-medium">Precio</span>
                 </div>
+                <input
+                  type="text"
+                  value={precio}
+                  onChange={(e) => setPrecio(e.target.value)}
+                  className="w-1/2 px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] focus:border-transparent text-right"
+                  placeholder="€"
+                />
               </div>
 
-              <div className="space-y-2">
-                <label className="text-gray-700 font-medium block">
-                  Duración (minutos) <span className="text-red-500">*</span>
-                </label>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center text-gray-600">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 mr-2 text-[#41B8D5]"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  <span className="font-medium">Duración (minutos)</span>
+                </div>
                 <input
                   type="number"
                   value={duracion}
                   onChange={(e) => {
-                    const currentValue = parseInt(e.target.value) || 0;
-                    const roundedValue = Math.max(5, Math.round(currentValue / 5) * 5);
-                    setDuracion(roundedValue.toString());
+                    // Allow user to type the full number before rounding
+                    const inputValue = e.target.value;
+                    if (inputValue === '') {
+                      setDuracion('');
+                      return;
+                    }
+                    // Only round when user stops typing
+                    const handleRounding = () => {
+                      const numValue = parseInt(inputValue) || 0;
+                      const roundedValue = Math.max(5, Math.round(numValue / 5) * 5);
+                      setDuracion(roundedValue.toString());
+                    };
+                    // Update with raw input value
+                    setDuracion(inputValue);
+                    // Clear any existing timeout
+                    if (window.roundingTimeout) {
+                      clearTimeout(window.roundingTimeout);
+                    }
+                    // Set new timeout to round after user stops typing
+                    window.roundingTimeout = setTimeout(handleRounding, 500);
                   }}
                   min="5"
                   step="5"
-                  className={`w-full px-4 py-3 border rounded-xl transition-all ${
+                  className={`w-1/2 px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] focus:border-transparent text-right ${
                     !duracion || parseInt(duracion) <= 0
                       ? "border-red-300 focus:ring-red-500"
                       : "border-gray-300 focus:ring-teal-500"
                   } focus:border-transparent focus:ring-2`}
                 />
               </div>
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center text-gray-600">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 mr-2 text-[#41B8D5]"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                    />
+                  </svg>
+                  <span className="font-medium">Tipo</span>
+                </div>
+                <select
+                  value={tipo}
+                  onChange={(e) => setTipo(e.target.value)}
+                  className="w-1/2 px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] focus:border-transparent text-right appearance-none"
+                >
+                  <option value="PRIMERA_CONSULTA">Primera consulta</option>
+                  <option value="CONTINUAR_TRATAMIENTO">
+                    Continuar tratamiento
+                  </option>
+                  <option value="OTRO">Otro</option>
+                </select>
+              </div>
             </div>
 
-            {/* Questionnaire Toggle */}
-            <div className="bg-gray-50 rounded-xl p-6 space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-medium text-gray-900">Cuestionario pre-intervención</h3>
-                  <p className="text-sm text-gray-500">
-                    Agrega un formulario personalizado que el paciente rellenará antes de su cita
-                  </p>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer">
+            {/* Questionnaire section */}
+            <div className="mt-6 pt-4 border-t border-gray-200">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-medium text-gray-800">
+                  Cuestionario personalizado
+                </h3>
+                <div className="flex items-center">
                   <input
                     type="checkbox"
+                    id="showQuestionnaire"
                     checked={showQuestionnaireSection}
-                    onChange={() => setShowQuestionnaireSection(!showQuestionnaireSection)}
-                    className="sr-only peer"
+                    onChange={() =>
+                      setShowQuestionnaireSection(!showQuestionnaireSection)
+                    }
+                    className="w-4 h-4 text-[#41B8D5] border-gray-300 rounded focus:ring-[#41B8D5]"
                   />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-600"></div>
-                </label>
-              </div>
-            </div>
-          </div>
-        
-          {showQuestionnaireSection && (
-  <div className="border-t border-gray-200 p-6">
-    {/* Default Questions Section */}
-    <div className="mb-8">
-      <div className="bg-gray-50 p-6 rounded-xl">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">
-          Las siguientes preguntas ya están incluidas por defecto:
-        </h3>
-        <div className="space-y-3">
-          {questionary.elements.slice(0, 5).map((element, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-between bg-white p-4 rounded-lg border border-gray-100 shadow-sm"
-            >
-              <span className="text-gray-700 font-medium">{element.label}</span>
-              <span className={`px-3 py-1 text-sm rounded-full ${
-                element.type === "Number" 
-                  ? "bg-blue-50 text-blue-700" 
-                  : "bg-teal-50 text-teal-700"
-              }`}>
-                {element.type === "Number" ? "Numérico" : "Texto"}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-
-    {/* Custom Questions Section */}
-    <div className="space-y-4">
-      {questionary.elements.slice(5).length > 0 && (
-        <div className="mb-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Preguntas personalizadas</h3>
-          <div className="space-y-3">
-            {questionary.elements.slice(5).map((element, index) => (
-              <div
-                key={index + 5}
-                className="flex items-center justify-between bg-white p-4 rounded-lg border border-gray-200 group hover:border-gray-300 transition-colors shadow-sm"
-              >
-                <span className="text-gray-700">{element.label}</span>
-                <div className="flex items-center gap-3">
-                  <span className={`px-3 py-1 text-sm rounded-full ${
-                    element.type === "Number" 
-                      ? "bg-blue-50 text-blue-700" 
-                      : "bg-teal-50 text-teal-700"
-                  }`}>
-                    {element.type === "Number" ? "Numérico" : "Texto"}
-                  </span>
-                  <button
-                    onClick={() => removeQuestion(index + 5)}
-                    className="text-red-500 opacity-0 group-hover:opacity-100 transition-opacity hover:text-red-700"
+                  <label
+                    htmlFor="showQuestionnaire"
+                    className="ml-2 text-sm text-gray-700"
                   >
-                    <Trash2 size={18} />
-                  </button>
+                    Incluir cuestionario
+                  </label>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-      )}
 
-      {/* Add New Question Section */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6">
-        <h4 className="text-base font-medium text-gray-900 mb-4">Añadir nueva pregunta:</h4>
-        <div className="flex gap-4">
-          <select
-            value={questionType}
-            onChange={(e) => setQuestionType(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent w-40"
-          >
-            <option value="Control">Texto</option>
-            <option value="Number">Numérico</option>
-          </select>
-          <div className="flex-1 relative">
-            <input
-              type="text"
-              value={newQuestion}
-              onChange={(e) => {
-                if (e.target.value.length <= 100) {
-                  setNewQuestion(e.target.value);
-                }
-              }}
-              placeholder="Ej. ¿Tiene alguna lesión previa?"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent pr-16"
-            />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">
-              {newQuestion.length}/100
-            </span>
+              {showQuestionnaireSection && (
+                <div className="space-y-4">
+                  <div className="bg-gray-50 p-4 rounded-xl">
+                    <h4 className="font-medium text-gray-700 mb-2">
+                      Preguntas predefinidas
+                    </h4>
+                    <ul className="space-y-2">
+                      {questionary.elements.map((element, index) => (
+                        <li
+                          key={index}
+                          className="flex items-center justify-between bg-white p-2 rounded border border-gray-200"
+                        >
+                          <div>
+                            <span className="text-sm font-medium">
+                              {element.label}
+                            </span>
+                            <span className="ml-2 text-xs text-gray-500">
+                              ({element.type})
+                            </span>
+                          </div>
+                          {index >= 5 && (
+                            <button
+                              type="button"
+                              onClick={() => removeQuestion(index)}
+                              className="text-red-500 hover:text-red-700"
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-5 w-5"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                />
+                              </svg>
+                            </button>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="bg-gray-50 p-4 rounded-xl">
+                    <h4 className="font-medium text-gray-700 mb-2">
+                      Añadir nueva pregunta
+                    </h4>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-sm text-gray-600 mb-1">
+                          Texto de la pregunta
+                        </label>
+                        <input
+                          type="text"
+                          value={newQuestion}
+                          onChange={(e) => setNewQuestion(e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] focus:border-transparent"
+                          placeholder="Ej: ¿Tiene alguna lesión previa?"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm text-gray-600 mb-1">
+                          Tipo de respuesta
+                        </label>
+                        <select
+                          value={questionType}
+                          onChange={(e) => setQuestionType(e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] focus:border-transparent"
+                        >
+                          <option value="Control">
+                            Texto (respuesta libre)
+                          </option>
+                          <option value="Number">Número</option>
+                          <option value="Boolean">Sí/No</option>
+                        </select>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={addQuestion}
+                        className="w-full px-4 py-2 bg-gradient-to-r from-[#41B8D5] to-[#1E5ACD] text-white rounded-xl hover:opacity-90 transition-colors"
+                      >
+                        Añadir pregunta
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="flex justify-end space-x-3 pt-4 mt-2 border-t border-gray-200">
+              <button
+                type="button"
+                onClick={handleClose}
+                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleSave}
+                className="px-4 py-2 bg-gradient-to-r from-[#41B8D5] to-[#1E5ACD] text-white rounded-xl hover:opacity-90 transition-colors"
+              >
+                {editingService ? "Actualizar" : "Añadir"}
+              </button>
+            </div>
           </div>
-          <GradientButton
-            variant="create"
-            onClick={addQuestion}
-            disabled={!newQuestion.trim()}
-            className="px-6 py-2 whitespace-nowrap"
-          >
-            Añadir
-          </GradientButton>
         </div>
-        <p className="mt-3 text-sm text-gray-500">
-          El campo de texto permite cualquier respuesta textual.
-        </p>
       </div>
-    </div>
-  </div>
-          )}
-
-          <div className="modal-buttons">
-            
-            <GradientButton variant="grey" onClick={onClose}>
-              Cancelar
-            </GradientButton>
-            <GradientButton variant="edit" onClick={handleSave}>
-              Guardar
-            </GradientButton>
-          </div>
-        </div>
-      </div>   
-    ); // End of ServiceModal component
+    );
   };
 
   const saveScheduleToAPI = async () => {
@@ -1515,7 +1597,7 @@ const FisioProfile = () => {
         <div className="mt-6 text-center">
           <button
             onClick={() => window.location.reload()}
-            className="bg-gradient-to-r from-teal-500 to-blue-600 text-white px-4 py-2 rounded-lg hover:from-teal-600 hover:to-blue-700 transition-all duration-200"
+            className="bg-gradient-to-r from-teal-500 to-blue-600 text-white px-4 py-2 rounded-xl hover:from-teal-600 hover:to-blue-700 transition-all duration-200"
           >
             Reintentar
           </button>
@@ -1614,13 +1696,17 @@ const FisioProfile = () => {
                   </div>
 
                   {/* Plan information */}
-                  <div className="bg-gradient-to-r from-blue-50 to-teal-50 rounded-lg p-4 mb-4">
+                  <div className="bg-gradient-to-r from-blue-50 to-teal-50 rounded-xl p-4 mb-4">
                     <h3 className="text-sm font-semibold text-gray-700 mb-2">
                       Plan actual
                     </h3>
                     <div className="flex items-center">
                       <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-teal-500 to-blue-600 text-white">
-                        {profile.plan === "1" ? "Fisio Blue" : profile.plan === "2" ? "Fisio Gold" : "Sin Plan"}
+                        {profile.plan == 1
+                          ? "Fisio Blue"
+                          : profile.plan === 2
+                          ? "Fisio Gold"
+                          : "Sin Plan"}
                       </span>
                     </div>
                   </div>
@@ -1708,6 +1794,91 @@ const FisioProfile = () => {
                 </div>
               </div>
             </div>
+            
+            {/* App Rating - Moved here from below */}
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-6">
+              <div className="px-6 py-4 bg-gradient-to-r from-teal-500 to-blue-600">
+                <h2 className="text-xl font-bold text-white flex items-center">
+                  <StarIcon className="mr-2" size={20} />
+                  Valorar la aplicación
+                </h2>
+              </div>
+
+              <div className="p-6">
+                <p className="text-gray-600 mb-4">
+                  Tu opinión nos ayuda a mejorar. ¿Qué te parece FisioFind hasta ahora?
+                </p>
+                {hasRated ? (
+                  <div className="space-y-4">
+                    <div className="bg-gray-50 p-4 rounded-xl">
+                      <div className="flex items-center mb-2">
+                        <div className="flex text-yellow-400">
+                          {renderStars(rating?.punctuation || 0)}
+                        </div>
+                        <span className="ml-2 text-gray-700 font-medium">
+                          {rating?.punctuation}/5
+                        </span>
+                      </div>
+                      <p className="text-gray-700">"{rating?.opinion}"</p>
+                    </div>
+                    <div className="flex space-x-3">
+                      <GradientButton
+                        variant="edit"
+                        className="flex-1 py-2 px-4 font-medium rounded-xl flex items-center justify-center gap-2"
+                        onClick={() => {
+                          setNewRating({
+                            punctuation: rating?.punctuation || 5,
+                            opinion: rating?.opinion || "",
+                          });
+                          setShowRatingForm(true);
+                        }}
+                      >
+                        <Edit size={16} />
+                        Editar
+                      </GradientButton>
+                      <GradientButton
+                        variant="grey"
+                        className="flex-1 py-2 px-4 font-medium rounded-xl flex items-center justify-center gap-2"
+                        onClick={handleDeleteRating}
+                      >
+                        <Trash2 size={16} />
+                        Eliminar
+                      </GradientButton>
+                    </div>
+                  </div>
+                ) : (
+                  <GradientButton
+                    variant="create"
+                    className="w-full py-2 px-4 font-medium rounded-xl flex items-center justify-center gap-2"
+                    onClick={() => {
+                      setNewRating({ punctuation: 5, opinion: "" });
+                      setShowRatingForm(true);
+                    }}
+                  >
+                    <StarIcon size={16} />
+                    Valorar ahora
+                  </GradientButton>
+                )}
+              </div>
+            </div>
+            
+            {/* Notification preferences - Moved here from below */}
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-6">
+              <div className="px-6 py-4 bg-gradient-to-r from-teal-500 to-blue-600">
+                <h2 className="text-xl font-bold text-white flex items-center">
+                  <Bell className="mr-2" size={20} />
+                  Notificaciones
+                </h2>
+              </div>
+
+              <div className="p-6">
+                <p className="text-gray-600 mb-4">
+                  Configura si deseas recibir notificaciones sobre tus citas y
+                  actualizaciones.
+                </p>
+                <SubscriptionSlider />
+              </div>
+            </div>
           </div>
 
           {/* Right column - Form section */}
@@ -1721,9 +1892,9 @@ const FisioProfile = () => {
               </div>
 
               <div className="p-6">
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-4">
                   {/* Contact information */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Correo Electrónico
@@ -1759,22 +1930,22 @@ const FisioProfile = () => {
                           value={profile.user.phone_number}
                           onChange={handleChange}
                           className={`w-full px-4 py-3 border-2 ${
-                            formErrors.phone_number
+                            (formErrors as {phone_number?: string})?.phone_number
                               ? "border-red-500"
                               : "border-gray-200"
                           } rounded-xl transition-all duration-200 outline-none focus:border-blue-500`}
                         />
                       </div>
-                      {formErrors.phone_number && (
+                      {(formErrors as {phone_number?: string}).phone_number && (
                         <p className="mt-1 text-sm text-red-600">
-                          {formErrors.phone_number}
+                          {(formErrors as {phone_number?: string})?.phone_number}
                         </p>
                       )}
                     </div>
                   </div>
 
                   {/* Password section */}
-                  <div className="py-3 flex items-center justify-start w-full gap-3">
+                  <div className="py-2 flex items-center justify-start w-full gap-3">
                     <div className="relative w-[50%]">
                       <input
                         disabled
@@ -1786,18 +1957,18 @@ const FisioProfile = () => {
                     </div>
                     <GradientButton
                       variant="create"
-                      className="px-4 py-3 font-medium rounded-xl flex items-center gap-2 mb-6"
+                      className="px-4 py-3 font-medium rounded-xl flex items-center gap-2 mb-8"
                       onClick={(e) => {
                         e.preventDefault();
                         setShowUpdatePasswordModal(true);
                       }}
                     >
-                      <Plus className="w-4 h-4" /> Actualizar contraseña
+                      <Plus className="w-4 h-4"/> Actualizar contraseña
                     </GradientButton>
                   </div>
 
                   {/* Specializations */}
-                  <div>
+                  <div className="mt-2">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Especializaciones
                     </label>
@@ -1810,7 +1981,7 @@ const FisioProfile = () => {
                           >
                             {spec}
                             <svg
-                              xmlns="http://www.w3.org/2000/svg" 
+                              xmlns="http://www.w3.org/2000/svg"
                               className="h-4 w-4 ml-1.5 text-blue-600 hover:text-blue-800 cursor-pointer"
                               viewBox="0 0 20 20"
                               fill="currentColor"
@@ -1833,17 +2004,15 @@ const FisioProfile = () => {
                       <div className="relative">
                         <button
                           type="button"
-                          className="w-full px-4 py-2 text-left border border-gray-300 rounded-lg bg-white flex justify-between items-center"
+                          className="w-full px-4 py-3 text-left text-black border-2 border-gray-700 rounded-xl bg-white flex justify-between items-center hover:border-gray-300 hover:text-white transition-colors duration-200 group"
                           onClick={() => setDropdownOpen(!dropdownOpen)}
                         >
-                          <span className="text-gray-700">
-                            {selectedSpecializations.length > 0
-                              ? `${selectedSpecializations.length} seleccionadas`
-                              : "Selecciona especializaciones"}
-                          </span>
+                          {selectedSpecializations.length > 0
+                            ? `${selectedSpecializations.length} especializaciones seleccionadas`
+                            : "Selecciona tus especializaciones"}
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            className={`h-5 w-5 text-gray-500 transition-transform ${
+                            className={`h-5 w-5 text-gray-500 transition-transform duration-200 group-hover:text-white ${
                               dropdownOpen ? "rotate-180" : ""
                             }`}
                             viewBox="0 0 20 20"
@@ -1858,17 +2027,7 @@ const FisioProfile = () => {
                         </button>
 
                         {dropdownOpen && (
-                          <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-                            <div className="p-2 border-b border-gray-200">
-                              <input
-                                type="text"
-                                placeholder="Buscar especialización..."
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                              />
-                            </div>
-
+                          <div className="absolute z-10 mt-2 w-full bg-white border-2 border-gray-100 rounded-xl shadow-xl max-h-[300px] overflow-y-auto">
                             <div className="p-2">
                               {availableSpecializations
                                 .filter((spec) =>
@@ -1879,11 +2038,11 @@ const FisioProfile = () => {
                                 .map((spec) => (
                                   <label
                                     key={spec}
-                                    className="flex items-center px-3 py-2 hover:bg-gray-100 rounded-md cursor-pointer"
+                                    className="flex items-center px-4 py-2.5 hover:bg-gray-50 rounded-xl cursor-pointer transition-colors duration-150"
                                   >
                                     <input
                                       type="checkbox"
-                                      className="form-checkbox h-5 w-5 text-blue-600 rounded"
+                                      className="form-checkbox h-5 w-5 text-blue-600 rounded-md border-2 border-gray-300 focus:ring-blue-500 focus:ring-2 focus:ring-offset-2 transition-all duration-200"
                                       checked={selectedSpecializations.includes(
                                         spec
                                       )}
@@ -1900,7 +2059,7 @@ const FisioProfile = () => {
                                         }
                                       }}
                                     />
-                                    <span className="ml-2 text-gray-700">
+                                    <span className="ml-3 text-gray-700 font-medium">
                                       {spec}
                                     </span>
                                   </label>
@@ -1913,7 +2072,7 @@ const FisioProfile = () => {
                   </div>
 
                   {/* Biography */}
-                  <div>
+                  <div className="mt-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Biografía
                     </label>
@@ -1935,7 +2094,7 @@ const FisioProfile = () => {
                   </div>
 
                   {/* Professional information */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Titulación <span className="text-red-500">*</span>
@@ -1981,7 +2140,7 @@ const FisioProfile = () => {
                     </div>
                   </div>
 
-                  <div>
+                  <div className="mt-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Experiencia <span className="text-red-500">*</span>
                     </label>
@@ -2004,7 +2163,7 @@ const FisioProfile = () => {
                     )}
                   </div>
 
-                  <div>
+                  <div className="mt-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Lugar de trabajo <span className="text-red-500">*</span>
                     </label>
@@ -2027,7 +2186,7 @@ const FisioProfile = () => {
                   </div>
 
                   {/* Submit button */}
-                  <div>
+                  <div className="mt-4">
                     <GradientButton
                       variant="edit"
                       className="w-full py-4 px-6 font-semibold rounded-xl flex items-center justify-center gap-2"
@@ -2043,7 +2202,10 @@ const FisioProfile = () => {
             {/* Services section */}
             <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-6">
               <div className="px-6 py-4 bg-gradient-to-r from-teal-500 to-blue-600 flex justify-between items-center">
-                <h2 className="text-xl font-bold text-white">Servicios</h2>
+                <h2 className="text-xl font-bold text-white flex items-center">
+                  <Film className="mr-2" size={20} />
+                  Servicios
+                </h2>
                 <GradientButton
                   variant="create"
                   className="px-3 py-2 font-medium rounded-xl flex items-center gap-2"
@@ -2157,24 +2319,6 @@ const FisioProfile = () => {
                     pacientes
                   </p>
                 </div>
-              </div>
-            </div>
-
-            {/* Notification preferences */}
-            <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-6">
-              <div className="px-6 py-4 bg-gradient-to-r from-teal-500 to-blue-600">
-                <h2 className="text-xl font-bold text-white flex items-center">
-                  <Bell className="mr-2" size={20} />
-                  Preferencias de Notificaciones
-                </h2>
-              </div>
-
-              <div className="p-6">
-                <p className="text-gray-600 mb-4">
-                  Configura si deseas recibir notificaciones sobre tus citas y
-                  actualizaciones.
-                </p>
-                <SubscriptionSlider />
               </div>
             </div>
           </div>
@@ -2314,14 +2458,14 @@ const FisioProfile = () => {
                   <GradientButton
                     variant="grey"
                     onClick={() => setScheduleModalOpen(false)}
-                    className="px-4 py-2 rounded-lg"
+                    className="px-4 py-2 rounded-xl"
                   >
                     Cancelar
                   </GradientButton>
                   <GradientButton
                     variant="edit"
                     onClick={saveScheduleToAPI}
-                    className="px-4 py-2 rounded-lg"
+                    className="px-4 py-2 rounded-xl"
                   >
                     Guardar Horario
                   </GradientButton>
@@ -2347,6 +2491,74 @@ const FisioProfile = () => {
           onConfirm={handleConfirmRatingDelete}
           onCancel={() => setConfirmRatingDelete(false)}
         />
+        
+        {/* Rating Form Modal */}
+        {showRatingForm && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white p-6 rounded-2xl shadow-2xl w-full max-w-md">
+              <h3 className="text-xl font-bold text-[#05668D] mb-4">
+                {hasRated ? "Editar" : "Valorar la aplicación"}
+              </h3>
+              <div className="mb-4">
+                <label className="block text-gray-700 mb-2">Puntuación</label>
+                <div className="flex">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() =>
+                        setNewRating({ ...newRating, punctuation: star })
+                      }
+                      className="focus:outline-none"
+                    >
+                      <svg
+                        className={`w-8 h-8 ${
+                          star <= newRating.punctuation
+                            ? "text-yellow-500"
+                            : "text-gray-300"
+                        }`}
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 mb-2">Opinión</label>
+                <textarea
+                  value={newRating.opinion}
+                  onChange={(e) =>
+                    setNewRating({
+                      ...newRating,
+                      opinion: e.target.value,
+                    })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  rows={4}
+                  placeholder="Comparte tu experiencia con la aplicación..."
+                ></textarea>
+              </div>
+              <div className="flex justify-end space-x-3">
+                <button
+                  onClick={() => setShowRatingForm(false)}
+                  className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleSubmitRating}
+                  className="px-4 py-2 bg-gradient-to-r from-[#41B8D5] to-[#1E5ACD] text-white rounded-md hover:opacity-90"
+                >
+                  {hasRated ? "Actualizar" : "Enviar"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Alert component */}
         {alert.show && (
