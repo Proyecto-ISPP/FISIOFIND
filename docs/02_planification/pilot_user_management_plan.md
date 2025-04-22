@@ -1,4 +1,4 @@
----
+<!-- ---
 title: "ACUERDO CON USUARIOS PILOTO"                      # CHANGE IF NEEDED
 subtitle: "FISIO FIND - Grupo 6 - #SPRINT 3"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]
@@ -19,7 +19,7 @@ header-right: "10/02/2025"                                # CHANGE IF NEEDED
 footer-left: "FISIO FIND"
 documentclass: scrartcl
 classoption: "table"
----
+--- -->
 
 
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
@@ -117,15 +117,15 @@ Para garantizar la validez de las pruebas piloto, fue fundamental establecer cri
 
 ## 2.1. CRITERIOS DE SELECCIÓN
 
-Tal y como se detalló en el documento [Acuerdo de usuarios piloto](../../01_organization/pilot_user_agreement.md), se disinguen dos categorías principales de usuarios piloto:
+Tal y como se detalló en el documento [Acuerdo de usuarios piloto](../../01_organization/pilot_user_agreement.md), se distinguen dos categorías principales de usuarios piloto:
 
-- **Usuario piloto externo**:  persona ajena al entorno académico del proyecto, cuya función es dar impresiones y sugerencias sobre la usabilidad y funcionalidad de la aplicación sin entrar en detalles técnicos. Dentro de esta categoría se distinguen dos roles principales:
+- **Usuario piloto externo**: persona ajena al entorno académico del proyecto, cuya función es dar impresiones y sugerencias sobre la usabilidad y funcionalidad de la aplicación sin entrar en detalles técnicos. Dentro de esta categoría se distinguen dos roles principales:
   - **Fisioterapeutas**: Son los usuarios clave en el proceso de validación, ya que la plataforma debe adaptarse a sus necesidades y flujos de trabajo. Su retroalimentación será fundamental para definir y ajustar las herramientas especializadas, la gestión de consultas y la experiencia de uso profesional.
   - **Pacientes**: Su participación se centrará en evaluar la usabilidad y la experiencia de usuario de la plataforma. Sus opiniones ayudarán a mejorar la navegación, la accesibilidad y la claridad en la interacción con los fisioterapeutas, asegurando que el servicio sea intuitivo y fácil de usar.
 
 - **Usuario piloto técnico**: estudiante de la asignatura ISPP que proporciona *feedback* detallado, reporta incidencias y ayuda a detectar errores en la aplicación, centrándose en su funcionamiento más que en la experiencia de usuario.
 
-El tipo de usuario piloto que más difícil ha sido de encontrar, y de conseguir su compromiso para todo el periodo de pruebas, han sido los fisioterapeutas. Desconocemos el alcance real que alcanzó el formulario de inscripción para este tipo de usuarios, pero podemos estimar que 1 de cada 4 fisioterapeutas que tuvieron acceso al mismo se inscribieron. Finalmente, obtuvimos una lista definitiva de **16 usuarios piloto fisioterapeutas**, con los siguientes perfiles profesionales:
+El tipo de usuario piloto que más difícil ha sido de encontrar, y de conseguir su compromiso para todo el periodo de pruebas, han sido los fisioterapeutas. Desconocemos el alcance real que tuvo el formulario de inscripción para este tipo de usuarios, pero podemos estimar que 1 de cada 4 fisioterapeutas que tuvieron acceso al mismo se inscribieron. Finalmente, obtuvimos una lista definitiva de **16 usuarios piloto fisioterapeutas**, con los siguientes perfiles profesionales:
 
 - **Lugar / forma de trabajo**:
 
@@ -141,7 +141,7 @@ El tipo de usuario piloto que más difícil ha sido de encontrar, y de conseguir
 
   ![Años de experiencia fisioterapeutas](../.img/pilot_users/experiencia_fisioterapeutas.png)
 
-En el caso de los usuarios piloto que actuarán en el rol de paciente, el proceso de captación fue mucho más sencillo. La gran mayoría de las personas inscritas son familiares cercanos, vecinos o amigos de miembros del equipo de FISIO FIND. Se ha procurado cubrir todas las franjas de edad posibles, para obtener un *feedback* que nos permita adaptar la plataforma al nivel de conocimientos y habilidades tecnológicas de cualquier persona. Todas las personas a las que se solicitó inscribirse así lo hicieron, dejando una lista definitiva con **18 usuarios piloto pacientes**, con las siguientes características destacables:
+En el caso de los usuarios piloto que actuarán en el rol de paciente, el proceso de captación fue mucho más sencillo. La gran mayoría de las personas inscritas son familiares cercanos, vecinos o amigos de miembros del equipo de FISIO FIND. Se ha procurado cubrir todas las franjas de edad posibles para obtener un *feedback* que nos permita adaptar la plataforma al nivel de conocimientos y habilidades tecnológicas de cualquier persona. Todas las personas a las que se solicitó inscribirse así lo hicieron, dejando una lista definitiva con **18 usuarios piloto pacientes**, con las siguientes características destacables:
 
 - **Edad**:
 
@@ -169,9 +169,9 @@ Por último, indicar que para los usuarios piloto técnicos tenemos a **6 alumno
  
 La estrategia empleada para captar usuarios piloto ha sido el **envío de un formulario de inscripción**, diferente para fisioterapeutas y pacientes, mediante **WhatsApp**. 
 
-Estos dos formularios se hicieron empleando la herramienta ***Google Forms***. En ambos casos, el formulario indicaba de forma explícita qué implica ser usuario piloto de una plataforma, en qué fechas deben estar disponibles (con cierta flexibilidad), a qué se comprometen aceptando los términos de participación y nuestro compromiso como equipo a no compartir los datos recogidos durante el periodo de pruebas con terceros. En el caso de los fisioterapeutas, se les explicó que su participación sería recompensada con una suscripción gratuita permanente a la plataforma, como agradecimiento por su colaboración. 
+Estos dos formularios se hicieron empleando la herramienta ***Google Forms***. En ambos casos, el formulario indicaba de forma explícita qué implica ser usuario piloto de una plataforma, en qué fechas deben estar disponibles (con cierta flexibilidad), a qué se comprometen aceptando los términos de participación y nuestro compromiso como equipo de no compartir los datos recogidos durante el periodo de pruebas con terceros. En el caso de los fisioterapeutas, se les explicó que su participación sería recompensada con una suscripción gratuita permanente a la plataforma, como agradecimiento por su colaboración. 
 
-En el caso de los **fisioterapeutas**, se envió un **primer correo** con un formulario adjunto de inscripción desde la dirección de *email corporativa* **info@fisiodind.com** a las 12 personas que mostraron un interés inicial en participar como usuarios piloto de la plataforma en el primer sonseo de viabilidad del proyecto. Este formulario, a parte de lo expuesto en el párrafo anterior, pretendía recoger también información sobre sus perfiles profesionales.
+En el caso de los **fisioterapeutas**, se envió un **primer correo** con un formulario adjunto de inscripción desde la dirección de *email corporativa* **info@fisiofind.com** a las 12 personas que mostraron un interés inicial en participar como usuarios piloto de la plataforma en el primer sondeo de viabilidad del proyecto. Este formulario, aparte de lo expuesto en el párrafo anterior, pretendía recoger también información sobre sus perfiles profesionales.
 De los 12 fisioterapeutas que recibieron el correo, solo 5 se inscribieron a través del formulario adjunto. Ante la falta de usuarios piloto, pedimos a nuestros conocidos fisioterapeutas que **compartieran el formulario por WhatsApp con sus compañeros de profesión**. El formulario llegó hasta el "Grupo de Fisioterapeutas de Extremadura", desde donde hemos recibido más participación y nos ha permitido alcanzar la cifra de 16 usuarios piloto fisioterapeutas.
 
 Para la captación de pacientes, se siguió una estrategia similar. Todos nuestros **conocidos** que, de manera informal habían mostrado interés en participar en las pruebas, recibieron un **mensaje de WhatsApp con el formulario** de inscripción. Además de los términos de participación ya expuestos, se hicieron algunas preguntas para elaborar un perfil demográfico de los pacientes inscritos y sobre su relación y experiencia con la fisioterapia como pacientes.
@@ -283,7 +283,7 @@ Se presenta un listado de los usuarios piloto que participarán en las pruebas d
 | María Vallejo                   | Autónomo/a               | Traumatológica y ortopédica, Deportiva, Suelo pélvico y/o Obstétrica   | 5-10 años      |
 | Eusebia Cano Gil                | En un hospital           | Traumatológica y ortopédica, Respiratoria, Rehabilitación Cardiaca     | Más de 10 años |
 | Marina Gonzalez Sanchez         | En un hospital           | Deportiva                                                              | Más de 10 años |
-| Alejandro Pedrido Galván        |            | /TODO                 |    |
+| Alejandro Pedrido Galván        | Autónomo/a               | Traumatológica y ortopédica, Neurológica, Geriátrica                | 1-5 años   |
 
 <br>
 
@@ -334,7 +334,7 @@ Una comunicación efectiva con los usuarios piloto es esencial para recoger su f
 
 ## 5.1. CANALES DE COMUNICACIÓN
 
-Se ha determiando que las comunicaciones con todos los usuarios pilotos se realizará mediante el correo electrónico corporativo (info@fisiofind.com). Así, se pretende crear un canal de comunicación personal, organizado y profesional con cada uno de los usuarios piloto, evitando la sobrecarga de información o la recepción de información no deseada por parte de los usuarios que se poduciría si se usase un canal de comunicación instantánea (como WhatsApp).
+Se ha determinado que las comunicaciones con todos los usuarios piloto se realizarán mediante el correo electrónico corporativo (info@fisiofind.com). Así, se pretende crear un canal de comunicación personal, organizado y profesional con cada uno de los usuarios piloto, evitando la sobrecarga de información o la recepción de información no deseada por parte de los usuarios que se produciría si se usase un canal de comunicación instantánea (como WhatsApp).
 
 ## 5.2. FRECUENCIA DE INTERACCIONES
 
@@ -351,7 +351,7 @@ Recalcamos que los Usuarios Piloto ***Técnicos*** deberán completar el formula
 
 ## 5.3. DOCUMENTACIÓN Y SOPORTE
 
-Se proporcionó documentación clara y soporte técnico para facilitar el uso de la plataforma y resolver dudas o problemas encontrados por los usuarios piloto, fomentando por parte del equipo de desarrollo la **elaboración de vídeos** explicativos en el que se detallen los casos de uso que el usuario debe probar.
+Se proporcionó documentación clara y soporte técnico para facilitar el uso de la plataforma y resolver dudas o problemas encontrados por los usuarios piloto, fomentando por parte del equipo de desarrollo la **elaboración de vídeos** explicativos en los que se detallen los casos de uso que el usuario debe probar.
 
 <br>
 
@@ -377,7 +377,7 @@ Las características y **funcionalidades de FISIO FIND que recibieron comentario
 
 En el informe de feedback antes mencionado, que se realizará tras cada consulta a los usuarios piloto en los sucesivos Sprints, se recogerán las conclusiones, lecciones aprendidas y el proceso de gestión del feedback además de la evaluación de la experiencia piloto de los usuarios alumnos de ISPP. 
 
-Todo este feedback será elaluado y contemplado por los responsables de calidad (QA) la hora de realizar los informes *Sprint* correspondientes.
+Todo este feedback será evaluado y contemplado por los responsables de calidad (QA) a la hora de realizar los informes *Sprint* correspondientes.
 
 
 # 8. EVALUACIÓN DE LA EXPERIENCIA PILOTO

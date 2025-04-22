@@ -36,7 +36,7 @@ const GENDER_OPTIONS = [
   { value: "M", label: "Masculino" },
   { value: "F", label: "Femenino" },
   { value: "O", label: "Otro" },
-  { value: "ND", label: "Prefiero no decirlo" },
+  { value: "P", label: "Prefiero no decirlo" },
 ];
 
 // Opciones de comunidad autónoma

@@ -142,7 +142,7 @@ export function SidebarDemo() {
         <IconPhone className="text-[#1E5ACD] h-5 w-5 flex-shrink-0 mx-auto" />
       ),
     },
-    ...(userRole === "physiotherapist" ? [
+/*     ...(userRole === "physiotherapist" ? [
       {
         label: "Cuestionarios",
         href: "/questionnaires",
@@ -150,7 +150,7 @@ export function SidebarDemo() {
           <FontAwesomeIcon icon={faEdit} className="text-[#8C4482] h-5 w-5 flex-shrink-0 mx-auto" />
         ),
       }
-    ] : []),
+    ] : []), */
   ];
 
   const privateLinks = [

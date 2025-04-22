@@ -1477,6 +1477,15 @@ const FisioProfile = () => {
               Editar Horario
             </GradientButton>
           </div>
+          <div className="w-full mt-4">
+          <GradientButton
+              variant="edit"
+              className="px-6 py-2 font-medium rounded-xl flex items-center gap-2 mx-auto"
+              onClick={() => window.location.href = "/physio-management/balance"}
+            >
+              Consultar Saldo
+            </GradientButton>
+          </div>
 
           {/* Sección de valoración */}
           <div className="space-y-4 mt-8">
@@ -1918,7 +1927,7 @@ const FisioProfile = () => {
                                 <Save size={18} className="mr-2" />
                                 Actualizar Perfil
                             </GradientButton>
-                            <Link href="/physio-management/video" passHref>
+                            {/* <Link href="/physio-management/video" passHref>
                                 <GradientButton
                                     variant="edit"
                                     className="w-full py-2 px-4 bg-gradient-to-r from-[#1E5ACD] to-[#3a6fd8] text-white font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center"
@@ -1926,7 +1935,7 @@ const FisioProfile = () => {
                                     <Film size={22} className="mr-2" />
                                     Subir vídeo
                                 </GradientButton>
-                            </Link>
+                            </Link> */}
                         </div>
                         <div className="border-t border-gray-200 pt-5 mt-5">
                 <div className="mb-2">

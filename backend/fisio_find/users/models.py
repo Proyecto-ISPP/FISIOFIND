@@ -19,6 +19,8 @@ def validate_unique_DNI(data_dni) -> bool:
 
 
 def add_dni_to_encryptedvalues(data_dni) -> None:
+    if data_dni is None:
+        return False
     enc = EncryptedValues.objects.first()
     if enc:
         if data_dni not in enc.encrypted_values:
@@ -29,6 +31,8 @@ def add_dni_to_encryptedvalues(data_dni) -> None:
 
 
 def delete_DNI_from_encryptedvalues(data_dni):
+    if data_dni is None:
+        return False
     enc = EncryptedValues.objects.all()
 
     if not enc.exists():
@@ -156,6 +160,11 @@ class Specialization(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = "Especialización"
+        verbose_name_plural = "Especializaciones"
+
 
 
 class PhysiotherapistSpecialization(models.Model):

@@ -1,6 +1,6 @@
----
+<!-- ---
 title: "COMMITMENT AGREEMENT"                             # CHANGE IF NEEDED
-subtitle: "FISIO FIND - Grupo 6 - #SPRINT 1"
+subtitle: "FISIO FIND - Grupo 6 - #SPRINT 3"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]
 date: "07/02/2025"                                        # CHANGE IF NEEDED
 subject: "ISPP"
@@ -18,7 +18,7 @@ header-right: "07/02/2025"                                # CHANGE IF NEEDED
 footer-left: "FISIO FIND"
 documentclass: scrartcl
 classoption: "table"
----
+--- -->
 
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
 <p align="center">
@@ -41,8 +41,8 @@ classoption: "table"
   - [2.5 PRÁCTICAS DE EQUIPO](#25-prácticas-de-equipo)
   - [2.6 CRITERIOS DE ÉXITO](#26-criterios-de-éxito)
   - [2.7 CUMPLIMIENTO DEL ACUERDO](#27-cumplimiento-del-acuerdo)
-  - [2.8 PROCESO DE REFUTACIÓN DE LA CALIFICACIÓN EN QA](#28-proceso-de-refutación-de-la-calificación-en-qa)
-  - [2.9 AJUSTE DEL PORCENTAJE DE CALIFICACIÓN EN EVALUACIONES DE QA](#29-ajuste-del-porcentaje-de-calificación-en-evaluaciones-de-qa)
+  - [2.8 Proceso de Refutación de la Calificación en QA](#28-proceso-de-refutación-de-la-calificación-en-qa)
+  - [2.9 Ajuste del Porcentaje de Calificación en Evaluaciones de QA](#29-ajuste-del-porcentaje-de-calificación-en-evaluaciones-de-qa)
   - [2.10 CONDICIONES DEL ACUERDO](#210-condiciones-del-acuerdo)
   - [2.11 CASOS NO CONTEMPLADOS](#211-casos-no-contemplados)
 - [3. RECOMPENSAS](#3-recompensas)
@@ -59,7 +59,7 @@ classoption: "table"
 
 - **Número de Grupo:** Grupo 6
 
-- **Entregable:** #SPRINT 1
+- **Entregable:** #SPRINT 3
 
 - **Miembros del grupo:** Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes.
 
@@ -136,11 +136,11 @@ Se establece el siguiente horario de comunicación y trabajo:
 
 - Asimismo, si los asignados a una tarea dejan de estar disponibles para hacerla o prevén que van a dejar de estarlo, deberán comunicarlo lo antes posible.
 
-- Las personas encargadas de dividir y asignar las tareas se comprometen a un reparto equitativo de manera que todos los integrantes del equipo puedan llegar a las 6 horas de trabajo estipuladas. En caso de que una persona no llegue a las 6 horas, será responsabilidad de las personas encargadas de dividir y asignar las tareas.
+- Las personas encargadas de dividir y asignar las tareas se comprometen a un reparto equitativo de manera que todos los integrantes del equipo puedan llegar a las **10 horas** de trabajo estipuladas. En caso de que una persona no llegue a las **10 horas**, será responsabilidad de las personas encargadas de dividir y asignar las tareas.
 
 ## 2.5 PRÁCTICAS DE EQUIPO
 
-- El equipo establece una serie de buenas prácticas definidas en el documento *Plan de Gestión de la Configuración*, las cuales serán obligatorias seguir. El no cumplimiento de estas prácticas será revisado por el equipo de QA y se tomarán las medidas necesarias.
+- El equipo establece una serie de buenas prácticas definidas en el documento *Plan de Gestión de la Configuración*, las cuales serán obligatorias de seguir. El incumplimiento de estas prácticas será revisado por el equipo de QA y se tomarán las medidas necesarias.
 
 ## 2.6 CRITERIOS DE ÉXITO
 
