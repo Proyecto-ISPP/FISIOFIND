@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Line } from "react-chartjs-2";
 import Alert from "@/components/ui/Alert";
+import { Film, ArrowLeft, File } from "lucide-react";
+
 
 import {
   Chart,
@@ -504,12 +506,13 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
   if (!treatment) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <button
-          onClick={handleGoBack}
-          className="mb-4 px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300 transition"
-        >
-          ← Volver
-        </button>
+      <button
+        onClick={handleGoBack}
+        className="mb-6 flex items-center text-blue-600 hover:text-blue-800 transition-colors duration-200 font-medium"
+      >
+        <ArrowLeft className="mr-2" size={20} />
+        Volver a mis tratamientos
+      </button>
   
         <Alert
           type="error"
@@ -608,7 +611,8 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
               }
               className="bg-gradient-to-r from-[#05668D] to-[#6BC9BE] hover:opacity-90 text-white font-semibold py-2 px-4 rounded-xl inline-flex items-center shadow-md transition-all duration-300"
             >
-              Gestionar Videos
+              <Film className="mr-2" size={20} />
+              Vídeos subidos
             </button>
             <button
             onClick={() =>
@@ -616,6 +620,7 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
             }
             className="bg-gradient-to-r from-[#05668D] to-[#6BC9BE] hover:opacity-90 text-white font-semibold py-2 px-4 rounded-xl inline-flex items-center shadow-md transition-all duration-300"
             >
+            <File className="mr-2" size={20} />
             Archivos subidos
           </button>
             <button
