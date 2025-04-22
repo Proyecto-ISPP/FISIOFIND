@@ -40,6 +40,9 @@ def create_payment(request):
     # payment_method = request.data.get('payment_method', 'card')
 
     try:
+        # Comprueba que amount sea int, si no es int da error
+        amount = int(amount)
+        
         appointment = Appointment.objects.get(id=appointment_id)
 
         # Check if the user is the patient associated with the appointment
@@ -74,11 +77,10 @@ def create_payment(request):
         }, status=status.HTTP_201_CREATED)
 
     except Appointment.DoesNotExist:
-        return Response({'error': 'Appointment not found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'Cita no encontrada'}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         logging.error(f'Error processing payment: {str(e)}')
-        return Response({'error': f'Error processing payment'}, status=status.HTTP_400_BAD_REQUEST)
-
+        return Response({'error': 'Error procesando el pago'}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 @permission_classes([IsPatient])
