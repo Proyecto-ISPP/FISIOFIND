@@ -113,13 +113,25 @@ const PhysioVideo = () => {
     e.preventDefault();
     const token = getAuthToken();
 
-    if (!title.trim() || !description.trim() || (!file && editingVideo === null)) {
-      showAlert("error", "Todos los campos son obligatorios.");
+    // Validate required fields
+    if (!title.trim()) {
+      showAlert("error", "El título es obligatorio.");
       return;
     }
-
-    if (title.length > 100 || description.length > 255) {
-      showAlert("error", "Título o descripción demasiado largos.");
+    if (title.length > 100) {
+      showAlert("error", "El título no puede exceder los 100 caracteres.");
+      return;
+    }
+    if (!description.trim()) {
+      showAlert("error", "La descripción es obligatoria.");
+      return;
+    }
+    if (description.length > 255) {
+      showAlert("error", "La descripción no puede exceder los 255 caracteres.");
+      return;
+    }
+    if (!file && editingVideo === null) {
+      showAlert("error", "El archivo de video es obligatorio.");
       return;
     }
 
@@ -127,14 +139,15 @@ const PhysioVideo = () => {
 
     try {
       if (editingVideo !== null) {
-        await axios.put(`${getApiBaseUrl()}/api/cloud/videos/update-video/${editingVideo}/`, {
-          title,
-          description
-        }, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        // Update video
+        await axios.put(
+          `${getApiBaseUrl()}/api/cloud/videos/update-video/${editingVideo}/`,
+          { title, description },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
         showAlert("success", "Video actualizado correctamente.");
       } else {
+        // Create new video
         const formData = new FormData();
         formData.append("title", title);
         formData.append("description", description);
@@ -144,12 +157,13 @@ const PhysioVideo = () => {
         await axios.post(`${getApiBaseUrl()}/api/cloud/videos/create-video/`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
         showAlert("success", "Video subido correctamente.");
       }
 
+      // Reset form and reload videos
       setTitle("");
       setDescription("");
       setFileKey(null);
@@ -158,11 +172,11 @@ const PhysioVideo = () => {
 
       const response = await axios.get(`${getApiBaseUrl()}/api/cloud/videos/list-videos/`, {
         headers: { Authorization: `Bearer ${token}` },
-        params: { treatment: id }
+        params: { treatment: id },
       });
       setVideos(response.data);
     } catch (error) {
-      showAlert("error", error.response?.data?.detail || "Error. Intenta nuevamente.");
+      showAlert("error", error.response?.data?.message || "Error al procesar el video.");
     } finally {
       setLoading(false);
     }

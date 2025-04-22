@@ -11,7 +11,7 @@ from .models import PatientFile, Video
 from mimetypes import guess_type
 
 @api_view(['POST'])
-@permission_classes([IsPatient])
+@permission_classes([IsPhysioOrPatient])
 def create_file(request):
     treatment_id = request.data.get('treatment')
 
@@ -29,7 +29,12 @@ def create_file(request):
             status=status.HTTP_404_NOT_FOUND
         )
 
-    if treatment.patient != request.user.patient:
+    if hasattr(request.user, 'patient') and treatment.patient != request.user.patient:
+        return Response(
+            {"message": "No tienes permiso para crear archivos para este tratamiento"},
+            status=status.HTTP_403_FORBIDDEN
+        )
+    elif hasattr(request.user, 'physio') and treatment.physiotherapist != request.user.physio:
         return Response(
             {"message": "No tienes permiso para crear archivos para este tratamiento"},
             status=status.HTTP_403_FORBIDDEN
@@ -58,14 +63,16 @@ def create_file(request):
 
 
 @api_view(['DELETE'])
-@permission_classes([IsPatient])
+@permission_classes([IsPhysioOrPatient])
 def delete_patient_file(request, file_id):
     user = request.user
 
     try:
         file = PatientFile.objects.get(id=file_id)
 
-        if not hasattr(user, 'patient') or file.treatment.patient.id != user.patient.id:
+        if hasattr(user, 'patient') and file.treatment.patient.id != user.patient.id:
+            return Response({"error": "No tienes permiso para eliminar este archivo"}, status=status.HTTP_403_FORBIDDEN)
+        elif hasattr(user, 'physio') and file.treatment.physiotherapist.id != user.physio.id:
             return Response({"error": "No tienes permiso para eliminar este archivo"}, status=status.HTTP_403_FORBIDDEN)
 
         file.delete_from_storage()
@@ -78,15 +85,17 @@ def delete_patient_file(request, file_id):
 
 
 @api_view(['PUT'])
-@permission_classes([IsPatient])
+@permission_classes([IsPhysioOrPatient])
 def update_patient_file(request, file_id):
     try:
         file_instance = PatientFile.objects.get(id=file_id)
     except PatientFile.DoesNotExist:
         return Response({"error": "Archivo no encontrado"}, status=status.HTTP_404_NOT_FOUND)
 
-    # Verificar que el usuario autenticado es el dueño del archivo
-    if file_instance.treatment.patient.id != request.user.patient.id:
+    # Verificar que el usuario autenticado es el dueño del archivo o el fisioterapeuta asociado
+    if hasattr(request.user, 'patient') and file_instance.treatment.patient.id != request.user.patient.id:
+        return Response({"error": "No tienes permiso para actualizar este archivo"}, status=status.HTTP_403_FORBIDDEN)
+    elif hasattr(request.user, 'physio') and file_instance.treatment.physiotherapist.id != request.user.physio.id:
         return Response({"error": "No tienes permiso para actualizar este archivo"}, status=status.HTTP_403_FORBIDDEN)
 
     mutable_data = request.data.copy()
@@ -210,34 +219,56 @@ def create_video(request):
 
     if not treatment_id:
         return Response(
-            {"message": "El ID del tratamiento es requerido"},
+            {"message": "El ID del tratamiento es requerido."},
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # Aquí asumo que Treatment es el nombre del modelo y tiene una relación con el paciente
     try:
         treatment = Treatment.objects.get(id=treatment_id)
     except Treatment.DoesNotExist:
         return Response(
-            {"message": "Tratamiento no encontrado"},
+            {"message": "Tratamiento no encontrado."},
             status=status.HTTP_404_NOT_FOUND
         )
 
-    # Verificar si el fisioterapeuta asociado al tratamiento es el mismo que el que hace la solicitud
     if treatment.physiotherapist != request.user.physio:
         return Response(
-            {"message": "No tienes permiso para crear archivos para este tratamiento"},
+            {"message": "No tienes permiso para crear videos para este tratamiento."},
             status=status.HTTP_403_FORBIDDEN
         )
 
-    mutable_data = request.data.copy()
-    serializer = VideoSerializer(data=mutable_data, context={"request": request})
+    # Validate required fields
+    if not request.data.get('title'):
+        return Response(
+            {"message": "El título es obligatorio."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    if not request.data.get('description'):
+        return Response(
+            {"message": "La descripción es obligatoria."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    if 'file' not in request.FILES:
+        return Response(
+            {"message": "El archivo de video es obligatorio."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # Validate file type
+    uploaded_file = request.FILES['file']
+    if not uploaded_file.content_type.startswith('video/'):
+        return Response(
+            {"message": "El archivo debe ser un video válido."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    serializer = VideoSerializer(data=request.data, context={"request": request})
 
     if serializer.is_valid():
         video = serializer.save()
         return Response(
             {
-                "message": "Archivo creado correctamente",
+                "message": "Video creado correctamente.",
                 "video": VideoSerializer(video).data
             },
             status=status.HTTP_201_CREATED

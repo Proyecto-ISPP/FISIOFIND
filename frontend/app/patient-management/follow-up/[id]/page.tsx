@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { use } from "react";
 import RestrictedAccess from "@/components/RestrictedAccess";
 import { getApiBaseUrl } from "@/utils/api";
 import { Film, ArrowLeft, File } from "lucide-react";
@@ -43,8 +44,9 @@ interface Treatment {
   notifications_enabled: boolean;
 }
 
-const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
+const TreatmentDetailPage = ({ params: paramsPromise }: { params: Promise<{ id: string }> }) => {
   const router = useRouter();
+  const params = use(paramsPromise); // Unwrap the params Promise
   const [treatment, setTreatment] = useState<Treatment | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -74,7 +76,7 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
             if (data.user_role !== "patient") {
               setError("Solo los pacientes pueden acceder a esta página");
             } else {
-              loadTreatment(storedToken, params.id);
+              loadTreatment(storedToken, params.id); // Access unwrapped params
             }
           })
           .catch((err) => {
@@ -87,7 +89,7 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
         setLoading(false);
       }
     }
-  }, [isClient, params.id]);
+  }, [isClient, params.id]); // Access unwrapped params
 
   const loadTreatment = async (authToken: string, treatmentId: string) => {
     try {
