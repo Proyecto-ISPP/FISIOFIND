@@ -314,21 +314,21 @@ const TreatmentFilesPage = () => {
       setFile(file);
 
       const fileUrl = URL.createObjectURL(file);
-      setFilePreview(fileUrl);
 
-      // Determinar el tipo de archivo
+      // Validate file type and set preview only for safe types
       const fileType = file.type.split("/")[0]; // 'image', 'application', etc.
       const fileExtension = file.name.split(".").pop()?.toLowerCase();
 
-      if (fileType === "image") {
-        // Vista previa de imagen (jpg, png, etc.)
+      if (fileType === "image" && ["jpg", "jpeg", "png", "gif"].includes(fileExtension || "")) {
+        // Preview for image files
         setFilePreview(fileUrl);
       } else if (fileExtension === "pdf") {
-        // Vista previa de PDF
-        setFilePreview(fileUrl); // Simplemente usar el enlace del archivo PDF
-      } else if (["doc", "docx", "xls", "xlsx"].includes(fileExtension || "")) {
-        // Vista previa de documentos (Word, Excel, etc.)
-        setFilePreview("/path/to/icon-for-doc-file.svg"); // Usar un icono para el archivo
+        // Preview for PDF files
+        setFilePreview(fileUrl);
+      } else {
+        // Unsupported file type: clear preview
+        setFilePreview(null);
+        console.warn("Unsupported file type:", file.type);
       }
     }
   };
@@ -448,11 +448,14 @@ const TreatmentFilesPage = () => {
                 className="w-full py-2 px-4 text-sm border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
                 required={!editingFile}
               />
-              {filePreview && file?.type.includes("image") && (
-                <img src={filePreview} alt="Vista previa" className="mt-2 max-h-60" />
-              )}
-              {filePreview && file?.type === "application/pdf" && (
-                <embed src={filePreview} type="application/pdf" width="100%" height="400px" />
+              {filePreview ? (
+                file?.type.includes("image") ? (
+                  <img src={filePreview} alt="Vista previa" className="mt-2 max-h-60" />
+                ) : file?.type === "application/pdf" ? (
+                  <embed src={filePreview} type="application/pdf" width="100%" height="400px" />
+                ) : null
+              ) : (
+                <p className="mt-2 text-sm text-gray-500">No preview available for this file type.</p>
               )}
             </div>
           )}
