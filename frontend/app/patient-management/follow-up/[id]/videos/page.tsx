@@ -122,28 +122,33 @@ const Pacientes = () => {
   const handleVideoClick = async (videoId: string) => {
     const storedToken = getAuthToken();
     if (!storedToken) {
-      setMessage("Error: No hay token de autenticación.");
+      showAlert("error", "Error: No hay token de autenticación.");
       return;
     }
 
-    setIsVideoLoading(true); // Mostrar el modal de "Cargando video"
+    setIsVideoLoading(true);
 
     try {
       const response = await axios.get(`${getApiBaseUrl()}/api/cloud/videos/stream-video/${videoId}/`, {
-        headers: {
-          Authorization: `Bearer ${storedToken}`,
-        },
-        responseType: 'blob', // Necesario para manejar el video como un archivo binario
+        headers: { Authorization: `Bearer ${storedToken}` },
+        responseType: "blob",
       });
 
-      const videoUrl = URL.createObjectURL(response.data); // Crear una URL temporal para el archivo blob
-      setVideoUrl(videoUrl); // Establecer la URL del video
+      if (response.status === 403) {
+        showAlert("error", "No tienes permiso para acceder a este video.");
+        return;
+      }
 
+      const videoUrl = URL.createObjectURL(response.data);
+      setVideoUrl(videoUrl);
     } catch (error) {
-      setMessage(" Error al obtener el video.");
-      setTimeout(() => setMessage(""), 5000);
+      if (error.response?.status === 403) {
+        showAlert("error", "No tienes permiso para acceder a este video.");
+      } else {
+        showAlert("error", "Error al obtener el video.");
+      }
     } finally {
-      setIsVideoLoading(false); // Ocultar el modal de "Cargando video" cuando el video esté listo
+      setIsVideoLoading(false);
     }
   };
 
@@ -262,26 +267,33 @@ const Pacientes = () => {
 
       {/* Video Player */}
       {videoUrl && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 backdrop-blur-sm">
-          <div className="relative max-w-4xl w-full p-4">
-            <button 
-              onClick={() => setVideoUrl(null)}
-              className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-all duration-200 flex items-center rounded-full p-2 shadow-lg"
-            >
-              <X size={24} />
-              <span className="ml-1 mr-1">Cerrar</span>
-            </button>
-            <video 
-              controls 
-              autoPlay
-              className="w-full rounded-xl shadow-2xl"
-              src={videoUrl}
-            >
-              Tu navegador no soporta la etiqueta de video.
-            </video>
-          </div>
+      <div className="fixed inset-0 z-50 bg-black bg-opacity-75 flex items-center justify-center backdrop-blur-sm pointer-events-auto">
+        <div className="relative max-w-4xl w-full p-4">
+          
+          <button 
+            onClick={() => setVideoUrl(null)} 
+            className="absolute top-4 right-4 bg-gray-900 text-white hover:bg-gray-800 transition-all duration-200 flex items-center rounded-full p-3 shadow-lg z-50 border border-white"
+            style={{
+              zIndex: 1000,
+              backgroundColor: "rgba(0, 0, 0, 0.7)",
+            }}
+          >
+            <X size={24} />
+          </button>
+
+          <video 
+            controls 
+            autoPlay
+            className="w-full rounded-xl shadow-2xl"
+            src={videoUrl}
+          >
+            Tu navegador no soporta la etiqueta de video.
+          </video>
         </div>
-      )}
+      </div>
+    )}
+
+
     </div>
   );
 };

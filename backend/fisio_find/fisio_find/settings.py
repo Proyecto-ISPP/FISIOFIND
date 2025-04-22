@@ -79,7 +79,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'channels',
     'videocall',
-    'ratings',
+    'ratings'
 ]
 
 # DJANGO REST FRAMEWORK
