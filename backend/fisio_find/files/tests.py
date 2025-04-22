@@ -1496,8 +1496,15 @@ class StreamVideoTestCase(APITestCase):
 
     @patch("files.views.boto3.client")
     def test_stream_video_storage_error(self, mock_boto_client):
+        """
+        Este test falla a propósito si la vista sigue devolviendo error 500.
+        Recordatorio de que debería manejar la excepción en lugar de reventar.
+        """
         mock_boto_client.return_value.get_object.side_effect = Exception("DigitalOcean error")
 
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 500)
-        self.assertIn("DigitalOcean error", response.data["error"])
+        try:
+            response = self.client.get(self.url)
+            if response.status_code == 500:
+                self.fail("ERROR 500: La vista no maneja excepciones de almacenamiento. Notificar para mejorar.")
+        except Exception as e:
+            self.fail(f"Excepción no capturada en la vista: {str(e)}")
