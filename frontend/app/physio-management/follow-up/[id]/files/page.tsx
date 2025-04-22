@@ -323,6 +323,51 @@ const PhysioFiles = () => {
           <p className="text-gray-600">Lista de archivos relacionados con tu tratamiento</p>
         </div>
 
+        {files.length > 0 && !loading && (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {files.map((file) => (
+              <div key={file.id} className="bg-gray-50 border-2 border-gray-200 rounded-2xl p-4 transition-all duration-200 hover:shadow-md flex flex-col justify-between">
+                <div>
+                  <h3 className="font-semibold text-lg text-gray-800 mb-2 truncate">{file.title}</h3>
+                  <p className="text-gray-600 text-sm mb-4 line-clamp-3">{file.description}</p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => handlePreview(file.id, file.title)}
+                    className="flex items-center gap-1 bg-[#6bc9be] text-white px-3 py-2 rounded-xl hover:bg-[#5ab8ad] transition-all duration-200"
+                    title="Vista previa"
+                  >
+                    <Eye size={18} />
+                    <span className="text-sm">Ver</span>
+                  </button>
+                  <button
+                    onClick={() => handleDownload(file.id, file.title)}
+                    className="flex items-center gap-1 bg-blue-500 text-white px-3 py-2 rounded-xl hover:bg-blue-400 transition-all duration-200"
+                    title="Descargar"
+                  >
+                    <Download size={18} />
+                    <span className="text-sm">Descargar</span>
+                  </button>
+                  <button
+                    onClick={() => handleEdit(file)}
+                    className="flex items-center gap-1 bg-yellow-500 text-white px-3 py-2 rounded-xl hover:bg-yellow-400 transition-all duration-200"
+                    title="Editar"
+                  >
+                    <span className="text-sm">Editar</span>
+                  </button>
+                  <button
+                    onClick={() => confirmDelete(file.id)}
+                    className="flex items-center gap-1 bg-red-500 text-white px-3 py-2 rounded-xl hover:bg-red-400 transition-all duration-200"
+                    title="Eliminar"
+                  >
+                    <span className="text-sm">Eliminar</span>
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
         <form onSubmit={handleUpload}>
           <div className="relative">
             <input
@@ -377,70 +422,6 @@ const PhysioFiles = () => {
             {loading ? (editingFile ? "Actualizando..." : "Subiendo...") : (editingFile ? "Actualizar Archivo" : "Subir Archivo")}
           </button>
         </form>
-
-        {loading && (
-          <div className="flex justify-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#1E5ACD]"></div>
-          </div>
-        )}
-
-        {message && (
-          <div className="mt-4 p-4 rounded-xl text-center bg-red-50 text-red-600 border border-red-100 flex items-center justify-center">
-            <AlertCircle className="mr-2" size={20} />
-            <span>{message}</span>
-          </div>
-        )}
-
-        {files.length === 0 && !loading && (
-          <div className="text-center py-8 bg-gray-50 rounded-2xl border-2 border-gray-200">
-            <p className="text-gray-500">No tienes archivos disponibles.</p>
-          </div>
-        )}
-
-        {files.length > 0 && !loading && (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {files.map((file) => (
-              <div key={file.id} className="bg-gray-50 border-2 border-gray-200 rounded-2xl p-4 transition-all duration-200 hover:shadow-md">
-                <div>
-                  <h3 className="font-semibold text-lg text-gray-800 mb-2 truncate">{file.title}</h3>
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-3">{file.description}</p>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handlePreview(file.id, file.title)}
-                      className="flex items-center gap-1 bg-[#6bc9be] text-white px-3 py-2 rounded-xl hover:bg-[#5ab8ad] transition-all duration-200"
-                      title="Vista previa"
-                    >
-                      <Eye size={18} />
-                      <span className="text-sm">Ver</span>
-                    </button>
-                    <button
-                      onClick={() => handleDownload(file.id, file.title)}
-                      className="flex items-center gap-1 bg-blue-500 text-white px-3 py-2 rounded-xl hover:bg-blue-400 transition-all duration-200"
-                      title="Descargar"
-                    >
-                      <Download size={18} />
-                      <span className="text-sm">Descargar</span>
-                    </button>
-                    <button
-                      onClick={() => handleEdit(file)}
-                      className="flex items-center gap-1 bg-yellow-500 text-white px-3 py-2 rounded-xl hover:bg-yellow-400 transition-all duration-200"
-                      title="Editar"
-                    >
-                      <span className="text-sm">Editar</span>
-                    </button>
-                    <button
-                      onClick={() => confirmDelete(file.id)}
-                      className="flex items-center gap-1 bg-red-500 text-white px-3 py-2 rounded-xl hover:bg-red-400 transition-all duration-200"
-                      title="Eliminar"
-                    >
-                      <span className="text-sm">Eliminar</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
 
       {deleteConfirmation.show && (
@@ -468,10 +449,9 @@ const PhysioFiles = () => {
 
       {previewFile && (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 backdrop-blur-sm">
-          <div className="relative max-w-4xl w-full p-4">
-            <button onClick={() => setPreviewFile(null)} className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-all duration-200 flex items-center rounded-full p-2 shadow-lg">
+            <div className="relative max-w-4xl w-full p-4">
+            <button onClick={() => setPreviewFile(null)} className="absolute top-6 right-6 bg-gray-800 text-white hover:bg-gray-700 transition-all duration-200 flex items-center rounded-full p-2 shadow-lg">
               <X size={24} />
-              <span className="ml-1 mr-1">Cerrar</span>
             </button>
 
             {fileType === 'image' && <img src={previewFile} alt="Vista previa" className="max-w-full max-h-[80vh] mx-auto object-contain" />}

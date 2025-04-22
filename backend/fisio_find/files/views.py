@@ -366,11 +366,14 @@ def update_video(request, video_id):
 
 
 @api_view(['GET'])
-@permission_classes([IsPatient])
+@permission_classes([IsPhysioOrPatient])
 def stream_video(request, video_id):
     try:
         video = Video.objects.get(id=video_id)
-        if not hasattr(request.user, "patient") or video.treatment.patient != request.user.patient:
+        # Check permissions for both patients and physiotherapists
+        if hasattr(request.user, "patient") and video.treatment.patient != request.user.patient:
+            return Response({'error': 'No tienes permisos para reproducir este vídeo'}, status=403)
+        elif hasattr(request.user, "physio") and video.treatment.physiotherapist != request.user.physio:
             return Response({'error': 'No tienes permisos para reproducir este vídeo'}, status=403)
 
         s3_client = boto3.client(
@@ -389,7 +392,7 @@ def stream_video(request, video_id):
         video_size = video_object["ContentLength"]
         video_body = video_object["Body"]
 
-        # Manejar streaming por fragmentos (range requests)
+        # Handle range requests for streaming
         range_header = request.headers.get("Range", None)
         if range_header:
             range_value = range_header.replace("bytes=", "").split("-")
@@ -397,11 +400,11 @@ def stream_video(request, video_id):
             end = int(range_value[1]) if len(range_value) > 1 and range_value[1] else video_size - 1
             chunk_size = end - start + 1
 
-            # Leer solo el fragmento necesario
+            # Read only the required chunk
             video_body.seek(start)
             video_chunk = video_body.read(chunk_size)
 
-            # Responder con `206 Partial Content`
+            # Respond with `206 Partial Content`
             response = HttpResponse(video_chunk, content_type="video/mp4")
             response["Content-Range"] = f"bytes {start}-{end}/{video_size}"
             response["Accept-Ranges"] = "bytes"
@@ -410,7 +413,7 @@ def stream_video(request, video_id):
             response["Connection"] = "keep-alive"
             response.status_code = 206
         else:
-            # Streaming completo en fragmentos
+            # Full streaming in chunks
             def stream_file():
                 for chunk in video_body.iter_chunks():
                     yield chunk

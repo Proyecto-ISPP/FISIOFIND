@@ -4,7 +4,7 @@ import React, { useState, useEffect, ChangeEvent, FormEvent, useRef } from "reac
 import { useParams, useRouter } from "next/navigation";
 import { getApiBaseUrl } from "@/utils/api";
 import axios from "axios";
-import { ArrowLeft, UploadCloud, Edit2, Trash } from "lucide-react";
+import { ArrowLeft, UploadCloud, Edit2, Trash, Play, X, Loader2 } from "lucide-react";
 import Alert from "@/components/ui/Alert";
 
 const PhysioVideo = () => {
@@ -29,6 +29,9 @@ const PhysioVideo = () => {
     message: ""
   });
 
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [isVideoLoading, setIsVideoLoading] = useState<boolean>(false);
+
   const showAlert = (type: "success" | "error" | "info" | "warning", message: string) => {
     setAlert({ show: true, type, message });
   };
@@ -37,44 +40,44 @@ const PhysioVideo = () => {
     return localStorage.getItem("token");
   };
 
-    useEffect(() => {
-      const checkAuthAndRole = async () => {
-        setIsAuthChecking(true);
-        const storedToken = getAuthToken();
-  
-        if (!storedToken) {
-          console.log("No token found, redirecting to login");
+  useEffect(() => {
+    const checkAuthAndRole = async () => {
+      setIsAuthChecking(true);
+      const storedToken = getAuthToken();
+
+      if (!storedToken) {
+        console.log("No token found, redirecting to login");
+        window.location.href = "/login";
+        return;
+      }
+
+      try {
+        const response = await axios.get(`${getApiBaseUrl()}/api/app_user/check-role/`, {
+          headers: {
+            Authorization: `Bearer ${storedToken}`,
+          },
+        });
+
+        if (response.data && response.data.user_role === "physiotherapist") {
+          setIsAuthenticated(true);
+        } else {
+          console.log("User is not a physiotherapist, redirecting to not-found");
+          window.location.href = "/not-found";
+        }
+      } catch (error) {
+        if (error.response?.status === 401) {
+          localStorage.removeItem("token");
           window.location.href = "/login";
-          return;
+        } else {
+          window.location.href = "/not-found";
         }
-  
-        try {
-          const response = await axios.get(`${getApiBaseUrl()}/api/app_user/check-role/`, {
-            headers: {
-              Authorization: `Bearer ${storedToken}`,
-            },
-          });
-  
-          if (response.data && response.data.user_role === "physiotherapist") {
-            setIsAuthenticated(true);
-          } else {
-            console.log("User is not a physiotherapist, redirecting to not-found");
-            window.location.href = "/not-found";
-          }
-        } catch (error) {
-          if (error.response?.status === 401) {
-            localStorage.removeItem("token");
-            window.location.href = "/login";
-          } else {
-            window.location.href = "/not-found";
-          }
-        } finally {
-          setIsAuthChecking(false);
-        }
-      };
-  
-      checkAuthAndRole();
-    }, []);
+      } finally {
+        setIsAuthChecking(false);
+      }
+    };
+
+    checkAuthAndRole();
+  }, []);
 
   useEffect(() => {
     if (!isAuthenticated || isAuthChecking) return;
@@ -90,10 +93,10 @@ const PhysioVideo = () => {
       try {
         const response = await axios.get(`${getApiBaseUrl()}/api/cloud/videos/list-videos/`, {
           headers: { Authorization: `Bearer ${token}` },
-          params: { treatment: id }
+          params: { treatment_id: id } // Ensure the correct parameter name is used
         });
         setVideos(Array.isArray(response.data) ? response.data : []);
-      } catch {
+      } catch (error) {
         setVideos([]);
       } finally {
         setLoadingVideos(false);
@@ -101,7 +104,7 @@ const PhysioVideo = () => {
     };
 
     fetchVideos();
-  }, [id]);
+  }, [id, isAuthenticated, isAuthChecking]);
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files?.length) {
@@ -214,6 +217,41 @@ const PhysioVideo = () => {
     }
   };
 
+  const handleVideoClick = async (videoId: string) => {
+    const token = getAuthToken();
+    if (!token) {
+      showAlert("error", "Error: No hay token de autenticación.");
+      return;
+    }
+
+    setIsVideoLoading(true);
+
+    try {
+      const response = await axios.get(`${getApiBaseUrl()}/api/cloud/videos/stream-video/${videoId}/`, {
+        headers: { Authorization: `Bearer ${token}` },
+        responseType: "blob",
+      });
+
+      if (response.status === 403) {
+        showAlert("error", "No tienes permiso para acceder a este video. Verifica que tienes los permisos necesarios.");
+        return;
+      }
+
+      const videoUrl = URL.createObjectURL(response.data);
+      setVideoUrl(videoUrl);
+    } catch (error) {
+      if (error.response?.status === 403) {
+        showAlert("error", "No tienes permiso para acceder a este video. Verifica que tienes los permisos necesarios.");
+      } else if (error.response?.status === 404) {
+        showAlert("error", "El video no fue encontrado. Verifica que el ID del video es correcto.");
+      } else {
+        showAlert("error", "Error al obtener el video. Intenta nuevamente más tarde.");
+      }
+    } finally {
+      setIsVideoLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center p-5" style={{ background: "rgb(238, 251, 250)" }}>
       {alert.show && (
@@ -233,6 +271,38 @@ const PhysioVideo = () => {
         </div>
       )}
 
+      {isVideoLoading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 backdrop-blur-sm">
+          <div
+            className="bg-white p-8 rounded-3xl shadow-xl max-w-sm w-full transition-all duration-300"
+            style={{ boxShadow: "0 20px 60px rgba(0, 0, 0, 0.15)" }}
+          >
+            <Loader2 className="animate-spin mx-auto mb-4 text-blue-600" size={48} />
+            <p className="text-center text-gray-700">Estamos cargando tu video, espera un momentito...</p>
+          </div>
+        </div>
+      )}
+
+      {videoUrl && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-75 flex items-center justify-center backdrop-blur-sm pointer-events-auto">
+          <div className="relative max-w-4xl w-full p-4">
+            <button
+              onClick={() => setVideoUrl(null)}
+              className="absolute top-4 right-4 bg-gray-900 text-white hover:bg-gray-800 transition-all duration-200 flex items-center rounded-full p-3 shadow-lg z-50 border border-white"
+              style={{
+                zIndex: 1000,
+                backgroundColor: "rgba(0, 0, 0, 0.7)",
+              }}
+            >
+              <X size={24} />
+            </button>
+            <video controls autoPlay className="w-full rounded-xl shadow-2xl" src={videoUrl}>
+              Tu navegador no soporta la etiqueta de video.
+            </video>
+          </div>
+        </div>
+      )}
+
       <div className="bg-white w-full max-w-3xl rounded-3xl shadow-xl p-10">
         <button onClick={() => router.push(`/physio-management/follow-up/${id}`)} className="mb-6 flex items-center text-blue-600 hover:text-blue-800">
           <ArrowLeft className="mr-2" size={20} /> Volver al tratamiento
@@ -248,24 +318,40 @@ const PhysioVideo = () => {
           {loadingVideos ? (
             <p className="text-center">Cargando videos...</p>
           ) : videos.length ? (
-            <ul className="space-y-4">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {videos.map((video) => (
-                <li key={video.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl shadow-md">
+                <div
+                  key={video.id}
+                  className="bg-gray-50 border-2 border-gray-200 rounded-2xl p-4 transition-all duration-200 hover:shadow-md"
+                >
                   <div>
-                    <h3 className="font-semibold">{video.title}</h3>
-                    <p>{video.description}</p>
+                    <h3 className="font-semibold text-lg text-gray-800 mb-2 truncate">{video.title}</h3>
+                    <p className="text-gray-600 text-sm mb-4 line-clamp-3">{video.description}</p>
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() => handleVideoClick(video.id)}
+                        className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-2 px-4 rounded-xl transition-all duration-200 flex items-center justify-center"
+                      >
+                        <Play className="mr-2" size={20} />
+                        Ver Video
+                      </button>
+                      <button
+                        onClick={() => handleEdit(video)}
+                        className="w-10 h-10 bg-yellow-500 hover:bg-yellow-600 text-white rounded-full flex items-center justify-center transition-all duration-200"
+                      >
+                        <Edit2 size={16} />
+                      </button>
+                      <button
+                        onClick={() => confirmDelete(video.id)}
+                        className="w-10 h-10 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition-all duration-200"
+                      >
+                        <Trash size={16} />
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex gap-2">
-                    <button onClick={() => handleEdit(video)} className="bg-[#05AC9C] text-white p-2 rounded-xl hover:bg-[#05918F]">
-                      <Edit2 size={18} />
-                    </button>
-                    <button onClick={() => confirmDelete(video.id)} className="bg-red-500 text-white p-2 rounded-xl hover:bg-red-600">
-                      <Trash size={18} />
-                    </button>
-                  </div>
-                </li>
+                </div>
               ))}
-            </ul>
+            </div>
           ) : (
             <p className="text-center">No hay videos disponibles para este tratamiento.</p>
           )}
