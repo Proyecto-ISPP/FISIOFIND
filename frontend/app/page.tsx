@@ -140,7 +140,7 @@ const Home = () => {
             <div className="relative hidden md:block">
               {/* Floating images around the logo */}
               <div className="absolute top-0 left-0 w-full h-full hidden lg:block">
-                <div className="floating-image" style={{ right: "60%", top: "45%" }}>
+                <div className="floating-image" style={{ right: "  0%", top: "3%" }}>
                   <Image
                     src="/static/Gif-mascota-despedida-unscreen.gif"
                     alt="Floating Image 3"
@@ -152,7 +152,7 @@ const Home = () => {
               </div>
 
               {/* Ajuste de la posición del logo */}
-              <div className="relative flex justify-center items-center mt-8">
+              <div className="relative flex justify-start items-center mt-8 ml-[-100px]">
                 <Image
                   src="/static/fisio_find_logo_white.webp"
                   alt="Hero Image"
