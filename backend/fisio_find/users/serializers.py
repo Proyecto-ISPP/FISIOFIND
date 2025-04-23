@@ -130,6 +130,9 @@ class PatientSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("La fecha de nacimiento debe ser anterior a la fecha actual.")
         elif value < date(1900, 1, 1):
             raise serializers.ValidationError("La fecha de nacimiento no puede ser tan atrás en el tiempo.")
+        elif (date.today().year - value.year - ((date.today().month, date.today().day) < (value.month, value.day))) < 18:
+            raise serializers.ValidationError("Debes ser mayor de edad para registrarte.")
+    
         return value
 
     def validate(self, data):
@@ -250,6 +253,10 @@ class PatientRegisterSerializer(serializers.ModelSerializer):
         if data['birth_date'] < date(1900, 1, 1):
             validation_errors["birth_date"] = "La fecha no puede ser tan atrás en el tiempo"
 
+        if (date.today().year - data['birth_date'].year - (
+            (date.today().month, date.today().day) < (data['birth_date'].month, data['birth_date'].day))) < 18:
+            validation_errors["birth_date"] = "Debes ser mayor de edad para registrarte."
+
         if validation_errors or len(validation_errors) > 1:
             raise serializers.ValidationError(validation_errors)
 
@@ -351,6 +358,17 @@ class PhysioRegisterSerializer(serializers.ModelSerializer):
             validation_errors["phone_number"] = "El número de teléfono debe tener 9 caracteres."
         if codigo_postal_no_mide_5(data['postal_code']):
             validation_errors["postal_code"] = "El código postal debe tener 5 caracteres."
+
+        if data['birth_date'] > date.today():
+            validation_errors["birth_date"] = "La fecha de nacimiento no puede ser posterior a la fecha actual."
+
+        if data['birth_date'] < date(1900, 1, 1):
+            validation_errors["birth_date"] = "La fecha no puede ser tan atrás en el tiempo"
+
+        if (date.today().year - data['birth_date'].year - (
+            (date.today().month, date.today().day) < (data['birth_date'].month, data['birth_date'].day))) < 18:
+            validation_errors["birth_date"] = "Debes ser mayor de edad para registrarte."
+
 
         # Validar colegiación (antes se hacía en create; ahora se valida aquí)
         first_name = data.get("first_name", "")
@@ -466,10 +484,10 @@ class PhysioUpdateSerializer(serializers.ModelSerializer):
             'invalid': 'Valor de plan inválido'
         }
     )
-    degree = serializers.CharField()
-    university = serializers.CharField()
-    experience = serializers.CharField()
-    workplace = serializers.CharField()
+    degree = serializers.CharField(required=False)
+    university = serializers.CharField(required=False)
+    experience = serializers.CharField(required=False)
+    workplace = serializers.CharField(required=False)
 
     class Meta:
         model = Physiotherapist
@@ -482,6 +500,8 @@ class PhysioUpdateSerializer(serializers.ModelSerializer):
         validation_errors = dict()
 
         # Validar que estos campos estén informados si aún no existen en el modelo
+        """
+        Comentado para que no haga falta meterlos
         required_fields = ['degree', 'university', 'experience', 'workplace']
         for field in required_fields:
             valor_actual = getattr(self.instance, field, None)
@@ -489,6 +509,7 @@ class PhysioUpdateSerializer(serializers.ModelSerializer):
 
             if not valor_actual and not nuevo_valor:
                 validation_errors[field] = f"El campo {field} es obligatorio."
+        """
         if 'dni' in data:
             if not validate_dni_structure(data['dni']):
                 validation_errors["dni"] = "El DNI debe tener 8 números seguidos de una letra válida."
@@ -565,19 +586,3 @@ class PhysioUpdateSerializer(serializers.ModelSerializer):
         except IntegrityError:
             raise serializers.ValidationError({"error":
                                               "Error de integridad en la base de datos. Posible duplicado de datos."})
-
-
-class AppUserAdminViewSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = AppUser
-        fields = '__all__'
-
-
-class PatientAdminViewSerializer(serializers.ModelSerializer):
-
-    user = AppUserAdminViewSerializer()
-
-    class Meta:
-        model = Patient
-        fields = '__all__'
