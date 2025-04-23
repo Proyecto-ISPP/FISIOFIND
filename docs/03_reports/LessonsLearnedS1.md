@@ -22,7 +22,7 @@ classoption: "table"
 
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
 <p align="center">
-  <img src="../.img/Logo_FisioFind_Verde_sin_fondo.PNG" alt="Logo FisioFind" width="300" />
+  <img src="../.img/Logo_FisioFind_Verde_sin_fondo.webp" alt="Logo FisioFind" width="300" />
 </p>
 
 <h1 align="center" style="font-size: 30px; font-weight: bold;">
@@ -59,7 +59,7 @@ classoption: "table"
 
 - **Miembros del grupo:** Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes.
 
-- **Contribuidores:** [Delfín Santana Rubio](https://github.com/DelfinSR) (revisor), [Antonio Macías Ferrera](https://github.com/antoniommff) (revisor), [Guadalupe Ridruejo Pineda](https://github.com/guaridpin) (revisor), [Miguel Encina Martínez](https://github.com/MiguelEncina) (revisor)
+- **Contribuidores:** [Delfín Santana Rubio](https://github.com/DelfinSR) (autor), [Antonio Macías Ferrera](https://github.com/antoniommff) (revisor), [Guadalupe Ridruejo Pineda](https://github.com/guaridpin) (revisor), [Miguel Encina Martínez](https://github.com/MiguelEncina) (revisor)
 
 - **Fecha de Creación:** 23/04/2025  
 
@@ -262,6 +262,7 @@ Analizando las decisiones tomadas junto a los problemas reportados del S2 en la 
 
 
 # Anexo
+[Link a Excel](https://uses0-my.sharepoint.com/:x:/g/personal/delsanrub_alum_us_es/EazKWAh6m99Jiu-RwekAUXUB39w6iHQ9QEHFFToq65VfHg?e=BYhLfj)
 
 Marca temporal,Nombre completo,Correo (uvus@alum.us.es),Rol en el equipo,Título o breve nombre del error/problema,Descripción breve del error/problema,¿A qué entrega pertenece?,¿Cuándo fue identificado?,¿Quién lo identificó?,¿Crees que fue un problema técnico?,"En caso afirmativo, ¿cuál fue el origen técnico del problema?",¿Crees que fue un problema de proceso o metodología?,"En caso afirmativo, ¿cuál fue el origen a nivel de proceso?",¿Quién introdujo el error o condición de fallo?,¿Quién permitió que llegara a la entrega final sin ser corregido?,¿Qué impacto tuvo este error en el resultado?,¿Qué solución técnica propones para evitar este error en el futuro?,¿Qué cambio propones en la forma de trabajo o metodología del equipo?,¿Consideras que este problema ya ha sido resuelto en entregas posteriores?,¿Qué podrías haber hecho mejor como miembro del equipo para evitar o detectar este error antes?,¿Qué aprendizaje personal sacas de este caso en concreto?
 19/04/2025 15:05:40,Redactado,Redactado,"Analista, Desarrollador",Error en el despliegue,Rafa y yo estuvimos intentando el despliegue pero había muchos problemas de cara a la entrega,S1,Antes de la entrega,Yo,No,,Sí,No gestionar bien los tiempos y dejarlo para el último dia," No sé qué responder a esto, fue la “mala planificación” de hacerlo el última dia","Todo el grupo, se intentó hasta el final y hasta 4 compañeros más se integraron",Suspender el S1 por el despligue,Ninguna,"Ya la hemos añadido, hemos predeterminado que se debe tener todo el martes para que el miércoles y jueves se arreglen posibles fallos",Sí,"Creo que ha sido algo normal, por nuestra inexperiencia ",Que hay que intentar adelantar el trabajo lo antes posibles de los deadlines para evitar esto
