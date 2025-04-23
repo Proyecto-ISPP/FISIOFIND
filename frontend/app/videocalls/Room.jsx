@@ -17,6 +17,8 @@ import useWebRTC from './hooks/useWebRTC';
 import useMediaControls from './hooks/useMediaControls';
 import useChat from './hooks/useChat';
 import useRoomManagement from './hooks/useRoomManagement';
+import useRemoteSpeechTranscription from './hooks/useRemoteSpeechTranscription';
+
 import MapaDolor from './tools/MapaDolor';
 import QuestionnaireResponseViewer from './tools/QuestionnaireResponseViewer';
 import PatientQuestionnaire from './tools/PatientQuestionnaire';
@@ -35,6 +37,11 @@ const Room = ({ roomCode }) => {
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
   const localStreamRef = useRef(null);
+
+  // Subtítulos remotos
+  const [showRemoteSubs, setShowRemoteSubs] = useState(false);
+  const remoteStream = remoteVideoRef.current?.srcObject || null;
+  const { transcripts } = useRemoteSpeechTranscription(showRemoteSubs, remoteStream);
 
   const [showSettings, setShowSettings] = useState(false);
   const [selectedTool, setSelectedTool] = useState(null);
@@ -112,51 +119,61 @@ const Room = ({ roomCode }) => {
   }, []);
 
   // Esperar a tener el rol antes de inicializar lógica pesada
-useEffect(() => {
-  const validateAccess = async () => {
-    try {
-      const response = await axios.get(`${getApiBaseUrl()}/api/videocall/join-room/${roomCode}/`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      console.log("✅ Acceso validado con backend:", response.data);
-    } catch (error) {
-      console.log(" Acceso denegado por backend:", error.response?.data || error.message);
-      alert("No tienes permiso para acceder a esta sala.");
-      window.location.href = '/videocalls';
-      return;
-    }
-
-    try {
-      console.log(`Inicializando sala ${roomCode} como ${userRole}`);
-      await mediaControls.initLocalMedia();
-      chat.addChatMessage('Sistema', 'Cámara y micrófono inicializados correctamente');
-      webSocket.connectWebSocket();
-    } catch (err) {
-      //console.error('Error durante la inicialización:', err);
-      //webRTC.setErrorMessage(`Error de inicialización: ${err.message}`);
-      if (err.name === 'NotAllowedError') {
-        webRTC.setErrorMessage('Permiso denegado para cámara o micrófono. Habilita los permisos en tu navegador.');
-      } else if (err.name === 'NotFoundError') {
-        console.log("Aqui estoy")
-        webRTC.setErrorMessage('No se encontró cámara o micrófono. Verifica la conexión de tus dispositivos.');
-      } else {
-        webRTC.setErrorMessage(`Error: ${err.message}`);
+  useEffect(() => {
+    const validateAccess = async () => {
+      try {
+        const response = await axios.get(
+          `${getApiBaseUrl()}/api/videocall/join-room/${roomCode}/`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log('✅ Acceso validado con backend:', response.data);
+      } catch (error) {
+        console.log(
+          ' Acceso denegado por backend:',
+          error.response?.data || error.message
+        );
+        alert('No tienes permiso para acceder a esta sala.');
+        window.location.href = '/videocalls';
+        return;
       }
+
+      try {
+        console.log(`Inicializando sala ${roomCode} como ${userRole}`);
+        await mediaControls.initLocalMedia();
+        chat.addChatMessage(
+          'Sistema',
+          'Cámara y micrófono inicializados correctamente'
+        );
+        webSocket.connectWebSocket();
+      } catch (err) {
+        if (err.name === 'NotAllowedError') {
+          webRTC.setErrorMessage(
+            'Permiso denegado para cámara o micrófono. Habilita los permisos en tu navegador.'
+          );
+        } else if (err.name === 'NotFoundError') {
+          webRTC.setErrorMessage(
+            'No se encontró cámara o micrófono. Verifica la conexión de tus dispositivos.'
+          );
+        } else {
+          webRTC.setErrorMessage(`Error: ${err.message}`);
+        }
+      }
+    };
+
+    if (!loading && userRole && token) {
+      validateAccess();
     }
-  };
 
-  if (!loading && userRole && token) {
-    validateAccess();
-  }
-
-  return () => {
-    webRTC.closeConnection();
-    webSocket.closeWebSocket();
-    mediaControls.cleanupMedia();
-  };
-}, [loading, userRole, token]);
+    return () => {
+      webRTC.closeConnection();
+      webSocket.closeWebSocket();
+      mediaControls.cleanupMedia();
+    };
+  }, [loading, userRole, token]);
 
   // WebSocket message handling
   useEffect(() => {
@@ -171,48 +188,50 @@ useEffect(() => {
             break;
           case 'pain-map':
             if (data.message.mapId) {
-              setActivePainMap(data.message.mapId === 'quit' ? null : data.message.mapId);
+              setActivePainMap(
+                data.message.mapId === 'quit' ? null : data.message.mapId
+              );
             } else if (data.message.partsSelected && data.message.side) {
-              if (data.message.side === "front") {
+              if (data.message.side === 'front') {
                 setPartsColoredFront(data.message.partsSelected);
-              } else if (data.message.side === "back") {
+              } else if (data.message.side === 'back') {
                 setPartsColoredBack(data.message.partsSelected);
               }
             }
             break;
-            case 'send-questionnaire':
-              if (userRole === 'patient') {
-                setActiveQuestionnaire(data.message.questionnaire);
-                chat.addChatMessage(
-                  'Sistema', 
-                  `Has recibido el cuestionario: "${data.message.questionnaire.title}"`
-                );
+          case 'send-questionnaire':
+            if (userRole === 'patient') {
+              setActiveQuestionnaire(data.message.questionnaire);
+              chat.addChatMessage(
+                'Sistema',
+                `Has recibido el cuestionario: "${data.message.questionnaire.title}"`
+              );
+            }
+            break;
+          case 'submit-questionnaire':
+            if (userRole === 'physio') {
+              chat.addChatMessage(
+                'Sistema',
+                `El paciente ha respondido al cuestionario: "${data.message.questionnaireTitle}"`
+              );
+
+              const matchingQuestionnaire = questionnaires.find(
+                (q) => q.id === data.message.questionnaireId
+              );
+
+              if (matchingQuestionnaire) {
+                setResponseQuestionnaire(matchingQuestionnaire);
+                setQuestionnaireResponse(data.message.responses);
+              } else {
+                setResponseQuestionnaire({
+                  id: data.message.questionnaireId,
+                  title: data.message.questionnaireTitle,
+                  questions: [],
+                });
+                setQuestionnaireResponse(data.message.responses);
               }
-              break;
-              case 'submit-questionnaire':
-                if (userRole === 'physio') {
-                  chat.addChatMessage(
-                    'Sistema', 
-                    `El paciente ha respondido al cuestionario: "${data.message.questionnaireTitle}"`
-                  );
-                  
-                  // Buscar el cuestionario completo para mostrar las preguntas correctamente
-                  const matchingQuestionnaire = questionnaires.find(q => q.id === data.message.questionnaireId);
-                  
-                  if (matchingQuestionnaire) {
-                    setResponseQuestionnaire(matchingQuestionnaire);
-                    setQuestionnaireResponse(data.message.responses);
-                  } else {
-                    // Si no encontramos el cuestionario, usamos la información básica disponible
-                    setResponseQuestionnaire({
-                      id: data.message.questionnaireId,
-                      title: data.message.questionnaireTitle,
-                      questions: []
-                    });
-                    setQuestionnaireResponse(data.message.responses);
-                  }
-                }
-                break;
+            }
+            break;
           default:
             webRTC.handleWebSocketMessage(data);
         }
@@ -223,22 +242,25 @@ useEffect(() => {
   }, [chat, webRTC, webSocket, roomManagement]);
 
   // Efecto para cargar cuestionarios
-useEffect(() => {
-  const fetchQuestionnaires = async () => {
-    try {
-      const response = await axios.get(`${getApiBaseUrl()}/api/questionnaires/list/`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setQuestionnaires(response.data);
-    } catch (error) {
-      console.log('Error fetching questionnaires:', error);
-    }
-  };
+  useEffect(() => {
+    const fetchQuestionnaires = async () => {
+      try {
+        const response = await axios.get(
+          `${getApiBaseUrl()}/api/questionnaires/list/`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        setQuestionnaires(response.data);
+      } catch (error) {
+        console.log('Error fetching questionnaires:', error);
+      }
+    };
 
-  if (token && userRole === 'physio') {
-    fetchQuestionnaires();
-  }
-}, [token, userRole]);
+    if (token && userRole === 'physio') {
+      fetchQuestionnaires();
+    }
+  }, [token, userRole]);
 
   const handlePainMapSelect = (mapId) => {
     setActivePainMap(mapId);
@@ -253,7 +275,10 @@ useEffect(() => {
         },
       });
 
-      chat.addChatMessage('Sistema', `Mapa de dolor "${activePainMap}" enviado al paciente.`);
+      chat.addChatMessage(
+        'Sistema',
+        `Mapa de dolor "${activePainMap}" enviado al paciente.`
+      );
     }
   };
 
@@ -270,7 +295,9 @@ useEffect(() => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-          <h2 className="text-xl font-semibold mb-4 text-blue-600">Acceso restringido</h2>
+          <h2 className="text-xl font-semibold mb-4 text-blue-600">
+            Acceso restringido
+          </h2>
           <p className="text-gray-700 mb-4">
             🔒 Necesitas iniciar sesión para acceder a las videollamadas.
           </p>
@@ -284,7 +311,7 @@ useEffect(() => {
       </div>
     );
   }
-  
+
   return (
     <div className={styles.roomContainer}>
       <RoomHeader
@@ -311,6 +338,23 @@ useEffect(() => {
         userRole={userRole}
       />
 
+      {/* PANEL DE SUBTÍTULOS REMOTOS */}
+      {showRemoteSubs && (
+        <div
+          className="absolute bottom-4 left-1/2 transform -translate-x-1/2
+                     bg-black/60 p-2 rounded max-w-lg text-center z-10"
+        >
+          {transcripts.map((t, i) => (
+            <p
+              key={i}
+              className={t.isFinal ? 'text-white font-medium' : 'text-gray-300 italic'}
+            >
+              {t.text}
+            </p>
+          ))}
+        </div>
+      )}
+
       <Controls
         micActive={mediaControls.micActive}
         cameraActive={mediaControls.cameraActive}
@@ -323,6 +367,17 @@ useEffect(() => {
         setShowSettings={setShowSettings}
         leaveCall={roomManagement.leaveCall}
       />
+
+      {/* BOTÓN PARA TOGGLEAR SUBTÍTULOS REMOTOS */}
+      <button
+        onClick={() => setShowRemoteSubs(v => !v)}
+        disabled={!webRTC.connected}
+        className={`ml-4 px-3 py-1 rounded 
+          ${showRemoteSubs ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-800'} 
+          ${webRTC.connected ? '' : 'opacity-50 cursor-not-allowed'}`}
+      >
+        {showRemoteSubs ? '🔊 Subtítulos ON' : '🔇 Subtítulos OFF'}
+      </button>
 
       <ChatPanel
         showChat={chat.showChat}
@@ -376,19 +431,19 @@ useEffect(() => {
           />
           {selectedTool && (
             <ToolPanel
-            selectedTool={selectedTool}
-            activePainMap={activePainMap}
-            handlePainMapSelect={handlePainMapSelect}
-            sendPainMapToPatient={sendPainMapToPatient}
-            userRole={userRole}
-            partsColoredFront={partsColoredFront}
-            partsColoredBack={partsColoredBack}
-            sendWebSocketMessage={webSocket.sendWebSocketMessage}
-            questionnaires={questionnaires}
-            addChatMessage={chat.addChatMessage}
-            onCloseTool={() => setSelectedTool(null)}
-            token={token}
-          />
+              selectedTool={selectedTool}
+              activePainMap={activePainMap}
+              handlePainMapSelect={handlePainMapSelect}
+              sendPainMapToPatient={sendPainMapToPatient}
+              userRole={userRole}
+              partsColoredFront={partsColoredFront}
+              partsColoredBack={partsColoredBack}
+              sendWebSocketMessage={webSocket.sendWebSocketMessage}
+              questionnaires={questionnaires}
+              addChatMessage={chat.addChatMessage}
+              onCloseTool={() => setSelectedTool(null)}
+              token={token}
+            />
           )}
         </>
       )}
@@ -407,6 +462,7 @@ useEffect(() => {
           </button>
         </div>
       )}
+
       {userRole === 'physio' && questionnaireResponse && (
         <div className={styles.modalOverlay}>
           <QuestionnaireResponseViewer
@@ -418,7 +474,7 @@ useEffect(() => {
             }}
           />
         </div>
-)}
+      )}
     </div>
   );
 };
