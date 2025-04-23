@@ -1990,3 +1990,101 @@
   border: 1px dashed #dee2e6;
   margin: 10px 0;
 }
+
+/* Estilos para el contenedor de subtítulos */
+.subtitlesContainer {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 60%;
+  max-width: 80%;
+  background-color: rgba(0, 0, 0, 0.75);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  z-index: 50;
+  cursor: move;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  padding: 0;
+  backdrop-filter: blur(4px);
+}
+
+/* Cabecera de subtítulos con título y botón de cerrar */
+.subtitlesHeader {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background-color: rgba(0, 0, 0, 0.4);
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: move;
+}
+
+.subtitlesClose {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+.subtitlesClose:hover {
+  color: white;
+}
+
+/* Contenido de los subtítulos */
+.subtitlesContent {
+  padding: 10px 16px;
+  min-height: 80px;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+/* Estilos para cada tipo de texto de subtítulos */
+.subtitleText {
+  margin: 8px 0;
+  font-size: 18px;
+  line-height: 1.4;
+  text-align: center;
+  transition: all 0.2s ease;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.subtitleFinal {
+  color: white;
+  font-weight: 500;
+}
+
+.subtitlePartial {
+  color: rgba(255, 255, 255, 0.8);
+  font-style: italic;
+}
+
+.subtitleEmpty {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+  font-style: italic;
+  padding: 20px 0;
+}
+
+/* Botón toggle de subtítulos mejorado */
+.subtitlesToggle {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  padding: 10px 16px;
+  border-radius: 30px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: none;
+  z-index: 40;
+}
+
+.subtitlesActive {
+  background-color: #4CAF50;
+  color: white;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);
+}
