@@ -1,13 +1,14 @@
 // pages/unsubscribe.tsx
 "use client";
+
+import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
 import axios from "axios";
 import { getApiBaseUrl } from "@/utils/api";
 
-const UnsubscribePage = () => {
-  const searchParams = useSearchParams(); 
-  const [token] = useState<string | null>(searchParams.get("token")); 
+const UnsubscribeContent = () => {
+  const searchParams = useSearchParams();
+  const [token] = useState<string | null>(searchParams.get("token"));
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [showModal, setShowModal] = useState(true);
@@ -65,4 +66,10 @@ const UnsubscribePage = () => {
   );
 };
 
-export default UnsubscribePage;
+export default function UnsubscribePage() {
+  return (
+    <Suspense fallback={<div>Cargando...</div>}>
+      <UnsubscribeContent />
+    </Suspense>
+  );
+}

@@ -1,6 +1,6 @@
----
+<!-- ---
 title: "INFORME DE TIEMPO - #SPRINT 3 (28/03 - 10/04)"       # CHANGE IF NEEDED
-subtitle: "FISIO FIND - Grupo 6 - #SPRINT 2"
+subtitle: "FISIO FIND - Grupo 6 - #SPRINT 3"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]
 date: "10/04/2025"                                        # CHANGE IF NEEDED
 subject: "ISPP"
@@ -18,7 +18,7 @@ header-right: "10/04/2025"                              # CHANGE IF NEEDED
 footer-left: "FISIO FIND"
 documentclass: scrartcl
 classoption: "table"
----
+--- -->
 
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
 <p align="center">

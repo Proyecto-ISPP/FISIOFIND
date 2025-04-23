@@ -98,7 +98,6 @@ INSTALLED_APPS += [
     'guest_session',
     'questionnaire',
     'treatments',
-    'gestion_survey',
     'payment',
     'files',
     'appointment_rating',
