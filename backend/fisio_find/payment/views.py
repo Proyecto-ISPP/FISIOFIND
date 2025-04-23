@@ -20,28 +20,32 @@ from django.http import FileResponse
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
-def _check_deadline(appointment):
+def _check_deadline(appointment, payment_status):
     """Check if the payment deadline has passed and cancel the appointment if needed."""
     now = timezone.now()
-    if now > appointment.start_time - timezone.timedelta(hours=48) and appointment.payment.status == 'Not Paid':
+    if now > appointment.start_time - timezone.timedelta(hours=48) and payment_status == 'Not Paid':
         appointment.status = 'Canceled'
         appointment.save()
         return True
     return False
 
-
+'''
 @api_view(['POST'])
 @permission_classes([IsPatient])
 def create_payment(request):
     """Create a payment for an appointment."""
     appointment_id = request.data.get('appointment_id')
     # Amount in cents: 1000 centavos = 10 EUR
-    amount = request.data.get('amount', 1000)
+    amount = request.data.get('amount', False)
     # payment_method = request.data.get('payment_method', 'card')
 
+    if not amount:
+        return Response({'error': 'Debe de enviar la cantidad de dinero a pagar'}, status=status.HTTP_400_BAD_REQUEST)
+
+
     try:
-        # Comprueba que amount sea int, si no es int da error
-        amount = int(amount)
+        # Comprueba que amount sea float, si no es float da error
+        amount = float(amount)
         
         appointment = Appointment.objects.get(id=appointment_id)
 
@@ -50,11 +54,12 @@ def create_payment(request):
             return Response({'error': 'You can only pay for your own appointments'},
                             status=status.HTTP_403_FORBIDDEN)
 
+        """
         # Check if deadline has passed
         if _check_deadline(appointment):
             return Response({'error': 'Payment deadline has expired and the appointment was canceled'},
                             status=status.HTTP_400_BAD_REQUEST)
-
+        """
         # Create payment intent with Stripe
         payment_intent = stripe.PaymentIntent.create(
             amount=amount,
@@ -81,6 +86,7 @@ def create_payment(request):
     except Exception as e:
         logging.error(f'Error processing payment: {str(e)}')
         return Response({'error': 'Error procesando el pago'}, status=status.HTTP_400_BAD_REQUEST)
+'''
 
 @api_view(['POST'])
 @permission_classes([IsPatient])
@@ -95,7 +101,7 @@ def confirm_payment(request, payment_id):
                             status=status.HTTP_403_FORBIDDEN)
 
         # Check if deadline has passed
-        if _check_deadline(payment.appointment):
+        if _check_deadline(payment.appointment, payment.status):
             return Response({'error': 'Payment deadline has expired and the appointment was canceled'},
                             status=status.HTTP_400_BAD_REQUEST)
 
@@ -131,7 +137,7 @@ def confirm_payment(request, payment_id):
         logging.error(f'Error confirming payment: {str(e)}')
         return Response({'error': f'Error confirming payment'}, status=status.HTTP_400_BAD_REQUEST)
 
-
+# ES UNA FUNCION, NO ES UNA URL
 def cancel_payment_patient(payment_id):
     """Cancel an appointment and handle refund if applicable."""
     try:
@@ -189,7 +195,7 @@ def cancel_payment_patient(payment_id):
         logging.error(f'Stripe error: {str(e)}')
         return Response({'error': 'An internal error has occurred. Please try again later.'}, status=status.HTTP_400_BAD_REQUEST)
     
-
+# ES UNA FUNCION NO ES UNA URL
 def cancel_payment_pyshio(appointment_id):
     """Cancel an appointment and handle refund if applicable."""
     try:
@@ -267,7 +273,7 @@ def cancel_payment_pyshio(appointment_id):
         logging.error(f'Stripe error: {str(e)}')
         return Response({'error': 'An error occurred while processing your payment. Please try again later.'}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
-        return Response({'error': 'An internal error has occurred. Please try again later.'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'An internal error has occurred. Please try again later.'+str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
@@ -323,7 +329,7 @@ def get_refund_status(request, payment_id):
                 
                 # Convertir timestamp a formato legible
                 from datetime import datetime
-                refund_date_formatted = datetime.utcfromtimestam(refund_date).strftime('%Y-%m-%d %H:%M:%S UTC')
+                refund_date_formatted = datetime.utcfromtimestamp(refund_date).strftime('%Y-%m-%d %H:%M:%S UTC')
 
                 return Response({
                     'message': 'Refund status retrieved successfully',
@@ -346,7 +352,7 @@ def get_refund_status(request, payment_id):
         logging.error(f'Stripe error: {str(e)}')
         return Response({'error': 'An error occurred while processing your payment.'}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
-        return Response({'error': 'An internal error has occurred. Please try again later.'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'An internal error has occurred. Please try again later.'+str(e)}, status=status.HTTP_400_BAD_REQUEST)
     
 
 @api_view(['GET'])
@@ -462,7 +468,7 @@ def get_physio_invoices(request):
     except Exception as e:
         logging.error("An error occurred: %s", str(e), exc_info=True)
         return Response({"error": "An internal error has occurred. Please try again later."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+"""
 @api_view(['POST'])
 @permission_classes([IsPhysiotherapist])
 def redeem_physio_payments(request):
@@ -488,8 +494,8 @@ def redeem_physio_payments(request):
         }, status=status.HTTP_200_OK)
 
     except Exception as e:
-        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+        return Response({"error": "Error en su solicitud, compruebe los datos enviados."}, status=status.HTTP_400_BAD_REQUEST)
+"""
 @api_view(['POST'])
 @permission_classes([IsPhysiotherapist])
 def collect_payments(request):
@@ -559,7 +565,7 @@ def collect_payments(request):
         return response
 
     except Exception as e:
-        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"error": "Error al procesar su solicitud, compruebe los datos enviados."}, status=status.HTTP_400_BAD_REQUEST)
 
 #generar un SetupIntent para almacenar el método de pago sin cobrarlo de inmediato
 def create_payment_setup(appointment_id, amount, user):
@@ -605,7 +611,7 @@ def create_payment_setup(appointment_id, amount, user):
     except Exception as e:
         logging.error(f'Error al procesar el pago: {str(e)}')
         appointment.delete()  # Eliminar la cita si ocurre un error
-        return Response({'error': 'An error occurred while processing your payment. Please try again later.'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'An error occurred while processing your payment. Please try again later.'+str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 @permission_classes([IsPatient])
