@@ -102,6 +102,7 @@ const FisioProfile = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
   const [showUpdatePasswordModal, setShowUpdatePasswordModal] = useState(false);
+  const [showDeleteAccountModal, setShowDeleteAccountModal] = useState(false);
   const [schedule, setSchedule] = useState({
     exceptions: {},
     appointments: [],
@@ -2185,14 +2186,23 @@ const FisioProfile = () => {
                     )}
                   </div>
 
-                  {/* Submit button */}
-                  <div className="mt-4">
+                  {/* Submit and Delete buttons */}
+                  <div className="mt-4 flex gap-4 items-center">
+                    
                     <GradientButton
                       variant="edit"
-                      className="w-full py-4 px-6 font-semibold rounded-xl flex items-center justify-center gap-2"
+                      className="flex-1 py-4 px-6 font-semibold rounded-xl flex items-center justify-center gap-2"
                     >
                       <Save size={18} />
                       Actualizar Perfil
+                    </GradientButton>
+                    <GradientButton
+                      variant="red"
+                      onClick={() => setShowDeleteAccountModal(true)}
+                      className="flex-1 py-4 px-6 font-semibold rounded-xl flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white"
+                    >
+                      <Trash2 size={18} />
+                      Eliminar Cuenta
                     </GradientButton>
                   </div>
                 </form>
@@ -2555,6 +2565,34 @@ const FisioProfile = () => {
                 >
                   {hasRated ? "Actualizar" : "Enviar"}
                 </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Delete Account Modal */}
+        {showDeleteAccountModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-2xl p-8 max-w-2xl w-full mx-4 shadow-xl">
+              <h2 className="text-2xl font-bold mb-4 text-gray-800">¿Estás seguro de que quieres eliminar tu cuenta?</h2>
+              <p className="mb-4 text-gray-600">Esta acción no se podrá deshacer.</p>
+              <p className="mb-6 text-gray-600">
+                Si eliminas tu cuenta todos tus datos personales, tratamientos, vídeos y archivos subidos e historial serán eliminados. 
+                Si realmente deseas ejercer el derecho a eliminar tus datos, escribe un correo a info@fisiofind.com con asunto [Eliminar mi cuenta] y procederemos a eliminar tus datos.
+              </p>
+              <div className="flex justify-end gap-4">
+                <button
+                  onClick={() => setShowDeleteAccountModal(false)}
+                  className="px-6 py-2 rounded-lg text-white bg-gradient-to-r from-gray-400 to-gray-500 hover:from-gray-500 hover:to-gray-600 transition-all duration-200 font-medium shadow-sm hover:shadow-md"
+                >
+                  Cancelar
+                </button>
+                <a
+                  href="mailto:info@fisiofind.com?subject=[Eliminar mi cuenta]"
+                  className="px-6 py-2 rounded-lg text-white bg-blue-500 hover:bg-blue-600 transition-all duration-200 font-medium shadow-sm hover:shadow-md"
+                >
+                  Enviar correo
+                </a>
               </div>
             </div>
           </div>
