@@ -189,7 +189,7 @@ Aunque solo suspendimos el entregable S1, decidimos aprovechar para hacer una en
 ### 🧩 Problemas principales
 
 #### 1. Despliegue tardío y fallido
-- **Descripción**: El despliegue se dejó para el último momento, lo que provocó múltiples errores y la suspensión del sprint.
+- **Descripción**: El despliegue se dejó para el último momento, lo que provocó múltiples errores y la calificación "suspenso" en este sprint.
 - **Causas**: Mala planificación, falta de CI/CD, y descoordinación general.
 - **Soluciones propuestas**:
   - Comenzar el despliegue desde la primera semana.
