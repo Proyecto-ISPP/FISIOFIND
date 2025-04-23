@@ -1,4 +1,4 @@
----
+<!-- ---
 title: "REPORTE ANÁLISIS CUANTITATIVO DE LA CALIDAD SEMANAS 1 Y 2 #SPRINT 1" # CHANGE IF NEEDED
 subtitle: "FISIO FIND - Grupo 6 - #SPRINT 1"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]                                                # CHANGE IF NEEDED
@@ -18,7 +18,7 @@ header-right: "04/03/2025"                                # CHANGE IF NEEDED
 footer-left: "FISIO FIND"
 documentclass: scrartcl
 classoption: "table"
----
+--- -->
 
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
 <p align="center">
@@ -55,7 +55,7 @@ classoption: "table"
 
 - **Número de Grupo:** Grupo 6
 
-- **Entregable:** #SPRINT 3
+- **Entregable:** #SPRINT 1
 
 - **Miembros del grupo:** Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes.
 
@@ -73,9 +73,9 @@ classoption: "table"
 
 | Fecha      | Versión | Realizada por   | Descripción de los cambios                       |
 | ---------- | ------- | --------------- | ------------------------------------------------ |
-| 04/03/2025 | v1.0    | Francisco Mateos Villarejo, Daniel Alors Romero | Elaboración de la estructura del documento para su posterior realización. |
-| 10/04/2025 | v2.0    | Francisco Mateos Villarejo, Daniel Alors Romero, Miguel Encina Martínez, Benjamín Ignacio Maureira Flores | Compleción del documento |
-
+| 04/03/2025 | v1.0    | Francisco Mateos Villarejo, Daniel Alors Romero | Elaboración de la estructura del documento para su posterior realización el día 06. |
+| 06/03/2025 | v1.1    | Francisco Mateos Villarejo, Daniel Alors Romero, Miguel Encina Martínez, Benjamín Ignacio Maureira Flores | Compleción del documento |
+| 13/03/2025 | v2.0    | Francisco Mateos Villarejo, Daniel Alors Romero, Miguel Encina Martínez, Benjamín Ignacio Maureira Flores | Actualización del documento |
 
 
 <br>
@@ -102,37 +102,39 @@ A continuación, se presentan los datos recopilados durante este período.
 
 ## 2.1. NÚMERO DE COMMITS
 El número de commits que se van a evaluar son los mergeados a la rama de Develop, sabiendo que no son los únicos realizados durante la semana, se contabilizará el número total de commits y su comparativa con los realizados en la anterior semana.
-Commits totales: 1.323
-Commits Semanales: 483
+Commits totales: 524
+Commits Semanales: 288
 
 ### 2.1.1. NÚMERO DE COMMITS POR PERSONA
-Alberto Carmona Sicre: 45
-Antonio Macías Ferrera: 169
-Benjamín Ignacio Maureira Flores: 49
-Francisco Capote García: 46
-Daniel Alors Romero: 39
-Daniel Fernández Caballero: 46
-Daniel Ruiz López: 43
-Daniel Tortorici Bartús: 44
-Daniel Vela Camacho: 50
-Delfín Santana Rubio: 238
-Guadalupe Ridruejo Pineda: 109 
-Julen Redondo Pacheco: 78
-Miguel Encina Martínez: 90
-Francisco Mateos Villarejo: 38 
-Pablo Fernández Pérez: 29
-Ramón Gavira Sánchez: 49
-Rafael Pulido Cifuentes: 87
+Alberto Carmona Sicre: 24
+Antonio Macías Ferrera: 68
+Benjamín Ignacio Maureira Flores: 8
+Francisco Capote García: 10
+Daniel Alors Romero: 17
+Daniel Fernández Caballero: 24
+Daniel Ruiz López: 25
+Daniel Tortorici Bartús: 8
+Daniel Vela Camacho: 13
+Delfín Santana Rubio: 96
+Guadalupe Ridruejo Pineda: 26 
+Julen Redondo Pacheco: 9
+Miguel Encina Martínez: 22
+Francisco Mateos Villarejo: 8 
+Pablo Fernández Pérez: 9
+Ramón Gavira Sánchez: 21
+Rafael Pulido Cifuentes: 42
 
 ## 2.2. NÚMERO DE PULL REQUESTS
 El número de Pull Requests que se van a evaluar son las mergeadas a la rama de Develop, sabiendo que no son los únicas realizadas durante la semana, se contabilizará el número total de Pull Requests realizadas en el proyecto y su comparativa con las realizadas en la anterior semana.
-Pull Requests totales: 258
-Pull Requests Semanales: 77
+Pull Requests totales: 96
+Pull Requests Semanales: 33
 
 # 3. INFORME DE TIEMPO
 El análisis del tiempo de trabajo es un factor clave en la evaluación de la productividad y eficiencia del equipo. En esta sección, se presentan datos recopilados por el equipo de control de tiempo, los cuales permiten medir el desempeño en función de las horas trabajadas, el cumplimiento de los planes establecidos y las posibles desviaciones respecto a la planificación inicial.
 
 Este análisis ayuda a identificar patrones en la distribución del tiempo, evaluar la carga de trabajo y detectar oportunidades de mejora en la gestión del tiempo dentro del Sprint. Además, proporciona información valiosa para la planificación de futuras iteraciones y la optimización del flujo de trabajo del equipo.
+
+Fuente: Datos proporcionados por el equipo de control de tiempo en los reportes "time_report_week_4", "time_report_week_5" y "time_report_week_6" en la carpeta "03_reports/time_reports".
 
 # 4. ANÁLISIS DE TAREAS REALIZADAS
 El análisis de las tareas realizadas es fundamental para evaluar el avance del Sprint y la eficiencia del equipo en la ejecución de las actividades planificadas. A través de la recopilación de datos en herramientas como GitHub Project y el uso de gráficas Burn Down, se obtiene una visión clara sobre el ritmo de trabajo y la capacidad del equipo para completar las tareas asignadas dentro de los plazos establecidos.
@@ -142,8 +144,12 @@ Este estudio permite identificar posibles bloqueos en el desarrollo, evaluar la 
 Fuente: GitHub Project, gráficas Burn Down.
 
 ## 4.1. GRÁFICA BURN UP
-![Burn Up Chart](../../.img/burnup_chart_Sprint3.png)
-En este se puede apreciar un avance progresivo durante toda la semana, aumentando el ritmo de trabajo durante el fin de semana de la última semana del Sprint para dar el máximo numero de funcionalidades a los usuarios piloto antes de terminar el sprint. Las tareas que todavía no están cerradas, son documentos o tareas de impacto pequeño, las cuales no afectan al desarrollo del sprint.
+![Burn Up Chart](../../.img/burnup_chart_week_4-5.png)
+
+Como podemos observar, hay un avance progresivo de las tareas durante estas primeras semanas de trabajo, lo que indica que el equipo está trabajando diariamente de forma equitativa. Sin embargo, si se quiere completar con todas las tareas planificadas para este primer Sprint, va a ser necesario incrementar la productividad y el esfuerzo dedicado. Aún así, cabe destacar que esta gráfica no representa el progreso de las tareas no finalizadas, por lo que no podemos profundizar más en el análisis.
+
+![Burn Up Chart](../../.img/burnup_chart_week_6.png)
+En este se puede apreciar un avance progresivo durante toda la semana. Sin embargo, los últimos días hemos tenido un avance más significativo cerrando varias tareas claves. Cabe resaltar que las tareas que sobran son del proximo sprint que ya estan planificadas y asignadas.
 
 # 5. ANÁLISIS DE COMUNICACIONES
 La comunicación efectiva es un pilar fundamental en el éxito del equipo de desarrollo. En esta sección, se evalúa el respeto a los horarios establecidos, el uso correcto de los canales de comunicación y la eficiencia en la interacción entre los miembros del equipo. Un flujo de comunicación adecuado permite la resolución rápida de bloqueos, mejora la coordinación del trabajo y evita malentendidos.
@@ -167,6 +173,6 @@ El uso de herramientas de inteligencia artificial en el desarrollo de software h
 
 Este análisis busca evaluar cómo la inteligencia artificial ha influido en la productividad del equipo, si ha permitido reducir tiempos de desarrollo y si ha presentado algún desafío en su implementación. También se revisa el cumplimiento de buenas prácticas en su uso, garantizando que la IA se utilice como un complemento eficaz dentro del flujo de trabajo del equipo.
 
-Fuente: Datos proporcionados por el equipo de control de uso de IA en los documento "ia_report_week_9" e "ia_report_week_10" en la carpeta "03_reports/ia_reports".
+Fuente: Datos proporcionados por el equipo de control de uso de IA en los documento "ia_report_week_4-5" e "ia_report_week_6" en la carpeta "03_reports/ia_reports".
 
 ---

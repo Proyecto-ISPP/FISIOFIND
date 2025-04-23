@@ -1,4 +1,4 @@
----
+<!-- ---
 title: "SPRINT RETROSPECTIVE #SPRINT 3 - GRUPO 1"                    # CHANGE IF NEEDED
 subtitle: "FISIO FIND - Grupo 6 - #SPRINT 3"
 author: [Miguel Encina Martínez, Francisco Mateos Villarejo, Daniel Tortorici Bartús, Daniel Vela Camacho, Francisco Capote García]
@@ -18,7 +18,7 @@ header-right: "10/04/2025"                                # CHANGE IF NEEDED
 footer-left: "FISIO FIND"
 documentclass: scrartcl
 classoption: "table"
----
+--- -->
 
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
 <p align="center">
@@ -37,8 +37,6 @@ classoption: "table"
 - [**3. DISCUSIÓN Y FEEDBACK**](#3-discusión-y-feedback)
   - [**GOOD: ¿Qué salió bien?**](#good-qué-salió-bien)
   - [**BAD: ¿Qué NO salió bien?**](#bad-qué-no-salió-bien)
-  - [**START: ¿Qué debemos empezar a hacer?**](#start-qué-debemos-empezar-a-hacer)
-  - [**STOP: ¿Qué debemos dejar de hacer?**](#stop-qué-debemos-dejar-de-hacer)
 - [**4. CONCLUSIONES**](#4-conclusiones)
 <!-- COMMENT WHEN EXPORTING TO PDF -->
 

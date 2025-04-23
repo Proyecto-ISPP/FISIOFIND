@@ -1,4 +1,4 @@
----
+<!-- ---
 title: "REPORTE DE IA DE LA SEMANA 9 (28/03/25) - (03/04/25)"
 subtitle: "FISIO FIND - Grupo 6 - #SPRINT 3"
 author: [Daniel Fernández Caballero, Daniel Ruiz López]
@@ -18,7 +18,7 @@ header-right: "03/04/2025"
 footer-left: "FISIO FIND"
 documentclass: scrartcl
 classoption: "table"
----
+--- -->
 
 <!-- Imagen del logo (comentar al exportar a PDF) -->
 <p align="center">
