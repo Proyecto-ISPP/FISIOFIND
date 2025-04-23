@@ -202,7 +202,7 @@ export default function Home() {
     setExpandedStatus(expandedStatus === status ? null : status);
   };
 
-  if (!token || !userRole) {
+  if (!token) {
     return (
       <RestrictedAccess message="Necesitas iniciar sesión para acceder tus citas" />
     );
