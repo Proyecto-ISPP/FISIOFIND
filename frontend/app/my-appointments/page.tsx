@@ -50,6 +50,7 @@ export default function Home() {
         });
 
         const userRole = roleResponse.data.user_role;
+        console.log(userRole);
         setCurrentRole(userRole);
 
         // Obtener las citas según el rol
@@ -209,11 +210,24 @@ export default function Home() {
   }
 
   return (
-    <RestrictedAccess>
-      <div className="container mx-auto px-4 py-8">
-        <br />
-        <br />
-        <h1 className="text-2xl font-bold text-gray-800 mb-6">Mis Citas</h1>
+    <div className="min-h-screen bg-gradient-to-b from-teal-50 to-blue-50 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="h-24"></div>
+        
+        {/* Header with decorative elements */}
+        <div className="relative mb-12">
+          <div className="absolute -top-24 -left-24 w-64 h-64 bg-teal-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+          <div className="absolute -top-16 -right-16 w-64 h-64 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+
+          <h1 className="text-5xl font-extrabold text-center text-gray-800 mb-3">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-teal-600 to-blue-600">
+              Mis Citas
+            </span>
+          </h1>
+          <p className="text-center text-gray-500 text-lg max-w-2xl mx-auto">
+            Gestiona tus consultas y reservas con profesionales
+          </p>
+        </div>
 
         {isLoading ? (
           <div className="flex justify-center my-12">
@@ -222,384 +236,109 @@ export default function Home() {
         ) : (
           <div className="flex flex-col md:flex-row gap-6">
             <div className="w-full md:w-3/4">
-              <Calendar
-                events={events}
-                handleAlternativesSubmit={handleAlternativesSubmit}
-                setEditionMode={setEditionMode}
-                editionMode={editionMode}
-                setSelectedEvent={setSelectedEvent}
-                selectedEvent={selectedEvent}
-                isClient={isClient}
-                token={token}
-                currentRole={currentRole}
-                hoveredEventId={hoveredEventId}
-                setHoveredEventId={setHoveredEventId}
-              />
+              <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+                <Calendar
+                  events={events}
+                  handleAlternativesSubmit={handleAlternativesSubmit}
+                  setEditionMode={setEditionMode}
+                  editionMode={editionMode}
+                  setSelectedEvent={setSelectedEvent}
+                  selectedEvent={selectedEvent}
+                  isClient={isClient}
+                  token={token}
+                  currentRole={currentRole}
+                  hoveredEventId={hoveredEventId}
+                  setHoveredEventId={setHoveredEventId}
+                />
+              </div>
             </div>
 
             <div className="w-full md:w-1/4">
-              <h2 className="text-xl font-medium text-gray-700 mb-4">Eventos</h2>
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-                {events.length > 0 ? (
-                  <div className="space-y-3">
-                    {/* Confirmadas */}
-                    <div>
-                      <button
-                        onClick={() => toggleStatus("confirmed")}
-                        className="w-full text-left font-medium text-gray-800 flex items-center justify-between"
+              <h2 className="text-xl font-bold text-gray-700 mb-4 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+                Eventos
+              </h2>
+              
+              <div className="space-y-4">
+                {Object.entries(groupedEvents).map(([status, statusEvents]) => {
+                  const eventsArray = statusEvents as any[];
+                  if (eventsArray.length === 0) return null;
+                  
+                  const statusLabels = {
+                    confirmed: "Confirmadas",
+                    pending: "Pendientes",
+                    booked: "Reservadas",
+                    finished: "Finalizadas"
+                  };
+                  
+                  const statusColors = {
+                    confirmed: "bg-green-500",
+                    pending: "bg-yellow-500",
+                    booked: "bg-blue-500",
+                    finished: "bg-gray-500"
+                  };
+                  
+                  return (
+                    <div key={status} className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
+                      <div 
+                        className="px-4 py-3 flex justify-between items-center cursor-pointer"
+                        onClick={() => toggleStatus(status)}
                       >
-                        <span>Confirmadas ({groupedEvents.confirmed.length})</span>
-                        <svg
-                          className={`w-5 h-5 transform transition-transform ${
-                            expandedStatus === "confirmed" ? "rotate-180" : ""
-                          }`}
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
+                        <div className="flex items-center">
+                          <span className={`w-3 h-3 rounded-full ${statusColors[status]} mr-2`}></span>
+                          <h3 className="font-medium text-gray-800">
+                            {statusLabels[status]} ({eventsArray.length})
+                          </h3>
+                        </div>
+                        <svg 
+                          xmlns="http://www.w3.org/2000/svg" 
+                          className={`h-5 w-5 text-gray-400 transition-transform ${expandedStatus === status ? 'transform rotate-180' : ''}`} 
+                          fill="none" 
+                          viewBox="0 0 24 24" 
+                          stroke="currentColor"
                         >
-                          <path
-                            fillRule="evenodd"
-                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                            clipRule="evenodd"
-                          />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
-                      </button>
-                      {expandedStatus === "confirmed" && (
-                        <div className="mt-2 space-y-2">
-                          {groupedEvents.confirmed.length > 0 ? (
-                            groupedEvents.confirmed
-                              .sort(
-                                (a: any, b: any) =>
-                                  new Date(a.start).getTime() - new Date(b.start).getTime()
-                              )
-                              .map((event: any) => (
-                                <div
-                                  key={event.id}
-                                  className="p-3 rounded-lg bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors"
-                                  onMouseEnter={() => setHoveredEventId(event.title)}
-                                  onMouseLeave={() => setHoveredEventId(null)}
-                                  onClick={() => setSelectedEvent(event)}
-                                >
-                                  <h3 className="font-medium text-gray-800">{event.title}</h3>
-                                  <div className="flex items-center text-sm text-gray-600 mt-1">
-                                    <svg
-                                      className="w-4 h-4 mr-1 text-gray-500"
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      viewBox="0 0 24 24"
-                                      fill="none"
-                                      stroke="currentColor"
-                                      strokeWidth="2"
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                    >
-                                      <circle cx="12" cy="12" r="10"></circle>
-                                      <polyline points="12 6 12 12 16 14"></polyline>
-                                    </svg>
-                                    {new Date(event.start).toLocaleString("es-ES", {
-                                      weekday: "short",
-                                      day: "numeric",
-                                      month: "short",
-                                      hour: "2-digit",
-                                      minute: "2-digit",
-                                    })}
-                                  </div>
-                                  <div className="mt-2">
-                                    <span className="inline-block px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">
-                                      Confirmada
-                                    </span>
-                                    {currentRole === "physiotherapist" &&
-                                      event.service &&
-                                      event.service.questionaryResponses &&
-                                      Object.keys(event.service.questionaryResponses).length > 0 && (
-                                        <span className="inline-block ml-2 px-2 py-1 text-xs rounded-full bg-purple-100 text-purple-800">
-                                          Cuestionario
-                                        </span>
-                                      )}
-                                  </div>
+                      </div>
+                      
+                      {expandedStatus === status && (
+                        <div className="px-4 py-3 border-t border-gray-100 bg-gray-50">
+                          <div className="space-y-3 max-h-64 overflow-y-auto">
+                            {eventsArray.map((event) => (
+                              <div 
+                                key={event.id}
+                                className={`p-3 rounded-lg bg-white border border-gray-200 hover:shadow-md transition-shadow duration-200 ${hoveredEventId === event.id ? 'ring-2 ring-teal-500' : ''}`}
+                                onMouseEnter={() => handleCardHover(event.id)}
+                                onMouseLeave={() => handleCardHover(null)}
+                              >
+                                <div className="font-medium text-gray-800">{event.title}</div>
+                                <div className="text-sm text-gray-500">
+                                  {new Date(event.start).toLocaleDateString('es-ES', { 
+                                    day: 'numeric', 
+                                    month: 'short', 
+                                    year: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                  })}
                                 </div>
-                              ))
-                          ) : (
-                            <p className="text-gray-500 text-sm">No hay citas confirmadas.</p>
-                          )}
+                                {event.description && (
+                                  <div className="mt-1 text-sm text-gray-600">{event.description}</div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       )}
                     </div>
-
-                    {/* Pendientes */}
-                    <div>
-                      <button
-                        onClick={() => toggleStatus("pending")}
-                        className="w-full text-left font-medium text-gray-800 flex items-center justify-between"
-                      >
-                        <span>Pendientes ({groupedEvents.pending.length})</span>
-                        <svg
-                          className={`w-5 h-5 transform transition-transform ${
-                            expandedStatus === "pending" ? "rotate-180" : ""
-                          }`}
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </button>
-                      {expandedStatus === "pending" && (
-                        <div className="mt-2 space-y-2">
-                          {groupedEvents.pending.length > 0 ? (
-                            groupedEvents.pending
-                              .sort(
-                                (a: any, b: any) =>
-                                  new Date(a.start).getTime() - new Date(b.start).getTime()
-                              )
-                              .map((event: any) => (
-                                <div
-                                  key={event.id}
-                                  className="p-3 rounded-lg bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors"
-                                  onMouseEnter={() => setHoveredEventId(event.title)}
-                                  onMouseLeave={() => setHoveredEventId(null)}
-                                  onClick={() => setSelectedEvent(event)}
-                                >
-                                  <h3 className="font-medium text-gray-800">{event.title}</h3>
-                                  <div className="flex items-center text-sm text-gray-600 mt-1">
-                                    <svg
-                                      className="w-4 h-4 mr-1 text-gray-500"
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      viewBox="0 0 24 24"
-                                      fill="none"
-                                      stroke="currentColor"
-                                      strokeWidth="2"
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                    >
-                                      <circle cx="12" cy="12" r="10"></circle>
-                                      <polyline points="12 6 12 12 16 14"></polyline>
-                                    </svg>
-                                    {new Date(event.start).toLocaleString("es-ES", {
-                                      weekday: "short",
-                                      day: "numeric",
-                                      month: "short",
-                                      hour: "2-digit",
-                                      minute: "2-digit",
-                                    })}
-                                  </div>
-                                  <div className="mt-2">
-                                    <span className="inline-block px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
-                                      Pendiente
-                                    </span>
-                                    {currentRole === "physiotherapist" &&
-                                      event.service &&
-                                      event.service.questionaryResponses &&
-                                      Object.keys(event.service.questionaryResponses).length > 0 && (
-                                        <span className="inline-block ml-2 px-2 py-1 text-xs rounded-full bg-purple-100 text-purple-800">
-                                          Cuestionario
-                                        </span>
-                                      )}
-                                  </div>
-                                </div>
-                              ))
-                          ) : (
-                            <p className="text-gray-500 text-sm">No hay citas pendientes.</p>
-                          )}
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Reservadas */}
-                    <div>
-                      <button
-                        onClick={() => toggleStatus("booked")}
-                        className="w-full text-left font-medium text-gray-800 flex items-center justify-between"
-                      >
-                        <span>Reservadas ({groupedEvents.booked.length})</span>
-                        <svg
-                          className={`w-5 h-5 transform transition-transform ${
-                            expandedStatus === "booked" ? "rotate-180" : ""
-                          }`}
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </button>
-                      {expandedStatus === "booked" && (
-                        <div className="mt-2 space-y-2">
-                          {groupedEvents.booked.length > 0 ? (
-                            groupedEvents.booked
-                              .sort(
-                                (a: any, b: any) =>
-                                  new Date(a.start).getTime() - new Date(b.start).getTime()
-                              )
-                              .map((event: any) => (
-                                <div
-                                  key={event.id}
-                                  className="p-3 rounded-lg bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors"
-                                  onMouseEnter={() => setHoveredEventId(event.title)}
-                                  onMouseLeave={() => setHoveredEventId(null)}
-                                  onClick={() => setSelectedEvent(event)}
-                                >
-                                  <h3 className="font-medium text-gray-800">{event.title}</h3>
-                                  <div className="flex items-center text-sm text-gray-600 mt-1">
-                                    <svg
-                                      className="w-4 h-4 mr-1 text-gray-500"
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      viewBox="0 0 24 24"
-                                      fill="none"
-                                      stroke="currentColor"
-                                      strokeWidth="2"
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                    >
-                                      <circle cx="12" cy="12" r="10"></circle>
-                                      <polyline points="12 6 12 12 16 14"></polyline>
-                                    </svg>
-                                    {new Date(event.start).toLocaleString("es-ES", {
-                                      weekday: "short",
-                                      day: "numeric",
-                                      month: "short",
-                                      hour: "2-digit",
-                                      minute: "2-digit",
-                                    })}
-                                  </div>
-                                  <div className="mt-2">
-                                    <span className="inline-block px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">
-                                      Reservada
-                                    </span>
-                                    {currentRole === "physiotherapist" &&
-                                      event.service &&
-                                      event.service.questionaryResponses &&
-                                      Object.keys(event.service.questionaryResponses).length > 0 && (
-                                        <span className="inline-block ml-2 px-2 py-1 text-xs rounded-full bg-purple-100 text-purple-800">
-                                          Cuestionario
-                                        </span>
-                                      )}
-                                  </div>
-                                </div>
-                              ))
-                          ) : (
-                            <p className="text-gray-500 text-sm">No hay citas reservadas.</p>
-                          )}
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Finalizadas */}
-                    <div>
-                      <button
-                        onClick={() => toggleStatus("finished")}
-                        className="w-full text-left font-medium text-gray-800 flex items-center justify-between"
-                      >
-                        <span>Finalizadas ({groupedEvents.finished.length})</span>
-                        <svg
-                          className={`w-5 h-5 transform transition-transform ${
-                            expandedStatus === "finished" ? "rotate-180" : ""
-                          }`}
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </button>
-                      {expandedStatus === "finished" && (
-                        <div className="mt-2 space-y-2">
-                          {groupedEvents.finished.length > 0 ? (
-                            groupedEvents.finished
-                              .sort(
-                                (a: any, b: any) =>
-                                  new Date(a.start).getTime() - new Date(b.start).getTime()
-                              )
-                              .map((event: any) => (
-                                <div
-                                  key={event.id}
-                                  className="p-3 rounded-lg bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors"
-                                  onMouseEnter={() => setHoveredEventId(event.title)}
-                                  onMouseLeave={() => setHoveredEventId(null)}
-                                  onClick={() => setSelectedEvent(event)}
-                                >
-                                  <h3 className="font-medium text-gray-800">{event.title}</h3>
-                                  <div className="flex items-center text-sm text-gray-600 mt-1">
-                                    <svg
-                                      className="w-4 h-4 mr-1 text-gray-500"
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      viewBox="0 0 24 24"
-                                      fill="none"
-                                      stroke="currentColor"
-                                      strokeWidth="2"
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                    >
-                                      <circle cx="12" cy="12" r="10"></circle>
-                                      <polyline points="12 6 12 12 16 14"></polyline>
-                                    </svg>
-                                    {new Date(event.start).toLocaleString("es-ES", {
-                                      weekday: "short",
-                                      day: "numeric",
-                                      month: "short",
-                                      hour: "2-digit",
-                                      minute: "2-digit",
-                                    })}
-                                  </div>
-                                  <div className="mt-2">
-                                    <span className="inline-block px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800">
-                                      Finalizada
-                                    </span>
-                                    {currentRole === "physiotherapist" &&
-                                      event.service &&
-                                      event.service.questionaryResponses &&
-                                      Object.keys(event.service.questionaryResponses).length > 0 && (
-                                        <span className="inline-block ml-2 px-2 py-1 text-xs rounded-full bg-purple-100 text-purple-800">
-                                          Cuestionario
-                                        </span>
-                                      )}
-                                  </div>
-                                </div>
-                              ))
-                          ) : (
-                            <p className="text-gray-500 text-sm">No hay citas finalizadas.</p>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ) : (
-                  <p className="text-center text-gray-500 py-4">No tienes citas próximas</p>
-                )}
+                  );
+                })}
               </div>
             </div>
           </div>
         )}
-
-        {selectedEvent && (
-          <AppointmentModal
-            selectedEvent={selectedEvent}
-            currentRole={currentRole}
-            setSelectedEvent={setSelectedEvent}
-            setEditionMode={setEditionMode}
-            isClient={isClient}
-            token={token}
-          />
-        )}
       </div>
-
-      {data && (
-        <div className="mt-4 text-center p-4 bg-red-50 text-red-700 rounded-lg">
-          <p className="text-lg font-semibold">{data.message}</p>
-          <p>Por favor, intenta nuevamente más tarde.</p>
-        </div>
-      )}
-    </RestrictedAccess>
+    </div>
   );
 }

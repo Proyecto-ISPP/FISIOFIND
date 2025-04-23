@@ -19,40 +19,54 @@ const WizardHeader: React.FC<WizardHeaderProps> = ({ steps, currentStep }) => {
   return (
     <>
       {/* Versión Desktop: chevrons */}
-      <div className="hidden lg:flex items-center space-x-2">
+      <div className="hidden lg:flex items-center justify-center space-x-[-12px] w-full">
         {steps.map((s) => (
           <div
             key={s.step}
             className={clsx(
-              "relative flex flex-col items-center justify-center text-white px-6 py-2 min-w-[160px] text-center",
+              "relative flex flex-col items-center justify-center text-white px-8 h-24 min-w-[200px]",
               getBgColorClass(s.step)
             )}
             style={{
               clipPath:
-                "polygon(85% 0%, 100% 50%, 85% 100%, 0% 100%, 15% 50%, 0% 0%)",
+                "polygon(90% 0%, 100% 50%, 90% 100%, 0% 100%, 10% 50%, 0% 0%)",
             }}
           >
-            <div className="px-4 py-2 flex flex-col items-center justify-center min-w-44 min-h-20">
-              <span className="font-semibold">Paso {s.step}</span>
-              <span className="text-sm">{s.label}</span>
+            <div className="flex flex-col items-center justify-center w-full h-full">
+              <span className="font-semibold text-base whitespace-nowrap">
+                Paso {s.step}
+              </span>
+              <span className="text-sm text-center px-2 whitespace-normal line-clamp-2">
+                {s.label}
+              </span>
             </div>
           </div>
         ))}
       </div>
 
       {/* Versión Mobile: bolitas */}
-      <div className="flex lg:hidden items-center space-x-2">
+      <div className="flex lg:hidden items-center justify-center w-full px-4 py-6">
         {steps.map((s) => (
-          <div key={s.step} className="flex flex-col items-center">
-            <div
-              className={clsx(
-                "w-10 h-10 rounded-full flex items-center justify-center text-white",
-                getBgColorClass(s.step)
-              )}
-            >
-              {s.step < currentStep ? "✓" : s.step}
+          <div key={s.step} className="flex flex-col items-center flex-1 max-w-[120px]">
+            <div className="h-[60px] flex items-start justify-center">
+              <div
+                className={clsx(
+                  "w-12 h-12 rounded-full flex items-center justify-center text-white text-lg font-medium shadow-md transition-all duration-300",
+                  getBgColorClass(s.step),
+                  s.step < currentStep && "scale-95",
+                  s.step === currentStep && "ring-4 ring-offset-2 ring-azulOscuroTitulos/30"
+                )}
+              >
+                {s.step < currentStep ? (
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                  </svg>
+                ) : (
+                  s.step
+                )}
+              </div>
             </div>
-            <span className="text-xs mt-1 text-gray-700 text-center">
+            <span className="text-sm text-gray-700 text-center font-medium line-clamp-2 h-[40px] hidden sm:block">
               {s.label}
             </span>
           </div>
