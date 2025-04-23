@@ -60,5 +60,5 @@ class QuestionnaireDetailsView(serializers.ModelSerializer):
 
     class Meta:
         model = Questionnaire
-        fields = ['id', 'physiotherapist', 'title', 'json_schema', 'ui_schema', 'questions']
+        fields = ['id', 'physiotherapist', 'title', 'json_schema', 'ui_schema', 'questions','responses']
         read_only_fields = ['id', 'physiotherapist']

@@ -5,6 +5,7 @@ from .models import Questionnaire
 from .serializers import QuestionnaireSerializer, QuestionnaireDetailsView
 from users.permissions import IsPhysiotherapist, IsPatient
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, permission_classes
 
 class QuestionnaireListView(APIView):
     """
@@ -153,3 +154,28 @@ class QuestionCreateView(APIView):
                 {'detail': 'No se ha encontrado el cuestionario'},
                 status=status.HTTP_404_NOT_FOUND
             )
+        
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, IsPatient])  # Verificamos que el usuario esté autenticado y sea paciente
+def store_responses(request, questionnaire_id):
+    # Obtener el paciente desde el token (usando request.user.patient.id)
+    patient_id = request.user.patient.id  # Extraemos el ID del paciente desde el token
+
+    # Obtener los datos enviados desde el frontend
+    responses = request.data.get('responses')
+
+    print("HOLA ESTOY AQUÍ")
+
+    if not responses:
+        return Response({'detail': 'Faltan respuestas'}, status=400)
+
+    try:
+        # Obtener el cuestionario
+        questionnaire = Questionnaire.objects.get(id=questionnaire_id)
+
+        # Almacenar las respuestas combinadas en el campo 'responses' del cuestionario
+        questionnaire.store_responses(patient_id, responses)
+
+        return Response({'detail': 'Respuestas guardadas correctamente'}, status=200)
+    except Questionnaire.DoesNotExist:
+        return Response({'detail': 'Cuestionario no encontrado'}, status=404)

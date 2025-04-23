@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import (
     QuestionnaireListView, QuestionnaireCreateView, QuestionnaireDetailView,
-    QuestionCreateView
+    QuestionCreateView, store_responses
 )
 
 urlpatterns = [
@@ -12,4 +12,5 @@ urlpatterns = [
 
     # Preguntas dentro de un cuestionario
     path('questionnaires/<int:questionnaire_id>/questions/create/', QuestionCreateView.as_view(), name='create_question'),
+    path('store-responses/<int:questionnaire_id>/', store_responses, name='store_responses'),
 ]
