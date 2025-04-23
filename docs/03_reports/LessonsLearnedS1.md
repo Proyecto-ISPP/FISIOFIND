@@ -59,7 +59,7 @@ classoption: "table"
 
 - **Miembros del grupo:** Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes.
 
-- **Contribuidores:** [Delfín Santana Rubio](https://github.com/DelfinSR) (revisor), [Antonio Macías Ferrera](https://github.com/antoniommff) (revisor), [Guadalupe Ridruejo Pineda](https://github.com/guaridpin) (revisor)
+- **Contribuidores:** [Delfín Santana Rubio](https://github.com/DelfinSR) (revisor), [Antonio Macías Ferrera](https://github.com/antoniommff) (revisor), [Guadalupe Ridruejo Pineda](https://github.com/guaridpin) (revisor), [Miguel Encina Martínez](https://github.com/MiguelEncina) (revisor)
 
 - **Fecha de Creación:** 23/04/2025  
 
@@ -83,9 +83,9 @@ classoption: "table"
 
 
 # 1. Metodología y roles
-El equipo utiliza *GitHub Project* como herramienta de gestión de tareas donde las actividades están organizadas en distintas columnas que reflejan su estado dentro del flujo de trabajo. Esta herramienta cuenta con un **tablero Kanban** para facilitar el seguimiento de las tareas, generación de **gráficas Burn-down** que nos serán útiles en las retrospectivas, y asignación y **estimación de tareas**, además de otras funciones que procurarán una buena organización del trabajo.
+El equipo utiliza *GitHub Project* como herramienta de gestión de tareas donde las actividades están organizadas en distintas columnas(Product Backlog, ToDo, In Progress, Ready For Test, Done) que reflejan su estado dentro del flujo de trabajo. Esta herramienta cuenta con un **tablero Kanban** para facilitar el seguimiento de las tareas, generación de **gráficas Burn-down** que nos serán útiles en las retrospectivas, y asignación y **estimación de tareas**, además de otras funciones que procurarán una buena organización del trabajo.
 
-Todas las tareas a ejecutar en el *Sprint* se encontrarán inicialmente en la columna "Product Backlog", habiendo sido previamente asignadas y estimadas por el equipo *Scrum*.
+Todas las tareas a ejecutar en el *Sprint* se encontrarán inicialmente en la columna "Product Backlog", habiendo sido previamente asignadas y estimadas por el equipo de **planificación**.
 
 Roles:
 - Antonio Macías: RRSS y Publicidad, Planificación, Presentaciones, Project Manager
@@ -123,7 +123,7 @@ Los 17 integrantes nos separamos a su vez en 3 grupos:
 - Rafael Pulido Cifuentes (representante)
 
 **Grupo 2:**
-- Antonio Macías Ferrera (Scrum Master)
+- Antonio Macías Ferrera (Project Manager)
 - Benjamín I. Maureira Flores
 - Delfín Santana Rubio (secretario)
 - Guadalupe Ridruejo Pineda
@@ -198,7 +198,7 @@ Aunque solo suspendimos el entregable S1, decidimos aprovechar para hacer una en
 
 #### 2. Falta de estructura común en el backend
 - **Descripción**: Uso inconsistente de `APIView` vs funciones directas.
-- **Causa**: Falta de acuerdo sobre una arquitectura común.
+- **Causa**: Falta de acuerdo sobre una arquitectura común y (comentario no generado por chatgpt a continuación) falta de experiencia previa con la tecnología.
 - **Solución**: Definir y documentar convenciones técnicas desde el inicio.
 
 #### 3. Problemas con Git y control de versiones
@@ -220,6 +220,8 @@ Todos los problemas apuntan a una mala comunicación y organización. A continua
 - Fallo en la organización: Los del equipo de planificación no tuvimos en cuenta dejar tiempo para resolver errores debido a la gran cantidad de funcionalidades que queríamos implementar para el S1 y se puso como fecha límite para terminar las funcionalidades pues el día de antes de la entrega. El problema surgió debido a que había unas funcionalidades que dependían de otras, por lo tanto, como esas funcionalidades claves se terminaron el último día, hubo que hacer un gran esfuerzo al final para terminar algunas funcionalidades dependientes. Esto provocó que surgieran errores al intentar integrar todo de golpe el último día por lo que ya no había tiempo para solucionar los errores, además de desplegar la aplicación, que también se dejó para el final. Deberíamos de haber establecido límites para que aquellas funcionalidades clave estuvieran listas la primera semana, para poder terminar el resto de funcionalidades la segunda. Además, deberíamos haber aplicado de forma más cuidadosa la política de ramas y la integración continua, realizando numerosos merges de develop en las ramas correspondientes para evitar perder código y solucionar los errores que puedan surgir con antelación. También deberíamos haber empezado antes a desplegar, aunque fuera con una versión sin funcionalidades de la aplicación.
 
 Todos los problemas relacionados están relacionados con el despliegue, la integración y la coordinación entre el despliegue y desarrollo de funcionalidades. Por otro lado, también se reporta falta de coordinación y acuerdos entre compañeros a la hora de desarrollar.
+
+También, es importante entender que el S1 fue nuestro primer contacto con muchas de las tecnologías que hemos utilizado para el desarrollo, por lo que es normal que ocurran problemas. Sin embargo, esto debería de haberse tenido más en cuenta en la planificación.
 
 Destaca que la mayoría de los problemas (4 de 5) fueron reportados antes de la entrega. El problema con título "Integración continua" fue el único que se encontró después de la entrega.
 
@@ -256,6 +258,7 @@ Analizando las decisiones tomadas junto a los problemas reportados del S2 en la 
 # 7. Lecciones aprendidas
 - Las tareas más importantes se deben empezar al principio del sprint.
 - La integración del código y la dependencia entre funcionalidades es algo a lo que se le debe de prestar atención.
+- Gastar recursos en una buena planificación puede hacernos ahorrar tiempo y esfuerzo del sprint.
 
 
 # Anexo
