@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
+import Draggable from 'react-draggable'; // Necesitarás instalar: npm install react-draggable
 import styles from './Room.module.css';
 
 import RoomHeader from './RoomHeader';
@@ -43,12 +44,14 @@ const Room = ({ roomCode }) => {
   const remoteStream = remoteVideoRef.current?.srcObject || null;
   const { transcripts } = useRemoteSpeechTranscription(showRemoteSubs, remoteStream);
 
+  const subtitlesRef = useRef(null); // Añade esta línea cerca de tus otros useRefs
+
   const [showSettings, setShowSettings] = useState(false);
   const [selectedTool, setSelectedTool] = useState(null);
   const [activePainMap, setActivePainMap] = useState(null);
   const [partsColoredFront, setPartsColoredFront] = useState([]);
   const [partsColoredBack, setPartsColoredBack] = useState([]);
-
+  const [subtitlesPosition, setSubtitlesPosition] = useState({ x: 0, y: 0 });
   const [questionnaires, setQuestionnaires] = useState([]);
   const [activeQuestionnaire, setActiveQuestionnaire] = useState(null);
   const [questionnaireResponse, setQuestionnaireResponse] = useState(null);
@@ -338,21 +341,39 @@ const Room = ({ roomCode }) => {
         userRole={userRole}
       />
 
-      {/* PANEL DE SUBTÍTULOS REMOTOS */}
+      {/* SUBTÍTULOS MEJORADOS */}
       {showRemoteSubs && (
-        <div
-          className="absolute bottom-4 left-1/2 transform -translate-x-1/2
-                     bg-black/60 p-2 rounded max-w-lg text-center z-10"
+        <Draggable
+          nodeRef={subtitlesRef} // Añade esta prop
+          defaultPosition={subtitlesPosition}
+          onStop={(e, data) => setSubtitlesPosition({ x: data.x, y: data.y })}
+          bounds="parent"
         >
-          {transcripts.map((t, i) => (
-            <p
-              key={i}
-              className={t.isFinal ? 'text-white font-medium' : 'text-gray-300 italic'}
-            >
-              {t.text}
-            </p>
-          ))}
-        </div>
+          <div ref={subtitlesRef} className={styles.subtitlesContainer}>
+            <div className={styles.subtitlesHeader}>
+              <span>Subtítulos</span>
+              <button 
+                className={styles.subtitlesClose} 
+                onClick={() => setShowRemoteSubs(false)}
+              >
+                ×
+              </button>
+            </div>
+            <div className={styles.subtitlesContent}>
+              {transcripts.slice(-2).map((t, i) => (
+                <p
+                  key={i}
+                  className={`${styles.subtitleText} ${t.isFinal ? styles.subtitleFinal : styles.subtitlePartial}`}
+                >
+                  {t.text}
+                </p>
+              ))}
+              {transcripts.length === 0 && (
+                <p className={styles.subtitleEmpty}>Esperando voz...</p>
+              )}
+            </div>
+          </div>
+        </Draggable>
       )}
 
       <Controls
@@ -372,9 +393,7 @@ const Room = ({ roomCode }) => {
       <button
         onClick={() => setShowRemoteSubs(v => !v)}
         disabled={!webRTC.connected}
-        className={`ml-4 px-3 py-1 rounded 
-          ${showRemoteSubs ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-800'} 
-          ${webRTC.connected ? '' : 'opacity-50 cursor-not-allowed'}`}
+        className={`${styles.subtitlesToggle} ${showRemoteSubs ? styles.subtitlesActive : ''}`}
       >
         {showRemoteSubs ? '🔊 Subtítulos ON' : '🔇 Subtítulos OFF'}
       </button>
