@@ -2,15 +2,30 @@
 
 import React, { useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { getApiBaseUrl } from '@/utils/api';
+import Cookies from 'js-cookie';
+
+const PROTECTED_ROUTES_REQUIRING_VERIFICATION = [
+  '/advanced-search',
+  '/my-appointments',
+  '/patient-management/follow-up',
+  '/patient-management/profile',
+  '/videocalls',
+];
+
+interface ErrorResponse {
+  response?: {
+    status?: number;
+  };
+}
 
 export function ClientWrapper({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const pathname = usePathname(); // Obtiene la URL actual
+  const pathname = usePathname(); 
 
   useEffect(() => {
-    const checkToken = async () => {
+    const checkTokenAndVerification = async () => {
       const token = localStorage.getItem('token');
 
       if (token) {
@@ -18,23 +33,62 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
           const response = await axios.get(`${getApiBaseUrl()}/api/app_user/current-user/`, {
             headers: { Authorization: `Bearer ${token}` },
           });
+          const status = response.data?.patient?.user?.account_status;
+          const isProtectedRoute = PROTECTED_ROUTES_REQUIRING_VERIFICATION.some(route => pathname.startsWith(route));
 
-          if (response.status === 200) {
-            console.log('Token válido');
+          if (isProtectedRoute && status === 'UNVERIFIED') {
+             router.push('/verificar-correo');
+             return;
           }
-        } catch (error: any) {
-          if (error.response?.status === 401) {
-            localStorage.removeItem('token');
-            alert('Su sesión ha expirado. Por favor, inicie sesión nuevamente.');
+          if (status === 'UNVERIFIED') {
+            Cookies.set('userVerificationStatus', status, {
+              path: '/',
+              sameSite: 'strict',
+              secure: process.env.NODE_ENV === 'production'
+            });
+          } else {
+            Cookies.remove('userVerificationStatus', { path: '/' });
+          }
 
-            // Redirige al login con la URL actual como parámetro
+        } catch (error: unknown) {
+          console.error('Error al verificar el token:', error);
+          const axiosError = error as AxiosError<ErrorResponse>;
+
+          if (axiosError.response?.status === 401) {
+            localStorage.removeItem('token');
+            Cookies.remove('userVerificationStatus', { path: '/' });
+            alert('Su sesión ha expirado. Por favor, inicie sesión nuevamente.');
             router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
+          } else {
+             console.error('Otro error al verificar token:', axiosError.message);
+             Cookies.remove('userVerificationStatus', { path: '/' });
           }
         }
+      } else {
+
+        localStorage.removeItem('token');
+        Cookies.remove('userVerificationStatus', { path: '/' });
+         const isProtectedRoute = PROTECTED_ROUTES_REQUIRING_VERIFICATION.some(route => pathname.startsWith(route));
+         if (isProtectedRoute) {
+            console.log(`ClientWrapper: Redirigiendo desde ${pathname} a /login porque no hay token.`);
+            router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
+            return;
+         }
       }
     };
 
-    checkToken();
+    checkTokenAndVerification();
+
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'token') {
+        checkTokenAndVerification();
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+    
   }, [router, pathname]);
 
   return <>{children}</>;
