@@ -57,6 +57,7 @@ classoption: "table"
       - [2. Herramientas SEO](#2-herramientas-seo)
       - [3. Software de Gestión de Redes Sociales](#3-software-de-gestión-de-redes-sociales)
       - [4. Herramientas de Diseño y Edición de Video](#4-herramientas-de-diseño-y-edición-de-video)
+      - [5. Otras Inversiones](#5-otras-inversiones)
     - [📋 Resumen de Inversión Mensual](#-resumen-de-inversión-mensual)
     - [Medición del Impacto](#medición-del-impacto)
 - [**3. PRESENTACIÓN DEL PROYECTO**](#3-presentación-del-proyecto)
@@ -203,14 +204,12 @@ Dividir el presupuesto mensual en las siguientes categorías:
 
 #### 1. Anuncios Pagados (SEM y Social Ads)
 
-- **Google Ads**: 500 €
-
+- **Google Ads**: 450 €
   - CPC (Coste por clic) promedio: 1 €–2 €
   - CPM (Coste por impresión) promedio: 3 €–12 €
   - Fuente: [NeoAttack](https://neoattack.com/blog/presupuesto-sem-2/)
 
-- **Instagram Ads**: 500 €
-
+- **Instagram Ads**: 450 €
   - CPC promedio: 0,40 €–3,00 €
   - CPM promedio: 3 €–10 €
   - Fuente: [Adyseo](https://adyseo.com/cuanto-cuesta-publicidad-instagram/)
@@ -222,7 +221,6 @@ Dividir el presupuesto mensual en las siguientes categorías:
 #### 2. Herramientas SEO
 
 - **DinoRANK**: 55 €/mes
-
   - Herramienta SEO multifunción desarrollada en España.
   - Fuente: [Blogger3cero](https://blogger3cero.com/mejores-herramientas-seo-local/)
 
@@ -233,35 +231,42 @@ Dividir el presupuesto mensual en las siguientes categorías:
 #### 3. Software de Gestión de Redes Sociales
 
 - **Metricool (Plan Advanced)**: 54 €/mes
-
   - Gestión de hasta 15 marcas.
   - Fuente: [Metricool](https://metricool.com/es/premium/)
-
-- **Buffer (Plan Essentials)**: 15 €/mes
-  - Gestión de hasta 8 canales de redes sociales.
-  - Fuente: [Buffer](https://buffer.com/pricing)
 
 #### 4. Herramientas de Diseño y Edición de Video
 
 - **Canva Pro**: 12 €/mes
-
   - Acceso a contenido premium y herramientas de diseño avanzadas.
   - Fuente: [Canva](https://www.canva.com/es_us/precios/)
 
-- **CapCut Pro**: 7,99 €/mes
-  - Herramientas avanzadas de edición de video sin marcas de agua.
-  - Fuente: [CapCut](https://www.capcut.com/es-es/)
+- **CapCut**: 0 € (versión gratuita)
+  - Se utilizará la versión básica sin coste.
+
+#### 5. Otras Inversiones
+
+- **LinkedIn Premium Business**: 59,99 €/mes
+  - Acceso a estadísticas avanzadas, mensajes InMail y búsquedas ilimitadas.
+  - Fuente: [LinkedIn](https://www.linkedin.com/premium/products/)
+
+- **Publicidad Offline**: 100 €/mes
+  - Impresión de carteles, tarjetas de visita y flyers para distribución en farmacias, gimnasios y puntos clave de Sevilla.
+
+---
 
 ### 📋 Resumen de Inversión Mensual
 
-| Categoría                             | Coste Mensual (€) |
-| ------------------------------------- | ----------------- |
-| Anuncios Pagados (SEM y Social Ads)   | 1.300             |
-| Herramientas SEO                      | 74,90             |
-| Software de Gestión de Redes          | 69                |
-| Herramientas de Diseño y Edición      | 19,99             |
-| **Total Aproximado**                  | **1.463,89**      |
+| Categoría                              | Coste Mensual (€) |
+|----------------------------------------|-------------------|
+| Anuncios Pagados (SEM y Social Ads)    | 1.200             |
+| Herramientas SEO                       | 74,90             |
+| Software de Gestión de Redes           | 54                |
+| Herramientas de Diseño y Edición       | 12                |
+| LinkedIn Premium Business              | 59,99             |
+| Publicidad Offline                     | 100               |
+| **TOTAL AJUSTADO**                     | **1.500,89**      |
 
+---
 
 ### Medición del Impacto
 
@@ -271,6 +276,8 @@ Para evaluar el retorno de la inversión (ROI) y la efectividad de las acciones 
 - **Click-Through Rate (CTR)**: Porcentaje de clics en anuncios respecto a las impresiones.
 - **Leads generados**: Cantidad de contactos o clientes potenciales obtenidos.
 - **Seguidores en redes sociales**: Crecimiento de la audiencia en plataformas sociales.
+- **Interacción en redes**: Comentarios, compartidos y mensajes directos recibidos.
+- **Menciones de marca y búsquedas por nombre**: Indicadores del reconocimiento de marca.
 
 Estos indicadores permitirán ajustar las estrategias y optimizar el presupuesto para maximizar el retorno de la inversión.
 

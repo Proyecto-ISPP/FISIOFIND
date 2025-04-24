@@ -1,11 +1,11 @@
-## 🚀 Changelog - 5.0.0
+## 🚀 Changelog - 9.0.0
 
-### ✨ Features (0)
-
+### ✨ Features (1)
+- feat: despliegue continuo back PPL (@Ramón Gavira)
 ### 🐛 Fixes (0)
 
-### 📖 Documentation (1)
-- docs: primera versión de análisis de costes de marketing y SEO (@guaridpin)
+### 📖 Documentation (0)
+
 ### 🌀 Other Changes (0)
 
 ### 🔗 Pull Requests
