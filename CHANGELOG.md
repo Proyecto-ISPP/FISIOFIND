@@ -1,16 +1,13 @@
-## 🚀 Changelog - 10.0.0
+## 🚀 Changelog - 11.0.0
 
 ### ✨ Features (0)
 
-### 🐛 Fixes (3)
-- fix: cambio de ppl a wpl (@Antonio Macías)
-- fix: correcciones de ortografía y errores menores (@Antonio Macías)
-- fix: correcciones menores (@Miguel Encina)
-### 📖 Documentation (4)
-- Merge pull request #545 from Proyecto-ISPP/docs/lecciones-aprendidas-s1 (@Antonio Macías)
-- docs: añadido link a excel a LessonsLearnedS1.md (@Delfin)
-- docs: comentarios aplicados a LessonsLearnedS1.md (@Delfin)
-- docs: creado LessonsLearnedS1.md (@Delfin)
-### 🌀 Other Changes (1)
-- Update LessonsLearnedS1.md (@Guadalupe Ridruejo Pineda)
+### 🐛 Fixes (0)
+
+### 📖 Documentation (2)
+- docs: version completa sprint planning ppl (@Antonio Macías)
+- docs: primera version sprint planning #PPL (@Antonio Macías)
+### 🌀 Other Changes (2)
+- Merge pull request #544 from Proyecto-ISPP/docs/sprint-planning-ppl (@Delfin)
+- style: arreglando logo y titulo de varios documentos (@Antonio Macías)
 ### 🔗 Pull Requests
