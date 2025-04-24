@@ -1,8 +1,8 @@
 ---
-title: "REPORTE DE IA DE LA SEMANA 9 (28/03/25) - (03/04/25)"
+title: "REPORTE DE IA PPL (11/04/25) - (24/04/25)"
 subtitle: "FISIO FIND - Grupo 6 - #SPRINT 3"
 author: [Daniel Fernández Caballero, Daniel Ruiz López]
-date: "03/04/2025"
+date: "24/04/2025"
 subject: "ISPP"
 lang: "es"
 toc: true
@@ -14,7 +14,7 @@ colorlinks: true
 linkcolor: blue
 titlepage-background: "../../.backgrounds/background4V.pdf"
 header-left: "IA REPORT"
-header-right: "03/04/2025"
+header-right: "24/04/2025"
 footer-left: "FISIO FIND"
 documentclass: scrartcl
 classoption: "table"
@@ -27,7 +27,7 @@ classoption: "table"
 
 <!-- Título centrado -->
 <h1 align="center" style="font-size: 30px; font-weight: bold;">
-  FISIO FIND - REPORTE DE IA DE LA SEMANA 9 (28/03/25) - (03/04/25)
+  FISIO FIND - REPORTE DE IA PPL (11/04/25) - (24/04/25)
 </h1>
 
 <br>
@@ -49,7 +49,7 @@ classoption: "table"
 
 - **Contribuidores:** [Daniel Fernández Caballero](https://github.com/DaniFdezCab) [Daniel Ruiz López](https://github.com/Danielruizlopezcc) (autores)
 
-- **Fecha de Creación:** 03/04/2025  
+- **Fecha de Creación:** 24/04/2025  
 
 - **Versión:** v1.0
 
@@ -59,7 +59,7 @@ classoption: "table"
 
 | Fecha      | Versión | Realizada por                                         | Descripción de los cambios                  |
 |-----------|---------|-------------------------------------------------------|---------------------------------------------|
-| 03/04/2025 | v1.0   | Daniel Fernández Caballero, Daniel Ruiz López                            | Elaboración de la primera versión del documento. |
+| 24/04/2025 | v1.0   | Daniel Fernández Caballero, Daniel Ruiz López                            | Elaboración de la primera versión del documento. |
 
 
 ---
@@ -68,75 +68,60 @@ classoption: "table"
 
 A continuación se presentan los distintos prompts evaluados junto con sus respectivas puntuaciones, cantidad de prompts y porcentaje de alucinaciones.
 
-1. **[Prompt 1](https://chatgpt.com/share/67e9ab56-67f0-800f-9090-4bce4de8ceed)**  
-   - Puntuación: 5  
-   - Prompts: 9  
-   - Alucinaciones: 0% 
-
-2. **[Prompt 2](https://chatgpt.com/share/67ea7077-a6cc-800b-a515-01a45aa72b71)**  
-   - Puntuación: 5  
-   - Prompts: 5 
-   - Alucinaciones: 0%
-
-3. **[Prompt 3](https://claude.ai/share/5e2666fe-beaa-4d95-9b3a-8a0185752a96)**  
-   - Puntuación: 5  
+1. **[Prompt 1](https://chatgpt.com/share/68061b21-4de8-8012-8853-e5e9830b96e0)**  
+   - Puntuación: 2  
    - Prompts: 2  
-   - Alucinaciones: 0%
-
-4. **[Prompt 4](https://claude.ai/share/414b29fe-bb39-4882-bd98-d73e25cc5c72)**  
-   - Puntuación: 5  
-   - Prompts: 1  
    - Alucinaciones: 0% 
 
-5. **[Prompt 5](https://claude.ai/share/71552087-1856-4b58-b7ed-cc1bab539cb9)**  
-   - Puntuación: 5  
-   - Prompts: 1  
+2. **[Prompt 2](https://chatgpt.com/share/68061b4b-aa60-8012-886a-1e8689fbc329)**  
+   - Puntuación: 2  
+   - Prompts: 1 
    - Alucinaciones: 0%
 
-6. **[Prompt 6](https://chatgpt.com/share/67d966ae-aa78-800b-8059-ffbbdcc55ac5)**  
+3. **[Prompt 3](https://chatgpt.com/share/68065efc-4cc4-8000-983f-e39d7c63fd06)**  
+   - Puntuación: 4  
+   - Prompts: 19  
+   - Alucinaciones: 5%
+
+4. **[Prompt 4](https://chatgpt.com/share/6807e612-c068-800f-ab18-76e13d1754fe)**  
+   - Puntuación: 5  
+   - Prompts: 41  
+   - Alucinaciones: 12.2% 
+
+5. **[Prompt 5](https://chatgpt.com/share/6808af8a-90c8-800f-af1f-ee54300054c7)**  
+   - Puntuación: 3  
+   - Prompts: 6
+   - Alucinaciones: 50%
+
+6. **[Prompt 6](https://chatgpt.com/share/6808c68b-7a14-800f-87fb-b063202ba1bb)**  
    - Puntuación: 5
-   - Prompts: 2  
+   - Prompts: 14 
    - Alucinaciones: 0% 
 
-7. **[Prompt 7](https://chatgpt.com/share/67eaf59d-bbe8-800f-9cfb-7d4b76a6739c)**  
+7. **[Prompt 7](https://chatgpt.com/share/68090737-1724-800f-9c2d-9fb90da465f4)**  
    - Puntuación: 5  
-   - Prompts: 71
-   - Alucinaciones: 1.4% 
+   - Prompts: 11
+   - Alucinaciones: 0% 
 
-8. **[Prompt 8](https://chatgpt.com/share/67ebaf7d-0a74-800f-88b4-1d12ed83d71d)**  
+8. **[Prompt 8](https://chatgpt.com/share/6809219c-f980-800f-b9d8-7e6fdb99c0ec)**  
    - Puntuación: 5  
-   - Prompts: 9
-   - Alucinaciones: 11% 
-
-9. **[Prompt 9](https://claude.ai/share/08d01a58-bd31-430a-9ad6-5ab885ce9cfb)**  
-   - Puntuación: 4.5  
-   - Prompts: 3
-   - Alucinaciones: 33%
-
-9. **[Prompt 10](https://chatgpt.com/share/67ed2618-6720-800f-9a2f-533adaed99ac)**  
-   - Puntuación: 5 
-   - Prompts: 20
-   - Alucinaciones: 25%
-
-9. **[Prompt 11](https://chatgpt.com/share/67ed68ea-79d4-8000-a898-7773be1decc5)**  
-   - Puntuación: 5 
-   - Prompts: 13
-   - Alucinaciones: 0%
+   - Prompts: 28
+   - Alucinaciones: 35.7% 
 
 
 ## ANÁLISIS ESTADÍSTICO
 
-En esta sección, realizaremos un análisis estadístico completo basado en las puntuaciones, el número de prompts y el porcentaje de alucinaciones de los 11 casos documentados en este reporte. Calcularemos medidas como el promedio, la desviación estándar, la distribución y las correlaciones entre las variables, para luego extraer conclusiones sobre el desempeño de la IA.
+En esta sección, realizaremos un análisis estadístico completo basado en las puntuaciones, el número de prompts y el porcentaje de alucinaciones de los 8 casos documentados en este reporte. Calcularemos medidas como el promedio, la desviación estándar, la distribución y las correlaciones entre las variables, para luego extraer conclusiones sobre el desempeño de la IA en las consultas realizadas.
 
 ### Datos iniciales
 
 Los datos a analizar son los siguientes:
 
-- **Puntuaciones:** 5, 5, 5, 5, 5, 5, 5, 5, 4.5, 5, 5  
-- **Número de prompts:** 9, 5, 2, 1, 1, 2, 71, 9, 3, 20, 13  
-- **Alucinaciones (%):** 0, 0, 0, 0, 0, 0, 1.4, 11, 33, 25, 0  
+- **Puntuaciones:** 2, 2, 4, 5, 3, 5, 5, 5  
+- **Número de prompts:** 2, 1, 19, 41, 6, 14, 11, 28  
+- **Alucinaciones (%):** 0, 0, 5, 12.2, 50, 0, 0, 35.7  
 
-Estos valores corresponden a los 11 prompts evaluados, cada uno con su respectiva puntuación (escala de 1 a 5), cantidad de prompts utilizados y porcentaje de alucinaciones.
+Estos valores corresponden a los 8 prompts evaluados, cada uno con su respectiva puntuación (escala de 1 a 5), cantidad de prompts utilizados y porcentaje de alucinaciones.
 
 ---
 
@@ -144,15 +129,15 @@ Estos valores corresponden a los 11 prompts evaluados, cada uno con su respectiv
 
 #### 1. Promedio (Media)
 
-Para calcular el promedio de las puntuaciones, sumamos todos los valores y los dividimos entre el número total de casos, que es 11.
+Para calcular el promedio de las puntuaciones, sumamos todos los valores y los dividimos entre el número total de casos, que es 8.
 
 Suma de las puntuaciones:  
-5 + 5 + 5 + 5 + 5 + 5 + 5 + 5 + 4.5 + 5 + 5 = 54.5  
+2 + 2 + 4 + 5 + 3 + 5 + 5 + 5 = 31  
 
 Promedio:  
-54.5 ÷ 11 ≈ 4.95  
+31 ÷ 8 = 3.875  
 
-El promedio de las puntuaciones es **4.95**. Esto indica un desempeño excepcionalmente alto de la IA, muy cercano al máximo de la escala (5), reflejando una calidad percibida casi perfecta en las interacciones.
+El promedio de las puntuaciones es **3.875**. Esto indica un desempeño generalmente bueno en las consultas, pero con variaciones que sugieren inconsistencias en la calidad percibida.
 
 #### 2. Desviación estándar
 
@@ -160,39 +145,38 @@ La desviación estándar mide cuánto se alejan las puntuaciones del promedio. P
 
 ##### Paso 1: Calcular la varianza
 
-Restamos el promedio (4.95) a cada puntuación, elevamos al cuadrado, sumamos y dividimos entre 11:  
-(5 - 4.95)² = 0.0025  
-(5 - 4.95)² = 0.0025  
-(5 - 4.95)² = 0.0025  
-(5 - 4.95)² = 0.0025  
-(5 - 4.95)² = 0.0025  
-(5 - 4.95)² = 0.0025  
-(5 - 4.95)² = 0.0025  
-(5 - 4.95)² = 0.0025  
-(4.5 - 4.95)² = 0.2025  
-(5 - 4.95)² = 0.0025  
-(5 - 4.95)² = 0.0025  
+Restamos el promedio (3.875) a cada puntuación, elevamos al cuadrado, sumamos y dividimos entre 8:  
+(2 - 3.875)² = 3.515625  
+(2 - 3.875)² = 3.515625  
+(4 - 3.875)² = 0.015625  
+(5 - 3.875)² = 1.265625  
+(3 - 3.875)² = 0.765625  
+(5 - 3.875)² = 1.265625  
+(5 - 3.875)² = 1.265625  
+(5 - 3.875)² = 1.265625  
 
 Suma de las diferencias al cuadrado:  
-0.0025 + 0.0025 + 0.0025 + 0.0025 + 0.0025 + 0.0025 + 0.0025 + 0.0025 + 0.2025 + 0.0025 + 0.0025 = 0.2275  
+3.515625 + 3.515625 + 0.015625 + 1.265625 + 0.765625 + 1.265625 + 1.265625 + 1.265625 = 12.875  
 
 Varianza:  
-0.2275 ÷ 11 ≈ 0.0207  
+12.875 ÷ 8 = 1.609375  
 
 ##### Paso 2: Calcular la desviación estándar
 
 Desviación estándar:  
-√0.0207 ≈ 0.14  
+√1.609375 ≈ 1.27  
 
-La desviación estándar es aproximadamente **0.14**, indicando una dispersión extremadamente baja. Las puntuaciones están muy concentradas alrededor del promedio de 4.95, mostrando gran consistencia.
+La desviación estándar es aproximadamente **1.27**, indicando una dispersión moderada. Las puntuaciones muestran cierta variabilidad alrededor del promedio.
 
 #### 3. Distribución de las puntuaciones
 
 Contamos cuántas veces aparece cada valor:  
-- 4.5: 1 vez (9.09%)  
-- 5: 10 veces (90.91%)  
+- 2: 2 veces (25%)  
+- 3: 1 vez (12.5%)  
+- 4: 1 vez (12.5%)  
+- 5: 4 veces (50%)  
 
-**Observación:** La puntuación dominante es 5 (90.91%), con un único caso de 4.5. Esto refleja un desempeño casi uniforme y de alta calidad, con mínima variación.
+**Observación:** La puntuación dominante es 5 (50%), pero la presencia de puntuaciones bajas (2 y 3) refleja inconsistencias en el desempeño de las consultas.
 
 ---
 
@@ -200,51 +184,48 @@ Contamos cuántas veces aparece cada valor:
 
 #### 1. Promedio (Media)
 
-Sumamos todos los valores del número de prompts y dividimos entre 11.
+Sumamos todos los valores del número de prompts y dividimos entre 8.
 
 Suma de los prompts:  
-9 + 5 + 2 + 1 + 1 + 2 + 71 + 9 + 3 + 20 + 13 = 136  
+2 + 1 + 19 + 41 + 6 + 14 + 11 + 28 = 122  
 
 Promedio:  
-136 ÷ 11 ≈ 12.36  
+122 ÷ 8 = 15.25  
 
-El promedio del número de prompts es **12.36**, sugiriendo que las interacciones tienden a ser relativamente largas en promedio, aunque hay una amplia variación.
+El promedio del número de prompts es **15.25**, sugiriendo interacciones de longitud moderada a alta, aunque con variaciones significativas.
 
 #### 2. Desviación estándar
 
 ##### Paso 1: Calcular la varianza
 
-Restamos el promedio (12.36) a cada valor, elevamos al cuadrado, sumamos y dividimos entre 11:  
-(9 - 12.36)² = 11.2896  
-(5 - 12.36)² = 54.1696  
-(2 - 12.36)² = 107.6496  
-(1 - 12.36)² = 129.0496  
-(1 - 12.36)² = 129.0496  
-(2 - 12.36)² = 107.6496  
-(71 - 12.36)² = 3437.0896  
-(9 - 12.36)² = 11.2896  
-(3 - 12.36)² = 87.6096  
-(20 - 12.36)² = 58.3696  
-(13 - 12.36)² = 0.4096  
+Restamos el promedio (15.25) a cada valor, elevamos al cuadrado, sumamos y dividimos entre 8:  
+(2 - 15.25)² = 175.5625  
+(1 - 15.25)² = 203.0625  
+(19 - 15.25)² = 14.0625  
+(41 - 15.25)² = 663.0625  
+(6 - 15.25)² = 85.5625  
+(14 - 15.25)² = 1.5625  
+(11 - 15.25)² = 18.0625  
+(28 - 15.25)² = 162.5625  
 
 Suma:  
-11.2896 + 54.1696 + 107.6496 + 129.0496 + 129.0496 + 107.6496 + 3437.0896 + 11.2896 + 87.6096 + 58.3696 + 0.4096 = 4133.6344  
+175.5625 + 203.0625 + 14.0625 + 663.0625 + 85.5625 + 1.5625 + 18.0625 + 162.5625 = 1323.9375  
 
 Varianza:  
-4133.6344 ÷ 11 ≈ 375.785  
+1323.9375 ÷ 8 = 165.4921875  
 
 ##### Paso 2: Calcular la desviación estándar
 
 Desviación estándar:  
-√375.785 ≈ 19.38  
+√165.4921875 ≈ 12.86  
 
-La desviación estándar es **19.38**, mostrando una dispersión muy alta debido al valor extremo de 71 prompts.
+La desviación estándar es **12.86**, mostrando una dispersión alta debido al valor extremo de 41 prompts.
 
 #### 3. Rango
 
 - Mínimo: 1 prompt  
-- Máximo: 71 prompts  
-- Rango = 71 - 1 = 70  
+- Máximo: 41 prompts  
+- Rango = 41 - 1 = 40  
 
 **Observación:** El rango amplio y la alta desviación estándar reflejan una gran variabilidad en la longitud de las interacciones.
 
@@ -254,53 +235,50 @@ La desviación estándar es **19.38**, mostrando una dispersión muy alta debido
 
 #### 1. Promedio (Media)
 
-Sumamos los porcentajes de alucinaciones y dividimos entre 11:  
-0 + 0 + 0 + 0 + 0 + 0 + 1.4 + 11 + 33 + 25 + 0 = 70.4  
+Sumamos los porcentajes de alucinaciones y dividimos entre 8:  
+0 + 0 + 5 + 12.2 + 50 + 0 + 0 + 35.7 = 102.9  
 
 Promedio:  
-70.4 ÷ 11 ≈ 6.4  
+102.9 ÷ 8 ≈ 12.8625  
 
-El promedio de alucinaciones es **6.4%**, indicando que, en general, las respuestas de la IA son bastante precisas, con un bajo nivel de error promedio.
+El promedio de alucinaciones es **12.86%**, indicando un nivel moderado de error en promedio, con casos extremos que elevan esta media.
 
 #### 2. Desviación estándar
 
 ##### Paso 1: Calcular la varianza
 
-Restamos el promedio (6.4) a cada valor, elevamos al cuadrado, sumamos y dividimos entre 11:  
-(0 - 6.4)² = 40.96  
-(0 - 6.4)² = 40.96  
-(0 - 6.4)² = 40.96  
-(0 - 6.4)² = 40.96  
-(0 - 6.4)² = 40.96  
-(0 - 6.4)² = 40.96  
-(1.4 - 6.4)² = 25  
-(11 - 6.4)² = 21.16  
-(33 - 6.4)² = 707.56  
-(25 - 6.4)² = 345.96  
-(0 - 6.4)² = 40.96  
+Restamos el promedio (12.8625) a cada valor, elevamos al cuadrado, sumamos y dividimos entre 8:  
+(0 - 12.8625)² = 165.44450625  
+(0 - 12.8625)² = 165.44450625  
+(5 - 12.8625)² = 61.67100625  
+(12.2 - 12.8625)² = 0.43950625  
+(50 - 12.8625)² = 1382.37890625  
+(0 - 12.8625)² = 165.44450625  
+(0 - 12.8625)² = 165.44450625  
+(35.7 - 12.8625)² = 522.20880625  
 
 Suma:  
-40.96 + 40.96 + 40.96 + 40.96 + 40.96 + 40.96 + 25 + 21.16 + 707.56 + 345.96 + 40.96 = 1346.44  
+165.44450625 + 165.44450625 + 61.67100625 + 0.43950625 + 1382.37890625 + 165.44450625 + 165.44450625 + 522.20880625 = 2788.47625  
 
 Varianza:  
-1346.44 ÷ 11 ≈ 122.4  
+2788.47625 ÷ 8 ≈ 348.55953125  
 
 ##### Paso 2: Calcular la desviación estándar
 
 Desviación estándar:  
-√122.4 ≈ 11.06  
+√348.55953125 ≈ 18.67  
 
-La desviación estándar es **11.06**, indicando una dispersión moderada, influida por valores altos como 33% y 25%.
+La desviación estándar es **18.67**, indicando una dispersión alta, influida por valores altos como 50%.
 
 #### 3. Distribución de las alucinaciones
 
-- 0%: 7 veces (63.64%)  
-- 1.4%: 1 vez (9.09%)  
-- 11%: 1 vez (9.09%)  
-- 25%: 1 vez (9.09%)  
-- 33%: 1 vez (9.09%)  
+- 0%: 4 veces (50%)  
+- 5%: 1 vez (12.5%)  
+- 12.2%: 1 vez (12.5%)  
+- 35.7%: 1 vez (12.5%)  
+- 50%: 1 vez (12.5%)  
 
-**Observación:** La mayoría (63.64%) no tiene alucinaciones, pero hay casos aislados con porcentajes significativos (hasta 33%).
+**Observación:** La mitad de los casos no presentan alucinaciones, pero valores altos (hasta 50%) afectan la percepción general de precisión.
 
 ---
 
@@ -308,44 +286,45 @@ La desviación estándar es **11.06**, indicando una dispersión moderada, influ
 
 #### 1. Puntuaciones y número de prompts
 
-- ∑x = 54.5, ∑y = 136, ∑xy = 5×9 + 5×5 + ... + 5×13 = 672, ∑x² = 247.25, ∑y² = 4136  
-- r = [11 × 672 - 54.5 × 136] ÷ √{[11 × 247.25 - 54.5²] × [11 × 4136 - 136²]}  
-- r = [7392 - 7412] ÷ √{[2720.75 - 2970.25] × [45496 - 18496]} ≈ -20 ÷ √{-249.5 × 27000} ≈ 0.008  
+- ∑x = 31, ∑y = 122, ∑xy = 2×2 + 2×1 + ... + 5×28 = 502, ∑x² = 141, ∑y² = 2758  
+- r = [8 × 502 - 31 × 122] ÷ √{[8 × 141 - 31²] × [8 × 2758 - 122²]}  
+- r = [4016 - 3782] ÷ √{[1128 - 961] × [22064 - 14884]} ≈ 234 ÷ √{167 × 7180} ≈ 0.213  
 
-**Resultado:** Correlación **0.008** (prácticamente nula). No hay relación significativa entre puntuaciones y prompts.
+**Resultado:** Correlación **0.213** (positiva débil). El número de prompts tiene una influencia mínima en las puntuaciones.
 
 #### 2. Puntuaciones y alucinaciones
 
-- ∑x = 54.5, ∑y = 70.4, ∑xy = 5×0 + 5×0 + ... + 5×0 = 242.5, ∑x² = 247.25, ∑y² = 1496.36  
-- r = [11 × 242.5 - 54.5 × 70.4] ÷ √{[11 × 247.25 - 54.5²] × [11 × 1496.36 - 70.4²]} ≈ -1168.9 ÷ √{-249.5 × 11499.84} ≈ -0.69  
+- ∑x = 31, ∑y = 102.9, ∑xy = 2×0 + 2×0 + ... + 5×35.7 = 258.5, ∑x² = 141, ∑y² = 3229.62  
+- r = [8 × 258.5 - 31 × 102.9] ÷ √{[8 × 141 - 31²] × [8 × 3229.62 - 102.9²]}  
+- r = [2068 - 3189.9] ÷ √{[1128 - 961] × [25836.96 - 10588.41]} ≈ -1121.9 ÷ √{167 × 15248.55} ≈ -0.703  
 
-**Resultado:** Correlación **-0.69** (negativa moderada-fuerte). Más alucinaciones tienden a reducir las puntuaciones.
+**Resultado:** Correlación **-0.703** (negativa moderada-fuerte). Las alucinaciones tienen un impacto significativo en la reducción de las puntuaciones.
 
 #### 3. Número de prompts y alucinaciones
 
-- ∑x = 136, ∑y = 70.4, ∑xy = 9×0 + 5×0 + ... + 13×0 = 614, ∑x² = 4136, ∑y² = 1496.36  
-- r = [11 × 614 - 136 × 70.4] ÷ √{[11 × 4136 - 136²] × [11 × 1496.36 - 70.4²]} ≈ -2810.4 ÷ √{27000 × 11499.84} ≈ -0.16  
+- ∑x = 122, ∑y = 102.9, ∑xy = 2×0 + 1×0 + ... + 28×35.7 = 1476.6, ∑x² = 2758, ∑y² = 3229.62  
+- r = [8 × 1476.6 - 122 × 102.9] ÷ √{[8 × 2758 - 122²] × [8 × 3229.62 - 102.9²]}  
+- r = [11812.8 - 12553.8] ÷ √{[22064 - 14884] × [25836.96 - 10588.41]} ≈ -741 ÷ √{7180 × 15248.55} ≈ -0.224  
 
-**Resultado:** Correlación **-0.16** (negativa débil). Poca relación entre prompts y alucinaciones.
+**Resultado:** Correlación **-0.224** (negativa débil). El número de prompts tiene una relación mínima con las alucinaciones.
 
 ---
 
 ### Tendencias y observaciones
 
-1. **Puntuaciones:** Promedio de 4.95 y desviación de 0.14 reflejan un desempeño casi perfecto y muy consistente.  
-2. **Número de prompts:** Promedio de 12.36 y desviación de 19.38 muestran gran variabilidad, con un outlier (71).  
-3. **Alucinaciones:** Promedio de 6.4% y desviación de 11.06 indican alta precisión general, pero con casos puntuales de error.  
-4. **Relaciones:** Las alucinaciones afectan negativamente las puntuaciones (-0.69), mientras que el número de prompts tiene un impacto mínimo (0.008 y -0.16).
+1. **Puntuaciones:** Promedio de 3.875 y desviación de 1.27 reflejan un desempeño bueno pero con variaciones notables, especialmente por puntuaciones bajas (2 y 3).  
+2. **Número de prompts:** Promedio de 15.25 y desviación de 12.86 muestran alta variabilidad, con un outlier (41).  
+3. **Alucinaciones:** Promedio de 12.86% y desviación de 18.67 indican precisión variable, con casos extremos (50%).  
+4. **Relaciones:** Las alucinaciones afectan negativamente las puntuaciones (-0.703), mientras que el número de prompts tiene un impacto limitado (0.213 y -0.224).
 
 ---
 
 ### Conclusión del análisis estadístico
 
-- **Puntuaciones:** Promedio de 4.95 y desviación de 0.14 confirman un desempeño sobresaliente y uniforme.  
-- **Número de prompts:** Promedio de 12.36 y alta desviación (19.38) reflejan interacciones de longitud muy variable.  
-- **Alucinaciones:** Promedio de 6.4% y desviación de 11.06 muestran precisión general, con excepciones notables.  
-- **Relación:** Las alucinaciones son el principal factor que reduce las puntuaciones (-0.69), mientras que la cantidad de prompts no influye significativamente.
-
+- **Puntuaciones:** Promedio de 3.875 y desviación de 1.27 reflejan un desempeño aceptable en las consultas, pero con inconsistencias significativas en algunos casos, evidenciadas por puntuaciones bajas (2 y 3). Esto sugiere que la IA es capaz de ofrecer respuestas de alta calidad en la mitad de los casos, pero enfrenta desafíos en ciertos contextos.  
+- **Número de prompts:** Promedio de 15.25 y alta desviación (12.86) indican que las consultas varían ampliamente en complejidad o extensión. La correlación débil con las puntuaciones (0.213) sugiere que la cantidad de prompts no es un factor determinante en la calidad de las respuestas.  
+- **Alucinaciones:** Promedio de 12.86% y desviación de 18.67 muestran una precisión moderada, pero con casos de error significativo (hasta 50%) que afectan la confianza en las respuestas.  
+- **Relación:** Las alucinaciones son el principal factor que reduce las puntuaciones (-0.703), indicando que los errores en las respuestas impactan directamente la percepción de calidad. Para mejorar la experiencia de consulta, es esencial optimizar la precisión de la IA, posiblemente mediante prompts más claros o específicos que minimicen las alucinaciones. La longitud de las interacciones no parece influir significativamente, lo que permite flexibilidad en cómo los usuarios formulan sus consultas.
 
 ## Aprobado por  
 **Scrum Master:** Antonio Macías Ferrera
