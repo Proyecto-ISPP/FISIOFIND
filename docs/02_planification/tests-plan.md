@@ -1,4 +1,4 @@
----
+<!-- ---
 title: "PLAN DE PRUEBAS"                       # CHANGE IF NEEDED
 subtitle: "FISIO FIND - Grupo 6 - #SPRINT 3"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]
@@ -18,7 +18,7 @@ header-right: "16/02/2025"                                # CHANGE IF NEEDED
 footer-left: "FISIO FIND"
 documentclass: scrartcl
 classoption: "table"
----
+--- -->
 
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
 <p align="center">
@@ -36,7 +36,7 @@ classoption: "table"
 - [1. INTRODUCCIÓN](#1-introducción)
 - [2. PRUEBAS CONTEMPLADAS Y ÁREAS DE APLICACIÓN](#2-pruebas-contempladas-y-áreas-de-aplicación)
 - [3. METODOLOGÍA Y POLÍTICA DE PRUEBAS](#3-metodología-y-política-de-pruebas)
-  - [3.1 HERRAMIENTAS QUE SE VAN A UTILIZAR PARA LAS PRUEBAS](#31-herramientas-que-se-van-a-utilizar-para-las-pruebas)
+  - [3.1 Herramientas que se van a utilizar para las pruebas](#31-herramientas-que-se-van-a-utilizar-para-las-pruebas)
 - [4. PRUEBAS IMPLEMENTADAS](#4-pruebas-implementadas)
   - [4.1 PRUEBAS UNITARIAS Y DE INTEGRACIÓN](#41-pruebas-unitarias-y-de-integración)
   - [4.2 PRUEBAS DE INTERFAZ](#42-pruebas-de-interfaz)

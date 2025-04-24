@@ -1,4 +1,4 @@
----
+<!-- ---
 title: "REPORTE DE IA DEL #SPRINT 2"
 subtitle: "FISIO FIND - Grupo 6 - #SPRINT 2"
 author: [Daniel Fernández Caballero, Daniel Ruiz López]
@@ -18,7 +18,7 @@ header-right: "27/03/2025"
 footer-left: "FISIO FIND"
 documentclass: scrartcl
 classoption: "table"
----
+--- -->
 
 <!-- Imagen del logo (comentar al exportar a PDF) -->
 <p align="center">
