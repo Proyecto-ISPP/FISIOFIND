@@ -28,6 +28,18 @@
     --border-radius-md: 8px;
     --border-radius-lg: 12px;
   }
+  /* Ajustes generales para el botón de CC */
+  .controlButton {
+    border-radius: 4px;
+    transition: background-color 0.2s;
+  }
+
+  /* Estado activo: fondo rojo + icono blanco, como YouTube */
+  .ccActive {
+    background-color: #FF0000;
+    color: #FFFFFF;
+  }
+
   
   /* Estilos generales */
   .roomContainer {

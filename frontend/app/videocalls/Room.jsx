@@ -58,7 +58,7 @@ const Room = ({ roomCode }) => {
   const [responseQuestionnaire, setResponseQuestionnaire] = useState(null);
 
   // Inicializamos los hooks SIEMPRE
-  const webSocket = useWebSocket(roomCode, userRole, () => {});
+  const webSocket = useWebSocket(roomCode, userRole, () => { });
   const chat = useChat({ userRole, sendWebSocketMessage: webSocket.sendWebSocketMessage });
   const webRTC = useWebRTC({
     localStreamRef,
@@ -351,9 +351,9 @@ const Room = ({ roomCode }) => {
         >
           <div ref={subtitlesRef} className={styles.subtitlesContainer}>
             <div className={styles.subtitlesHeader}>
-              <span>Subtítulos</span>
-              <button 
-                className={styles.subtitlesClose} 
+              <span></span>
+              <button
+                className={styles.subtitlesClose}
                 onClick={() => setShowRemoteSubs(false)}
               >
                 ×
@@ -387,7 +387,11 @@ const Room = ({ roomCode }) => {
         showSettings={showSettings}
         setShowSettings={setShowSettings}
         leaveCall={roomManagement.leaveCall}
+        showRemoteSubs={showRemoteSubs}
+        setShowRemoteSubs={setShowRemoteSubs}
+        webRTCConnected={webRTC.connected}
       />
+
 
       {/* BOTÓN PARA TOGGLEAR SUBTÍTULOS REMOTOS */}
       <button
