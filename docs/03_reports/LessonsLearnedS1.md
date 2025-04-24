@@ -1,6 +1,6 @@
----
-title: "Lecciones aprendidas S1"                             # CHANGE IF NEEDED
-subtitle: "FISIO FIND - Grupo 6 - #WPL"
+<!-- ---
+title: "Lecciones aprendidas #S1"                        # CHANGE IF NEEDED
+subtitle: "FISIO FIND - Grupo 6 - #PPL"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]
 date: "23/04/2025"                                       # CHANGE IF NEEDED
 subject: "ISPP"
@@ -18,7 +18,7 @@ header-right: "23/04/2025"                               # CHANGE IF NEEDED
 footer-left: "FISIO FIND"
 documentclass: scrartcl
 classoption: "table"  
----
+--- -->
 
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
 <p align="center">
@@ -26,7 +26,7 @@ classoption: "table"
 </p>
 
 <h1 align="center" style="font-size: 30px; font-weight: bold;">
-  Lecciones aprendidas S1
+  Lecciones aprendidas #S1
 </h1>
 
 <br>
@@ -35,12 +35,17 @@ classoption: "table"
 - [1. Metodología y roles](#1-metodología-y-roles)
 - [2. Metodología para el análisis de los problemas](#2-metodología-para-el-análisis-de-los-problemas)
 - [3. Datos recolectados](#3-datos-recolectados)
-    - [3.1 Datos recolectados en la reunión con el revisor](#31-datos-recolectados-en-la-reunión-con-el-revisor)
-    - [3.2 Datos recolectados en la encuesta](#32-datos-recolectados-en-la-encuesta)
+  - [3.1 Datos recolectados en la reunión con el revisor](#31-datos-recolectados-en-la-reunión-con-el-revisor)
+  - [3.2 Datos recolectados en la encuesta](#32-datos-recolectados-en-la-encuesta)
 - [4. Resumen de datos recolectados](#4-resumen-de-datos-recolectados)
-    - [4.1 Resumen hecho por ChatGPT](#41-resumen-hecho-por-chatgpt)
-    - [4.2 Resumen hecho por secretario](#42-resumen-hecho-por-secretario)
+  - [4.1 Resumen hecho por ChatGPT - Problemas principales](#41-resumen-hecho-por-chatgpt---problemas-principales)
+    - [4.1.1. Despliegue tardío y fallido](#411-despliegue-tardío-y-fallido)
+    - [4.1.2. Falta de estructura común en el backend](#412-falta-de-estructura-común-en-el-backend)
+    - [4.1.3. Problemas con Git y control de versiones](#413-problemas-con-git-y-control-de-versiones)
+    - [4.1.4. Fallos de planificación y organización general](#414-fallos-de-planificación-y-organización-general)
+  - [4.2 Resumen hecho por secretario](#42-resumen-hecho-por-secretario)
 - [5. Análisis de las condiciones de fallo](#5-análisis-de-las-condiciones-de-fallo)
+- [6. Soluciones tomadas](#6-soluciones-tomadas)
 - [7. Lecciones aprendidas](#7-lecciones-aprendidas)
 - [Anexo](#anexo)
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
@@ -55,15 +60,15 @@ classoption: "table"
 
 - **Número de Grupo:** Grupo 6
 
-- **Entregable:** #WPL
+- **Entregable:** #PPL
 
 - **Miembros del grupo:** Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes.
 
 - **Contribuidores:** [Delfín Santana Rubio](https://github.com/DelfinSR) (autor), [Antonio Macías Ferrera](https://github.com/antoniommff) (revisor), [Guadalupe Ridruejo Pineda](https://github.com/guaridpin) (revisor), [Miguel Encina Martínez](https://github.com/MiguelEncina) (revisor)
 
-- **Fecha de Creación:** 23/04/2025  
+- **Fecha de creación:** 23/04/2025  
 
-- **Versión:** v1.0
+- **Versión:** v1.1
 
 <br>
 
@@ -71,9 +76,10 @@ classoption: "table"
 
 **Historial de modificaciones**
 
-| Fecha        | Versión   | Realizada por             | Descripción de los cambios                                            |
-| ------------ | --------- | ------------------------- | --------------------------------------------------------------------- |
-| 23/04/2025   | v1.0      | Delfín Santana Rubio      | Versión inicial del documento                                         |
+| Fecha        | Versión   | Realizada por             | Descripción de los cambios                                      |
+| ------------ | --------- | ------------------------- | --------------------------------------------------------------- |
+| 23/04/2025   | v1.0      | [Delfín Santana Rubio](https://github.com/DelfinSR)      | Versión inicial del documento                                   |
+| 24/04/2025   | v1.1      | [Antonio Macías Ferrera](https://github.com/antoniommff) | Correcciones de ortografía y errores menores.                  |
 
 <br>
 
@@ -83,77 +89,81 @@ classoption: "table"
 
 
 # 1. Metodología y roles
-El equipo utiliza *GitHub Project* como herramienta de gestión de tareas donde las actividades están organizadas en distintas columnas(Product Backlog, ToDo, In Progress, Ready For Test, Done) que reflejan su estado dentro del flujo de trabajo. Esta herramienta cuenta con un **tablero Kanban** para facilitar el seguimiento de las tareas, generación de **gráficas Burn-down** que nos serán útiles en las retrospectivas, y asignación y **estimación de tareas**, además de otras funciones que procurarán una buena organización del trabajo.
+El equipo utiliza *GitHub Project* como herramienta de gestión de tareas, donde las actividades están organizadas en distintas columnas (Product Backlog, ToDo, In Progress, Ready For Test, Done) que reflejan su estado dentro del flujo de trabajo. Esta herramienta cuenta con un **tablero Kanban** para facilitar el seguimiento de las tareas, la generación de **gráficas Burn-down** útiles en las retrospectivas, y la asignación y **estimación de tareas**, además de otras funciones que procuran una buena organización del trabajo.
 
 Todas las tareas a ejecutar en el *Sprint* se encontrarán inicialmente en la columna "Product Backlog", habiendo sido previamente asignadas y estimadas por el equipo de **planificación**.
 
 Roles:
-- Antonio Macías: RRSS y Publicidad, Planificación, Presentaciones, Project Manager
-- Francisco Capote: RRSS y Publicidad
-- Francisco Mateo: RRSS y Publicidad, QA
-- Guadalupe Ridruejo: RRSS y Publicidad, Planificación, Presentaciones
-- Pablo Fernández: RRSS y Publicidad, Planificación
-- Rafael Pulido: RRSS y Publicidad, Planificación, Presentaciones, Tiempo, Formación
-- Daniel Ruiz: RRSS y Publicidad, IA
-- Alberto Carmona: Secretarios, Tiempo
-- Daniel Vela: Secretarios
-- Delfín Santana: Secretarios
-- Miguel Encina: Planificación, QA
-- Benjamín I. Maureira: QA
-- Daniel Alors: QA
-- Ramón Gavira: Planificación, Formación
-- Daniel Fernández: IA
+- Antonio Macías: RRSS y Publicidad, Planificación, Presentaciones, Project Manager.
+- Francisco Capote: RRSS y Publicidad.
+- Francisco Mateo: RRSS y Publicidad, QA.
+- Guadalupe Ridruejo: RRSS y Publicidad, Planificación, Presentaciones.
+- Pablo Fernández: RRSS y Publicidad, Planificación.
+- Rafael Pulido: RRSS y Publicidad, Planificación, Presentaciones, Tiempo, Formación.
+- Daniel Ruiz: RRSS y Publicidad, IA.
+- Alberto Carmona: Secretario, Tiempo.
+- Daniel Vela: Secretario.
+- Delfín Santana: Secretario.
+- Miguel Encina: Planificación, QA.
+- Benjamín I. Maureira: QA.
+- Daniel Alors: QA.
+- Ramón Gavira: Planificación, Formación.
+- Daniel Fernández: IA.
 
 Los roles **planificación** y **analista** son sinónimos. Estos son responsables de planificar las tareas.
 
 Los **representantes** serán necesarios para favorecer una buena comunicación y dividir las tareas en cada grupo. De este modo, las tareas son asignadas por los analistas, pero hay un "gestor" de las tareas por cada grupo.
 
-Los **secretarios** serán los encargados de tomar actas de las reuniones internas y tomar nota del *feedback* de los profesores.
+Los **secretarios** serán los encargados de tomar actas de las reuniones internas y registrar el *feedback* de los profesores.
 
 Por otro lado, todos los integrantes del equipo son desarrolladores.
 
-Los 17 integrantes nos separamos a su vez en 3 grupos:
+Los 17 integrantes se dividen a su vez en 3 grupos:
 
 **Grupo 1:**
-- Alberto Carmona Sicre (secretario)
-- Daniel Alors Romero
-- Daniel Fernández Caballero
-- Daniel Ruiz López
-- Pablo Fernández Pérez
-- Rafael Pulido Cifuentes (representante)
+- Alberto Carmona Sicre (secretario).
+- Daniel Alors Romero.
+- Daniel Fernández Caballero.
+- Daniel Ruiz López.
+- Pablo Fernández Pérez.
+- Rafael Pulido Cifuentes (representante).
 
 **Grupo 2:**
-- Antonio Macías Ferrera (Project Manager)
-- Benjamín I. Maureira Flores
-- Delfín Santana Rubio (secretario)
-- Guadalupe Ridruejo Pineda
-- Julen Redondo Pacheco
-- Ramón Gavira Sánchez (representante)
+- Antonio Macías Ferrera (Project Manager).
+- Benjamín I. Maureira Flores.
+- Delfín Santana Rubio (secretario).
+- Guadalupe Ridruejo Pineda.
+- Julen Redondo Pacheco.
+- Ramón Gavira Sánchez (representante).
 
 **Grupo 3:**
-- Daniel Tortorici Bartus
-- Daniel Vela Camacho (secretario)
-- Francisco Capote García
-- Francisco Mateos Villarejo
-- Miguel Encina Martínez (representante)
+- Daniel Tortorici Bartus.
+- Daniel Vela Camacho (secretario).
+- Francisco Capote García.
+- Francisco Mateos Villarejo.
+- Miguel Encina Martínez (representante).
 
 Cada miembro del equipo será responsable de gestionar el estado de sus tareas ateniéndose al siguiente procedimiento:
 
 1. **Inicio de la Tarea**
-    - El desarrollador selecciona una tarea de la columna "Product Backlog" y la traslada a "Todo".
+    - El desarrollador selecciona una tarea de la columna "Product Backlog" y la traslada a "ToDo".
     - Esta acción indica que la tarea ha sido priorizada para su ejecución.
     - Los representantes de cada grupo serán responsables de estimar y asignar las tareas a realizar por ese grupo.
 
 2. **Trabajo en Progreso**
     - Cuando se comienza a trabajar en la tarea, se mueve a la columna "In Progress".
-    - Se debe registrar el tiempo de trabajo en **Clockify** de acuerdo al protocolo y la política de nombrado especificada en el ***Plan De Gestión De La Configuración***.
+    - Se debe registrar el tiempo de trabajo en **Clockify** de acuerdo al protocolo y la política de nombrado especificada en el ***Plan de Gestión de la Configuración***.
 
 3. **Revisión de Código: Revisión por pares**
     - Al finalizar la implementación, el responsable de la tarea crea una *Pull Request (PR)* y traslada la tarea a la columna "Ready for Test".
-    - El otro miembro del equipo asignado se encarga de analizar el código y verificar su calidad.
+    - Otro miembro del equipo asignado se encarga de analizar el código y verificar su calidad.
     - Si la revisión es satisfactoria, el revisor aprueba la PR y fusiona los cambios.
     - Si se identifican errores o mejoras necesarias, la tarea se devuelve a "In Progress", notificando los ajustes requeridos.
     - Por norma general, el *testing* será realizado también acorde a la revisión por pares.
+
+
+<br>
+
 
 # 2. Metodología para el análisis de los problemas
 La metodología consta de tres fases:
@@ -168,6 +178,9 @@ Para la recolección se tomaron dos acciones:
 - Encuesta grupal: El equipo de Fisio Find pasó una encuesta interna para recolectar los problemas que cada miembro del equipo pensaba que se habían tenido. Esta encuesta estuvo diseñada con los contenidos y estructuras necesarias especificadas en el documento "Grade Recovery Guidelines" que se encuentra en EV. Las respuestas hechas por otros compañeros estaban disponibles durante la encuesta, ya que se indicó que no se debían de repetir problemas reportados para así facilitar el análisis.
 
 Para el análisis y la redacción de conclusiones se designó a un secretario del grupo la tarea de analizar los datos recolectados y redactar las conclusiones a las que se han llegado.
+
+<br>
+
 
 # 3. Datos recolectados
 ## 3.1 Datos recolectados en la reunión con el revisor
@@ -184,11 +197,9 @@ Aunque solo suspendimos el entregable S1, decidimos aprovechar para hacer una en
 
 # 4. Resumen de datos recolectados
 
-## 4.1 Resumen hecho por ChatGPT
+## 4.1 Resumen hecho por ChatGPT - Problemas principales
 
-### 🧩 Problemas principales
-
-#### 1. Despliegue tardío y fallido
+### 4.1.1. Despliegue tardío y fallido
 - **Descripción**: El despliegue se dejó para el último momento, lo que provocó múltiples errores y la calificación "suspenso" en este sprint.
 - **Causas**: Mala planificación, falta de CI/CD, y descoordinación general.
 - **Soluciones propuestas**:
@@ -196,28 +207,34 @@ Aunque solo suspendimos el entregable S1, decidimos aprovechar para hacer una en
   - Adoptar integración continua (ya implementada para S3).
   - Gestionar mejor el tiempo y no esperar al último día.
 
-#### 2. Falta de estructura común en el backend
+### 4.1.2. Falta de estructura común en el backend
 - **Descripción**: Uso inconsistente de `APIView` vs funciones directas.
 - **Causa**: Falta de acuerdo sobre una arquitectura común y (comentario no generado por chatgpt a continuación) falta de experiencia previa con la tecnología.
 - **Solución**: Definir y documentar convenciones técnicas desde el inicio.
 
-#### 3. Problemas con Git y control de versiones
+### 4.1.3. Problemas con Git y control de versiones
 - **Descripción**: Se perdió código por mala gestión de ramas.
 - **Causa**: No seguir Gitflow adecuadamente.
 - **Solución**: Seguir estrictamente Gitflow y educar al equipo en su uso.
 
-#### 4. Fallos de planificación y organización general
+### 4.1.4. Fallos de planificación y organización general
 - **Descripción**: Se subestimaron tareas y no se gestionaron dependencias entre funcionalidades.
 - **Impacto**: Caos el último día y funcionalidades clave sin integrar.
 - **Solución**: Crear un cronograma con fechas intermedias y gestionar las dependencias entre tareas.
 
+
 ## 4.2 Resumen hecho por secretario
 Todos los problemas apuntan a una mala comunicación y organización. A continuación, se muestran los títulos de los problemas que han puesto los encuestados junto a la descripción proporcionada con el compañero:
+
 - Error en el despliegue: Rafa y yo estuvimos intentando el despliegue pero había muchos problemas de cara a la entrega
+
 - Integración continua: Problemas con la integración continua, fallos al hacer el despliegue y código que desapareció por mala política de ramas
+
 - Refactorización de Backend S1: Al principio del desarrollo no se acordó ninguna estructura o modelo a seguir para realizar las llamadas API del backend, por lo que resultó en varias aplicaciones, cada una con una estructura diferente, algunos utilizaban clases APIView que proporcionaba DjangoRest y otros definían las funciones directamente. Tras una discusión del equipo se acordó seguir una estructura predeterminada para facilitar la legibilidad y homogeneidad del código.
+
 - Despliegue tardío: Según recuerdo, se esperó a que todo el equipo terminase de desarrollar hasta el último día para desplegar. Según tengo entendido, se comenzó a desplegar el día anterior a la entrega y surgieron complicaciones que causaron que no se pudiera desplegar hasta horas antes de la hora límite de la entrega. Sin embargo, aunque se consiguió desplegar, este tenía errores, que fue la causa del suspenso según tengo entendido.	
-- Fallo en la organización: Los del equipo de planificación no tuvimos en cuenta dejar tiempo para resolver errores debido a la gran cantidad de funcionalidades que queríamos implementar para el S1 y se puso como fecha límite para terminar las funcionalidades pues el día de antes de la entrega. El problema surgió debido a que había unas funcionalidades que dependían de otras, por lo tanto, como esas funcionalidades claves se terminaron el último día, hubo que hacer un gran esfuerzo al final para terminar algunas funcionalidades dependientes. Esto provocó que surgieran errores al intentar integrar todo de golpe el último día por lo que ya no había tiempo para solucionar los errores, además de desplegar la aplicación, que también se dejó para el final. Deberíamos de haber establecido límites para que aquellas funcionalidades clave estuvieran listas la primera semana, para poder terminar el resto de funcionalidades la segunda. Además, deberíamos haber aplicado de forma más cuidadosa la política de ramas y la integración continua, realizando numerosos merges de develop en las ramas correspondientes para evitar perder código y solucionar los errores que puedan surgir con antelación. También deberíamos haber empezado antes a desplegar, aunque fuera con una versión sin funcionalidades de la aplicación.
+
+- Fallo en la organización: Los del equipo de planificación no tuvimos en cuenta dejar tiempo para resolver errores debido a la gran cantidad de funcionalidades que queríamos implementar para el S1 y se puso como fecha límite para terminar las funcionalidades pues el día de antes de la entrega. El problema surgió debido a que había unas funcionalidades que dependían de otras, por lo tanto, como esas funcionalidades claves se terminaron el último día, hubo que hacer un gran esfuerzo al final para terminar algunas funcionalidades dependientes. Esto provocó que surgieran errores al intentar integrar todo de golpe el último día por lo que ya no había tiempo para solucionar los errores, además de desplegar la aplicación, que también se dejó para el final. Deberíamos de haber establecido límites para que aquellas funcionalidades clave estuvieran listas la primera semana, para poder terminar el resto de funcionalidades la segunda. Además, deberíamos haber aplicado de forma más cuidadosa la política de ramas y la integración contínua, realizando numerosos merges de develop en las ramas correspondientes para evitar perder código y solucionar los errores que puedan surgir con antelación. Tambien deberíamos haber empezado antes a desplegar, aunque fuera con una versión sin funcionalidades de la aplicación.
 
 Todos los problemas relacionados están relacionados con el despliegue, la integración y la coordinación entre el despliegue y desarrollo de funcionalidades. Por otro lado, también se reporta falta de coordinación y acuerdos entre compañeros a la hora de desarrollar.
 
@@ -227,24 +244,44 @@ Destaca que la mayoría de los problemas (4 de 5) fueron reportados antes de la 
 
 La mala planificación, el mal uso de la política de ramas y la falta de acuerdos y coordinación causaron que existieran errores en el código (en ocasiones causados por conflictos entre ramas) y que no hubiera tiempo para solucionarlos. Estos se trasladaron al despliegue, el cual por mala planificación tuvo sus propios problemas. De este modo, se entregó un producto con problemas en el despliegue por haber desplegado mal y porque el propio código tenía bugs.
 
+<br>
+
+
 # 5. Análisis de las condiciones de fallo
 A continuación se hace un análisis de las condiciones de fallo respecto a 
 
-- T-1) Not informing that a member is absent: No sucedió y no es un problema que se haya reportado.
-- T-2) Taking longer than the stipulated time for the presentation: No sucedió y no es un problema que se haya reportado.
-- T-3) Finishing the presentation before the last minute: No sucedió y no es un problema que se haya reportado.
-- T-4) Having a divergence of the actual presentation with respect to the one that was part of the deliverable registered in the EV platform: No sucedió y no es un problema que se haya reportado.
-- T-5) Not respecting or not reacting to the feedback given in class without an explicit justification explained in the presentation: No sucedió y no es un problema que se haya reportado. (En el feedback se ha dicho en varias ocasiones que el deploy es un fallo recurrente en los años anteriores. Se puede entender que no hemos reaccionado al feedback. Sin embargo, no se marca como incumplida porque hay otra condición de fallo que recoge mejor el problema.)
-- T-6) Omitting in the presentation any of the aspects that are expected to be seen as they were explained in the previous class discussion: No sucedió y no es un problema que se haya reportado.
-- T-7) Having text in the slides that is not readable by the presenter from the back of the class: No sucedió y no es un problema que se haya reportado.
-- T-8) Presenting a document as part of a deliverable without a proper cover page that should include at least: No sucedió y no es un problema que se haya reportado.
-- T-9) Performing an incorrect delivery: No sucedió y no es un problema que se haya reportado.
-- **T-10) In all deliverables including software, incurring in any of the following software failure conditions:** El primer error incumple directamente la condición de fallo T-10 en su apartado "A legal interaction with your system does not have the expected behavior". Cuando entras en el despliegue del S1 (conectarse a una web e interactuar con ella es una acción legal), no aparecen las imágenes y no se comporta como en el video de la demo, que es el comportamiento esperado.
+- T-1. Not informing that a member is absent: No sucedió y no es un problema que se haya reportado.
+
+- T-2. Taking longer than the stipulated time for the presentation: No sucedió y no es un problema que se haya reportado.
+
+- T-3. Finishing the presentation before the last minute: No sucedió y no es un problema que se haya reportado.
+
+- T-4. Having a divergence of the actual presentation with respect to the one that was part of the deliverable registered in the EV platform: No sucedió y no es un problema que se haya reportado.
+
+- T-5. Not respecting or not reacting to the feedback given in class without an explicit justification explained in the presentation: No sucedió y no es un problema que se haya reportado. (En el feedback se ha dicho en varias ocasiones que el deploy es un fallo recurrente en los años anteriores. Se puede entender que no hemos reaccionado al feedback. Sin embargo, no se marca como incumplida porque hay otra condición de fallo que recoge mejor el problema.)
+
+- T-6. Omitting in the presentation any of the aspects that are expected to be seen as they were explained in the previous class discussion: No sucedió y no es un problema que se haya reportado.
+
+- T-7. Having text in the slides that is not readable by the presenter from the back of the class: No sucedió y no es un problema que se haya reportado.
+
+- T-8. Presenting a document as part of a deliverable without a proper cover page that should include at least: No sucedió y no es un problema que se haya reportado.
+
+- T-9. Performing an incorrect delivery: No sucedió y no es un problema que se haya reportado.
+
+- **T-10. In all deliverables including software, incurring in any of the following software failure conditions:** El primer error incumple directamente la condición de fallo T-10 en su apartado "A legal interaction with your system does not have the expected behavior". Cuando entras en el despliegue del S1 (conectarse a una web e interactuar con ella es una acción legal), no aparecen las imágenes y no se comporta como en el video de la demo, que es el comportamiento esperado.
+
 	- Origen del problema a nivel técnico: desconocimiento de la tecnología del despliegue y de la configuración necesaria del código para desplegar en esa tecnología concreta y errores en el código.
+
 	- Origen a nivel de proceso: Mala organización, fallos en el seguimiento de las tareas, no se pusieron fechas límite a las tareas y fallos en la gestión de ramas. 
+
 	- Fuente del problema (Person/People or System who introduced or generated the specific failure condition): teóricamente, la mala planificación es responsabilidad del equipo de planificación, el mal despliegue es principalmente del equipo de despliegue y los errores en el desarrollo de todo el equipo. Sin embargo, los fallos se retroalimentan, por lo que realmente es responsable todo el equipo.
+
 	- Responsables del problema (Person/People who allowed the failure condition to be part of the deliverable): Igual que la fuente, todo el equipo.
+
 	- Acciones de mitigación: De esto se habla en la siguiente sección.
+
+<br>
+
 
 # 6. Soluciones tomadas
 El equipo era consciente de este problema, y para solucionarlo, en el siguiente sprint (S2) se cambiaron las personas asignadas al despliegue y se priorizó esa tarea desde el principio del sprint. Respecto a los errores de código y el mal uso de la política de ramas, el equipo tomó consciencia de ello y se comprometió a hacer merges de develop continuamente, que eventualmente se convirtió en una métrica (número de conflictos en pull request). Por otro lado, al estar desplegado desde el primer momento, se consiguieron resolver los errores en el despliegue de forma más eficiente. Estas acciones solucionaron el problema y se consiguió desplegar correctamente. Las soluciones específicas más importantes fueron:
@@ -255,10 +292,15 @@ De este modo, el único problema que causó el suspenso fue solucionado (está e
 
 Analizando las decisiones tomadas junto a los problemas reportados del S2 en la encuesta, destaca que la solución tomada tras el despliegue fallido del S2 fue intentar hacer despliegue continuo. Sin embargo, esto no se consiguió directamente en el S2, por lo que en este entregable había dos personas responsables de desplegar continuamente. Por otro lado, se han reportado otros problemas de planificación en el S2. Cabe remarcar que en el S2 la organización del grupo cambió momentáneamente para abarcar mejor las tareas asignadas, lo que es probable que cause problemas de comunicación. También se reportan problemas en el reparto del esfuerzo y en la comunicación con usuarios pilotos. Analizar el estado de estos problemas no es objetivo de este documento, pero dado que son distintos que los detectados en el S1, se concluye que los problemas del S1 fueron solucionados pero surgieron nuevos problemas en el S2.
 
+<br>
+
+
 # 7. Lecciones aprendidas
 - Las tareas más importantes se deben empezar al principio del sprint.
 - La integración del código y la dependencia entre funcionalidades es algo a lo que se le debe de prestar atención.
 - Gastar recursos en una buena planificación puede hacernos ahorrar tiempo y esfuerzo del sprint.
+
+<br>
 
 
 # Anexo
