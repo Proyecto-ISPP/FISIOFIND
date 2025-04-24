@@ -35,18 +35,11 @@ const Controls = ({
       <button
         onClick={() => setShowRemoteSubs(v => !v)}
         disabled={!webRTCConnected}
-        className={`
-          ${styles.controlButton}
-        `}
         title="Subtítulos"
-      >
-        <FontAwesomeIcon
-          icon={showRemoteSubs
-            ? faClosedCaptioning
-            : faClosedCaptioningSlash
-          }
-        />
-      </button>
+        className={styles.controlButton}
+    >
+      {showRemoteSubs ? <SubtitlesIcon /> : <SubtitlesOffIcon />}
+    </button>
       <button onClick={() => setShowChat(!showChat)} className={styles.controlButton}>
         <FontAwesomeIcon icon={faComments} />
       </button>

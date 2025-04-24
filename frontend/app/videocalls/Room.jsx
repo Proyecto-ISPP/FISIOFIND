@@ -393,15 +393,6 @@ const Room = ({ roomCode }) => {
       />
 
 
-      {/* BOTÓN PARA TOGGLEAR SUBTÍTULOS REMOTOS */}
-      <button
-        onClick={() => setShowRemoteSubs(v => !v)}
-        disabled={!webRTC.connected}
-        className={`${styles.subtitlesToggle} ${showRemoteSubs ? styles.subtitlesActive : ''}`}
-      >
-        {showRemoteSubs ? '🔊 Subtítulos ON' : '🔇 Subtítulos OFF'}
-      </button>
-
       <ChatPanel
         showChat={chat.showChat}
         chatMessages={chat.chatMessages}
