@@ -1,28 +1,28 @@
 "use client";
 
-import React, { useState, useEffect, ChangeEvent, FormEvent, useRef } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { getApiBaseUrl } from "@/utils/api";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { UploadCloud, Edit2, Trash } from "lucide-react";
+import { getApiBaseUrl } from "@/utils/api";
+import { Play, AlertCircle, X, Loader2, ArrowLeft } from 'lucide-react';
+import { useParams, useRouter } from "next/navigation";
 import Alert from "@/components/ui/Alert";
 
-const PhysioVideo = () => {
+const getAuthToken = () => {
+  return localStorage.getItem("token");
+};
+
+const Pacientes = () => {
   const params = useParams();
   const id = params?.id as string;
-  const [title, setTitle] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const [file, setFileKey] = useState<File | null>(null);
-  const [token, setToken] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [loadingVideos, setLoadingVideos] = useState<boolean>(false);  // Estado para cargar los videos
-  const [videos, setVideos] = useState<any[]>([]);  // Estado para los videos
-  const [editingVideo, setEditingVideo] = useState<number | null>(null);  // Estado para controlar qué video estamos editando
-  const [editTitle, setEditTitle] = useState<string>("");  // Título del video a editar
-  const [editDescription, setEditDescription] = useState<string>("");  // Descripción del video a editar
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const router = useRouter();
-  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [videos, setVideos] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [message, setMessage] = useState<string>("");
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [isVideoLoading, setIsVideoLoading] = useState<boolean>(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isAuthChecking, setIsAuthChecking] = useState<boolean>(true);
+
 
   const [alert, setAlert] = useState<{
     show: boolean;
@@ -33,8 +33,7 @@ const PhysioVideo = () => {
     type: "info",
     message: ""
   });
-
-  // Function to show alerts
+  
   const showAlert = (type: "success" | "error" | "info" | "warning", message: string) => {
     setAlert({
       show: true,
@@ -43,503 +42,260 @@ const PhysioVideo = () => {
     });
   };
 
+  
+  // Check authentication and role
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    setToken(storedToken);
-
-    // Solicitar los videos al cargar la página
-    const fetchVideos = async () => {
-      setLoadingVideos(true); // Establecer que estamos cargando videos
-      try {
-        const response = await axios.get(
-          `${getApiBaseUrl()}/api/cloud/videos/list-videos/`, 
-          {
-            headers: {
-              Authorization: `Bearer ${storedToken}`,
-            },
-            params: {
-              treatment: id // Add treatment ID as a query parameter
-            }
-          }
-        );
-        // Check if response.data is an array (even if empty)
-        if (Array.isArray(response.data)) {
-          setVideos(response.data);
-        } else {
-          setVideos([]);
-        }
-      } catch (error) {
-        setVideos([]);
-      } finally {
-        setLoadingVideos(false);
-      }
-    };
-
-    fetchVideos(); // Llamar a la función para obtener los videos
-  }, [id]); // Add id as a dependency
-
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      setFileKey(event.target.files[0]);
-    }
-  };
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    // Validaciones
-    if (!file) {
-      showAlert("error", "Por favor selecciona un archivo.");
-      return;
-    }
-
-    if (!title.trim()) {
-      showAlert("error", "El título no puede estar vacío.");
-      return;
-    }
-
-    // Add character limit validation for title
-    if (title.length > 100) {
-      showAlert("error", "El título no puede exceder los 100 caracteres.");
-      return;
-    }
-
-    if (!description.trim()) {
-      showAlert("error", "La descripción no puede estar vacía.");
-      return;
-    }
-
-    // Add character limit validation for description
-    if (description.length > 255) {
-      showAlert("error", "La descripción no puede exceder los 255 caracteres.");
-      return;
-    }
-
-    setLoading(true);
-
-    const formData = new FormData();
-    formData.append("title", title);
-    formData.append("description", description);
-    formData.append("file", file);
-    formData.append("treatment", id);
-
-    try {
-      const response = await axios.post(
-        `${getApiBaseUrl()}/api/cloud/videos/create-video/`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      showAlert("success", "Video subido correctamente.");
-      setTitle("");
-      setDescription("");
-      setFileKey(null);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
-
-      // Volver a cargar los videos después de subir uno
-      const fetchVideos = async () => {
-        try {
-          const response = await axios.get(
-            `${getApiBaseUrl()}/api/cloud/videos/list-videos/`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          setVideos(response.data);
-        } catch (error) {
-          showAlert("error", error.response?.data?.detail || "No se pudieron cargar los videos.");
-        }
-      };
-      fetchVideos();
-    } catch (error) {
-      showAlert("error", error.response?.data?.detail || "Error al subir el vídeo. Intenta nuevamente.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleEdit = (video) => {
-    setEditingVideo(video.id);
-    setEditTitle(video.title);
-    setEditDescription(video.description);
-    setEditModalOpen(true);
-  };
-
-  const handleUpdate = async (event) => {
-    event.preventDefault(); // Esto evita el refresco de la página
-    
-    if (!editTitle.trim()) {
-      showAlert("error", "El título no puede estar vacío.");
-      return;
-    }
-
-    // Add character limit validation for edit title
-    if (editTitle.length > 100) {
-      showAlert("error", "El título no puede exceder los 100 caracteres.");
-      return;
-    }
-
-    if (!editDescription.trim()) {
-      showAlert("error", "La descripción no puede estar vacía");
-      return;
-    }
-
-    // Add character limit validation for edit description
-    if (editDescription.length > 255) {
-      showAlert("error", "La descripción no puede exceder los 255 caracteres.");
-      return;
-    }
-
-    try {
-      const response = await axios.put(
-        `${getApiBaseUrl()}/api/cloud/videos/update-video/${editingVideo}/`,
-        {
-          title: editTitle,
-          description: editDescription,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      showAlert("success", "Video actualizado correctamente.");
-      setEditingVideo(null); // Finalizar edición
-      // Recargar videos
-      const fetchVideos = async () => {
-        try {
-          const response = await axios.get(
-            `${getApiBaseUrl()}/api/cloud/videos/list-videos/`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          setVideos(response.data);
-        } catch (error) {
-          showAlert("error", error.response?.data?.detail || "No se pudieron cargar los videos.");
-        }
-      };
-      fetchVideos();
-    } catch (error) {
-      showAlert("error", error.response?.data?.detail || "Error al actualizar el video. Intenta nuevamente.");
-    }
-  };
-
-  // Add state for delete confirmation
-  const [deleteConfirmation, setDeleteConfirmation] = useState<{
-    show: boolean;
-    videoId: number | null;
-  }>({
-    show: false,
-    videoId: null
-  });
-
-  // Function to show delete confirmation
-  const confirmDelete = (videoId: number) => {
-    setDeleteConfirmation({
-      show: true,
-      videoId
-    });
-  };
-
-  // Function to cancel delete
-  const cancelDelete = () => {
-    setDeleteConfirmation({
-      show: false,
-      videoId: null
-    });
-  };
-
-  // Modify handleDelete to be called after confirmation
-  const handleDelete = async (videoId) => {
-    // Close the confirmation modal
-    setDeleteConfirmation({
-      show: false,
-      videoId: null
-    });
-    
-    try {
-      // Make sure we have a token
-      if (!token) {
-        showAlert("error", "No hay token de autenticación disponible.");
+    const checkAuthAndRole = async () => {
+      setIsAuthChecking(true);
+      const storedToken = getAuthToken();
+      
+      if (!storedToken) {
+        console.log("No token found, redirecting to login");
+        window.location.href = "/login";
         return;
       }
 
-      await axios.delete(
-        `${getApiBaseUrl()}/api/cloud/videos/delete-video/${videoId}/`,
-        {
+      try {
+        // Check user role
+        const response = await axios.get(`${getApiBaseUrl()}/api/app_user/check-role/`, {
           headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
+            Authorization: `Bearer ${storedToken}`,
           },
+        });
+
+        if (response.data && response.data.user_role === "patient") {
+          setIsAuthenticated(true);
+        } else {
+          console.log("User is not a patient, redirecting to not-found");
+          window.location.href = "/not-found";
         }
-      );
-      
-      showAlert("success", "Video eliminado correctamente.");
-      
-      // Refresh videos list by filtering out the deleted video
-      setVideos(videos.filter(video => video.id !== videoId));
-      
-      // Also fetch fresh data from the server
-      const fetchVideos = async () => {
-        try {
-          const response = await axios.get(
-            `${getApiBaseUrl()}/api/cloud/videos/list-videos/`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-              params: {
-                treatment: id
-              }
-            }
-          );
-          if (Array.isArray(response.data)) {
-            setVideos(response.data);
-          } else {
-            setVideos([]);
-          }
-        } catch (fetchError) {
-          // Just set to empty array if there's an error
-          setVideos([]);
+      } catch (error) {
+        if (error.response?.status === 401) {
+          // Token expired or invalid
+          localStorage.removeItem("token");
+          window.location.href = "/login";
+        } else {
+          // Other errors, redirect to not-found
+          window.location.href = "/not-found";
         }
-      };
-      
-      fetchVideos();
-    } catch (error) {
-      // Check if the error is a 404 (video already deleted)
-      if (error.response && error.response.status === 404) {
-        showAlert("success", "Video eliminado correctamente.");
-        // Refresh the video list by filtering out the deleted video
-        setVideos(videos.filter(video => video.id !== videoId));
-      } else {
-        showAlert("error", error.response?.data?.detail || "Error al eliminar el video. Intenta nuevamente.");
+      } finally {
+        setIsAuthChecking(false);
       }
+    };
+
+    checkAuthAndRole();
+  }, []);
+
+  useEffect(() => {
+    if (!isAuthenticated || isAuthChecking) return;
+    
+    const fetchVideos = async () => {
+      const storedToken = getAuthToken();
+      if (!storedToken) {
+        setMessage("Error: No hay token de autenticación.");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await axios.get(`${getApiBaseUrl()}/api/cloud/videos/list-videos/`, {
+          headers: {
+            Authorization: `Bearer ${storedToken}`,
+          },
+        });
+
+        if (response.data && Array.isArray(response.data)) {
+          setVideos(response.data);
+        } else {
+          setMessage(" No se encontraron videos.");
+        }
+      } catch (error) {
+        showAlert("error", "Error al obtener los videos.");
+      } finally {
+        setLoading(false); // Al finalizar la carga de videos, cambia el estado
+      }
+    };
+
+    fetchVideos();
+  }, [isAuthenticated, isAuthChecking]);
+
+  const handleVideoClick = async (videoId: string) => {
+    const storedToken = getAuthToken();
+    if (!storedToken) {
+      showAlert("error", "Error: No hay token de autenticación.");
+      return;
+    }
+
+    setIsVideoLoading(true);
+
+    try {
+      const response = await axios.get(`${getApiBaseUrl()}/api/cloud/videos/stream-video/${videoId}/`, {
+        headers: { Authorization: `Bearer ${storedToken}` },
+        responseType: "blob",
+      });
+
+      if (response.status === 403) {
+        showAlert("error", "No tienes permiso para acceder a este video.");
+        return;
+      }
+
+      const videoUrl = URL.createObjectURL(response.data);
+      setVideoUrl(videoUrl);
+    } catch (error) {
+      if (error.response?.status === 403) {
+        showAlert("error", "No tienes permiso para acceder a este video.");
+      } else {
+        showAlert("error", "Error al obtener el video.");
+      }
+    } finally {
+      setIsVideoLoading(false);
     }
   };
 
+  // Loading state
+  if (isAuthChecking) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+        <div className="animate-pulse flex flex-col items-center">
+          <div className="h-12 w-12 rounded-full bg-blue-200 mb-4"></div>
+          <div className="h-4 w-24 bg-blue-200 rounded"></div>
+        </div>
+      </div>
+    );
+  }
+
+  // If not authenticated (this is a fallback, the redirect should happen in useEffect)
+  if (!isAuthenticated) {
+    return null;
+  }
+  
   return (
-    <div className="min-h-screen w-full" style={{ backgroundColor: "rgb(238, 251, 250)" }}>
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-6">
-            <button
-              onClick={() =>
-                router.push(`/physio-management/follow-up/${id}`)
-              }
-              className="bg-white hover:bg-gray-100 text-[#05668D] font-semibold py-2 px-4 rounded-xl inline-flex items-center shadow-md transition-all duration-300"
-            >
-              ← Volver
-            </button>
-            <h1 className="text-3xl font-bold text-[#05668D]">Videos del Tratamiento</h1>
-            <div className="w-24"></div> {/* Spacer for alignment */}
+    <div className="min-h-screen flex items-center justify-center p-5" 
+         style={{ background: "rgb(238, 251, 250)" }}>
+
+      <div className="bg-white w-full max-w-4xl rounded-3xl shadow-xl p-10 transition-all duration-300"
+           style={{ boxShadow: "0 20px 60px rgba(0, 0, 0, 0.08)" }}>
+        
+        {/* Back to Treatment Button */}
+        <button
+          onClick={() => router.push(`/patient-management/follow-up/${id}`)}
+          className="mb-6 flex items-center text-blue-600 hover:text-blue-800 transition-colors duration-200 font-medium"
+        >
+          <ArrowLeft className="mr-2" size={20} />
+          Volver al tratamiento
+        </button>
+
+        <div className="text-center mb-9">
+          <h1 className="text-3xl font-bold mb-2"
+              style={{ 
+                background: "linear-gradient(90deg, #1E5ACD, #3a6fd8)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent"
+              }}>
+            Videos del Tratamiento
+          </h1>
+          <p className="text-gray-600">
+            Lista de videos relacionados con tu tratamiento
+          </p>
+        </div>
+
+        {/* Loading State */}
+        {loading && (
+          <div className="flex justify-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#1E5ACD]"></div>
           </div>
-      {alert.show && (
-        <Alert 
-          type={alert.type} 
-          message={alert.message} 
-          onClose={() => setAlert({ ...alert, show: false })} 
-        />
-      )}
-      
-      {/* Delete Confirmation Modal */}
-      {deleteConfirmation.show && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl">
-            <h3 className="text-xl font-bold mb-4">Confirmar eliminación</h3>
-            <p className="mb-6">¿Estás seguro de que deseas eliminar este video? Esta acción no se puede deshacer.</p>
-            <div className="flex justify-end space-x-3">
-              <button
-                onClick={cancelDelete}
-                className="px-4 py-2 border border-gray-300 rounded-xl hover:bg-gray-100 transition-colors"
+        )}
+
+        {/* Error Message */}
+        {message && (
+          <div
+            className="mt-4 p-4 rounded-xl text-center bg-red-50 text-red-600 border border-red-100 flex items-center justify-center"
+          >
+            <AlertCircle className="mr-2" size={20} />
+            <span>{message}</span>
+          </div>
+        )}
+
+        {/* No Videos Available */}
+        {videos.length === 0 && !loading && (
+          <div className="text-center py-8 bg-gray-50 rounded-2xl border-2 border-gray-200">
+            <p className="text-gray-500">No tienes videos disponibles.</p>
+          </div>
+        )}
+
+        {/* Video List */}
+        {videos.length > 0 && !loading && (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {videos.map((video) => (
+              <div 
+                key={video.id} 
+                className="bg-gray-50 border-2 border-gray-200 rounded-2xl p-4 transition-all duration-200 hover:shadow-md"
               >
-                Cancelar
-              </button>
-              <button
-                onClick={() => handleDelete(deleteConfirmation.videoId)}
-                className="px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-colors"
-              >
-                Eliminar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-      <div className="flex justify-center">
-        <div className="bg-white w-full max-w-3xl rounded-3xl shadow-xl p-10 transition-all duration-300" style={{ boxShadow: "0 20px 60px rgba(0, 0, 0, 0.08)" }}>
-
-          {/* Videos list moved to the top */}
-          <div className="mb-8">
-            <h2 className="text-2xl font-semibold text-[#05668D] mb-4">Videos Disponibles</h2>
-
-            {loadingVideos ? (
-              <p className="text-center">Cargando videos...</p>
-            ) : (
-              <>
-                {videos.length > 0 ? (
-                  <ul className="space-y-4">
-                    {videos.map((video) => (
-                      <li key={video.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl shadow-md">
-                        <div>
-                          <h3 className="font-semibold">{video.title}</h3>
-                          <p>{video.description}</p>
-                        </div>
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => handleEdit(video)}
-                            className="bg-[#05AC9C] text-white p-2 rounded-xl hover:bg-[#05918F] transition-all duration-200"
-                            title="Editar video"
-                          >
-                            <Edit2 size={18} />
-                          </button>
-                          
-                          <button
-                            onClick={() => confirmDelete(video.id)}
-                            className="bg-red-500 text-white p-2 rounded-xl hover:bg-red-600 transition-all duration-200"
-                            title="Eliminar video"
-                          >
-                            <Trash size={18} />
-                          </button>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-center">No hay videos disponibles para este tratamiento.</p>
-                )}
-              </>
-            )}
-          </div>
-        {/* Upload form made smaller */}
-        <div className="border-t pt-6">
-          <h2 className="text-2xl font-semibold text-[#05668D] mb-6">Subir Nuevo Video</h2>
-          <form onSubmit={handleSubmit} className="space-y-3">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Título"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="w-full py-3 px-4 text-sm border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
-                maxLength={100}
-              />
-              <div className="text-right text-xs text-gray-500 mt-1">
-                {title.length}/100 caracteres
-              </div>
-            </div>
-
-            <div className="relative">
-              <textarea
-                placeholder="Descripción"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="w-full py-3 px-4 text-sm border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
-                rows={2}
-                maxLength={255}
-              />
-              <div className="text-right text-xs text-gray-500 mt-1">
-                {description.length}/255 caracteres
-              </div>
-            </div>
-
-            <div className="relative">
-              <input
-                type="file"
-                accept="video/*"
-                onChange={handleFileChange}
-                ref={fileInputRef}
-                className="w-full py-2 px-4 text-sm border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
-              />
-            </div>
-            
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-2 px-4 rounded-xl transition-all duration-200 flex items-center justify-center"
-            >
-              <UploadCloud className="mr-2" size={18} />
-              {loading ? "Subiendo..." : "Subir Video"}
-            </button>
-          </form>
-        </div>
-        </div>
-
-        {editModalOpen && editingVideo && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md">
-              <h2 className="text-2xl font-bold text-[#05668D] mb-6">
-                Editar Video
-              </h2>
-              <form onSubmit={handleUpdate} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Título del Video
-                  </label>
-                  <input
-                    type="text"
-                    value={editTitle}
-                    onChange={(e) => setEditTitle(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300"
-                    placeholder="Título"
-                    maxLength={100}
-                  />
-                  <div className="text-right text-xs text-gray-500 mt-1">
-                    {editTitle.length}/100 caracteres
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Descripción del Video
-                  </label>
-                  <textarea
-                    value={editDescription}
-                    onChange={(e) => setEditDescription(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300"
-                    placeholder="Descripción"
-                    rows={2}
-                    maxLength={255}
-                  />
-                  <div className="text-right text-xs text-gray-500 mt-1">
-                    {editDescription.length}/255 caracteres
-                  </div>
-                </div>
-
-                <div className="flex justify-end space-x-3 mt-6">
+                  <h3 className="font-semibold text-lg text-gray-800 mb-2 truncate">
+                    {video.title}
+                  </h3>
+                  <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                    {video.description}
+                  </p>
                   <button
-                    type="button"
-                    onClick={() => {
-                      setEditModalOpen(false);
-                      setEditingVideo(null);
-                    }}
-                    className="px-4 py-2 bg-white border border-red-400 text-red-500 rounded-xl hover:bg-red-50 transition-all duration-300"
+                    onClick={() => handleVideoClick(video.id)}
+                    className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 flex items-center justify-center"
                   >
-                    Cancelar
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 bg-gradient-to-r from-[#6BC9BE] to-[#05668D] text-white rounded-xl hover:opacity-90 transition-all duration-300"
-                  >
-                    Guardar Cambios
+                    <Play className="mr-2" size={20} />
+                    Ver Video
                   </button>
                 </div>
-              </form>
-            </div>
+              </div>
+            ))}
           </div>
         )}
       </div>
-    </div>
+
+      {/* Video Loading Modal */}
+      {isVideoLoading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 backdrop-blur-sm">
+          <div className="bg-white p-8 rounded-3xl shadow-xl max-w-sm w-full transition-all duration-300"
+               style={{ boxShadow: "0 20px 60px rgba(0, 0, 0, 0.15)" }}>
+            <Loader2 className="animate-spin mx-auto mb-4 text-blue-600" size={48} />
+            <p className="text-center text-gray-700">
+              Estamos cargando tu video, espera un momentito...
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Video Player */}
+      {videoUrl && (
+      <div className="fixed inset-0 z-50 bg-black bg-opacity-75 flex items-center justify-center backdrop-blur-sm pointer-events-auto">
+        <div className="relative max-w-4xl w-full p-4">
+          
+          <button 
+            onClick={() => setVideoUrl(null)} 
+            className="absolute top-4 right-4 bg-gray-900 text-white hover:bg-gray-800 transition-all duration-200 flex items-center rounded-full p-3 shadow-lg z-50 border border-white"
+            style={{
+              zIndex: 1000,
+              backgroundColor: "rgba(0, 0, 0, 0.7)",
+            }}
+          >
+            <X size={24} />
+          </button>
+
+          <video 
+            controls 
+            autoPlay
+            className="w-full rounded-xl shadow-2xl"
+            src={videoUrl}
+          >
+            Tu navegador no soporta la etiqueta de video.
+          </video>
+        </div>
+      </div>
+    )}
+
+
     </div>
   );
 };
 
-export default PhysioVideo;
+export default Pacientes;
