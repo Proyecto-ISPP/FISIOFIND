@@ -82,7 +82,7 @@ classoption: "table"
 
 - **Fecha de Creación:** 20/04/2025
 
-- **Versión:** v1.1
+- **Versión:** v1.2
 
 <br>
 
@@ -93,7 +93,8 @@ classoption: "table"
 | Fecha      | Versión | Realizada por             | Descripción de los cambios            |
 | ---------- | ------- | ------------------------- | ------------------------------------- |
 | 20/04/2025 | v1.0    | Antonio Macías Ferrera    | Elaboración de la base del documento. |
-| 21/04/2025 | v1.1    | Guadalupe Ridruejo Pineda | Deslgose de costes de marketing y SEO.     |
+| 21/04/2025 | v1.1    | Guadalupe Ridruejo Pineda | Deslgose de costes de marketing y SEO.|
+| 25/04/2025 | v1.2    | Guadalupe Ridruejo Pineda | Modificación en la estrategia de marketing y SEO.|
 
 <br>
 
@@ -103,7 +104,7 @@ classoption: "table"
 
 # **1. INTRODUCCIÓN**
 
-El presente plan de marketing tiene como objetivo establecer una estrategia integral para aumentar la visibilidad de Fisio Find en su fase de lanzamiento y expansión. Se busca incrementar el tráfico orgánico, llegar a nuevos usuarios mediante publicidad dirigida, fortalecer la imagen de marca y controlar el presupuesto de marketing.
+El presente plan de marketing y SEO tiene como objetivo establecer una estrategia integral para aumentar la visibilidad de Fisio Find en su fase de lanzamiento y expansión. Se busca incrementar el tráfico orgánico, llegar a nuevos usuarios mediante publicidad dirigida, fortalecer la imagen de marca y controlar el presupuesto de marketing (1.500 € hasta el lanzamiento oficial de la plataforma el 23 de mayo de 2025).
 
 <br>
 
@@ -112,20 +113,20 @@ El presente plan de marketing tiene como objetivo establecer una estrategia inte
 ## 2.1. Posicionamiento SEO
 
 ### Objetivo:
-- Mejorar el posicionamiento de Fisio Find en los motores de búsqueda.
+- Optimizar la visibilidad orgánica de Fisio Find en los motores de búsqueda, con el fin de alcanzar una posición dentro de los primeros cinco resultados en las páginas de resultados de búsqueda (SERP) y conserguir una tasa de conversión (visitantes de Fisio Find que realicen acciones específicas en la plataforma) superior al 60 %.
 
 ### Acciones:
 
 #### 1. Investigación y Selección de Palabras Clave
 
-- **Identificación de palabras clave estratégicas**: Utilizar herramientas como [Semrush](https://www.semrush.com/) y [Ahrefs](https://ahrefs.com/) para identificar palabras clave relevantes relacionadas con fisioterapia y salud, incluyendo términos de cola larga como "fisioterapia para personas mayores" o "rehabilitación de lesiones musculares".
-- **Análisis de la competencia local**: Estudiar las palabras clave por las que compiten otras clínicas y sitios webs de fisioterapia en España para identificar oportunidades de mejora y nichos menos competidos.
+- **Identificación de palabras clave estratégicas**: Utilizar herramientas como [Semrush](https://www.semrush.com/) y [Ahrefs](https://ahrefs.com/) para identificar palabras clave relevantes relacionadas con "fisioterapia", "salud", "ejercicio físico" y "telemedicina", incluyendo términos de cola larga como "fisioterapia para personas mayores" o "rehabilitación de lesiones musculares".
+- **Análisis de la competencia local**: Estudiar las palabras clave por las que compiten otras clínicas y sitios webs de fisioterapia en España, como TuFisio, Doctoralia, TopDoctors, Fisioforce o TRAK para identificar oportunidades de mejora y nichos menos competidos.
 
 #### 2. Optimización On-Page
 
-- **Contenido del sitio web**:
+- **Contenido del sitio web (fisiofind.com)**:
   - Redactar textos claros y concisos que incluyan las palabras clave seleccionadas.
-  - Incorporar testimonios de pacientes y casos de éxito para aumentar la credibilidad.
+  - Incorporar testimonios de pacientes y fisiotearpeutas para aumentar la credibilidad.
 - **Metaetiquetas**:
   - Crear títulos y descripciones únicas para cada página, incluyendo palabras clave relevantes.
   - Utilizar etiquetas ALT en imágenes que describan el contenido visual y contengan palabras clave.
@@ -135,22 +136,21 @@ El presente plan de marketing tiene como objetivo establecer una estrategia inte
 
 #### 3. Creación de Contenido de Valor
 
-- **Blog**:
-  - Publicar artículos informativos sobre temas relacionados con la fisioterapia, consejos de salud y prevención de lesiones.
+- **Contenido multimedia (LinkedIn, YouTube e Instagram)**:
+  - Publicar contenido informativo sobre temas relacionados con la fisioterapia, telerehabilitación, consejos de salud y prevención de lesiones.
   - Incorporar palabras clave relevantes en los títulos y contenidos.
-- **Contenido multimedia**:
-  - Crear videos explicativos y testimonios de pacientes para compartir en el sitio web y redes sociales, mejorando el engagement y el tiempo de permanencia en la página.
+  - Crear vídeos explicativos y testimonios de pacientes y fisioterapeutas, usuarios de la plataforma, para compartir en el sitio web y redes sociales, mejorando el engagement y el tiempo de permanencia en la página.
 
 #### 4. SEO Técnico
 
 - **Velocidad de carga**:
   - Optimizar imágenes y utilizar herramientas de caché para mejorar los tiempos de carga del sitio.
 - **Adaptabilidad móvil**:
-  - Asegurar que el sitio web sea responsive y ofrezca una experiencia de usuario óptima en dispositivos móviles.
+  - Asegurar que el sitio web sea *responsive* y ofrezca una experiencia de usuario óptima en dispositivos móviles.
 - **Seguridad**:
   - Implementar un certificado SSL para garantizar la seguridad de los datos de los usuarios.
 - **Mapa del sitio y archivo robots.txt**:
-  - Crear y enviar un sitemap.xml a Google Search Console.
+  - Crear y enviar un **sitemap.xml** a Google Search Console para asegurar que Google y otros buscadores encuentren todas las páginas relevantes, incluso si no están bien enlazadas internamente.
   - Configurar correctamente el archivo robots.txt para guiar a los motores de búsqueda en la indexación del sitio.
 
 #### 5. Monitoreo y Ajustes
@@ -164,17 +164,17 @@ El presente plan de marketing tiene como objetivo establecer una estrategia inte
 
 - **Posicionamiento en buscadores**: Seguimiento de la posición en Google para las palabras clave objetivo.
 - **Tráfico orgánico**: Medición del número de visitantes que llegan al sitio a través de resultados de búsqueda no pagados.
-- **Tasa de conversión**: Porcentaje de visitantes que realizan una acción deseada, como solicitar una cita o contactar a la clínica.
-- **Número de reseñas y calificación promedio en GMB**: Indicadores de la reputación online y confianza de los pacientes.
+- **Tasa de conversión**: Porcentaje de visitantes que realizan una acción deseada, como buscar fisioterapeutas o solicitar una cita.
+- **Número de reseñas y calificación promedio en Google My Business (GMB)**: Indicadores de la reputación online y confianza de los usuarios en Fisio Find (fisioterapeutas y pacientes), recogidas tanto en la propia plataforma como por Google My Business.  
 
 ## 2.2. Campañas de Anuncios Segmentadas
 
 ### Objetivo:
-- Incrementar la notoriedad de marca y conversión mediante campañas de pago por clic (PPC) en Google Ads, Instagram y LinkedIn, dirigidas a segmentos específicos del público objetivo.
+- Incrementar la notoriedad de marca y conversión (superior al 60 %) mediante campañas de pago por clic (PPC) en Google Ads, Instagram, LinkedIn y Spotify, dirigidas a segmentos específicos del público objetivo.
 
 ### Acciones:
-  - Planificar campañas de anuncios en Google Ads y redes sociales (Instagram, Facebook, LinkedIn).
-  - Definir audiencias específicas para cada campaña, segmentando por intereses, ubicación y comportamiento.
+  - Planificar campañas de anuncios en Google Ads y redes sociales (Instagram, Spotify, LinkedIn).
+  - Definir audiencias específicas para cada campaña, segmentando por intereses, ubicación y comportamiento. Nos centraremos en usuarios potenciales (pacientes) y clientes de la plataforma (fisioterapeutas autónomos).
   - Crear anuncios atractivos y relevantes para cada segmento de audiencia.
   - Monitorear y ajustar las campañas en función del rendimiento y el retorno de la inversión (ROI).
   - A/B testing de creatividades para mejorar el click-through rate (CTR).
@@ -186,21 +186,22 @@ El presente plan de marketing tiene como objetivo establecer una estrategia inte
 - Fortalecer la imagen de marca y construir una comunidad online activa.
   
 ### Acciones:
-  - Seleccionar las redes sociales clave: Instagram, YouTube y LinkedIn.
-  - Definir un calendario de publicaciones con contenido variado (informativo, promocional, interactivo).
+  - Seleccionar las redes sociales clave: Instagram, YouTube y LinkedIn. 
+  - Definir un calendario de publicaciones con contenido variado divididos en tres categorías: informativo, promocional e interactivo.
+  - Contactar con influencers relacionados con el mundo de la fisioterapia y el ejercicio físico en busca de colaboraciones.
   - Asignar un perfil de community manager para gestionar las interacciones y el contenido.
-  - Utilizar herramientas de gestión de redes sociales como Buffer o Hootsuite para programar y analizar publicaciones.
+  - Utilizar herramientas de gestión de redes sociales (Metricool) para programar y analizar publicaciones.
   - Responder comentarios y mensajes directos como parte de la atención al cliente.
-  - Crear carruseles y reels informativos.
+  - Crear carruseles y reels informativos con frecuencia semanal.
 
 ## 2.4. Análisis de Costes de Marketing
 
 ### Objetivo:
-- Controlar el presupuesto de marketing con una previsión clara de inversión y retorno.
+- Controlar el presupuesto de marketing: 1.500 €.
 
 ### Acciones:
 
-Dividir el presupuesto mensual en las siguientes categorías:
+Dividir el presupuesto disponible para la campaña de lanzamiento en las siguientes categorías:
 
 #### 1. Anuncios Pagados (SEM y Social Ads)
 
@@ -209,10 +210,15 @@ Dividir el presupuesto mensual en las siguientes categorías:
   - CPM (Coste por impresión) promedio: 3 €–12 €
   - Fuente: [NeoAttack](https://neoattack.com/blog/presupuesto-sem-2/)
 
-- **Instagram Ads**: 450 €
+- **Instagram Ads**: 225 €
   - CPC promedio: 0,40 €–3,00 €
   - CPM promedio: 3 €–10 €
   - Fuente: [Adyseo](https://adyseo.com/cuanto-cuesta-publicidad-instagram/)
+
+- **Spotify Ads**: 
+  - CPC promedio: No aplica.
+  - CPM promedio: 5,00 €–10,00 €
+  - Fuente: [Emarketer](https://www.emarketer.com/content/what-future-of-spotify-ad-business-look-like?utm_source=chatgpt.com)
 
 - **Gestión de campañas (SEM y Social Ads)**: 300 €/mes
   - Incluye configuración, seguimiento y optimización de campañas.
@@ -240,8 +246,8 @@ Dividir el presupuesto mensual en las siguientes categorías:
   - Acceso a contenido premium y herramientas de diseño avanzadas.
   - Fuente: [Canva](https://www.canva.com/es_us/precios/)
 
-- **CapCut**: 0 € (versión gratuita)
-  - Se utilizará la versión básica sin coste.
+- **CapCut Pro**: 7,99 €/mes
+  - Se utilizará la versión Pro para acceder a funciones avanzadas de edición de video, como eliminación de marca de agua, exportación en 4K, efectos premium y herramientas de inteligencia artificial.
 
 #### 5. Otras Inversiones
 
