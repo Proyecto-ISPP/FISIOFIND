@@ -1,12 +1,12 @@
-## 🚀 Changelog - 14.0.0
+## 🚀 Changelog - 15.0.0
 
 ### ✨ Features (0)
 
 ### 🐛 Fixes (0)
 
-### 📖 Documentation (0)
+### 📖 Documentation (2)
+- Merge pull request #536 from Proyecto-ISPP/docs/doc-feedback-11-04 (@Delfin)
+- docs: Primera versión feedback 11-04 (@albcarsic)
+### 🌀 Other Changes (0)
 
-### 🌀 Other Changes (2)
-- Merge branch 'main' of github.com:Proyecto-ISPP/FISIOFIND (@guaridpin)
-- doc: modificación del documento de marketing para añadir objetivos y anuncios de Spotify (@guaridpin)
 ### 🔗 Pull Requests
