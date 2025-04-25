@@ -1,0 +1,1 @@
+Mover el test de locust que se quiere probar al nombre locust.py y correr locust. Se recomienda quitar el internet para evitar que se manden correos por ejemplo.
