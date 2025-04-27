@@ -64,7 +64,7 @@ classoption: "table"
 
 - **Miembros del grupo:** Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes.
 
-- **Contribuidores:** [Antonio Macías Ferrera](https://github.com/antoniommff) (autor) [Delfín Santana Rubio](https://github.com/DelfinSR) (revisor)
+- **Contribuidores:** [Antonio Macías Ferrera](https://github.com/antoniommff) (autor) [Miguel Encina](https://github.com/MiguelEncina) (revisor)
 
 - **Fecha de Creación:** 27/04/2025
 
@@ -383,9 +383,9 @@ El uso de la inteligencia artificial estará regulado por el *Acuerdo de IA* y s
 ---
 **Aprobado por:**  
 
-**Scrum Master:** Antonio Macías Ferrera  
+**Scrum Master:** [Antonio Macías Ferrera](https://github.com/antoniommff)
 **Rol:** Scrum Master, analista, programador
 
-**Representante grupo 3:** Delfín Santana Rubio 
-**Rol:** Secretario del grupo 2, analista, programador, tester
+**Representante grupo 3:** [Miguel Encina Martínez](https://github.com/MiguelEncina) 
+**Rol:** Secretario del grupo 3, analista, programador, QA
 
