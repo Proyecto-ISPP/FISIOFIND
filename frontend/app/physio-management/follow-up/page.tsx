@@ -49,7 +49,7 @@ interface Appointment {
   end_time: string;
   is_online: boolean;
   service: Record<string, unknown>;
-  patient_name: string;
+  name: string;
   physiotherapist_name: string;
   status: string;
   patient: number;
@@ -59,6 +59,7 @@ const SeguimientoPage = () => {
   const router = useRouter();
   const [treatments, setTreatments] = useState<Treatment[]>([]);
   const [filteredTreatments, setFilteredTreatments] = useState<Treatment[]>([]);
+  const [allTreatments, setAllTreatments] = useState<Treatment[]>([]); // New state to store all treatments
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<boolean | null>(null);
@@ -302,45 +303,49 @@ const SeguimientoPage = () => {
 
     console.log("Processing appointments to find patients without treatments");
     console.log("Finished appointments:", finishedAppointments);
+    console.log("All treatments:", allTreatments); // Use allTreatments instead of treatments
 
-    // Get all patient IDs that already have treatments
-    const patientsWithTreatments = new Set(
-      treatments.map((treatment) => {
-        if (
-          typeof treatment.patient === "object" &&
-          treatment.patient &&
-          treatment.patient.id
-        ) {
-          return treatment.patient.id;
-        } else {
-          return Number(treatment.patient);
-        }
-      })
+    // Get all patient IDs that already have ACTIVE treatments
+    const patientsWithActiveTreatments = new Set(
+      allTreatments // Use allTreatments instead of treatments
+        .filter(treatment => treatment.is_active)
+        .map((treatment) => {
+          if (
+            typeof treatment.patient === "object" &&
+            treatment.patient &&
+            treatment.patient.id
+          ) {
+            return treatment.patient.id;
+          } else {
+            return Number(treatment.patient);
+          }
+        })
     );
 
     console.log(
-      "Patients with treatments:",
-      Array.from(patientsWithTreatments)
+      "Patients with active treatments:",
+      Array.from(patientsWithActiveTreatments)
     );
 
-    // Filter appointments to find patients without treatments
+    // Filter appointments to find patients without active treatments
     const patientsWithoutTreatmentData = finishedAppointments
       .filter(
         (appointment) =>
-          !patientsWithTreatments.has(Number(appointment.patient))
+          !patientsWithActiveTreatments.has(Number(appointment.patient))
       )
       .map((appointment) => ({
         id: Number(appointment.patient),
-        name: appointment.patient_name,
+        name: appointment.name,
         appointmentId: appointment.id,
         appointmentDate: new Date(appointment.end_time).toLocaleDateString(
           "es-ES"
         ),
       }));
 
-    console.log("Patients without treatment:", patientsWithoutTreatmentData);
+    console.log("Patients without active treatment:", patientsWithoutTreatmentData);
     setPatientsWithoutTreatment(patientsWithoutTreatmentData);
-  }, [finishedAppointments, treatments]);
+    setFilteredPatients(patientsWithoutTreatmentData);
+  }, [finishedAppointments, allTreatments]);
 
   useEffect(() => {
     if (!patientSearchTerm) {
@@ -403,6 +408,25 @@ const SeguimientoPage = () => {
 
         // Intentamos obtener los datos del backend
         try {
+          // First, fetch ALL treatments without any filter
+          const allTreatmentsResponse = await fetch(
+            `${getApiBaseUrl()}/api/treatments/physio/`, 
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          if (!allTreatmentsResponse.ok) {
+            throw new Error("Error al obtener todos los tratamientos");
+          }
+
+          const allTreatmentsData = await allTreatmentsResponse.json();
+          setAllTreatments(allTreatmentsData);
+
+          // Then, fetch filtered treatments if a filter is applied
           let url = `${getApiBaseUrl()}/api/treatments/physio/`;
           if (activeFilter !== null) {
             url += `?is_active=${activeFilter}`;
@@ -416,7 +440,7 @@ const SeguimientoPage = () => {
           });
 
           if (!response.ok) {
-            throw new Error("Error al obtener los tratamientos");
+            throw new Error("Error al obtener los tratamientos filtrados");
           }
 
           const data = await response.json();
