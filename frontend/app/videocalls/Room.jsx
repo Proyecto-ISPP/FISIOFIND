@@ -201,7 +201,7 @@ useEffect(() => {
                   
                   if (matchingQuestionnaire) {
                     setResponseQuestionnaire(matchingQuestionnaire);
-                    setQuestionnaireResponse(data.message.responses);
+                    setQuestionnaireResponse(data.message);
                   } else {
                     // Si no encontramos el cuestionario, usamos la información básica disponible
                     setResponseQuestionnaire({
@@ -209,7 +209,7 @@ useEffect(() => {
                       title: data.message.questionnaireTitle,
                       questions: []
                     });
-                    setQuestionnaireResponse(data.message.responses);
+                    setQuestionnaireResponse(data.message);
                   }
                 }
                 break;
@@ -362,6 +362,7 @@ useEffect(() => {
             questionnaire={activeQuestionnaire}
             sendWebSocketMessage={webSocket.sendWebSocketMessage}
             onClose={() => setActiveQuestionnaire(null)}
+            roomCode={roomCode}
           />
         </>
       )}
@@ -416,6 +417,7 @@ useEffect(() => {
               setQuestionnaireResponse(null);
               setResponseQuestionnaire(null);
             }}
+            roomCode={roomCode}
           />
         </div>
 )}

@@ -12,7 +12,8 @@ import { getApiBaseUrl } from '@/utils/api';
 const PatientQuestionnaire = ({ 
   questionnaire, 
   sendWebSocketMessage,
-  onClose
+  onClose,
+  roomCode
 }) => {
   const [formData, setFormData] = useState({});
   const [token, setToken] = useState('');
@@ -58,9 +59,11 @@ const PatientQuestionnaire = ({
     // Llamada API para guardar las respuestas en la base de datos
     try {
       const response = await axios.post(
-        `${getApiBaseUrl()}/api/questionnaires/store-responses/${questionnaire.id}/`,  // Endpoint con el ID del cuestionario
+        `${getApiBaseUrl()}/api/questionnaires/${questionnaire.id}/responses/create/`,  // Endpoint con el ID del cuestionario
         {
-          responses: responsesCombined  // Solo enviamos las respuestas combinadas
+          room_code: roomCode,  // Código de la sala
+          responses: responsesCombined,  // Solo enviamos las respuestas combinadas
+          notes: '',  // Aquí puedes añadir notas si es necesario
         },
         {
           headers: {
@@ -70,7 +73,7 @@ const PatientQuestionnaire = ({
         }
       );
 
-      if (response.status === 200) {
+      if (response.status === 201) {
         // Si todo sale bien
         setAlert({
           type: 'success',

@@ -6,25 +6,20 @@ import { faTimes, faFilePdf, faCheckCircle, faSave, faStickyNote } from '@fortaw
 import Alert from '@/components/ui/Alert';
 import axios from 'axios';
 import { getApiBaseUrl } from '@/utils/api';
-import jwt_decode from "jwt-decode";
 
-const QuestionnaireResponseViewer = ({ responseData, onClose, questionnaire }) => {
+const QuestionnaireResponseViewer = ({ responseData, onClose, questionnaire, roomCode }) => {
   const [showNotes, setShowNotes] = useState(false);
   const [noteText, setNoteText] = useState('');
   const [savedNote, setSavedNote] = useState('');
   const [alert, setAlert] = useState(null);
   const [authToken, setAuthToken] = useState('');
-  const [patientToken, setPatientToken] = useState('');
 
   useEffect(() => {
     // Obtener token del fisioterapeuta
     const therapistToken = localStorage.getItem('token');
     setAuthToken(therapistToken);
 
-    // Obtener token del paciente desde responseData
-    if (responseData?.patientToken) {
-      setPatientToken(responseData.patientToken);
-    }
+    
   }, [responseData]);
 
   if (!responseData || !questionnaire) return null;
@@ -79,11 +74,11 @@ const QuestionnaireResponseViewer = ({ responseData, onClose, questionnaire }) =
     }
 
     try {
-      const response = await axios.post(
-        `${getApiBaseUrl()}/api/questionnaires/save-note/${questionnaire.id}/`,
+      const response = await axios.put(
+        `${getApiBaseUrl()}/api/questionnaires/${questionnaire.id}/responses/add-notes/`,
         {
-          patientToken,
-          note: noteText
+          room_code: roomCode,
+          notes: noteText
         },
         {
           headers: {
@@ -101,11 +96,7 @@ const QuestionnaireResponseViewer = ({ responseData, onClose, questionnaire }) =
           message: 'Nota guardada correctamente',
           onClose: () => setAlert(null)
         });
-        
-        // Actualizar datos locales
-        if (responseData[patientToken]) {
-          responseData[patientToken].note = noteText;
-        }
+
       }
     } catch (error) {
       console.error('Error guardando nota:', error);
@@ -121,35 +112,35 @@ const QuestionnaireResponseViewer = ({ responseData, onClose, questionnaire }) =
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white rounded-xl shadow-lg w-full max-w-3xl mx-4 overflow-hidden">
         {alert && (
-          <Alert 
-            type={alert.type} 
-            message={alert.message} 
-            onClose={alert.onClose} 
+          <Alert
+            type={alert.type}
+            message={alert.message}
+            onClose={alert.onClose}
           />
         )}
-        
+
         <div className="flex justify-between items-center p-5 bg-gray-50 border-b border-gray-200">
           <h3 className="text-xl font-semibold text-gray-800">
             Respuestas: {questionnaire.title}
           </h3>
           <div className="flex space-x-2">
-            <button 
-              onClick={handleExportPDF} 
-              className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors" 
+            <button
+              onClick={handleExportPDF}
+              className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
               title="Exportar a PDF"
             >
               <FontAwesomeIcon icon={faFilePdf} />
             </button>
-            <button 
-              onClick={onClose} 
-              className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors" 
+            <button
+              onClick={onClose}
+              className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
               title="Cerrar"
             >
               <FontAwesomeIcon icon={faTimes} />
             </button>
           </div>
         </div>
-        
+
         <div className="p-6 max-h-[80vh] overflow-y-auto">
           <div className="flex justify-between items-center mb-6 pb-3 border-b border-gray-200">
             <div className="text-gray-600">
@@ -160,23 +151,26 @@ const QuestionnaireResponseViewer = ({ responseData, onClose, questionnaire }) =
               <span>Completo</span>
             </div>
           </div>
-          
-          <div className="space-y-4 mb-8">
-            {Object.keys(responseData.responses).map(key => (
-              <div key={key} className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                <div className="font-medium text-gray-700 mb-2">
-                  {getQuestionText(key)}
+
+          {responseData.responses &&
+
+            <div className="space-y-4 mb-8">
+              {Object.keys(responseData.responses).map(key => (
+                <div key={key} className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                  <div className="font-medium text-gray-700 mb-2">
+                    {getQuestionText(key)}
+                  </div>
+                  <div className="text-gray-800">
+                    {formatAnswer(key, responseData.responses[key])}
+                  </div>
                 </div>
-                <div className="text-gray-800">
-                  {formatAnswer(key, responseData.responses[key].response)}
-                </div>
-              </div>
-            ))}
-          </div>
-          
+              ))}
+            </div>
+          }
+
           <div className="mt-8 pt-4 border-t border-gray-200">
             {!showNotes && !savedNote && (
-              <button 
+              <button
                 onClick={toggleNotes}
                 className="flex items-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition-colors"
               >
@@ -184,24 +178,24 @@ const QuestionnaireResponseViewer = ({ responseData, onClose, questionnaire }) =
                 Añadir nota
               </button>
             )}
-            
+
             {showNotes && (
               <div className="mt-4 p-5 bg-blue-50 rounded-lg border border-blue-200">
                 <h4 className="font-medium text-blue-800 mb-3">Notas del fisioterapeuta:</h4>
-                <textarea 
+                <textarea
                   value={noteText}
                   onChange={handleNoteChange}
                   placeholder="Escribe tus notas o diagnóstico aquí..."
                   className="w-full p-3 border border-blue-300 rounded-md min-h-32 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <div className="flex justify-end mt-3 space-x-3">
-                  <button 
+                  <button
                     onClick={() => setShowNotes(false)}
                     className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md transition-colors"
                   >
                     Cancelar
                   </button>
-                  <button 
+                  <button
                     onClick={saveNote}
                     className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center transition-colors"
                   >
@@ -211,13 +205,13 @@ const QuestionnaireResponseViewer = ({ responseData, onClose, questionnaire }) =
                 </div>
               </div>
             )}
-            
+
             {savedNote && !showNotes && (
               <div className="mt-4 p-5 bg-blue-50 border-l-4 border-blue-500 rounded-md">
                 <h4 className="font-semibold text-blue-800 mb-2">Nota del fisioterapeuta:</h4>
                 <p className="text-gray-800 mb-3">{savedNote}</p>
-                <button 
-                  onClick={toggleNotes} 
+                <button
+                  onClick={toggleNotes}
                   className="text-blue-600 hover:text-blue-800 flex items-center transition-colors"
                 >
                   <FontAwesomeIcon icon={faStickyNote} className="mr-1" />
