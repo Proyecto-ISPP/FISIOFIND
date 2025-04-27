@@ -79,6 +79,16 @@ const SeguimientoPage = () => {
   >([]);
   const [creatingTreatment, setCreatingTreatment] = useState(false);
 
+  const [patientSearchTerm, setPatientSearchTerm] = useState("");
+  const [filteredPatients, setFilteredPatients] = useState<
+    {
+      id: number;
+      name: string;
+      appointmentId: number;
+      appointmentDate: string;
+    }[]
+  >([]);
+
   const [showDateForm, setShowDateForm] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<{id: number, appointmentId: number} | null>(null);
   const [startDate, setStartDate] = useState("");
@@ -332,6 +342,37 @@ const SeguimientoPage = () => {
     setPatientsWithoutTreatment(patientsWithoutTreatmentData);
   }, [finishedAppointments, treatments]);
 
+  useEffect(() => {
+    if (!patientSearchTerm) {
+      setFilteredPatients(patientsWithoutTreatment);
+      return;
+    }
+
+    const term = patientSearchTerm.trim();
+
+    // First, look for exact matches (prioritize these)
+    const exactMatches = patientsWithoutTreatment.filter(
+      (patient) => patient.name === term
+    );
+
+    // If we have exact matches, only show those
+    if (exactMatches.length > 0) {
+      setFilteredPatients(exactMatches);
+      return;
+    }
+
+    // Otherwise, look for partial matches (case sensitive)
+    const partialMatches = patientsWithoutTreatment.filter((patient) =>
+      patient.name.includes(term)
+    );
+
+    setFilteredPatients(partialMatches);
+  }, [patientSearchTerm, patientsWithoutTreatment]);
+
+  const handlePatientSearch = (term: string) => {
+    setPatientSearchTerm(term);
+  };
+
   const extractActivePatients = useCallback((treatmentsData: Treatment[]) => {
     const activePatientsMap = new Map<number, Patient>();
 
@@ -505,10 +546,15 @@ const SeguimientoPage = () => {
   }
 
   return (
-    <div className="min-h-screen w-full" style={{ backgroundColor: "rgb(238, 251, 250)" }}>
+    <div
+      className="min-h-screen w-full"
+      style={{ backgroundColor: "rgb(238, 251, 250)" }}
+    >
       <div className="container mx-auto px-4 py-12">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold text-[#05668D]">Seguimiento de Tratamientos</h1>
+          <h1 className="text-4xl font-bold text-[#05668D]">
+            Seguimiento de Tratamientos
+          </h1>
         </div>
 
         {error && (
@@ -528,8 +574,43 @@ const SeguimientoPage = () => {
               un tratamiento para ellos.
             </p>
 
+            {/* Search bar for patients */}
+            <div className="mb-6">
+              <label
+                htmlFor="patientSearch"
+                className="block text-lg font-semibold mb-2 text-[#05668D]"
+              >
+                Buscar paciente
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  id="patientSearch"
+                  placeholder="Nombre del paciente..."
+                  value={patientSearchTerm}
+                  onChange={(e) => handlePatientSearch(e.target.value)}
+                  className="w-full p-3 pl-10 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5]"
+                />
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <svg
+                    className="h-5 w-5 text-gray-400"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {patientsWithoutTreatment.map((patient) => (
+              {filteredPatients.map((patient) => (
                 <div
                   key={`${patient.id}-${patient.appointmentId}`}
                   className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-md overflow-hidden border border-blue-100 hover:shadow-lg transition-all duration-300"
@@ -565,17 +646,30 @@ const SeguimientoPage = () => {
                 </div>
               ))}
             </div>
+
+            {patientSearchTerm && filteredPatients.length === 0 && (
+              <div className="text-center p-4 bg-gray-50 rounded-xl mt-4">
+                <p className="text-gray-600">
+                  No se encontraron pacientes que coincidan con &quot;
+                  {patientSearchTerm}&quot;.
+                </p>
+              </div>
+            )}
           </div>
         )}
 
         {/* Existing treatments section */}
         <div className="bg-white rounded-2xl shadow-lg p-8">
-          <h2 className="text-2xl font-bold mb-6 text-[#05668D]">Tratamientos existentes</h2>
+          <h2 className="text-2xl font-bold mb-6 text-[#05668D]">
+            Tratamientos existentes
+          </h2>
 
           <div className="bg-gradient-to-br from-[#f8fdfc] to-[#edf8f7] rounded-xl shadow-md p-6 mb-8">
             <div className="flex flex-col md:flex-row md:items-center justify-between">
               <div className="mb-4 md:mb-0">
-                <h2 className="text-lg font-semibold mb-3 text-[#05668D]">Filtrar por estado</h2>
+                <h2 className="text-lg font-semibold mb-3 text-[#05668D]">
+                  Filtrar por estado
+                </h2>
                 <div className="flex space-x-3">
                   <button
                     onClick={() => handleFilterChange(null)}
@@ -627,8 +721,19 @@ const SeguimientoPage = () => {
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300"
                   />
                   <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 text-gray-400"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                      />
                     </svg>
                   </div>
                 </div>
@@ -668,7 +773,10 @@ const SeguimientoPage = () => {
                 </div>
 
                 <div className="mb-6">
-                  <label htmlFor="end-date" className="block text-gray-700 mb-2 font-medium">
+                  <label
+                    htmlFor="end-date"
+                    className="block text-gray-700 mb-2 font-medium"
+                  >
                     Fecha de fin
                   </label>
                   <input
@@ -702,8 +810,19 @@ const SeguimientoPage = () => {
 
           {filteredTreatments.length === 0 ? (
             <div className="text-center py-12 bg-gray-50 rounded-xl">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M12 2a10 10 0 110 20 10 10 0 010-20z" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-16 w-16 mx-auto text-gray-400 mb-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M12 2a10 10 0 110 20 10 10 0 010-20z"
+                />
               </svg>
               <p className="text-gray-500 text-lg">
                 No se encontraron tratamientos con los filtros seleccionados
@@ -719,8 +838,8 @@ const SeguimientoPage = () => {
                 >
                   <div
                     className={`p-1 text-center text-white ${
-                      treatment.is_active 
-                        ? "bg-gradient-to-r from-green-400 to-green-600" 
+                      treatment.is_active
+                        ? "bg-gradient-to-r from-green-400 to-green-600"
                         : "bg-gradient-to-r from-gray-400 to-gray-600"
                     }`}
                   >
