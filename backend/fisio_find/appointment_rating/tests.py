@@ -10,6 +10,7 @@ from users.models import AppUser
 from users.models import Patient
 from users.models import Physiotherapist
 from django.core.exceptions import ObjectDoesNotExist
+from unittest.mock import patch
 
 class AppointmentRatingIntegrationTests(APITestCase):
 
@@ -82,22 +83,27 @@ class AppointmentRatingIntegrationTests(APITestCase):
         
         self.report_rating_url_template = lambda rating_id: reverse("report_rating", kwargs={"rating_id": rating_id})
 
-    def test_successful_rating_creation(self):
+    @patch("appointment_rating.views.send_rating_email")
+    def test_successful_rating_creation(self, mock_send_email):
         """Test exitoso de creación de rating para una cita finalizada (método POST)"""
         response = self.client.post(self.create_or_update_rating_url, self.valid_rating_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(float(response.data["score"]), 4.5)
         self.assertEqual(response.data["comment"], "Buena sesión")
         self.assertEqual(response.data["appointment"], self.appointment.id)
+        mock_send_email.assert_called()
 
-    def test_duplicate_rating_creation_fails(self):
+    @patch("appointment_rating.views.send_rating_email")
+    def test_duplicate_rating_creation_fails(self, mock_send_email):
         """No se puede crear más de un rating para la misma cita (POST)"""
         self.client.post(self.create_or_update_rating_url, self.valid_rating_data, format="json")
+        mock_send_email.assert_called()
         response = self.client.post(self.create_or_update_rating_url, self.valid_rating_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("error", response.data)
 
-    def test_successful_rating_update(self):
+    @patch("appointment_rating.views.send_rating_email")
+    def test_successful_rating_update(self, mock_send_email):
         """Test para actualizar un rating existente (método PUT)"""
         # Crear rating inicialmente
         create_response = self.client.post(self.create_or_update_rating_url, self.valid_rating_data, format="json")
@@ -108,8 +114,10 @@ class AppointmentRatingIntegrationTests(APITestCase):
         self.assertEqual(put_response.status_code, status.HTTP_200_OK)
         self.assertEqual(float(put_response.data["score"]), 5.0)
         self.assertEqual(put_response.data["comment"], "Actualizado")
+        mock_send_email.assert_called()
 
-    def test_get_appointment_rating_success(self):
+    @patch("appointment_rating.views.send_rating_email")
+    def test_get_appointment_rating_success(self, mock_send_email):
         """Obtener el rating de una cita cuando existe (GET)"""
         # Primero, crear el rating
         self.client.post(self.create_or_update_rating_url, self.valid_rating_data, format="json")
@@ -117,6 +125,7 @@ class AppointmentRatingIntegrationTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(float(response.data["score"]), 4.5)
         self.assertEqual(response.data["comment"], "Buena sesión")
+        mock_send_email.assert_called()
 
     def test_get_appointment_rating_not_found(self):
         """Obtener el rating de una cita sin rating debe devolver error 404"""
@@ -180,7 +189,8 @@ class AppointmentRatingIntegrationTests(APITestCase):
         self.assertIn("rating", response.data)
         self.assertIn("ratings_count", response.data)
 
-    def test_report_rating_as_physio(self):
+    @patch("appointment_rating.views.send_rating_email")  
+    def test_report_rating_as_physio(self, mock_send_email):
         """Test para reportar un rating, donde el reporte lo realiza el fisioterapeuta"""
         # Crear rating como paciente
         self.client.force_authenticate(user=self.patient_user)
@@ -194,8 +204,10 @@ class AppointmentRatingIntegrationTests(APITestCase):
         report_response = self.client.post(report_url, format="json")
         self.assertEqual(report_response.status_code, status.HTTP_200_OK)
         self.assertIn("message", report_response.data)
+        mock_send_email.assert_called()
 
-    def test_create_rating_by_room_code(self):
+    @patch("appointment_rating.views.send_rating_email")
+    def test_create_rating_by_room_code(self, mock_send_email):
         """Crear un rating usando el endpoint basado en room_code (POST)"""
         url = self.create_rating_by_room_url
         self.client.force_authenticate(user=self.patient_user)
@@ -203,6 +215,7 @@ class AppointmentRatingIntegrationTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(float(response.data["score"]), 4.5)
         self.assertEqual(response.data["appointment"], self.appointment.id)
+        mock_send_email.assert_called()
 
     def test_check_rating_by_room_code_exists(self):
         """Verificar que se detecta un rating existente por room_code (GET)"""
