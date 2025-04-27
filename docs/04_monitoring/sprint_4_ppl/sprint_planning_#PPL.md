@@ -84,6 +84,7 @@ classoption: "table"
 | Fecha      | Versión | Realizada por          | Descripción de los cambios                       |
 | ---------- | ------- | ---------------------- | ------------------------------------------------ |
 | 20/04/2025 | v1.0    | [Antonio Macías Ferrera](https://github.com/antoniommff) | Elaboración de la primera versión del documento. |
+| 27/04/2025 | v1.1    | [Antonio Macías Ferrera](https://github.com/antoniommff) | Adición de nuevas tareas de marketing y seo. Eliminación de tarea de changelog. |
 
 
 <br>
@@ -125,7 +126,6 @@ Los objetivos marcados para este Sprint son los siguientes:
 | E-017: Correcciones #S3 | [RFC-011: Refactorización frontend II](https://github.com/Proyecto-ISPP/FISIOFIND/issues/383) | 1: Correcciones y tareas del Sprint 3 | [Daniel Ruiz](https://github.com/Danielruizlopezcc), [Rafael Pulido](https://github.com/rafpulcif) | HIGH 🔴 |
 | E-017: Correcciones #S3 | [HF-018: Accesibilidad](https://github.com/Proyecto-ISPP/FISIOFIND/issues/394) | 1: Correcciones y tareas del Sprint 3 | [Ramón Gavira](https://github.com/rgavira123), [Benjamín Maureira](https://github.com/benjimrfl) | MEDIUM 🟡 |
 | E-017: Correcciones #S3 | [Sistema de Soporte y Comunicación](https://github.com/Proyecto-ISPP/FISIOFIND/issues/396) | 1: Correcciones y tareas del Sprint 3 | [Daniel Alors](https://github.com/DanielAlors), [Pablo Fernández](https://github.com/Letee2) | HIGH 🔴 |
-| E-017: Correcciones #S3 | [Changelog automático](https://github.com/Proyecto-ISPP/FISIOFIND/issues/398) | 1: Correcciones y tareas del Sprint 3 | [Daniel Alors](https://github.com/DanielAlors), [Julen Redondo](https://github.com/Julenrp) | LOW 🟢 |
 | E-017: Correcciones #S3 | [HF-017: Compartir archivos clínicos](https://github.com/Proyecto-ISPP/FISIOFIND/issues/393) | 1: Correcciones y tareas del Sprint 3 | [Julen Redondo](https://github.com/Julenrp), [Paco Mateos](https://github.com/pacomateos10), [Antonio Macías](https://github.com/antoniommff) | HIGH 🔴 |
 | E-017: Correcciones #S3 | [Actualizar README](https://github.com/Proyecto-ISPP/FISIOFIND/issues/522) | 1: Correcciones y tareas del Sprint 3 | [Daniel Fernández](https://github.com/DaniFdezCab) | LOW 🟢 |
 | E-018: Plan de pruebas | [Tests de frontend](https://github.com/Proyecto-ISPP/FISIOFIND/issues/509) | 2: Plan de pruebas | [Delfín Santana](https://github.com/DelfinSR) | MEDIUM 🟡 |
@@ -134,7 +134,9 @@ Los objetivos marcados para este Sprint son los siguientes:
 | E-020: Corrección de bugs | [Corrección de bugs](https://github.com/Proyecto-ISPP/FISIOFIND/issues/510) | 4: Corrección de bugs | [Daniel Fernández](https://github.com/DaniFdezCab), [Francisco Capote](https://github.com/franciiscocg), [Alberto Carmona](https://github.com/albcarsic) | HIGH 🔴 |
 | E-021: Campaña de lanzamiento | [Video y presentación para el #PPL](https://github.com/Proyecto-ISPP/FISIOFIND/issues/508) | 5: Campaña de lanzamiento | [Antonio Macías](https://github.com/antoniommff), [Guadalupe Ridruejo](https://github.com/guaridpin) | HIGH 🔴 |
 | E-021: Campaña de lanzamiento | [Campaña mediática y de lanzamiento I](https://github.com/Proyecto-ISPP/FISIOFIND/issues/507) | 5: Campaña de lanzamiento | [Antonio Macías](https://github.com/antoniommff), [Guadalupe Ridruejo](https://github.com/guaridpin) | HIGH 🔴 |
-| E-021: Campaña de lanzamiento | [Primera versión documento Stock Pitch](https://github.com/Proyecto-ISPP/FISIOFIND/issues/537) | 5: Campaña de lanzamiento | [Daniel Alors](https://github.com/DanielAlors) | LOW 🟢 |
+| E-021: Campaña de lanzamiento | [Primera versión documento Stock Pitch](https://github.com/Proyecto-ISPP/FISIOFIND/issues/537) | 5: Campaña de lanzamiento | [Daniel Alors](https://github.com/DanielAlors) y [Alberto Carmona](https://github.com/albcarsic) | LOW 🟢 |
+| E-021: Campaña de lanzamiento | [SEO on page](https://github.com/Proyecto-ISPP/FISIOFIND/issues/550) | 5: Campaña de lanzamiento | [Ramón Gavira](https://github.com/rgavira123), [Benjamín Maureira](https://github.com/benjimrfl) | MEDIUM 🟡 |
+
 
 
 
@@ -171,20 +173,6 @@ Se recomienda ver este vídeo para orientar sobre cómo ejecutar este cambio (a 
 > **Quiero** poder recibir archivos de mis pacientes, principalmente imágenes de diagnóstico (ecografías, radiografías, etc.) y que se almacenen en un lugar de su perfil de pacientes al que yo pueda acceder,  
 > **Para** consultarlos en cualquier momento y tomar decisiones sobre su valoración y tratamiento.
 
-<br></br>
-
-[***[Feature] Changelog automático #398***](https://github.com/Proyecto-ISPP/FISIOFIND/issues/398)
-
-**Descripción de la funcionalidad:**
-- Changelog automático: Generación automática de registros de cambios con cada nueva versión.
-- Codium AI: Integración con Codium AI para mejorar la generación de código y optimización de desarrollos.
- 
-**Consideraciones adicionales:**
-- Se debe comprobar que la integración con Codium AI funciona sin afectar el rendimiento del sistema.
-- Revisar la compatibilidad con herramientas actuales del proyecto.
-
-**Instrucciones adicionales:**
-- Que cada uno de los miembros asignados a esta tarea se encargue de cada uno de los punto. Uno changelog y el otro sodium ai
 
 <br></br>
 
@@ -441,6 +429,26 @@ Realizar un documento "Stock Pitch" orientado a los inversores, en los que pueda
 **Consideraciones adicionales:**
 - Se recomienda usar [Canva](https://www.canva.com/)
 - Se recomienda consultar la siguiente página como guía: https://www.careerprinciples.com/resources/stock-pitch 
+
+
+<br></br>
+
+[***SEO on page #550***](https://github.com/Proyecto-ISPP/FISIOFIND/issues/550)
+
+**Descripción de la funcionalidad:**
+Investigación y Selección de Palabras Clave
+Identificación de palabras clave estratégicas: Utilizar herramientas como Semrush y Ahrefs para identificar palabras clave relevantes relacionadas con "fisioterapia", "salud", "ejercicio físico" y "telemedicina", incluyendo términos de cola larga como "fisioterapia para personas mayores" o "rehabilitación de lesiones musculares".
+Análisis de la competencia local: Estudiar las palabras clave por las que compiten otras clínicas y sitios webs de fisioterapia en España, como TuFisio, Doctoralia, TopDoctors, Fisioforce o TRAK para identificar oportunidades de mejora y nichos menos competidos.
+Optimización On-Page
+Contenido del sitio web (fisiofind.com):
+Redactar textos claros y concisos que incluyan las palabras clave seleccionadas.
+Incorporar testimonios de pacientes y fisiotearpeutas para aumentar la credibilidad.
+Metaetiquetas:
+Crear títulos y descripciones únicas para cada página, incluyendo palabras clave relevantes.
+Utilizar etiquetas ALT en imágenes que describan el contenido visual y contengan palabras clave.
+Estructura del sitio:
+Asegurar una navegación intuitiva y jerarquía clara de contenidos.
+Implementar URLs amigables que reflejen el contenido de cada página.
 
 
 <br>
