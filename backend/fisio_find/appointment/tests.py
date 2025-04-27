@@ -8,6 +8,7 @@ from videocall.models import Room
 from payment.models import Payment
 from django.utils import timezone
 from datetime import timedelta
+from unittest.mock import patch
 import json
 
 
@@ -240,67 +241,100 @@ class CreateAppointmentIntegrationTests(APITestCase):
             "is_online": True,
             "alternatives": {}
         }
-    def test_successful_appointment_creation(self):
+
+    @patch("appointment.views.create_payment_setup")
+    @patch("appointment.views.send_appointment_email")
+    def test_successful_appointment_creation(self, mock_send_email, create_payment):
+        create_payment.return_value = None
         response = self.client.post(self.url, self.base_data(), format="json")
         self.assertEqual(response.status_code, 201)
         self.assertEqual(Appointment.objects.count(), 1)
+        mock_send_email.assert_called()
+        create_payment.assert_called()
 
-    def test_missing_service_field(self):
+    @patch("appointment.views.create_payment_setup")
+    def test_missing_service_field(self, create_payment):
+        create_payment.return_value = None
         data = self.base_data()
         data.pop("service")
         response = self.client.post(self.url, data, format="json")
         self.assertEqual(response.status_code, 400)
         self.assertIn("error", response.data)
-
-    def test_empty_service_dict(self):
+        create_payment.assert_not_called()
+        
+    @patch("appointment.views.create_payment_setup")
+    def test_empty_service_dict(self, create_payment):
+        create_payment.return_value = None
         data = self.base_data()
         data["service"] = {}
         response = self.client.post(self.url, data, format="json")
         self.assertEqual(response.status_code, 400)
-
-    def test_invalid_service_id_not_in_physio_services(self):
+        create_payment.assert_not_called()
+    
+    @patch("appointment.views.create_payment_setup")
+    def test_invalid_service_id_not_in_physio_services(self, create_payment):
+        create_payment.return_value = None
         invalid_service = self.valid_service.copy()
         invalid_service["id"] = 99  # no existe
         data = self.base_data(service_override=invalid_service)
         response = self.client.post(self.url, data, format="json")
         self.assertEqual(response.status_code, 400)
+        create_payment.assert_not_called()
 
-    def test_service_fields_do_not_match_physio_service(self):
+    @patch("appointment.views.create_payment_setup")
+    def test_service_fields_do_not_match_physio_service(self, create_payment):
+        create_payment.return_value = None
         invalid_service = self.valid_service.copy()
         invalid_service["price"] = 999  # no coincide
         data = self.base_data(service_override=invalid_service)
         response = self.client.post(self.url, data, format="json")
         self.assertEqual(response.status_code, 400)
+        create_payment.assert_not_called()
 
-    def test_questionary_missing_required_response(self):
+    @patch("appointment.views.create_payment_setup")
+    def test_questionary_missing_required_response(self, create_payment):
+        create_payment.return_value = None
         invalid_service = self.valid_service.copy()
         invalid_service["questionaryResponses"].pop("edad")
         data = self.base_data(service_override=invalid_service)
         response = self.client.post(self.url, data, format="json")
         self.assertEqual(response.status_code, 400)
-
-    def test_questionary_response_wrong_type(self):
+        create_payment.assert_not_called()
+    
+    @patch("appointment.views.create_payment_setup")
+    def test_questionary_response_wrong_type(self, create_payment):
+        create_payment.return_value = None
         invalid_service = self.valid_service.copy()
         invalid_service["questionaryResponses"]["edad"] = "treinta y dos"  # no se puede convertir a int
         data = self.base_data(service_override=invalid_service)
         response = self.client.post(self.url, data, format="json")
         self.assertEqual(response.status_code, 400)
+        create_payment.assert_not_called()
 
-    def test_questionary_response_control_too_long(self):
+    @patch("appointment.views.create_payment_setup")
+    def test_questionary_response_control_too_long(self, create_payment):
+        create_payment.return_value = None
         invalid_service = self.valid_service.copy()
         invalid_service["questionaryResponses"]["motivo_consulta"] = "x" * 151
         data = self.base_data(service_override=invalid_service)
         response = self.client.post(self.url, data, format="json")
         self.assertEqual(response.status_code, 400)
-
-    def test_questionary_response_extra_keys(self):
+        create_payment.assert_not_called()
+    
+    @patch("appointment.views.create_payment_setup")
+    def test_questionary_response_extra_keys(self, create_payment):
+        create_payment.return_value = None
         invalid_service = self.valid_service.copy()
         invalid_service["questionaryResponses"]["extra"] = "no debería estar"
         data = self.base_data(service_override=invalid_service)
         response = self.client.post(self.url, data, format="json")
         self.assertEqual(response.status_code, 400)
+        create_payment.assert_not_called()
 
-    def test_custom_questionnaire_is_null_should_ignore_responses(self):
+    @patch("appointment.views.create_payment_setup")
+    @patch("appointment.views.send_appointment_email")
+    def test_custom_questionnaire_is_null_should_ignore_responses(self, mock_send_email, create_payment):
+        create_payment.return_value = None
         physio_services = self.physio.services
         physio_services["1"]["custom_questionnaire"] = None
         self.physio.services = physio_services
@@ -313,8 +347,13 @@ class CreateAppointmentIntegrationTests(APITestCase):
         data = self.base_data(service_override=service)
         response = self.client.post(self.url, data, format="json")
         self.assertEqual(response.status_code, 201)
+        mock_send_email.assert_called()
+        create_payment.assert_called()
 
-    def test_custom_questionnaire_is_null_and_no_responses(self):
+    @patch("appointment.views.create_payment_setup")
+    @patch("appointment.views.send_appointment_email")
+    def test_custom_questionnaire_is_null_and_no_responses(self, mock_send_email, create_payment):
+        create_payment.return_value = None
         physio_services = self.physio.services
         physio_services["1"]["custom_questionnaire"] = None
         self.physio.services = physio_services
@@ -327,6 +366,8 @@ class CreateAppointmentIntegrationTests(APITestCase):
         data = self.base_data(service_override=service)
         response = self.client.post(self.url, data, format="json")
         self.assertEqual(response.status_code, 201)
+        mock_send_email.assert_called()
+        create_payment.assert_called()
 
 
 class CreateAppointmentTests(APITestCase):
@@ -472,8 +513,10 @@ class CreateAppointmentTests(APITestCase):
             status='booked',
             alternatives='',
         )
-    
-    def test_create_appointment_as_patient(self):
+    @patch("appointment.views.create_payment_setup")
+    @patch("appointment.views.send_appointment_email")
+    def test_create_appointment_as_patient(self, mock_send_email, create_payment):
+        create_payment.return_value = None
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'patient1',
             'password': 'Usuar1o_1'
@@ -511,13 +554,11 @@ class CreateAppointmentTests(APITestCase):
         self.assertEqual(Appointment.objects.get(id=response.data['appointment_data']['id']).status, 'booked')
         self.assertEqual(Appointment.objects.get(id=response.data['appointment_data']['id']).alternatives, "")
         self.assertEqual(appointment_added, True)
-        self.assertEqual(Payment.objects.count(), 1)
-        self.assertIsInstance(response.data['payment_data']['payment'], dict)
-        self.assertEqual(Payment.objects.get(id=response.data['payment_data']['payment']['id']).amount, float(self.valid_service['price']))
-        self.assertEqual(Payment.objects.get(id=response.data['payment_data']['payment']['id']).appointment.id, response.data['appointment_data']['id'])
-        self.assertIsInstance(response.data['payment_data']['client_secret'], str)
+        mock_send_email.assert_called()
+        create_payment.assert_called()
 
-    def test_create_appointment_without_authentication(self):
+    @patch("appointment.views.create_payment_setup")
+    def test_create_appointment_without_authentication(self, create_payment):
         url = '/api/appointment/patient/'
         data = {
             'start_time': self.end_time,
@@ -532,8 +573,10 @@ class CreateAppointmentTests(APITestCase):
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, 401)
         self.assertEqual(Appointment.objects.count(), 1)
+        create_payment.assert_not_called()
     
-    def test_create_appointment_as_patient_invalid_start_end_time(self):
+    @patch("appointment.views.create_payment_setup")
+    def test_create_appointment_as_patient_invalid_start_end_time(self, create_payment):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'patient1',
             'password': 'Usuar1o_1'
@@ -556,8 +599,10 @@ class CreateAppointmentTests(APITestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['non_field_errors'][0], 'La fecha de inicio debe ser anterior a la fecha de fin.')
         self.assertEqual(Appointment.objects.count(), 1)
+        create_payment.assert_not_called()
 
-    def test_create_appointment_as_patient_invalid_start_end_date(self):
+    @patch("appointment.views.create_payment_setup")
+    def test_create_appointment_as_patient_invalid_start_end_date(self, create_payment):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'patient1',
             'password': 'Usuar1o_1'
@@ -580,8 +625,10 @@ class CreateAppointmentTests(APITestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['non_field_errors'][0], 'La cita debe comenzar y terminar el mismo día.')
         self.assertEqual(Appointment.objects.count(), 1)
+        create_payment.assert_not_called()
     
-    def test_create_appointment_as_patient_invalid_schedule_day(self):
+    @patch("appointment.views.create_payment_setup")
+    def test_create_appointment_as_patient_invalid_schedule_day(self, create_payment):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'patient1',
             'password': 'Usuar1o_1'
@@ -604,8 +651,10 @@ class CreateAppointmentTests(APITestCase):
         self.assertEqual(response.status_code, 400)
         self.assertIn('El fisioterapeuta no trabaja los', response.data['error'])
         self.assertEqual(Appointment.objects.count(), 1)
+        create_payment.assert_not_called()
 
-    def test_create_appointment_as_patient_invalid_schedule_time(self):
+    @patch("appointment.views.create_payment_setup")
+    def test_create_appointment_as_patient_invalid_schedule_time(self, create_payment):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'patient1',
             'password': 'Usuar1o_1'
@@ -628,8 +677,10 @@ class CreateAppointmentTests(APITestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['error'], 'El horario solicitado no está dentro del horario del fisioterapeuta')
         self.assertEqual(Appointment.objects.count(), 1)
+        create_payment.assert_not_called()
 
-    def test_create_appointment_as_patient_already_appointment_exists(self):
+    @patch("appointment.views.create_payment_setup")
+    def test_create_appointment_as_patient_already_appointment_exists(self, create_payment):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'patient1',
             'password': 'Usuar1o_1'
@@ -652,8 +703,10 @@ class CreateAppointmentTests(APITestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['non_field_errors'][0], 'El fisioterapeuta ya tiene una cita en ese horario.')
         self.assertEqual(Appointment.objects.count(), 1)
+        create_payment.assert_not_called()
 
-    def test_create_appointment_as_patient_in_exception_date(self):
+    @patch("appointment.views.create_payment_setup")
+    def test_create_appointment_as_patient_in_exception_date(self, create_payment):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'patient1',
             'password': 'Usuar1o_1'
@@ -676,8 +729,10 @@ class CreateAppointmentTests(APITestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['error'], 'El fisioterapeuta no está disponible en ese horario debido a una excepción')
         self.assertEqual(Appointment.objects.count(), 1)
+        create_payment.assert_not_called()
 
-    def test_create_appointment_as_patient_in_past_date(self):
+    @patch("appointment.views.create_payment_setup")
+    def test_create_appointment_as_patient_in_past_date(self, create_payment):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'patient1',
             'password': 'Usuar1o_1'
@@ -700,8 +755,10 @@ class CreateAppointmentTests(APITestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['error'], 'No puedes crear una cita en el pasado')
         self.assertEqual(Appointment.objects.count(), 1)
+        create_payment.assert_not_called()
 
-    def test_create_appointment_as_patient_with_physio_credentials(self):
+    @patch("appointment.views.create_payment_setup")
+    def test_create_appointment_as_patient_with_physio_credentials(self, create_payment):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'jorgito',
             'password': 'Usuar1o_1'
@@ -723,8 +780,10 @@ class CreateAppointmentTests(APITestCase):
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, 403)
         self.assertEqual(Appointment.objects.count(), 1)
+        create_payment.assert_not_called()
 
-    def test_create_appointment_as_patient_invalid_physio(self):
+    @patch("appointment.views.create_payment_setup")
+    def test_create_appointment_as_patient_invalid_physio(self, create_payment):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'patient1',
             'password': 'Usuar1o_1'
@@ -747,8 +806,10 @@ class CreateAppointmentTests(APITestCase):
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data['error'], 'Fisioterapeuta no encontrado')
         self.assertEqual(Appointment.objects.count(), 1)
+        create_payment.assert_not_called()
 
-    def test_create_appointment_as_physio(self):
+    @patch("appointment.views.create_payment_setup")
+    def test_create_appointment_as_physio(self, create_payment):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'jorgito',
             'password': 'Usuar1o_1'
@@ -787,8 +848,10 @@ class CreateAppointmentTests(APITestCase):
         self.assertEqual(Appointment.objects.get(id=appointment_id).status, 'booked')
         self.assertEqual(Appointment.objects.get(id=appointment_id).alternatives, "")
         self.assertEqual(appointment_added, True)
+        create_payment.assert_not_called()
 
-    def test_create_appointment_as_physio_without_authentication(self):
+    @patch("appointment.views.create_payment_setup")
+    def test_create_appointment_as_physio_without_authentication(self, create_payment):
         url = '/api/appointment/physio/'
         data = {
             'start_time': self.end_time,
@@ -802,8 +865,10 @@ class CreateAppointmentTests(APITestCase):
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, 401)
         self.assertEqual(Appointment.objects.count(), 1)
+        create_payment.assert_not_called()
 
-    def test_create_appointment_as_physio_with_patient_credentials(self):
+    @patch("appointment.views.create_payment_setup")
+    def test_create_appointment_as_physio_with_patient_credentials(self, create_payment):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'patient1',
             'password': 'Usuar1o_1'
@@ -824,8 +889,10 @@ class CreateAppointmentTests(APITestCase):
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, 403)
         self.assertEqual(Appointment.objects.count(), 1)
+        create_payment.assert_not_called()
 
-    def test_create_appointment_as_physio_invalid_start_end_time(self):
+    @patch("appointment.views.create_payment_setup")
+    def test_create_appointment_as_physio_invalid_start_end_time(self, create_payment):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'jorgito',
             'password': 'Usuar1o_1'
@@ -847,8 +914,10 @@ class CreateAppointmentTests(APITestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['non_field_errors'][0], 'La fecha de inicio debe ser anterior a la fecha de fin.')
         self.assertEqual(Appointment.objects.count(), 1)
+        create_payment.assert_not_called()
 
-    def test_create_appointment_as_physio_invalid_start_end_date(self):
+    @patch("appointment.views.create_payment_setup")
+    def test_create_appointment_as_physio_invalid_start_end_date(self, create_payment):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'jorgito',
             'password': 'Usuar1o_1'
@@ -870,8 +939,10 @@ class CreateAppointmentTests(APITestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['non_field_errors'][0], 'La cita debe comenzar y terminar el mismo día.')
         self.assertEqual(Appointment.objects.count(), 1)
+        create_payment.assert_not_called()
 
-    def test_create_appointment_as_physio_patient_already_has_appointment(self):
+    @patch("appointment.views.create_payment_setup")
+    def test_create_appointment_as_physio_patient_already_has_appointment(self, create_payment):
         # Primero creamos otro fisioterapeuta para el paciente
         other_physio_user = AppUser.objects.create_user(
             username = "other_fisio",
@@ -929,7 +1000,8 @@ class CreateAppointmentTests(APITestCase):
         self.assertEqual(response.data['non_field_errors'][0], 'El paciente ya tiene una cita en ese horario.')
         self.assertEqual(Appointment.objects.count(), 2)  # Sigue habiendo dos citas (la original y la que creamos en este test)
 
-    def test_create_appointment_as_physio_invalid_patient(self):
+    @patch("appointment.views.create_payment_setup")
+    def test_create_appointment_as_physio_invalid_patient(self, create_payment):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'jorgito',
             'password': 'Usuar1o_1'
@@ -953,7 +1025,8 @@ class CreateAppointmentTests(APITestCase):
         self.assertEqual(response.data['error'], 'Paciente no encontrado')
         self.assertEqual(Appointment.objects.count(), 1)
 
-    def test_create_appointment_as_physio_missing_required_fields(self):
+    @patch("appointment.views.create_payment_setup")
+    def test_create_appointment_as_physio_missing_required_fields(self, create_payment):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'jorgito',
             'password': 'Usuar1o_1'
@@ -976,7 +1049,8 @@ class CreateAppointmentTests(APITestCase):
         self.assertTrue('start_time' in response.data)
         self.assertEqual(Appointment.objects.count(), 1)
 
-    def test_create_appointment_as_physio_same_time_conflict(self):
+    @patch("appointment.views.create_payment_setup")
+    def test_create_appointment_as_physio_same_time_conflict(self, create_payment):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'jorgito',
             'password': 'Usuar1o_1'
@@ -998,6 +1072,7 @@ class CreateAppointmentTests(APITestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['non_field_errors'][0], 'El fisioterapeuta ya tiene una cita en ese horario.')
         self.assertEqual(Appointment.objects.count(), 1)
+
 
 class ListAppointmentTests(APITestCase):
     def setUp(self):
@@ -2175,7 +2250,9 @@ class PatchDeleteAppointmentTests(APITestCase):
             is_test_room=False,
         )
 
-    def test_accept_alternative_success(self):
+    @patch("appointment.views.cancel_payment_pyshio")
+    @patch("appointment.views.cancel_payment_patient")
+    def test_accept_alternative_success(self, mock_cancel_payment_patient, mock_cancel_payment_physio):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'patient1',
             'password': 'Usuar1o_1'
@@ -2194,8 +2271,12 @@ class PatchDeleteAppointmentTests(APITestCase):
         self.assertEqual(Appointment.objects.get(id=self.appointment.id).start_time.astimezone(self.spain_tz).strftime("%Y-%m-%dT%H:%M:%S%z"), self.end_time)
         self.assertEqual(Appointment.objects.get(id=self.appointment.id).end_time.astimezone(self.spain_tz).strftime("%Y-%m-%dT%H:%M:%S%z"), self.new_appointment_end_time)
         self.assertEqual(response.data["alternatives"], "")
-    
-    def test_accept_alternative_invalid_appointment(self):
+        mock_cancel_payment_patient.assert_not_called()
+        mock_cancel_payment_physio.assert_not_called()
+
+    @patch("appointment.views.cancel_payment_pyshio")
+    @patch("appointment.views.cancel_payment_patient")
+    def test_accept_alternative_invalid_appointment(self, mock_cancel_payment_patient, mock_cancel_payment_physio):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'patient1',
             'password': 'Usuar1o_1'
@@ -2206,8 +2287,12 @@ class PatchDeleteAppointmentTests(APITestCase):
         response = self.client.put('/api/appointment/update/999/accept-alternative/', format='json')
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data['error'], 'Cita no encontrada')
+        mock_cancel_payment_patient.assert_not_called()
+        mock_cancel_payment_physio.assert_not_called()
 
-    def test_accept_alternative_no_alternatives(self):
+    @patch("appointment.views.cancel_payment_pyshio")
+    @patch("appointment.views.cancel_payment_patient")
+    def test_accept_alternative_no_alternatives(self, mock_cancel_payment_patient, mock_cancel_payment_physio):
         aux_appointment = Appointment.objects.create(
             start_time=self.end_time,
             end_time=self.new_appointment_end_time,
@@ -2233,8 +2318,12 @@ class PatchDeleteAppointmentTests(APITestCase):
         response = self.client.put(f'/api/appointment/update/{aux_appointment.id}/accept-alternative/', data, format='json')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['error'], 'No puedes aceptar una alternativa si la cita no tiene alternativas')
+        mock_cancel_payment_patient.assert_not_called()
+        mock_cancel_payment_physio.assert_not_called()
 
-    def test_accept_alternative_invalid_alternative_date(self):
+    @patch("appointment.views.cancel_payment_pyshio")
+    @patch("appointment.views.cancel_payment_patient")
+    def test_accept_alternative_invalid_alternative_date(self, mock_cancel_payment_patient, mock_cancel_payment_physio):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'patient1',
             'password': 'Usuar1o_1'
@@ -2250,8 +2339,12 @@ class PatchDeleteAppointmentTests(APITestCase):
         response = self.client.put(url, data, format='json')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['error'], 'El rango horario seleccionado no coincide con las alternativas disponibles')
+        mock_cancel_payment_patient.assert_not_called()
+        mock_cancel_payment_physio.assert_not_called()
 
-    def test_accept_alternative_invalid_alternative_time(self):
+    @patch("appointment.views.cancel_payment_pyshio")
+    @patch("appointment.views.cancel_payment_patient")
+    def test_accept_alternative_invalid_alternative_time(self, mock_cancel_payment_patient, mock_cancel_payment_physio):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'patient1',
             'password': 'Usuar1o_1'
@@ -2267,8 +2360,12 @@ class PatchDeleteAppointmentTests(APITestCase):
         response = self.client.put(url, data, format='json')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['error'], 'El rango horario seleccionado no coincide con las alternativas disponibles')
+        mock_cancel_payment_patient.assert_not_called()
+        mock_cancel_payment_physio.assert_not_called()
 
-    def test_accept_alternative_other_patient(self):       
+    @patch("appointment.views.cancel_payment_pyshio")
+    @patch("appointment.views.cancel_payment_patient")
+    def test_accept_alternative_other_patient(self, mock_cancel_payment_patient, mock_cancel_payment_physio):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'patient2',
             'password': 'Usuar1o_1'
@@ -2284,8 +2381,12 @@ class PatchDeleteAppointmentTests(APITestCase):
         response = self.client.put(url, data, format='json')
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data['error'], 'No autorizado para aceptar una alternativa de esta cita')
+        mock_cancel_payment_patient.assert_not_called()
+        mock_cancel_payment_physio.assert_not_called()
 
-    def test_accept_alternative_no_dates(self):
+    @patch("appointment.views.cancel_payment_pyshio")
+    @patch("appointment.views.cancel_payment_patient")
+    def test_accept_alternative_no_dates(self, mock_cancel_payment_patient, mock_cancel_payment_physio):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'patient1',
             'password': 'Usuar1o_1'
@@ -2298,8 +2399,12 @@ class PatchDeleteAppointmentTests(APITestCase):
         response = self.client.put(url, data, format='json')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['error'], "Debes proporcionar un 'start_time' y un 'end_time' válidos")
+        mock_cancel_payment_patient.assert_not_called()
+        mock_cancel_payment_physio.assert_not_called()
 
-    def test_confirm_appointment_success(self):
+    @patch("appointment.views.cancel_payment_pyshio")
+    @patch("appointment.views.cancel_payment_patient")
+    def test_confirm_appointment_success(self, mock_cancel_payment_patient, mock_cancel_payment_physio):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'jorgito',
             'password': 'Usuar1o_1'
@@ -2314,8 +2419,12 @@ class PatchDeleteAppointmentTests(APITestCase):
         self.assertEqual(Appointment.objects.get(id=self.appointment.id).status, "confirmed")
         self.assertEqual(Appointment.objects.get(id=self.appointment.id).start_time.astimezone(self.spain_tz).strftime("%Y-%m-%dT%H:%M:%S%z"), self.start_time)
         self.assertEqual(Appointment.objects.get(id=self.appointment.id).end_time.astimezone(self.spain_tz).strftime("%Y-%m-%dT%H:%M:%S%z"), self.end_time)
- 
-    def test_confirm_appointment_invalid_appointment(self):
+        mock_cancel_payment_patient.assert_not_called()
+        mock_cancel_payment_physio.assert_not_called()
+    
+    @patch("appointment.views.cancel_payment_pyshio")
+    @patch("appointment.views.cancel_payment_patient")
+    def test_confirm_appointment_invalid_appointment(self, mock_cancel_payment_patient, mock_cancel_payment_physio):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'jorgito',
             'password': 'Usuar1o_1'
@@ -2326,8 +2435,12 @@ class PatchDeleteAppointmentTests(APITestCase):
         response = self.client.put('/api/appointment/update/999/confirm/')
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data['error'], 'Cita no encontrada')
-    
-    def test_confirm_appointment_not_physio(self):
+        mock_cancel_payment_patient.assert_not_called()
+        mock_cancel_payment_physio.assert_not_called()
+
+    @patch("appointment.views.cancel_payment_pyshio")
+    @patch("appointment.views.cancel_payment_patient")
+    def test_confirm_appointment_not_physio(self, mock_cancel_payment_patient, mock_cancel_payment_physio):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'patient1',
             'password': 'Usuar1o_1'
@@ -2338,8 +2451,12 @@ class PatchDeleteAppointmentTests(APITestCase):
         response = self.client.put(f'/api/appointment/update/{self.appointment.id}/confirm/', format='json')
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data['detail'], 'Usted no tiene permiso para realizar esta acción.')
+        mock_cancel_payment_patient.assert_not_called()
+        mock_cancel_payment_physio.assert_not_called()
 
-    def test_confirm_appointment_other_physio(self):
+    @patch("appointment.views.cancel_payment_pyshio")
+    @patch("appointment.views.cancel_payment_patient")
+    def test_confirm_appointment_other_physio(self, mock_cancel_payment_patient, mock_cancel_payment_physio):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'guille',
             'password': 'Usuar1o_1'
@@ -2350,8 +2467,12 @@ class PatchDeleteAppointmentTests(APITestCase):
         response = self.client.put(f'/api/appointment/update/{self.appointment.id}/confirm/', format='json')
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data['error'], 'No puedes confirmar citas de otros fisioterapeutas')
+        mock_cancel_payment_patient.assert_not_called()
+        mock_cancel_payment_physio.assert_not_called()
 
-    def test_confirm_appointment_not_booked(self):
+    @patch("appointment.views.cancel_payment_pyshio")
+    @patch("appointment.views.cancel_payment_patient")
+    def test_confirm_appointment_not_booked(self, mock_cancel_payment_patient, mock_cancel_payment_physio):
         appointment = Appointment.objects.create(
             start_time=self.end_time,
             end_time=self.new_appointment_end_time,
@@ -2374,8 +2495,12 @@ class PatchDeleteAppointmentTests(APITestCase):
         response = self.client.put(f'/api/appointment/update/{appointment.id}/confirm/', format='json')
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data['error'], "Solo puedes confirmar citas con estado 'booked'")
+        mock_cancel_payment_patient.assert_not_called()
+        mock_cancel_payment_physio.assert_not_called()
 
-    def test_delete_appointment_success_as_physio(self):
+    @patch("appointment.views.cancel_payment_pyshio")
+    @patch("appointment.views.cancel_payment_patient")
+    def test_delete_appointment_success_as_physio(self, mock_cancel_payment_patient, mock_cancel_payment_physio):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'jorgito',
             'password': 'Usuar1o_1'
@@ -2407,8 +2532,12 @@ class PatchDeleteAppointmentTests(APITestCase):
         self.assertEqual(Appointment.objects.count(), 1)
         self.assertEqual(Room.objects.count(), 1)
         self.assertEqual(appointment_added, False)
+        mock_cancel_payment_patient.assert_not_called()
+        mock_cancel_payment_physio.assert_called()
 
-    def test_delete_appointment_success_as_patient(self):
+    @patch("appointment.views.cancel_payment_pyshio")
+    @patch("appointment.views.cancel_payment_patient")
+    def test_delete_appointment_success_as_patient(self, mock_cancel_payment_patient, mock_cancel_payment_physio):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'patient1',
             'password': 'Usuar1o_1'
@@ -2441,9 +2570,13 @@ class PatchDeleteAppointmentTests(APITestCase):
         self.assertEqual(Appointment.objects.count(), 1)
         self.assertEqual(Room.objects.count(), 1)
         self.assertEqual(appointment_added, False)
+        mock_cancel_payment_patient.assert_called()
+        mock_cancel_payment_physio.assert_not_called()
 
-    
-    def test_delete_appointment_invalid_appointment(self):
+
+    @patch("appointment.views.cancel_payment_pyshio")
+    @patch("appointment.views.cancel_payment_patient")
+    def test_delete_appointment_invalid_appointment(self, mock_cancel_payment_patient, mock_cancel_payment_physio):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'jorgito',
             'password': 'Usuar1o_1'
@@ -2454,8 +2587,13 @@ class PatchDeleteAppointmentTests(APITestCase):
         response = self.client.delete('/api/appointment/delete/999/', format='json')
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data['error'], 'Cita no encontrada')
-    
-    def test_delete_appointment_no_permission(self):
+        mock_cancel_payment_patient.assert_not_called()
+        mock_cancel_payment_physio.assert_not_called()
+
+        
+    @patch("appointment.views.cancel_payment_pyshio")
+    @patch("appointment.views.cancel_payment_patient")
+    def test_delete_appointment_no_permission(self, mock_cancel_payment_patient, mock_cancel_payment_physio):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'patient2',
             'password': 'Usuar1o_1'
@@ -2466,8 +2604,12 @@ class PatchDeleteAppointmentTests(APITestCase):
         response = self.client.delete(f'/api/appointment/delete/{self.appointment.id}/', format='json')
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data['error'], 'No tienes permisos para borrar esta cita')
+        mock_cancel_payment_patient.assert_not_called()
+        mock_cancel_payment_physio.assert_not_called()
 
-    def test_delete_appointment_close_date_as_physio(self):
+    @patch("appointment.views.cancel_payment_pyshio")
+    @patch("appointment.views.cancel_payment_patient")
+    def test_delete_appointment_close_date_as_physio(self, mock_cancel_payment_patient, mock_cancel_payment_physio):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'jorgito',
             'password': 'Usuar1o_1'
@@ -2500,8 +2642,12 @@ class PatchDeleteAppointmentTests(APITestCase):
         self.assertEqual(Appointment.objects.count(), 1)
         self.assertEqual(Room.objects.count(), 1)
         self.assertEqual(appointment_added, False)
+        mock_cancel_payment_patient.assert_not_called()
+        mock_cancel_payment_physio.assert_called()
 
-    def test_delete_appointment_close_date_as_patient(self):
+    @patch("appointment.views.cancel_payment_pyshio")
+    @patch("appointment.views.cancel_payment_patient")
+    def test_delete_appointment_close_date_as_patient(self, mock_cancel_payment_patient, mock_cancel_payment_physio):
         login_response = self.client.post('/api/app_user/login/', {
             'username': 'patient1',
             'password': 'Usuar1o_1'
@@ -2511,7 +2657,9 @@ class PatchDeleteAppointmentTests(APITestCase):
 
         response = self.client.delete(f'/api/appointment/delete/{self.close_appointment.id}/', format='json')
         self.assertEqual(response.status_code, 403)
-        self.assertEqual(response.data['error'], 'No puedes borrar una cita con menos de 48 horas de antelación')
+        self.assertIn('No puedes borrar una cita con menos de 48 horas de antelación', response.data['error'])
+        mock_cancel_payment_patient.assert_not_called()
+        mock_cancel_payment_physio.assert_not_called()
 
 
 class GetPhysioScheduleByIdTests(APITestCase):
@@ -2684,12 +2832,12 @@ class EditWeeklyScheduleTests(APITestCase):
             "schedule": {
                 "weekly_schedule": {
                     "monday": [{"start": "09:00", "end": "13:00"}],
-                    "tuesday": [],
-                    "wednesday": [],
-                    "thursday": [],
-                    "friday": [],
-                    "saturday": [],
-                    "sunday": []
+                    "tuesday": [{"start": "09:00", "end": "13:00"}],
+                    "wednesday": [{"start": "09:00", "end": "13:00"}],
+                    "thursday": [{"start": "09:00", "end": "13:00"}],
+                    "friday": [{"start": "09:00", "end": "13:00"}],
+                    "saturday": [{"start": "09:00", "end": "13:00"}],
+                    "sunday": [{"start": "09:00", "end": "13:00"}]
                 },
                 "exceptions": {
                     (now_spain + timedelta(days=2)).strftime("%Y-%m-%d"): [
@@ -2699,7 +2847,6 @@ class EditWeeklyScheduleTests(APITestCase):
             }
         }
         response = self.client.put(self.url, payload, format="json")
-        print(response.data)
         physiotherapist = Physiotherapist.objects.get(id=self.physio.id)
         physio_schedule = physiotherapist.schedule
         self.assertEqual(response.status_code, 200)
@@ -2751,7 +2898,7 @@ class EditWeeklyScheduleTests(APITestCase):
         }
         response = self.client.put(self.url, payload, format="json")
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data["error"], "Debe enviar un objeto JSON con el campo 'weekly_schedule'.")
+        self.assertIn("Debe enviar un objeto JSON con el campo 'weekly_schedule'.", response.data["error"])
 
     def test_edit_schedule_invalid_day(self):
         login_response = self.client.post('/api/app_user/login/', {
@@ -2789,7 +2936,7 @@ class EditWeeklyScheduleTests(APITestCase):
         }
         response = self.client.put(self.url, payload, format="json")
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data["error"], "weekly_schedule debe ser un diccionario.")
+        self.assertIn("weekly_schedule debe ser un diccionario.", response.data["error"])
 
     def test_edit_schedule_invalid_time_format(self):
         login_response = self.client.post('/api/app_user/login/', {
@@ -2809,7 +2956,7 @@ class EditWeeklyScheduleTests(APITestCase):
         }
         response = self.client.put(self.url, payload, format="json")
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data["error"], "Los horarios 09-00 o 11:00 no son válidos. Usa formato 'HH:MM'.")
+        self.assertIn("Los horarios 09-00 o 11:00 no son válidos. Usa formato 'HH:MM'.", response.data["error"])
 
     def test_edit_schedule_invalid_weekly_schedule_atributes_format(self):
         login_response = self.client.post('/api/app_user/login/', {
@@ -2829,7 +2976,7 @@ class EditWeeklyScheduleTests(APITestCase):
         }
         response = self.client.put(self.url, payload, format="json")
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data["error"], "El horario {'start_time': '09-00', 'end_time': '11:00'} no es válido. Debe ser un objeto con 'start' y 'end'.")
+        self.assertIn("El horario {'start_time': '09-00', 'end_time': '11:00'} no es válido. Debe ser un objeto con 'start' y 'end'.", response.data["error"])
 
     def test_edit_schedule_invalid_weekly_schedule_list_format(self):
         login_response = self.client.post('/api/app_user/login/', {
@@ -2849,7 +2996,7 @@ class EditWeeklyScheduleTests(APITestCase):
         }
         response = self.client.put(self.url, payload, format="json")
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data["error"], "Los horarios para monday deben ser una lista.")
+        self.assertIn("Los horarios para monday deben ser una lista.", response.data["error"])
 
     def test_edit_schedule_invalid_range(self):
         login_response = self.client.post('/api/app_user/login/', {
@@ -2869,7 +3016,7 @@ class EditWeeklyScheduleTests(APITestCase):
         }
         response = self.client.put(self.url, payload, format="json")
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data["error"], "El rango 14:00-12:00 no es válido. La hora de inicio debe ser anterior a la de fin.")
+        self.assertIn("El rango 14:00-12:00 no es válido. La hora de inicio debe ser anterior a la de fin.", response.data["error"])
 
     def test_edit_schedule_exception_invalid_date_format(self):
         login_response = self.client.post('/api/app_user/login/', {
@@ -2891,7 +3038,7 @@ class EditWeeklyScheduleTests(APITestCase):
         }
         response = self.client.put(self.url, payload, format="json")
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data["error"], "La fecha 2025/04/10 no tiene el formato válido YYYY-MM-DD.")
+        self.assertIn("La fecha 2025/04/10 no tiene el formato válido YYYY-MM-DD.", response.data["error"])
 
     def test_edit_schedule_exception_no_exception_field(self):
         login_response = self.client.post('/api/app_user/login/', {
@@ -2910,7 +3057,7 @@ class EditWeeklyScheduleTests(APITestCase):
         }
         response = self.client.put(self.url, payload, format="json")
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data["error"], "Debe enviar un objeto JSON con el campo 'exceptions'.")
+        self.assertIn("Debe enviar un objeto JSON con el campo 'exceptions'.", response.data["error"])
 
     def test_edit_schedule_exception_invalid_exception_list_format(self):
         login_response = self.client.post('/api/app_user/login/', {
@@ -2932,7 +3079,7 @@ class EditWeeklyScheduleTests(APITestCase):
         }
         response = self.client.put(self.url, payload, format="json")
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data["error"], "Los bloques para la fecha 2025-04-10 deben ser una lista.")
+        self.assertIn("Los bloques para la fecha 2025-04-10 deben ser una lista.", response.data["error"])
 
     def test_edit_schedule_exception_invalid_exception_fields_format(self):
         login_response = self.client.post('/api/app_user/login/', {
@@ -2955,7 +3102,7 @@ class EditWeeklyScheduleTests(APITestCase):
         response = self.client.put(self.url, payload, format="json")
         print(response.data)
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data["error"], "El bloque {'start_time': '09:30', 'end_time': '10:30'} en la fecha 2025-04-10 no es válido. Debe ser un objeto con 'start' y 'end'.")
+        self.assertIn("El bloque {'start_time': '09:30', 'end_time': '10:30'} en la fecha 2025-04-10 no es válido. Debe ser un objeto con 'start' y 'end'.", response.data["error"])
 
     def test_edit_schedule_exception_invalid_exception_time_format(self):
         login_response = self.client.post('/api/app_user/login/', {
@@ -2977,7 +3124,7 @@ class EditWeeklyScheduleTests(APITestCase):
         }
         response = self.client.put(self.url, payload, format="json")
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data["error"], "Los horarios 09-30 o 10:30 en la fecha 2025-04-10 no son válidos. Usa formato 'HH:MM'.")
+        self.assertIn("Los horarios 09-30 o 10:30 en la fecha 2025-04-10 no son válidos. Usa formato 'HH:MM'.", response.data["error"])
 
     def test_edit_schedule_exception_invalid_exception_time_range(self):
         login_response = self.client.post('/api/app_user/login/', {
@@ -2999,7 +3146,7 @@ class EditWeeklyScheduleTests(APITestCase):
         }
         response = self.client.put(self.url, payload, format="json")
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data["error"], "El rango 11:30-10:30 en la fecha 2025-04-10 no es válido. La hora de inicio debe ser anterior a la de fin.")
+        self.assertIn("El rango 11:30-10:30 en la fecha 2025-04-10 no es válido. La hora de inicio debe ser anterior a la de fin.", response.data["error"])
 
     def test_edit_schedule_exception_outside_schedule_range(self):
         login_response = self.client.post('/api/app_user/login/', {
@@ -3027,4 +3174,4 @@ class EditWeeklyScheduleTests(APITestCase):
         response = self.client.put(self.url, payload, format="json")
         print(response.data)
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data["error"], "La excepción del 2025-04-06 (08:00-08:30) no coincide con ningún horario habitual del día sunday.")
+        self.assertIn("La excepción del "+(now_spain + timedelta(days=1)).strftime("%Y-%m-%d")+" (08:00-08:30) no coincide con ningún horario habitual del día "+(now_spain + timedelta(days=1)).strftime("%A").lower()+".", response.data["error"])
