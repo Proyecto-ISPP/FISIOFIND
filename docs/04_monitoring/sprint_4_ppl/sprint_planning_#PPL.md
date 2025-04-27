@@ -1,8 +1,8 @@
 <!-- ---
-title: "SPRINT PLANNING SPRINT 4"                         # UPDATED FOR SPRINT 3
+title: "SPRINT PLANNING SPRINT 4"
 subtitle: "FISIO FIND - Grupo 6 - #PPL"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]
-date: "20/04/2025"                                        # UPDATED FOR SPRINT 3
+date: "20/04/2025"
 subject: "ISPP"
 lang: "es"
 toc: true
@@ -70,7 +70,7 @@ classoption: "table"
 
 - **Fecha de Creación:** 20/04/2025
 
-- **Versión:** v1.0
+- **Versión:** v1.1
 
 <br>
 
@@ -108,7 +108,7 @@ classoption: "table"
 
 # **1. OBJETIVOS DEL SPRINT**
 
-El propósito de este informe es definir los objetivos a lograr durante el Sprint 4 y describir la metodología para alcanzarlos.Este Sprint pertenece a la pase de preparación de lanzamiento del proyecto (Prepare Project Launch - #PPL) y durará desde el viernes 18/04/2025 hasta el jueves 01/05/2025.
+El propósito de este informe es definir los objetivos a lograr durante el Sprint 4 y describir la metodología para alcanzarlos. Este Sprint pertenece a la fase de preparación de lanzamiento del proyecto (Prepare Project Launch - #PPL) y durará desde el viernes 18/04/2025 hasta el jueves 01/05/2025.
 
 **🔴 Sprint Goal:** PREPARE PROJECT LAUNCH (Pruebas finales, refactorización, funcionalidades extra)
 
@@ -157,7 +157,7 @@ Los objetivos marcados para este Sprint son los siguientes:
 [***[Feature] Actualizar README #522***](https://github.com/Proyecto-ISPP/FISIOFIND/issues/522)
 
 **Descripción de la funcionalidad:**
-Modificar el README para actualizarlo a todos los nuevos cambios del #PPL y nueva estructura del proyecto: Actualizar `Project Scruture` con todas las nuevas apps añadidas desde la ultima versión del readme. ¡HAY QUE TENER MUCHO CIUDAD CON ESTA SECCIÓN!
+Modificar el README para actualizarlo a todos los nuevos cambios del #PPL y nueva estructura del proyecto: Actualizar `Project Scruture` con todas las nuevas apps añadidas desde la última versión del readme. ¡HAY QUE TENER MUCHO CUIDADO CON ESTA SECCIÓN!
 
 **Motivación e impacto:**
 - Mejorar la calidad y claridad del código y la documentación
@@ -188,7 +188,7 @@ Se recomienda ver este vídeo para orientar sobre cómo ejecutar este cambio (a 
 [***[REQUEST FOR CHANGE] Refactorización frontend II #383***](https://github.com/Proyecto-ISPP/FISIOFIND/issues/383)
 
 **Descripción del cambio:**  
-- Modificar los emojis de las opciones de registro para que tengan una estética más 3D y coherente con el resto de elemenos de la app.
+- Modificar los emojis de las opciones de registro para que tengan una estética más 3D y coherente con el resto de elementos de la app.
 
 ![Registro](https://github.com/user-attachments/assets/ba04f5a2-5f36-4e8c-a36d-f403c9c7ef27)
 
@@ -221,7 +221,7 @@ Se recomienda ver este vídeo para orientar sobre cómo ejecutar este cambio (a 
 **Motivación:**  
 - Mejorar la experiencia de usuario
 - Unificar interfaz
-- Mejorar la responsabilidad de la web movil
+- Mejorar la responsividad de la web móvil
 
 **Instrucciones:**  
 - Se recomienda realizar esta tarea entre dos personas
@@ -336,7 +336,7 @@ La lógica debería modificarse para que un fisioterapeuta sea mostrado si tiene
 
 - En la pantalla de gestión de vídeos del fisio, añadir un botón de volver atrás, y arreglar el modal de edición de videos para que aparezca realmente como un modal y no abajo de la página como aparece ahora.
 
-- Arreglar la venta de creación de cuenta para que esté centrada (actualmente está más a la izquierda)
+- Arreglar la ventana de creación de cuenta para que esté centrada (actualmente está más a la izquierda)
 ![Image](https://github.com/user-attachments/assets/4f409f38-022d-49e5-9765-4b7bc47e87ba)
 
 - No hay modal de confirmación de cancelación de cita (salta error de cita no encontrada directamente)
@@ -367,9 +367,9 @@ La lógica debería modificarse para que un fisioterapeuta sea mostrado si tiene
 
 - Elaborar la presentación del PPL
 
-- Elaborar presentación tecnica de trabajo realizado
+- Elaborar presentación técnica de trabajo realizado
 
-- Plantear / elaborar vídeos cortos/reel para las cuentas de Fisio Find
+- Plantear / elaborar vídeos cortos/reels para las cuentas de Fisio Find
 
 
  **Consideraciones adicionales**
