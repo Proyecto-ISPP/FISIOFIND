@@ -9,7 +9,7 @@ class Questionnaire(models.Model):
     json_schema = models.JSONField()
     ui_schema = models.JSONField()
     questions = models.JSONField(verbose_name="Preguntas")
-    responses = models.JSONField(verbose_name="Respuestas", default=dict, blank=True, null=True)
+    # responses = models.JSONField(verbose_name="Respuestas", default=dict, blank=True, null=True)
 
     def __str__(self):
         return self.title
@@ -57,3 +57,29 @@ class Questionnaire(models.Model):
         }
         self.save()
 
+class QuestionnaireResponses(models.Model):
+    questionnaire = models.ForeignKey(Questionnaire, on_delete=models.CASCADE, related_name='responses')
+    appointment = models.ForeignKey('appointment.Appointment', on_delete=models.CASCADE, related_name='responses')
+    responses = models.JSONField(verbose_name="Respuestas", default=dict)
+    notes = models.TextField(verbose_name="Notas", blank=True, null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de creación")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Última actualización")
+
+    def __str__(self):
+        return f"Respuestas de {self.appointment.patient} a '{self.questionnaire.title}'"
+
+    class Meta:
+        verbose_name = "Respuesta de cuestionario"
+        verbose_name_plural = "Respuestas de cuestionarios"
+        unique_together = ('questionnaire', 'appointment')  # Evita duplicados para una cita y cuestionario
+
+    def clean(self):
+        if not self.responses:
+            raise ValidationError("Las respuestas no pueden estar vacías.")
+
+    def get_answer_for_question(self, question_id):
+        """
+        Devuelve la respuesta para una pregunta específica, si existe.
+        """
+        return self.responses.get(question_id)
