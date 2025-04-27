@@ -128,6 +128,16 @@ const ExercisesPage = () => {
   const [exerciseUsage, setExerciseUsage] = useState<ExerciseUsage[]>([]);
   const [loadingUsage, setLoadingUsage] = useState(false);
 
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [newExercise, setNewExercise] = useState({
+    title: "",
+    description: "",
+    body_region: "UPPER_BODY",
+    exercise_type: "STRENGTH",
+  });
+  const [isCreating, setIsCreating] = useState(false);
+  const [createSuccess, setCreateSuccess] = useState(false);
+
   const fetchExerciseUsage = async (exerciseId: number) => {
     try {
       setLoadingUsage(true);
@@ -232,6 +242,78 @@ const ExercisesPage = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const createExercise = async () => {
+    try {
+      setIsCreating(true);
+      setError(null);
+
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setError("No se ha encontrado el token de autenticación");
+        setIsCreating(false);
+        return;
+      }
+
+      const response = await fetch(
+        `${getApiBaseUrl()}/api/treatments/exercises/create/`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newExercise),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setExercises([...exercises, data]);
+      setCreateSuccess(true);
+
+      // Reset form
+      setNewExercise({
+        title: "",
+        description: "",
+        body_region: "UPPER_BODY",
+        exercise_type: "STRENGTH",
+      });
+
+      // Hide form after successful creation
+      setTimeout(() => {
+        setShowCreateForm(false);
+        setCreateSuccess(false);
+      }, 2000);
+    } catch (error) {
+      console.error("Error creating exercise:", error);
+      setError("Error al crear el ejercicio. Por favor, inténtalo de nuevo.");
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  // Handle form input changes
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    setNewExercise((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Handle form submission
+  const handleCreateSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    createExercise();
   };
 
   // Search exercises by title
@@ -407,6 +489,111 @@ const ExercisesPage = () => {
         </div>
       </div>
 
+      {/* Create Exercise Button */}
+      <div className="mb-6 flex justify-center">
+        <button
+          onClick={() => setShowCreateForm(!showCreateForm)}
+          className="px-6 py-3 bg-gradient-to-r from-[#6BC9BE] to-[#05668D] text-white font-medium rounded-xl hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#6BC9BE] focus:ring-offset-2 transition-all duration-300 shadow-md flex items-center space-x-2"
+        >
+          {showCreateForm ? "Cancelar" : "Crear Nuevo Ejercicio"}
+        </button>
+      </div>
+
+      {/* Create Exercise Form */}
+      {showCreateForm && (
+        <div className="bg-white rounded-xl shadow-md p-6 mb-6">
+          <h2 className="text-xl font-semibold mb-4">Crear Nuevo Ejercicio</h2>
+
+          {createSuccess && (
+            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+              Ejercicio creado exitosamente.
+            </div>
+          )}
+
+          <form onSubmit={handleCreateSubmit}>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Título <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                name="title"
+                value={newExercise.title}
+                onChange={handleInputChange}
+                required
+                className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Nombre del ejercicio"
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Descripción <span className="text-red-500">*</span>
+              </label>
+              <textarea
+                name="description"
+                value={newExercise.description}
+                onChange={handleInputChange}
+                required
+                rows={4}
+                className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Descripción detallada del ejercicio"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Región Corporal <span className="text-red-500">*</span>
+                </label>
+                <select
+                  name="body_region"
+                  value={newExercise.body_region}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  {Object.entries(bodyRegionNames).map(([key, name]) => (
+                    <option key={key} value={key}>
+                      {name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Tipo de Ejercicio <span className="text-red-500">*</span>
+                </label>
+                <select
+                  name="exercise_type"
+                  value={newExercise.exercise_type}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  {Object.entries(exerciseTypeNames).map(([key, name]) => (
+                    <option key={key} value={key}>
+                      {name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                disabled={isCreating}
+                className="px-6 py-2 text-base font-medium text-white bg-gradient-to-r from-[#6BC9BE] to-[#05668D] hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#6BC9BE] focus:ring-offset-2 transition-colors duration-200 rounded-xl shadow-sm disabled:opacity-50"
+              >
+                {isCreating ? "Creando..." : "Crear Ejercicio"}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
       {/* Error Message */}
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
@@ -444,7 +631,9 @@ const ExercisesPage = () => {
                 <div className="flex flex-col h-full">
                   <div className="p-4 flex-grow">
                     <div className="flex justify-between items-start mb-4">
-                      <h2 className="text-xl font-semibold">Uso del ejercicio</h2>
+                      <h2 className="text-xl font-semibold">
+                        Uso del ejercicio
+                      </h2>
                       <button
                         onClick={() => setSelectedExercise(null)}
                         className="text-gray-500 hover:text-gray-700"
@@ -485,7 +674,9 @@ const ExercisesPage = () => {
                           >
                             <div className="flex justify-between items-start gap-2 mb-2">
                               <div>
-                                <p className="font-medium">{usage.session.name}</p>
+                                <p className="font-medium">
+                                  {usage.session.name}
+                                </p>
                                 <p className="text-xs text-gray-500">
                                   {formatDayOfWeek(usage.session.day_of_week)}
                                 </p>
@@ -497,7 +688,9 @@ const ExercisesPage = () => {
                                     : "bg-gray-100 text-gray-800"
                                 }`}
                               >
-                                {usage.treatment.is_active ? "Activo" : "Inactivo"}
+                                {usage.treatment.is_active
+                                  ? "Activo"
+                                  : "Inactivo"}
                               </span>
                             </div>
 
@@ -513,29 +706,61 @@ const ExercisesPage = () => {
 
                             {usage.series.length > 0 && (
                               <div>
-                                <p className="text-xs font-bold mb-1">{usage.series.length} Series:</p>
+                                <p className="text-xs font-bold mb-1">
+                                  {usage.series.length} Series:
+                                </p>
                                 <div className="overflow-x-auto">
                                   <table className="w-full text-xs">
                                     <thead>
                                       <tr className="bg-gray-50">
-                                        <th className="px-2 py-1 text-left">Rep.</th>
-                                        <th className="px-2 py-1 text-left">Peso</th>
-                                        <th className="px-2 py-1 text-left">Tiempo</th>
-                                        <th className="px-2 py-1 text-left">Dist.</th>
+                                        <th className="px-2 py-1 text-left">
+                                          Rep.
+                                        </th>
+                                        <th className="px-2 py-1 text-left">
+                                          Peso
+                                        </th>
+                                        <th className="px-2 py-1 text-left">
+                                          Tiempo
+                                        </th>
+                                        <th className="px-2 py-1 text-left">
+                                          Dist.
+                                        </th>
                                       </tr>
                                     </thead>
                                     <tbody>
-                                      {usage.series.slice(0, 4).map((series) => (
-                                        <tr key={series.id} className="border-b border-gray-100">
-                                          <td className="px-2 py-1">{series.repetitions}</td>
-                                          <td className="px-2 py-1">{series.weight ? `${series.weight} kg` : '-'}</td>
-                                          <td className="px-2 py-1">{series.time ? `${parseInt(series.time)} seg` : '-'}</td>
-                                          <td className="px-2 py-1">{series.distance ? `${series.distance} m` : '-'}</td>
-                                        </tr>
-                                      ))}
+                                      {usage.series
+                                        .slice(0, 4)
+                                        .map((series) => (
+                                          <tr
+                                            key={series.id}
+                                            className="border-b border-gray-100"
+                                          >
+                                            <td className="px-2 py-1">
+                                              {series.repetitions}
+                                            </td>
+                                            <td className="px-2 py-1">
+                                              {series.weight
+                                                ? `${series.weight} kg`
+                                                : "-"}
+                                            </td>
+                                            <td className="px-2 py-1">
+                                              {series.time
+                                                ? `${parseInt(series.time)} seg`
+                                                : "-"}
+                                            </td>
+                                            <td className="px-2 py-1">
+                                              {series.distance
+                                                ? `${series.distance} m`
+                                                : "-"}
+                                            </td>
+                                          </tr>
+                                        ))}
                                       {usage.series.length > 4 && (
                                         <tr>
-                                          <td colSpan={5} className="px-2 py-1 text-center text-gray-500">
+                                          <td
+                                            colSpan={5}
+                                            className="px-2 py-1 text-center text-gray-500"
+                                          >
                                             +{usage.series.length - 4} más
                                           </td>
                                         </tr>
