@@ -12,6 +12,18 @@ import { GradientButton } from "@/components/ui/gradient-button";
 import { PhysioCallToAction } from "@/components/ui/physio-cta";
 import { DemoWindow } from "@/components/demo-window";
 
+function UserWayWidget() {
+    useEffect(() => {
+    const d = document;
+    const s = d.createElement("script");
+    s.setAttribute("data-account", "436w0GnIfK");
+    s.src = "https://cdn.userway.org/widget.js";
+    s.async = true;
+    (d.head || d.body).appendChild(s);
+  }, []);
+  return null;
+}
+
 
 const Home = () => {
   const router = useRouter();
@@ -67,6 +79,7 @@ const Home = () => {
       style={{ backgroundColor: "rgb(238, 251, 250)" }}
     >
       <CookieConsent />
+      <UserWayWidget />
 
       {!isAuthenticated && (
         <header className="bg-[rgb(238, 251, 250)] shadow-md py-4">
@@ -361,8 +374,8 @@ const Home = () => {
               <span className="absolute left-1/2 -translate-x-1/2 bottom-0 w-12 h-1 bg-[#41B8D5] rounded-full"></span>
             </h3>
             <p className="text-center max-w-xs mx-auto ml-4">
-                Una plataforma innovadora diseñada para conectar pacientes con los
-                mejores fisioterapeutas especializados en todo España.
+              Una plataforma innovadora diseñada para conectar pacientes con los
+              mejores fisioterapeutas especializados en todo España.
             </p>
             <div className="flex space-x-4 mt-6">
               <a

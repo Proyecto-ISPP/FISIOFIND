@@ -68,6 +68,7 @@ Fisio Find is a specialized online consultation platform designed to connect phy
   - Patient record management
   - Treatment tracking
   - Progress reports
+  - Easy-to-use upload video interface
 
 ---
 
@@ -132,6 +133,7 @@ Fisio Find is a specialized online consultation platform designed to connect phy
 		│   ├── patient-management
 		│	│   ├── follow-up
 		│	│   │	├── [id]
+		│	│   │	│	├── files
 		│	│   │	│	├── sessions
 		│	│   │	│	│	└── [sessionId]
 		│	│   │	│	└── videos
@@ -142,12 +144,12 @@ Fisio Find is a specialized online consultation platform designed to connect phy
 		│	│   ├── balance
 		│	│   ├── follow-up
 		│	│   │	├── [id]
+		│	│   │	│	├── files
 		│	│   │	│	├── sessions
 		│	│   │	│	│	└── [sessionId]
 		│	│   │	│	└── videos
 		│	│   │	└──	 components
-		│	│   ├── profile
-		│	│   └── video
+		│	│   └── profile
 		│   ├── questionnaires
 		│   ├── register
 		│	│   ├── patient
@@ -186,291 +188,146 @@ Fisio Find is a specialized online consultation platform designed to connect phy
 ### Project Index
 
 <details open>
-	<summary><b><code>FISIOFIND/</code></b></summary>
-	<ul style="list-style-type: none; padding-left: 20px;">
-		<li>
-			<details>
-				<summary><b>.github</b></summary>
-				<ul style="list-style-type: none; padding-left: 20px;">
-					<li><b><a href='../FISIOFIND/.github/ISSUE_TEMPLATE'>ISSUE_TEMPLATE</a></b> - Plantillas para la creación de issues en GitHub</li>
-					<li><b><a href='../FISIOFIND/.github/PULL_REQUEST_TEMPLATE.md'>PULL_REQUEST_TEMPLATE.md</a></b> - Plantilla para pull requests en GitHub</li>
-					<li><b><a href='../FISIOFIND/.github/workflows'>workflows</a></b> - Configuraciones de flujos de trabajo para GitHub Actions</li>
-				</ul>
-			</details>
-		</li>
-		<li><b><a href='../FISIOFIND/README.md'>README.md</a></b> - Documento principal del proyecto FISIOFIND</li>
-		<li>
-			<details>
-				<summary><b>backend</b></summary>
-				<ul style="list-style-type: none; padding-left: 20px;">
-					<li><b><a href='../FISIOFIND/backend/.env.example'>.env.example</a></b> - Ejemplo de archivo de entorno</li>
-					<li>
-						<details>
-							<summary><b>fisio_find</b></summary>
-							<ul style="list-style-type: none; padding-left: 20px;">
-								<li><b><a href='../FISIOFIND/backend/fisio_find/appointment'>appointment</a></b> - Módulo para gestionar citas</li>
-								<li><b><a href='../FISIOFIND/backend/fisio_find/appointment_rating'>appointment_rating</a></b> - Módulo para calificaciones de citas</li>
-								<li><b><a href='../FISIOFIND/backend/fisio_find/files'>files</a></b> - Módulo para gestión de archivos</li>
-								<li><b><a href='../FISIOFIND/backend/fisio_find/fisio_find'>fisio_find</a></b> - Configuración principal del proyecto Django</li>
-								<li><b><a href='../FISIOFIND/backend/fisio_find/gestion_survey'>gestion_survey</a></b> - Módulo para gestión de encuestas</li>
-								<li><b><a href='../FISIOFIND/backend/fisio_find/guest_session'>guest_session</a></b> - Módulo para sesiones de invitados</li>
-								<li>
-									<details>
-										<summary><b>payment</b></summary>
-										<ul style="list-style-type: none; padding-left: 20px;">
-											<li><b><a href='../FISIOFIND/backend/fisio_find/payment/management/commands'>management/commands</a></b> - Comandos personalizados para pagos</li>
-											<li><b><a href='../FISIOFIND/backend/fisio_find/payment/utils'>utils</a></b> - Utilidades para el módulo de pagos</li>
-										</ul>
-									</details>
-								</li>
-								<li><b><a href='../FISIOFIND/backend/fisio_find/questionnaire'>questionnaire</a></b> - Módulo para cuestionarios</li>
-								<li><b><a href='../FISIOFIND/backend/fisio_find/ratings'>ratings</a></b> - Módulo para calificaciones generales</li>
-								<li><b><a href='../FISIOFIND/backend/fisio_find/terms'>terms</a></b> - Módulo para términos y condiciones</li>
-								<li>
-									<details>
-										<summary><b>treatments</b></summary>
-										<ul style="list-style-type: none; padding-left: 20px;">
-											<li><b><a href='../FISIOFIND/backend/fisio_find/treatments/management/commands'>management/commands</a></b> - Comandos personalizados para tratamientos</li>
-										</ul>
-									</details>
-								</li>
-								<li><b><a href='../FISIOFIND/backend/fisio_find/users'>users</a></b> - Módulo para gestión de usuarios</li>
-								<li><b><a href='../FISIOFIND/backend/fisio_find/videocall'>videocall</a></b> - Módulo para videollamadas</li>
-							</ul>
-						</details>
-					</li>
-					<li><b><a href='../FISIOFIND/backend/requirements.txt'>requirements.txt</a></b> - Lista de dependencias del backend</li>
-					<li><b><a href='../FISIOFIND/backend/run-backend.ps1'>run-backend.ps1</a></b> - Script para ejecutar el backend</li>
-				</ul>
-			</details>
-		</li>
-		<li>
-			<details>
-				<summary><b>docs</b></summary>
-				<ul style="list-style-type: none; padding-left: 20px;">
-					<li><b><a href='../FISIOFIND/docs/.DS_Store'>.DS_Store</a></b> - Archivo de configuración de macOS</li>
-					<li><b><a href='../FISIOFIND/docs/.backgrounds'>.backgrounds</a></b> - Fondos para documentación</li>
-					<li><b><a href='../FISIOFIND/docs/.img'>.img</a></b> - Imágenes para documentación</li>
-					<li><b><a href='../FISIOFIND/docs/01_organization'>01_organization</a></b> - Documentación sobre organización</li>
-					<li><b><a href='../FISIOFIND/docs/02_planification'>02_planification</a></b> - Documentación sobre planificación</li>
-					<li><b><a href='../FISIOFIND/docs/03_reports'>03_reports</a></b> - Informes del proyecto</li>
-					<li><b><a href='../FISIOFIND/docs/04_monitoring'>04_monitoring</a></b> - Documentación sobre monitoreo</li>
-					<li><b><a href='../FISIOFIND/docs/05_knowledge_base'>05_knowledge_base</a></b> - Base de conocimiento del proyecto</li>
-					<li><b><a href='../FISIOFIND/docs/06_terms'>06_terms</a></b> - Términos y condiciones documentados</li>
-					<li><b><a href='../FISIOFIND/docs/Devising a Project'>Devising a Project</a></b> - Guía para diseñar el proyecto</li>
-					<li><b><a href='../FISIOFIND/docs/SPRINT 1'>SPRINT 1</a></b> - Documentación del Sprint 1</li>
-					<li><b><a href='../FISIOFIND/docs/SPRINT 2'>SPRINT 2</a></b> - Documentación del Sprint 2</li>
-					<li><b><a href='../FISIOFIND/docs/build-pdf-examples.sh'>build-pdf-examples.sh</a></b> - Script para generar PDFs de ejemplo</li>
-					<li><b><a href='../FISIOFIND/docs/eisvogel.latex'>eisvogel.latex</a></b> - Plantilla LaTeX para documentación</li>
-					<li><b><a href='../FISIOFIND/docs/templates'>templates</a></b> - Plantillas para documentación</li>
-				</ul>
-			</details>
-		</li>
-		<li>
-			<details>
-				<summary><b>frontend</b></summary>
-				<ul style="list-style-type: none; padding-left: 20px;">
-					<li><b><a href='../FISIOFIND/frontend/README.md'>README.md</a></b> - Documentación principal del frontend</li>
-					<li>
-						<details>
-							<summary><b>app</b></summary>
-							<ul style="list-style-type: none; padding-left: 20px;">
-								<li>
-									<b><a href='../FISIOFIND/frontend/app/account'>account</a></b> - Gestión de cuentas
-									<ul style="list-style-type: none; padding-left: 20px;">
-										<li>
-											<b><a href='../FISIOFIND/frontend/app/account/delete'>delete</a></b> - Eliminación de cuenta
-											<ul style="list-style-type: none; padding-left: 20px;">
-												<li>
-													<b><a href='../FISIOFIND/frontend/app/account/delete/confirm'>confirm</a></b> - Confirmación
-													<ul style="list-style-type: none; padding-left: 20px;">
-														<li><b><a href='../FISIOFIND/frontend/app/account/delete/confirm/[token]'>[token]</a></b> - Token de confirmación</li>
-													</ul>
-												</li>
-											</ul>
-										</li>
-									</ul>
-								</li>
-								<li><b><a href='../FISIOFIND/frontend/app/advanced-search'>advanced-search</a></b> - Ruta para búsqueda avanzada</li>
-								<li>
-									<b><a href='../FISIOFIND/frontend/app/appointments'>appointments</a></b> - Gestión de citas
-									<ul style="list-style-type: none; padding-left: 20px;">
-										<li>
-											<b><a href='../FISIOFIND/frontend/app/appointments/create'>create</a></b> - Crear citas
-											<ul style="list-style-type: none; padding-left: 20px;">
-												<li><b><a href='../FISIOFIND/frontend/app/appointments/create/[id]'>[id]</a></b> - Crear cita por ID</li>
-											</ul>
-										</li>
-									</ul>
-								</li>
-								<li>
-									<b><a href='../FISIOFIND/frontend/app/confirm-alternative'>confirm-alternative</a></b> - Confirmación alternativa
-									<ul style="list-style-type: none; padding-left: 20px;">
-										<li><b><a href='../FISIOFIND/frontend/app/confirm-alternative/[token]'>[token]</a></b> - Token de alternativa</li>
-									</ul>
-								</li>
-								<li>
-									<b><a href='../FISIOFIND/frontend/app/confirm-appointment'>confirm-appointment</a></b> - Confirmación de citas
-									<ul style="list-style-type: none; padding-left: 20px;">
-										<li><b><a href='../FISIOFIND/frontend/app/confirm-appointment/[token]'>[token]</a></b> - Token de cita</li>
-									</ul>
-								</li>
-								<li><b><a href='../FISIOFIND/frontend/app/login'>login</a></b> - Ruta para inicio de sesión</li>
-								<li><b><a href='../FISIOFIND/frontend/app/logout'>logout</a></b> - Ruta para cerrar sesión</li>
-								<li><b><a href='../FISIOFIND/frontend/app/modelo'>modelo</a></b> - Ruta para modelo</li>
-								<li><b><a href='../FISIOFIND/frontend/app/my-appointments'>my-appointments</a></b> - Ruta para mis citas</li>
-								<li>
-									<details>
-										<summary><b>patient-management</b></summary>
-										<ul style="list-style-type: none; padding-left: 20px;">
-											<li>
-												<b><a href='../FISIOFIND/frontend/app/patient-management/follow-up'>follow-up</a></b> - Seguimiento de pacientes
-												<ul style="list-style-type: none; padding-left: 20px;">
-													<li>
-														<b><a href='../FISIOFIND/frontend/app/patient-management/follow-up/[id]'>[id]</a></b> - Seguimiento por ID
-														<ul style="list-style-type: none; padding-left: 20px;">
-															<li>
-																<b><a href='../FISIOFIND/frontend/app/patient-management/follow-up/[id]/sessions'>sessions</a></b> - Sesiones
-																<ul style="list-style-type: none; padding-left: 20px;">
-																	<li><b><a href='../FISIOFIND/frontend/app/patient-management/follow-up/[id]/sessions/[sessionId]'>[sessionId]</a></b> - Sesión por ID</li>
-																</ul>
-															</li>
-															<li><b><a href='../FISIOFIND/frontend/app/patient-management/follow-up/[id]/videos'>videos</a></b> - Vídeos de seguimiento</li>
-														</ul>
-													</li>
-												</ul>
-											</li>
-											<li><b><a href='../FISIOFIND/frontend/app/patient-management/profile'>profile</a></b> - Perfil del paciente</li>
-										</ul>
-									</details>
-								</li>
-								<li><b><a href='../FISIOFIND/frontend/app/permissions-error'>permissions-error</a></b> - Ruta para errores de permisos</li>
-								<li>
-									<details>
-										<summary><b>physio-management</b></summary>
-										<ul style="list-style-type: none; padding-left: 20px;">
-											<li>
-												<b><a href='../FISIOFIND/frontend/app/physio-management/[id]'>[id]</a></b> - Gestión por ID
-												<ul style="list-style-type: none; padding-left: 20px;">
-													<li><b><a href='../FISIOFIND/frontend/app/physio-management/[id]/exercises'>exercises</a></b> - Ejercicios por ID</li>
-												</ul>
-											</li>
-											<li><b><a href='../FISIOFIND/frontend/app/physio-management/balance'>balance</a></b> - Balance de fisioterapeutas</li>
-											<li>
-												<b><a href='../FISIOFIND/frontend/app/physio-management/follow-up'>follow-up</a></b> - Seguimiento
-												<ul style="list-style-type: none; padding-left: 20px;">
-													<li>
-														<b><a href='../FISIOFIND/frontend/app/physio-management/follow-up/[id]'>[id]</a></b> - Seguimiento por ID
-														<ul style="list-style-type: none; padding-left: 20px;">
-															<li>
-																<b><a href='../FISIOFIND/frontend/app/physio-management/follow-up/[id]/sessions'>sessions</a></b> - Sesiones
-																<ul style="list-style-type: none; padding-left: 20px;">
-																	<li><b><a href='../FISIOFIND/frontend/app/physio-management/follow-up/[id]/sessions/[sessionId]'>[sessionId]</a></b> - Sesión por ID</li>
-																</ul>
-															</li>
-															<li><b><a href='../FISIOFIND/frontend/app/physio-management/follow-up/[id]/videos'>videos</a></b> - Vídeos</li>
-														</ul>
-													</li>
-													<li><b><a href='../FISIOFIND/frontend/app/physio-management/follow-up/components'>components</a></b> - Componentes de seguimiento</li>
-												</ul>
-											</li>
-											<li><b><a href='../FISIOFIND/frontend/app/physio-management/profile'>profile</a></b> - Perfil del fisioterapeuta</li>
-											<li><b><a href='../FISIOFIND/frontend/app/physio-management/video'>video</a></b> - Vídeos de fisioterapeutas</li>
-										</ul>
-									</details>
-								</li>
-								<li><b><a href='../FISIOFIND/frontend/app/questionnaires'>questionnaires</a></b> - Ruta para cuestionarios</li>
-								<li>
-									<details>
-										<summary><b>register</b></summary>
-										<ul style="list-style-type: none; padding-left: 20px;">
-											<li><b><a href='../FISIOFIND/frontend/app/register/patient'>patient</a></b> - Registro de pacientes</li>
-											<li><b><a href='../FISIOFIND/frontend/app/register/physio'>physio</a></b> - Registro de fisioterapeutas</li>
-											<li>
-												<b><a href='../FISIOFIND/frontend/app/register/verified'>verified</a></b> - Verificación
-												<ul style="list-style-type: none; padding-left: 20px;">
-													<li><b><a href='../FISIOFIND/frontend/app/register/verified/[token]'>[token]</a></b> - Token de verificación</li>
-												</ul>
-											</li>
-										</ul>
-									</details>
-								</li>
-								<li><b><a href='../FISIOFIND/frontend/app/terms'>terms</a></b> - Ruta para términos y condiciones</li>
-								<li><b><a href='../FISIOFIND/frontend/app/unsubscribe'>unsubscribe</a></b> - Ruta para darse de baja</li>
-								<li>
-									<details>
-										<summary><b>videocalls</b></summary>
-										<ul style="list-style-type: none; padding-left: 20px;">
-											<li><b><a href='../FISIOFIND/frontend/app/videocalls/[roomCode]'>[roomCode]</a></b> - Videollamada por código de sala</li>
-											<li><b><a href='../FISIOFIND/frontend/app/videocalls/css'>css</a></b> - Estilos para videollamadas</li>
-											<li><b><a href='../FISIOFIND/frontend/app/videocalls/end'>end</a></b> - Finalización de videollamadas</li>
-											<li><b><a href='../FISIOFIND/frontend/app/videocalls/hooks'>hooks</a></b> - Hooks para videollamadas</li>
-											<li>
-												<b><a href='../FISIOFIND/frontend/app/videocalls/tools'>tools</a></b> - Herramientas
-												<ul style="list-style-type: none; padding-left: 20px;">
-													<li>
-														<b><a href='../FISIOFIND/frontend/app/videocalls/tools/body-highlighter'>body-highlighter</a></b> - Resaltador de cuerpo
-														<ul style="list-style-type: none; padding-left: 20px;">
-															<li><b><a href='../FISIOFIND/frontend/app/videocalls/tools/body-highlighter/assests'>assests</a></b> - Recursos</li>
-														</ul>
-													</li>
-													<li><b><a href='../FISIOFIND/frontend/app/videocalls/tools/components'>components</a></b> - Componentes</li>
-												</ul>
-											</li>
-										</ul>
-									</details>
-								</li>
-								<li><b><a href='../FISIOFIND/frontend/app/globals.css'>globals.css</a></b> - Estilos globales</li>
-								<li><b><a href='../FISIOFIND/frontend/app/layout.tsx'>layout.tsx</a></b> - Diseño principal del frontend</li>
-								<li><b><a href='../FISIOFIND/frontend/app/not-found.tsx'>not-found.tsx</a></b> - Página de no encontrado</li>
-								<li><b><a href='../FISIOFIND/frontend/app/page.tsx'>page.tsx</a></b> - Página principal</li>
-							</ul>
-						</details>
-					</li>
-					<li>
-						<details>
-							<summary><b>components</b></summary>
-							<ul style="list-style-type: none; padding-left: 20px;">
-								<li><b><a href='../FISIOFIND/frontend/components/ui'>ui</a></b> - Componentes de interfaz de usuario</li>
-							</ul>
-						</details>
-					</li>
-					<li><b><a href='../FISIOFIND/frontend/context'>context</a></b> - Gestión de contexto</li>
-					<li><b><a href='../FISIOFIND/frontend/lib'>lib</a></b> - Librerías y utilidades</li>
-					<li>
-						<details>
-							<summary><b>public</b></summary>
-							<ul style="list-style-type: none; padding-left: 20px;">
-								<li><b><a href='../FISIOFIND/frontend/public/images'>images</a></b> - Imágenes públicas</li>
-								<li>
-									<b><a href='../FISIOFIND/frontend/public/pdfs'>pdfs</a></b> - Documentos PDF
-									<ul style="list-style-type: none; padding-left: 20px;">
-										<li><b><a href='../FISIOFIND/frontend/public/pdfs/06_terms'>06_terms</a></b> - Términos y condiciones</li>
-									</ul>
-								</li>
-							</ul>
-						</details>
-					</li>
-					<li><b><a href='../FISIOFIND/frontend/services'>services</a></b> - Servicios del frontend</li>
-					<li>
-						<details>
-							<summary><b>static</b></summary>
-							<ul style="list-style-type: none; padding-left: 20px;">
-								<li>
-									<b><a href='../FISIOFIND/frontend/static/images'>images</a></b> - Imágenes estáticas
-									<ul style="list-style-type: none; padding-left: 20px;">
-										<li><b><a href='../FISIOFIND/frontend/static/images/body-regions'>body-regions</a></b> - Regiones del cuerpo</li>
-										<li><b><a href='../FISIOFIND/frontend/static/images/exercise-types'>exercise-types</a></b> - Tipos de ejercicios</li>
-									</ul>
-								</li>
-							</ul>
-						</details>
-					</li>
-					<li><b><a href='../FISIOFIND/frontend/utils'>utils</a></b> - Utilidades del frontend</li>
-				</ul>
-			</details>
-		</li>
-	</ul>
+  <summary><b><code>FISIOFIND/</code></b></summary>
+  <ul style="list-style-type: none; padding-left: 20px;">
+    <li>
+      <details>
+        <summary><b>.github</b></summary>
+        <ul style="list-style-type: none; padding-left: 20px;">
+          <li><b><a href='/.github/ISSUE_TEMPLATE'>ISSUE_TEMPLATE</a></b> – Plantillas para crear incidencias</li>
+          <li><b><a href='/.github/PULL_REQUEST_TEMPLATE.md'>PULL_REQUEST_TEMPLATE.md</a></b> – Plantilla para solicitudes de extracción</li>
+          <li><b><a href='/.github/workflows'>workflows</a></b> – Configuración de flujos de trabajo para GitHub Actions</li>
+        </ul>
+      </details>
+    </li>
+    <li><b><a href='/README.md'>README.md</a></b> – Documentación principal del proyecto</li>
+    <li>
+      <details>
+        <summary><b>backend</b></summary>
+        <ul style="list-style-type: none; padding-left: 20px;">
+          <li><b><a href='/backend/.env.example'>.env.example</a></b> – Archivo de entorno de ejemplo</li>
+          <li>
+            <details>
+              <summary><b>fisio_find</b></summary>
+              <ul style="list-style-type: none; padding-left: 20px;">
+                <li><b><a href='/backend/fisio_find/appointment'>appointment</a></b> – Gestión de citas</li>
+                <li><b><a href='/backend/fisio_find/appointment_rating'>appointment_rating</a></b> – Valoraciones de citas</li>
+                <li><b><a href='/backend/fisio_find/files'>files</a></b> – Gestión de archivos</li>
+                <li><b><a href='/backend/fisio_find/fisio_find'>fisio_find</a></b> – Configuración principal del proyecto Django</li>
+                <li><b><a href='/backend/fisio_find/gestion_survey'>gestion_survey</a></b> – Gestión de encuestas</li>
+                <li><b><a href='/backend/fisio_find/guest_session'>guest_session</a></b> – Sesiones de invitados</li>
+                <li>
+                  <details>
+                    <summary><b>payment</b></summary>
+                    <ul style="list-style-type: none; padding-left: 20px;">
+                      <li><b><a href='/backend/fisio_find/payment/management/commands'>management/commands</a></b> – Comandos personalizados</li>
+                      <li><b><a href='/backend/fisio_find/payment/utils'>utils</a></b> – Utilidades del módulo de pagos</li>
+                    </ul>
+                  </details>
+                </li>
+                <li><b><a href='/backend/fisio_find/questionnaire'>questionnaire</a></b> – Cuestionarios</li>
+                <li><b><a href='/backend/fisio_find/ratings'>ratings</a></b> – Valoraciones generales</li>
+                <li><b><a href='/backend/fisio_find/terms'>terms</a></b> – Términos y condiciones</li>
+                <li>
+                  <details>
+                    <summary><b>treatments</b></summary>
+                    <ul style="list-style-type: none; padding-left: 20px;">
+                      <li><b><a href='/backend/fisio_find/treatments/management/commands'>management/commands</a></b> – Comandos personalizados</li>
+                    </ul>
+                  </details>
+                </li>
+                <li><b><a href='/backend/fisio_find/users'>users</a></b> – Gestión de usuarios</li>
+                <li><b><a href='/backend/fisio_find/videocall'>videocall</a></b> – Videollamadas</li>
+              </ul>
+            </details>
+          </li>
+          <li><b><a href='/backend/requirements.txt'>requirements.txt</a></b> – Dependencias del backend</li>
+          <li><b><a href='/backend/run-backend.ps1'>run-backend.ps1</a></b> – Script de ejecución del backend</li>
+        </ul>
+      </details>
+    </li>
+    <li>
+      <details>
+        <summary><b>docs</b></summary>
+        <ul style="list-style-type: none; padding-left: 20px;">
+          <li><b><a href='/docs/.DS_Store'>.DS_Store</a></b> – Archivo interno de macOS</li>
+          <li><b><a href='/docs/.backgrounds'>.backgrounds</a></b> – Recursos visuales</li>
+          <li><b><a href='/docs/.img'>.img</a></b> – Imágenes de documentación</li>
+          <li><b><a href='/docs/01_organization'>01_organization</a></b> – Organización del proyecto</li>
+          <li><b><a href='/docs/02_planification'>02_planification</a></b> – Planificación</li>
+          <li><b><a href='/docs/03_reports'>03_reports</a></b> – Informes</li>
+          <li><b><a href='/docs/04_monitoring'>04_monitoring</a></b> – Monitoreo</li>
+          <li><b><a href='/docs/05_knowledge_base'>05_knowledge_base</a></b> – Base de conocimiento</li>
+          <li><b><a href='/docs/06_terms'>06_terms</a></b> – Términos documentados</li>
+          <li><b><a href='/docs/Devising a Project'>Devising a Project</a></b> – Diseño del proyecto</li>
+          <li><b><a href='/docs/SPRINT 1'>SPRINT 1</a></b> – Documentación del Sprint 1</li>
+          <li><b><a href='/docs/SPRINT 2'>SPRINT 2</a></b> – Documentación del Sprint 2</li>
+          <li><b><a href='/docs/build-pdf-examples.sh'>build-pdf-examples.sh</a></b> – Generación de PDFs</li>
+          <li><b><a href='/docs/eisvogel.latex'>eisvogel.latex</a></b> – Plantilla LaTeX</li>
+          <li><b><a href='/docs/templates'>templates</a></b> – Plantillas de documentación</li>
+        </ul>
+      </details>
+    </li>
+    <li>
+      <details>
+        <summary><b>frontend</b></summary>
+        <ul style="list-style-type: none; padding-left: 20px;">
+          <li><b><a href='/frontend/README.md'>README.md</a></b> – Documentación del frontend</li>
+          <li>
+            <details>
+              <summary><b>app</b></summary>
+              <ul style="list-style-type: none; padding-left: 20px;">
+                <li>
+                  <b><a href='/frontend/app/account'>account</a></b> – Gestión de cuentas
+                  <ul style="list-style-type: none; padding-left: 20px;">
+                    <li>
+                      <b><a href='/frontend/app/account/delete'>delete</a></b> – Eliminación de cuenta
+                      <ul style="list-style-type: none; padding-left: 20px;">
+                        <li>
+                          <b><a href='/frontend/app/account/delete/confirm'>confirm</a></b> – Confirmación
+                          <ul style="list-style-type: none; padding-left: 20px;">
+                            <li><b><a href='/frontend/app/account/delete/confirm/[token]'>[token]</a></b> – Token de confirmación</li>
+                          </ul>
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+                <li><b><a href='/frontend/app/advanced-search'>advanced-search</a></b> – Búsqueda avanzada</li>
+                <li>
+                  <b><a href='/frontend/app/appointments'>appointments</a></b> – Gestión de citas
+                  <ul style="list-style-type: none; padding-left: 20px;">
+                    <li>
+                      <b><a href='/frontend/app/appointments/create'>create</a></b> – Crear cita
+                      <ul style="list-style-type: none; padding-left: 20px;">
+                        <li><b><a href='/frontend/app/appointments/create/[id]'>[id]</a></b> – Cita por ID</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+                <li>
+                  <b><a href='/frontend/app/confirm-alternative'>confirm-alternative</a></b> – Confirmación alternativa
+                  <ul style="list-style-type: none; padding-left: 20px;">
+                    <li><b><a href='/frontend/app/confirm-alternative/[token]'>[token]</a></b></li>
+                  </ul>
+                </li>
+                <li>
+                  <b><a href='/frontend/app/confirm-appointment'>confirm-appointment</a></b> – Confirmación de citas
+                  <ul style="list-style-type: none; padding-left: 20px;">
+                    <li><b><a href='/frontend/app/confirm-appointment/[token]'>[token]</a></b></li>
+                  </ul>
+                </li>
+                <li><b><a href='/frontend/app/login'>login</a></b> – Inicio de sesión</li>
+                <li><b><a href='/frontend/app/logout'>logout</a></b> – Cierre de sesión</li>
+                <li><b><a href='/frontend/app/modelo'>modelo</a></b> – Modelo anatómico</li>
+                <li><b><a href='/frontend/app/my-appointments'>my-appointments</a></b> – Mis citas</li>
+              </ul>
+            </details>
+          </li>
+        </ul>
+      </details>
+    </li>
+  </ul>
 </details>
 
 ##  Local Deployment
@@ -627,7 +484,9 @@ After the local backend server is running, we can run the frontend server **in a
 - [X] **`Extra-2`**: <strike>User support tools implemented.</strike>
 - [X] **`Extra-3`**: <strike>Comprehensive application testing completed.</strike>
 
-
+### PPL
+- [X] **`Extra-4`**: <strike>Patient history management implemented.</strike>
+- [X] **`Extra-5`**: <strike>Chatbot implemented.</strike>
 
 ---
 

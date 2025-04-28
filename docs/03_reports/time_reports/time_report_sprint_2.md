@@ -1,5 +1,5 @@
 ---
-title: "INFORME DE TIEMPO - #SPRINT 2 (14/03 - 20/03)"       # CHANGE IF NEEDED
+title: "INFORME DE TIEMPO - #SPRINT 2 (14/03 - 27/03)"       # CHANGE IF NEEDED
 subtitle: "FISIO FIND - Grupo 6 - #SPRINT 2"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]
 date: "25/03/2025"                                        # CHANGE IF NEEDED
@@ -26,7 +26,7 @@ classoption: "table"
 </p>
 
 <h1 align="center" style="font-size: 30px; font-weight: bold;">
-  FISIO FIND  -  INFORME DE TIEMPO #SPRINT 2 (14/03 - 20/03)
+  FISIO FIND  -  INFORME DE TIEMPO #SPRINT 2 (14/03 - 27/03)
 </h1>
 
 <br>
