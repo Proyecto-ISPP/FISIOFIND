@@ -44,6 +44,7 @@ interface Treatment {
 }
 
 interface Appointment {
+  patient_name: string;
   id: number;
   start_time: string;
   end_time: string;
@@ -73,7 +74,7 @@ const SeguimientoPage = () => {
   const [patientsWithoutTreatment, setPatientsWithoutTreatment] = useState<
     {
       id: number;
-      name: string;
+      patient_name: string;
       appointmentId: number;
       appointmentDate: string;
     }[]
@@ -84,7 +85,7 @@ const SeguimientoPage = () => {
   const [filteredPatients, setFilteredPatients] = useState<
     {
       id: number;
-      name: string;
+      patient_name: string;
       appointmentId: number;
       appointmentDate: string;
     }[]
@@ -335,7 +336,7 @@ const SeguimientoPage = () => {
       )
       .map((appointment) => ({
         id: Number(appointment.patient),
-        name: appointment.name,
+        patient_name: appointment.patient_name?.trim() ? appointment.patient_name : `Paciente sin nombre`,
         appointmentId: appointment.id,
         appointmentDate: new Date(appointment.end_time).toLocaleDateString(
           "es-ES"
@@ -357,7 +358,7 @@ const SeguimientoPage = () => {
 
     // First, look for exact matches (prioritize these)
     const exactMatches = patientsWithoutTreatment.filter(
-      (patient) => patient.name === term
+      (patient) => patient.patient_name === term
     );
 
     // If we have exact matches, only show those
@@ -368,7 +369,7 @@ const SeguimientoPage = () => {
 
     // Otherwise, look for partial matches (case sensitive)
     const partialMatches = patientsWithoutTreatment.filter((patient) =>
-      patient.name.includes(term)
+      patient.patient_name.includes(term)
     );
 
     setFilteredPatients(partialMatches);
@@ -644,7 +645,7 @@ const SeguimientoPage = () => {
                   </div>
 
                   <div className="p-6">
-                    <h3 className="text-xl font-bold mb-2">{patient.name}</h3>
+                    <h3 className="text-xl font-bold mb-2">{patient.patient_name}</h3>
 
                     <div className="mb-4">
                       <div className="flex justify-between mb-1">
