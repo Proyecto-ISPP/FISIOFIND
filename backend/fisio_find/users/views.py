@@ -89,6 +89,7 @@ def patient_register_view(request):
 def verify_user_and_update_status(user_id):
     """
     Función para cambiar el estado del usuario a verified y devolver una Response.
+    En principio, se llama desde la verificación de correo
     """
     patient = Patient.objects.get(id=user_id)
     patient.user.account_status = 'ACTIVE'
@@ -270,9 +271,12 @@ def verify_physio_id(request):
 def physio_register_view(request):
     serializer = PhysioRegisterSerializer(data=request.data)
     if serializer.is_valid():
-        pyshio = serializer.save()
-        user_id = pyshio.id
-        verify_user_and_update_status(user_id)
+        physio = serializer.save()
+        physio.user.account_status = 'ACTIVE'
+        physio.save()
+        # Comentado porque la funcion de verificar user solo trabaja con patient
+        # user_id = physio.id
+        # verify_user_and_update_status(user_id)
         return Response({"message": "Fisioteraputa registrado correctamente"}, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
