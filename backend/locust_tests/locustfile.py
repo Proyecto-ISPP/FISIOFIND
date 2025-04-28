@@ -339,3 +339,54 @@ class UserBehavior(HttpUser):
                 login_response.success()
             elif login_response.status_code >= 500:
                 login_response.failure(f"Server error: {login_response.status_code}")
+    
+    @task(1)
+    def login_fisio_and_create_exercise(self):
+        """Se loguea como fisioterapeuta y crea un ejercicio"""
+        login_payload = {
+            "username": "LOCUST_USER",
+            "password": "Usuar1o_5"
+        }
+        headers = {"Content-Type": "application/json"}
+
+        with self.client.post(
+            "/api/app_user/login/",
+            json=login_payload,
+            headers=headers,
+            name="Login Physio for Create Exercise",
+            catch_response=True
+        ) as login_response:
+            if login_response.status_code == 200:
+                token = login_response.json().get("access")
+                if token:
+                    exercise_payload = {
+                        "title": "Ejercicio muy sano",
+                        "description": "Descripción muy clara",
+                        "body_region": "UPPER_BODY",
+                        "exercise_type": "STRENGTH"
+                    }
+                    auth_headers = {
+                        "Authorization": f"Bearer {token}",
+                        "Content-Type": "application/json"
+                    }
+                    with self.client.post(
+                        "/api/treatments/exercises/create/",
+                        json=exercise_payload,
+                        headers=auth_headers,
+                        name="Create Exercise",
+                        catch_response=True
+                    ) as create_response:
+                        print("Create Exercise response status:", create_response.status_code)
+                        print("Create Exercise response body:", create_response.text)
+
+                        if create_response.status_code == 400:
+                            create_response.success()
+                        elif create_response.status_code >= 500:
+                            create_response.failure(f"Server error: {create_response.status_code}")
+                else:
+                    print("No access token received. Login response:", login_response.text)
+                    login_response.failure("No access token received")
+            elif login_response.status_code == 400:
+                login_response.success()
+            elif login_response.status_code >= 500:
+                login_response.failure(f"Server error: {login_response.status_code}")
