@@ -60,7 +60,7 @@ const bodyRegionImages: Record<string, string> = {
   KNEE: "/static/images/body-regions/rodilla.png",
   CALVES: "/static/images/body-regions/gemelos.png",
   ANKLE_FOOT: "/static/images/body-regions/pie_tobillo.png",
-  UPPER_BODY: "/static/images/body-regions/tre_superior.png",
+  UPPER_BODY: "/static/images/body-regions/tren_superior.png",
   LOWER_BODY: "/static/images/body-regions/tren_inferior.png",
   FULL_BODY: "/static/images/body-regions/full_body.png",
 };
