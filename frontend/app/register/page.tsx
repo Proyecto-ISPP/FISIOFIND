@@ -81,14 +81,16 @@ export default function RegisterPage() {
                 {/* Highlight effect */}
                 <div className="absolute top-0 left-1/4 right-1/4 h-1/5 bg-white/30 rounded-full blur-sm transform -rotate-6"></div>
                 {/* Image container with 3D hover effect */}
-                <div className="absolute inset-0 flex items-center justify-center transform group-hover:scale-105 group-hover:translate-z-10 transition-all duration-300">
-                  <Image
-                    src="/static/patient_icon.svg"
-                    alt="Patient Icon"
-                    width={180}
-                    height={180}
-                    className="object-cover drop-shadow-xl"
-                  />
+                <div className="absolute inset-0 flex items-center justify-center transform group-hover:scale-110 group-hover:translate-z-10 transition-all duration-300">
+                  <div className="w-48 h-48 relative">
+                    <Image
+                      src="/static/patient_icon.png"
+                      alt="Patient Icon"
+                      fill
+                      className="object-cover drop-shadow-xl rounded-full"
+                      style={{ objectPosition: "center" }}
+                    />
+                  </div>
                 </div>
               </div>
             </CardItem>
@@ -128,14 +130,16 @@ export default function RegisterPage() {
                 {/* Highlight effect */}
                 <div className="absolute top-0 left-1/4 right-1/4 h-1/5 bg-white/30 rounded-full blur-sm transform rotate-6"></div>
                 {/* Image container with 3D hover effect */}
-                <div className="absolute inset-0 flex items-center justify-center transform group-hover:scale-105 group-hover:translate-z-10 transition-all duration-300">
-                  <Image
-                    src="/static/physiotherapist_icon.svg"
-                    alt="Physiotherapist Icon"
-                    width={180}
-                    height={180}
-                    className="object-cover drop-shadow-xl"
-                  />
+                <div className="absolute inset-0 flex items-center justify-center transform group-hover:scale-110 group-hover:translate-z-10 transition-all duration-300">
+                  <div className="w-48 h-48 relative">
+                    <Image
+                      src="/static/physiotherapist_icon.png"
+                      alt="Physiotherapist Icon"
+                      fill
+                      className="object-cover drop-shadow-xl rounded-full"
+                      style={{ objectPosition: "center" }}
+                    />
+                  </div>
                 </div>
               </div>
             </CardItem>
