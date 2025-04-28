@@ -1,173 +1,341 @@
-from locust import HttpUser, task, between, constant
-import logging
+import random
+from locust import HttpUser, task, between
 
-class APIMethodCheckUser(HttpUser):
-    wait_time = constant(0)#between(1, 2)
+class UserBehavior(HttpUser):
+    wait_time = between(1, 5)
 
-    # Lista de endpoints a probar
-    endpoints = [
-        "http://localhost:8000/api/app_user/account/delete/confirm/<str:token>/",
-        "http://localhost:8000/api/app_user/account/delete/request/",
-        "http://localhost:8000/api/app_user/change_password/",
-        "http://localhost:8000/api/app_user/check-role/",
-        "http://localhost:8000/api/app_user/current-user/",
-        "http://localhost:8000/api/app_user/login/",
-        "http://localhost:8000/api/app_user/logout/",
-        "http://localhost:8000/api/app_user/patient/register/",
-        "http://localhost:8000/api/app_user/physio/add-service/",
-        "http://localhost:8000/api/app_user/physio/delete-service/<int:service_id>/",
-        "http://localhost:8000/api/app_user/physio/payment/",
-        "http://localhost:8000/api/app_user/physio/register/",
-        "http://localhost:8000/api/app_user/physio/update-service/<int:service_id>/",
-        "http://localhost:8000/api/app_user/physio/update/",
-        "http://localhost:8000/api/app_user/physio/validate/",
-        "http://localhost:8000/api/app_user/physio/verify-identity/",
-        "http://localhost:8000/api/app_user/profile/",
-        "http://localhost:8000/api/app_user/register/verified/<token>/",
-        "http://localhost:8000/api/app_user/services/<int:physio_id>/",
-        "http://localhost:8000/api/app_user/subscription/status/",
-        "http://localhost:8000/api/app_user/subscription/update/",
-        "http://localhost:8000/api/app_user/unsubscribe/",
-        "http://localhost:8000/api/appointment/<int:appointmentId>/",
-        "http://localhost:8000/api/appointment/<int:appointmentId><drf_format_suffix:format>",
-        "http://localhost:8000/api/appointment/confirm-alternative/<str:token>/",
-        "http://localhost:8000/api/appointment/confirm-alternative/<str:token><drf_format_suffix:format>",
-        "http://localhost:8000/api/appointment/confirm-appointment/<str:token>/",
-        "http://localhost:8000/api/appointment/confirm-appointment/<str:token><drf_format_suffix:format>",
-        "http://localhost:8000/api/appointment/delete/<int:appointment_id>/",
-        "http://localhost:8000/api/appointment/delete/<int:appointment_id><drf_format_suffix:format>",
-        "http://localhost:8000/api/appointment/patient/",
-        "http://localhost:8000/api/appointment/patient/list/",
-        "http://localhost:8000/api/appointment/patient/list<drf_format_suffix:format>",
-        "http://localhost:8000/api/appointment/patient<drf_format_suffix:format>",
-        "http://localhost:8000/api/appointment/physio/",
-        "http://localhost:8000/api/appointment/physio/list/",
-        "http://localhost:8000/api/appointment/physio/list/finished/",
-        "http://localhost:8000/api/appointment/physio/list/finished<drf_format_suffix:format>",
-        "http://localhost:8000/api/appointment/physio/list<drf_format_suffix:format>",
-        "http://localhost:8000/api/appointment/physio/schedule/weekly/",
-        "http://localhost:8000/api/appointment/physio/schedule/weekly<drf_format_suffix:format>",
-        "http://localhost:8000/api/appointment/physio<drf_format_suffix:format>",
-        "http://localhost:8000/api/appointment/schedule/<int:pk>/",
-        "http://localhost:8000/api/appointment/schedule/<int:pk><drf_format_suffix:format>",
-        "http://localhost:8000/api/appointment/update/<int:appointment_id>/",
-        "http://localhost:8000/api/appointment/update/<int:appointment_id>/accept-alternative/",
-        "http://localhost:8000/api/appointment/update/<int:appointment_id>/accept-alternative<drf_format_suffix:format>",
-        "http://localhost:8000/api/appointment/update/<int:appointment_id>/confirm/",
-        "http://localhost:8000/api/appointment/update/<int:appointment_id>/confirm<drf_format_suffix:format>",
-        "http://localhost:8000/api/appointment/update/<int:appointment_id><drf_format_suffix:format>",
-        "http://localhost:8000/api/appointment_ratings/<int:physio_id>/",
-        "http://localhost:8000/api/appointment_ratings/appointment/<int:appointment_id>/",
-        "http://localhost:8000/api/appointment_ratings/appointment/<int:appointment_id>/edit/",
-        "http://localhost:8000/api/appointment_ratings/average/",
-        "http://localhost:8000/api/appointment_ratings/check-room-rating/<str:room_code>/",
-        "http://localhost:8000/api/appointment_ratings/report/<int:rating_id>/",
-        "http://localhost:8000/api/appointment_ratings/room/<str:room_code>/",
-        "http://localhost:8000/api/cloud/files/create-files/",
-        "http://localhost:8000/api/cloud/files/delete-file/<int:file_id>/",
-        "http://localhost:8000/api/cloud/files/list-file/<int:file_id>/",
-        "http://localhost:8000/api/cloud/files/list-files/",
-        "http://localhost:8000/api/cloud/files/update-file/<int:file_id>/",
-        "http://localhost:8000/api/cloud/videos/create-video/",
-        "http://localhost:8000/api/cloud/videos/delete-video/<int:video_id>/",
-        "http://localhost:8000/api/cloud/videos/list-video/<int:video_id>/",
-        "http://localhost:8000/api/cloud/videos/list-videos/",
-        "http://localhost:8000/api/cloud/videos/stream-video/<int:video_id>/",
-        "http://localhost:8000/api/cloud/videos/update-video/<int:video_id>/",
-        "http://localhost:8000/api/guest_session/advanced-search/",
-        "http://localhost:8000/api/guest_session/physios-with-specializations/",
-        "http://localhost:8000/api/guest_session/search-physios/",
-        "http://localhost:8000/api/guest_session/specializations/",
-        "http://localhost:8000/api/questionnaires/<int:pk>/",
-        "http://localhost:8000/api/questionnaires/create/",
-        "http://localhost:8000/api/questionnaires/list/",
-        "http://localhost:8000/api/questionnaires/questionnaires/<int:questionnaire_id>/questions/create/",
-        "http://localhost:8000/api/ratings/<int:rating_id>/",
-        "http://localhost:8000/api/ratings/create/",
-        "http://localhost:8000/api/ratings/delete/<int:rating_id>/",
-        "http://localhost:8000/api/ratings/has-rated/",
-        "http://localhost:8000/api/ratings/list/",
-        "http://localhost:8000/api/ratings/my-rating/",
-        "http://localhost:8000/api/ratings/update/<int:rating_id>/",
-        "http://localhost:8000/api/terms/create/",
-        "http://localhost:8000/api/terms/delete/<int:pk>/",
-        "http://localhost:8000/api/terms/detail/<int:pk>/",
-        "http://localhost:8000/api/terms/list/",
-        "http://localhost:8000/api/terms/update/<int:pk>/",
-        "http://localhost:8000/api/treatments/<int:pk>/",
-        "http://localhost:8000/api/treatments/<int:pk>/toggle-notifications/",
-        "http://localhost:8000/api/treatments/<int:treatment_id>/evolution/",
-        "http://localhost:8000/api/treatments/<int:treatment_id>/sessions/",
-        "http://localhost:8000/api/treatments/<int:treatment_id>/sessions/create/",
-        "http://localhost:8000/api/treatments/create/",
-        "http://localhost:8000/api/treatments/exercise-logs/<int:pk>/",
-        "http://localhost:8000/api/treatments/exercise-logs/create/",
-        "http://localhost:8000/api/treatments/exercise-sessions/<int:exercise_session_id>/logs/",
-        "http://localhost:8000/api/treatments/exercise-sessions/<int:exercise_session_id>/series/",
-        "http://localhost:8000/api/treatments/exercise-sessions/<int:exercise_session_id>/series/create/",
-        "http://localhost:8000/api/treatments/exercise-sessions/<int:exercise_session_id>/unassign-exercise/",
-        "http://localhost:8000/api/treatments/exercises/",
-        "http://localhost:8000/api/treatments/exercises/<int:exercise_id>/usage/",
-        "http://localhost:8000/api/treatments/exercises/<int:pk>/",
-        "http://localhost:8000/api/treatments/exercises/create/",
-        "http://localhost:8000/api/treatments/exercises/search/",
-        "http://localhost:8000/api/treatments/patient/",
-        "http://localhost:8000/api/treatments/physio/",
-        "http://localhost:8000/api/treatments/series/<int:pk>/",
-        "http://localhost:8000/api/treatments/series/<int:pk>/delete/",
-        "http://localhost:8000/api/treatments/sessions/<int:session_id>/",
-        "http://localhost:8000/api/treatments/sessions/<int:session_id>/assign-exercise/",
-        "http://localhost:8000/api/treatments/sessions/<int:session_id>/exercises/",
-        "http://localhost:8000/api/treatments/sessions/<int:session_id>/test/",
-        "http://localhost:8000/api/treatments/sessions/<int:session_id>/test/delete/",
-        "http://localhost:8000/api/treatments/sessions/<int:session_id>/test/respond/",
-        "http://localhost:8000/api/treatments/sessions/<int:session_id>/test/responses/",
-        "http://localhost:8000/api/treatments/sessions/<int:session_id>/test/view/",
-        "http://localhost:8000/api/videocall/create-room/",
-        "http://localhost:8000/api/videocall/create-test-room/",
-        "http://localhost:8000/api/videocall/delete-room/<str:code>/",
-        "http://localhost:8000/api/videocall/join-room/<str:code>/",
-        "http://localhost:8000/api/videocall/my-rooms/",
-    ]
+    @task(2)
+    def register_physio(self):
+        payload = {
+            "username": "LOCUST_USER",
+            "email": "LOCUST@sample.com",
+            "password": "Usuar1o_5",
+            "first_name": "Guadalupe",
+            "last_name": "Moto Pino",
+            "dni": "76966713L",
+            "phone_number": "666666666",
+            "postal_code": "41960",
+            "gender": "M",
+            "birth_date": "2000-01-01",
+            "collegiate_number": "1488",
+            "autonomic_community": "EXTREMADURA",
+            "specializations": ["Obstetricia", "Deportiva"],
+            "plan":"blue"
+        }
+        headers = {"Content-Type": "application/json"}
+        
+        with self.client.post(
+            "/api/app_user/physio/register/",
+            json=payload,
+            headers=headers,
+            name="Register Physio",
+            catch_response=True  # Necesario para controlar manualmente la respuesta
+        ) as response:
+            print("Physio response status:", response.status_code)
+            print("Physio response body:", response.text)
+            if response.status_code == 400:
+                response.success()  # Lo marcamos como "éxito" aunque sea 400
+            elif response.status_code >= 500:
+                response.failure(f"Server error: {response.status_code}")  # Solo fallamos si es error de servidor
 
-    # Inicializamos las listas globales
-    post_not_allowed = []
-    get_not_allowed = []
-    put_not_allowed = []
 
-    def _check_method(self, method_name, url):
-        method = getattr(self.client, method_name)
-        with method(url, catch_response=True) as response:
-            if response.status_code == 405:
-                getattr(self, f"{method_name}_not_allowed").append(url)
-                response.success()  # Para que no lo marque como error
-            #elif response.status_code >= 400:
-            #    response.failure(f"{method_name.upper()} {url} -> {response.status_code}")
-            else:
+    @task(1)  # Peso 1: menos frecuente que register_physio
+    def post_backend_advanced_search(self):
+        """Simula el uso del filtro de búsqueda en el backend"""
+        payload = {
+            "specialization": random.choice(["Fisioterapia deportiva", "Pediatría", ""]),
+            "gender": random.choice(["male", "female", ""]),
+            "postalCode": random.choice(["28001", "08010", ""]),
+            "maxPrice": random.choice(["30", "50", ""]),
+            "schedule": random.choice(["mañana", "tarde", "noche", ""]),
+            "name": random.choice(["", "Juan", "María"])
+        }
+
+        self.client.post(
+            "/api/guest_session/advanced-search/",
+            json=payload,
+            headers={"Content-Type": "application/json"},
+            name="Advanced Search"
+        )
+
+    @task(1)
+    def register_patient(self):
+        payload = {
+            "username": "LOCUST_patient",
+            "email": "LOCUST_patient@sample.com",
+            "password": "74066738E74066738E",
+            "first_name": "Sample",
+            "last_name": "Sample",
+            "dni": "74066738E",
+            "phone_number": "666666666",
+            "postal_code": "41960",
+            "gender": "M",
+            "birth_date": "2000-01-01"
+        }
+        headers = {"Content-Type": "application/json"}
+        
+        with self.client.post(
+            "/api/app_user/patient/register/",
+            json=payload,
+            headers=headers,
+            name="Register Patient",
+            catch_response=True
+        ) as response:
+            print("Patient response status:", response.status_code)
+            print("Patient response body:", response.text)
+            if response.status_code == 400:
                 response.success()
+            elif response.status_code >= 500:
+                response.failure(f"Server error: {response.status_code}")
+                
+    @task(1)
+    def login_and_add_service(self):
+        """Se loguea como fisioterapeuta y añade un servicio"""
+        login_payload = {
+            "username": "LOCUST_USER",
+            "password": "Usuar1o_5"
+        }
+        headers = {"Content-Type": "application/json"}
 
-    @task
-    def check_methods(self):
-        for url in self.endpoints:
-            self._check_method("get", url)
-            self._check_method("post", url)
-            self._check_method("put", url)
+        with self.client.post(
+            "/api/app_user/login/",
+            json=login_payload,
+            headers=headers,
+            name="Login Physio",
+            catch_response=True
+        ) as login_response:
+            if login_response.status_code == 200:
+                token = login_response.json().get("access")
+                if token:
+                    add_service_payload = {"title":"Primera consulta","description":"ejemplo","price":90,"duration":60,"tipo":"PRIMERA_CONSULTA","custom_questionnaire":{"UI Schema":{"type":"Group","label":"Cuestionario Personalizado","elements":[{"type":"Number","label":"Peso (kg)","scope":"#/properties/peso"},{"type":"Number","label":"Altura (cm)","scope":"#/properties/altura"},{"type":"Number","label":"Edad","scope":"#/properties/edad"},{"type":"Control","label":"Nivel de actividad física","scope":"#/properties/actividad_fisica"},{"type":"Control","label":"Motivo de la consulta","scope":"#/properties/motivo_consulta"}]}}}
+                    auth_headers = {
+                        "Authorization": f"Bearer {token}",
+                        "Content-Type": "application/json"
+                    }
+                    with self.client.post(
+                        "/api/app_user/physio/add-service/",
+                        json=add_service_payload,
+                        headers=auth_headers,
+                        name="Add Service",
+                        catch_response=True
+                    ) as service_response:
+                        print("Add Service response status:", service_response.status_code)
+                        print("Add Service response body:", service_response.text)
+                        if service_response.status_code == 400:
+                            service_response.success()
+                        elif service_response.status_code >= 500:
+                            service_response.failure(f"Server error: {service_response.status_code}")
+                else:
+                    login_response.failure("No access token received")
+            elif login_response.status_code == 400:
+                login_response.success()
+            elif login_response.status_code >= 500:
+                login_response.failure(f"Server error: {login_response.status_code}")
 
-        # Solo lo hace una vez
-        #self.environment.runner.quit()
 
-    def on_stop(self):
-        pass
-        """
-        logging.info("GET not allowed:")
-        for url in self.get_not_allowed:
-            logging.info(f" - {url}")
+    @task(1)
+    def login_and_update_physio(self):
+        """Se loguea como fisioterapeuta y actualiza su perfil"""
+        login_payload = {
+            "username": "LOCUST_USER",
+            "password": "Usuar1o_5"
+        }
+        headers = {"Content-Type": "application/json"}
 
-        logging.info("POST not allowed:")
-        for url in self.post_not_allowed:
-            logging.info(f" - {url}")
+        with self.client.post(
+            "/api/app_user/login/",
+            json=login_payload,
+            headers=headers,
+            name="Login Physio for Update",
+            catch_response=True
+        ) as login_response:
+            if login_response.status_code == 200:
+                token = login_response.json().get("access")
+                if token:
+                    update_payload = {
+                        "user.dni": "76966713L",
+                        "user.email": "LOCUST@sample.com",
+                        "user.first_name": "Guadalupe",
+                        "user.last_name": "Moto Pino",
+                        "user.phone_number": "666666666",
+                        "user.postal_code": "41960",
+                        "user.user_id": "13",
+                        "user.username": "LOCUST_USER",
+                        "gender": "M",
+                        "birth_date": "2000-01-01",
+                        "autonomic_community": "EXTREMADURA",
+                        "collegiate_number": "1488",
+                        "bio": "Mi biografía",
+                        "rating_avg": "",
+                        "specializations": '["Obstetricia","Deportiva"]',  # OJO, string
+                        "degree": "La mejor titulación",
+                        "university": "La mejor universidad",
+                        "experience": "Mucha experiencia",
+                        "workplace": "En el mejor sitio"
+                    }
+                    auth_headers = {
+                        "Authorization": f"Bearer {token}"
+                    }
+                    with self.client.put(
+                        "/api/app_user/physio/update/",
+                        data=update_payload,
+                        headers=auth_headers,
+                        name="Update Physio",
+                        catch_response=True
+                    ) as update_response:
+                        print("Update Physio response status:", update_response.status_code)
+                        print("Update Physio response body:", update_response.text)
 
-        logging.info("PUT not allowed:")
-        for url in self.put_not_allowed:
-            logging.info(f" - {url}")
-        """
+                        if update_response.status_code == 400:
+                            update_response.success()
+                        elif update_response.status_code >= 500:
+                            update_response.failure(f"Server error: {update_response.status_code}")
+                else:
+                    print("No access token received. Login response:", login_response.text)
+                    login_response.failure("No access token received")
+            elif login_response.status_code == 400:
+                login_response.success()
+            elif login_response.status_code >= 500:
+                login_response.failure(f"Server error: {login_response.status_code}")
+
+
+    @task(1)
+    def login_and_update_patient(self):
+        """Se loguea como paciente y actualiza su perfil"""
+        login_payload = {
+            "username": "LOCUST_patient",
+            "password": "74066738E74066738E"
+        }
+        headers = {"Content-Type": "application/json"}
+
+        with self.client.post(
+            "/api/app_user/login/",
+            json=login_payload,
+            headers=headers,
+            name="Login Patient for Update",
+            catch_response=True
+        ) as login_response:
+            if login_response.status_code == 200:
+                token = login_response.json().get("access")
+                if token:
+                    update_payload = {
+                        "user.first_name": "Sample",
+                        "user.last_name": "Sample",
+                        "user.email": "LOCUST_patient@sample.com",
+                        "user.phone_number": "666666667",
+                        "user.postal_code": "66666",
+                        "user.username": "LOCUST_patient",
+                        "gender": "F",
+                        "birth_date": "2000-01-01"
+                    }
+                    auth_headers = {
+                        "Authorization": f"Bearer {token}"
+                    }
+                    with self.client.patch(
+                        "/api/app_user/profile/",
+                        data=update_payload,
+                        headers=auth_headers,
+                        name="Update Patient Profile",
+                        catch_response=True
+                    ) as update_response:
+                        print("Update Patient response status:", update_response.status_code)
+                        print("Update Patient response body:", update_response.text)
+
+                        if update_response.status_code == 400:
+                            update_response.success()
+                        elif update_response.status_code >= 500:
+                            update_response.failure(f"Server error: {update_response.status_code}")
+                else:
+                    print("No access token received. Login response:", login_response.text)
+                    login_response.failure("No access token received")
+            elif login_response.status_code == 400:
+                login_response.success()
+            elif login_response.status_code >= 500:
+                login_response.failure(f"Server error: {login_response.status_code}")
+
+    @task(1)
+    def login_physio_and_list_appointments(self):
+        """Se loguea como fisio y lista sus citas"""
+        login_payload = {
+            "username": "LOCUST_USER",
+            "password": "Usuar1o_5"
+        }
+        headers = {"Content-Type": "application/json"}
+
+        with self.client.post(
+            "/api/app_user/login/",
+            json=login_payload,
+            headers=headers,
+            name="Login Physio for Appointments",
+            catch_response=True
+        ) as login_response:
+            if login_response.status_code == 200:
+                token = login_response.json().get("access")
+                if token:
+                    auth_headers = {
+                        "Authorization": f"Bearer {token}"
+                    }
+                    with self.client.get(
+                        "/api/appointment/physio/list/",
+                        headers=auth_headers,
+                        name="List Physio Appointments",
+                        catch_response=True
+                    ) as list_response:
+                        print("List Appointments physio response status:", list_response.status_code)
+                        print("List Appointments physio response body:", list_response.text)
+
+                        if list_response.status_code == 400:
+                            list_response.success()
+                        elif list_response.status_code >= 500:
+                            list_response.failure(f"Server error: {list_response.status_code}")
+                else:
+                    print("No access token received. Login response:", login_response.text)
+                    login_response.failure("No access token received")
+            elif login_response.status_code == 400:
+                login_response.success()
+            elif login_response.status_code >= 500:
+                login_response.failure(f"Server error: {login_response.status_code}")
+
+
+    @task(1)
+    def login_patient_and_list_appointments(self):
+        """Se loguea como paciente y lista sus citas"""
+        login_payload = {
+            "username": "LOCUST_patient",
+            "password": "74066738E74066738E"
+        }
+        headers = {"Content-Type": "application/json"}
+
+        with self.client.post(
+            "/api/app_user/login/",
+            json=login_payload,
+            headers=headers,
+            name="Login Patient for Appointments",
+            catch_response=True
+        ) as login_response:
+            if login_response.status_code == 200:
+                token = login_response.json().get("access")
+                if token:
+                    auth_headers = {
+                        "Authorization": f"Bearer {token}"
+                    }
+                    with self.client.get(
+                        "/api/appointment/patient/list/",
+                        headers=auth_headers,
+                        name="List Patient Appointments",
+                        catch_response=True
+                    ) as list_response:
+                        print("List Appointments patient response status:", list_response.status_code)
+                        print("List Appointments patient response body:", list_response.text)
+
+                        if list_response.status_code == 400:
+                            list_response.success()
+                        elif list_response.status_code >= 500:
+                            list_response.failure(f"Server error: {list_response.status_code}")
+                else:
+                    print("No access token received. Login response:", login_response.text)
+                    login_response.failure("No access token received")
+            elif login_response.status_code == 400:
+                login_response.success()
+            elif login_response.status_code >= 500:
+                login_response.failure(f"Server error: {login_response.status_code}")
