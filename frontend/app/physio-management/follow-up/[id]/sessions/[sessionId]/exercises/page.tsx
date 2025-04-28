@@ -987,6 +987,23 @@ const ExercisesPage = ({
                       required
                     >
                       {/* ... existing options ... */}
+                      <option value="NECK">Cuello</option>
+                      <option value="SHOULDER">Hombros</option>
+                      <option value="ARM">Brazos (Bíceps, Tríceps)</option>
+                      <option value="ELBOW">Codo</option>
+                      <option value="WRIST_HAND">Muñeca y Mano</option>
+                      <option value="CHEST">Pecho</option>
+                      <option value="UPPER_BACK">Espalda Alta</option>
+                      <option value="LOWER_BACK">Zona Lumbar</option>
+                      <option value="CORE">Zona Media / Core</option>
+                      <option value="QUADRICEPS">Cuádriceps</option>
+                      <option value="HAMSTRINGS">Isquiotibiales</option>
+                      <option value="KNEE">Rodilla</option>
+                      <option value="CALVES">Pantorrillas</option>
+                      <option value="ANKLE_FOOT">Tobillo y Pie</option>
+                      <option value="UPPER_BODY">Parte Superior del Cuerpo</option>
+                      <option value="LOWER_BODY">Parte Inferior del Cuerpo</option>
+                      <option value="FULL_BODY">Cuerpo Completo</option>
                     </select>
                   </div>
                   <div className="space-y-2">
@@ -1005,6 +1022,16 @@ const ExercisesPage = ({
                       required
                     >
                       {/* ... existing options ... */}
+                      <option value="STRENGTH">Fortalecimiento Muscular</option>
+                      <option value="MOBILITY">Movilidad Articular</option>
+                      <option value="STRETCHING">Estiramientos</option>
+                      <option value="BALANCE">Ejercicios de Equilibrio</option>
+                      <option value="PROPRIOCEPTION">Propiocepción</option>
+                      <option value="COORDINATION">Coordinación</option>
+                      <option value="BREATHING">Ejercicios Respiratorios</option>
+                      <option value="RELAXATION">Relajación / Descarga</option>
+                      <option value="CARDIO">Resistencia Cardiovascular</option>
+                      <option value="FUNCTIONAL">Ejercicio Funcional</option>
                     </select>
                   </div>
                   <div className="flex space-x-4 mt-6">

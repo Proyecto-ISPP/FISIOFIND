@@ -54,6 +54,18 @@ class TreatmentCreateView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
             
+        # Verificar si el paciente ya tiene un tratamiento activo
+        existing_active_treatment = Treatment.objects.filter(
+            patient=patient,
+            is_active=True
+        ).exists()
+        
+        if existing_active_treatment:
+            return Response(
+                {'detail': 'El paciente ya tiene un tratamiento activo'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+            
         data = request.data.copy()
         data['physiotherapist'] = physiotherapist.id
         data['patient'] = patient.id
