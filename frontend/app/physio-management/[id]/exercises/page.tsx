@@ -851,7 +851,7 @@ const ExercisesPage = () => {
                   </div>
 
                   <div className="p-4 flex-grow">
-                    <h2 className="text-xl font-semibold mb-2">
+                    <h2 className="text-xl font-semibold mb-2 break-words">
                       {exercise.title}
                     </h2>
 
