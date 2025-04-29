@@ -710,10 +710,25 @@ def get_patient_history(request, patient_id):
                 "patient": appointment.patient.id,
                 "alternatives": appointment.alternatives,
             }
-            appointment_data["questionnaire_responses"] = questionnaire_responses.values() if questionnaire_responses.exists() else None
+            
+            # Procesar respuestas de cuestionarios incluyendo el título
+            if questionnaire_responses.exists():
+                responses_data = []
+                for response in questionnaire_responses:
+                    response_data = response.__dict__.copy()
+                    if '_state' in response_data:
+                        del response_data['_state']
+                    
+                    # Añadir el título del cuestionario
+                    response_data['questionnaire_title'] = response.questionnaire.title
+                    
+                    responses_data.append(response_data)
+                appointment_data["questionnaire_responses"] = responses_data
+            else:
+                appointment_data["questionnaire_responses"] = None
+                
             appointments_data.append(appointment_data)
 
-        print(appointments_data)
         return Response({"appointments": appointments_data}, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
