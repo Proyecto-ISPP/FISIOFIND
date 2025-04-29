@@ -47,6 +47,8 @@ const Room = ({ roomCode }) => {
   const [questionnaireResponse, setQuestionnaireResponse] = useState(null);
   const [responseQuestionnaire, setResponseQuestionnaire] = useState(null);
 
+  const [selectedPatientId, setSelectedPatientId] = useState(null);
+
   // Inicializamos los hooks SIEMPRE
   const webSocket = useWebSocket(roomCode, userRole, () => {});
   const chat = useChat({ userRole, sendWebSocketMessage: webSocket.sendWebSocketMessage });
@@ -79,6 +81,8 @@ const Room = ({ roomCode }) => {
     addChatMessage: chat.addChatMessage,
   });
 
+  console.log(roomCode)
+
   // Cargar token y rol desde backend
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
@@ -110,6 +114,26 @@ const Room = ({ roomCode }) => {
       setLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    const fetchRoomParticipants = async () => {
+      if (userRole === 'physio' && token) {
+        try {
+          const res = await axios.get(`${getApiBaseUrl()}/api/videocall/room-info/${roomCode}/`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (res.data.patient && res.data.patient.id) {
+            setSelectedPatientId(res.data.patient.id);
+          }
+        } catch (error) {
+          console.error('No se pudo obtener la información de la sala:', error);
+        }
+      }
+    };
+  
+    fetchRoomParticipants();
+  }, [userRole, token, roomCode]);
+  
 
   // Esperar a tener el rol antes de inicializar lógica pesada
 useEffect(() => {
@@ -388,6 +412,7 @@ useEffect(() => {
             questionnaires={questionnaires}
             addChatMessage={chat.addChatMessage}
             onCloseTool={() => setSelectedTool(null)}
+            selectedPatientId={selectedPatientId}
             token={token}
           />
           )}

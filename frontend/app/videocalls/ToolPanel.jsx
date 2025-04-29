@@ -2,10 +2,11 @@ import React from 'react';
 import styles from './Room.module.css';
 
 // Subcomponentes de cada herramienta
-import Historial from './tools/Historial';
+import PatientHistoryViewer from './tools/PatientHistoryViewer';
 import Modelo3D from './hooks/3DModel';
 import Plantillas from './tools/Templates';
 import QuestionnaireTool from './tools/QuestionnaireTool';
+
 
 const ToolPanel = ({
   selectedTool,
@@ -18,6 +19,7 @@ const ToolPanel = ({
   userRole,
   addChatMessage,
   onCloseTool,
+  selectedPatientId,
   token,
   questionnaires
 }) => {
@@ -25,7 +27,13 @@ const ToolPanel = ({
 
   return (
     <div className={styles.toolContent}>
-      {selectedTool === 'historial' && <Historial />}
+      {selectedTool === 'historial' && selectedPatientId && (
+        <PatientHistoryViewer
+          patientId={selectedPatientId}
+          token={token}
+          onClose={onCloseTool}
+        />
+      )}
       {selectedTool === 'modelo3d' && (
         <Modelo3D isVisible={true} userRole={userRole} />
       )}
