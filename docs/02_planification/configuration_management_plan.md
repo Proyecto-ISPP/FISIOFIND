@@ -1,6 +1,6 @@
 ---
 title: "PLAN DE GESTIÓN DE LA CONFIGURACIÓN"              # CHANGE IF NEEDED
-subtitle: "FISIO FIND - Grupo 6 - #DP"
+subtitle: "FISIO FIND - Grupo 6 - #SPRINT 1"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]
 date: "04/02/2025"                                        # CHANGE IF NEEDED
 subject: "ISPP"
@@ -22,7 +22,7 @@ classoption: "table"
 
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
 <p align="center">
-  <img src="../.img/Logo_FisioFind_Verde_sin_fondo.PNG" alt="Logo FisioFind" width="300" />
+  <img src="../.img/Logo_FisioFind_Verde_sin_fondo.webp" alt="Logo FisioFind" width="300" />
 </p>
 
 <h1 align="center" style="font-size: 30px; font-weight: bold;">
@@ -32,7 +32,7 @@ classoption: "table"
 <br>
 
 **ÍNDICE**
-- [**1. NORMAS Y PROCEDIMIENTOS APLICABLES**](#1-normas-y-procedimientos-aplicables)
+- [**1. INTRODUCCIÓN**](#1-introducción)
 - [**2. ELEMENTOS CONFIGURABLES**](#2-elementos-configurables)
 - [**3. HERRAMIENTAS A UTILIZAR**](#3-herramientas-a-utilizar)
 - [**4. CONTROL y POLÍTICA DE VERSIONADO**](#4-control-y-política-de-versionado)
@@ -70,15 +70,15 @@ classoption: "table"
 
 - **Número de Grupo:** Grupo 6
 
-- **Entregable:** #DP
+- **Entregable:** #SPRINT 1
 
 - **Miembros del grupo:** Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes.
 
-- **Autores:** Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores
+- **Contribuidores:** [Antonio Macías Ferrera](https://github.com/antoniommff) (autor y revisor), [Benjamín Maureira](https://github.com/benjimrfl) (autor)
 
 - **Fecha de Creación:** 04/02/2025  
 
-- **Versión:** v2.3
+- **Versión:** v2.5
 
 <br>
 
@@ -94,6 +94,8 @@ classoption: "table"
 | 13/02/2025   | v2.1     | Antonio Macías Ferrera           | Adecuación al nuevo proyecto Fisio Find.                          |
 | 15/02/2025   | v2.2     | Antonio Macías Ferrera           | Adecuación al feedback de la clase del 14/02/2025. Sustitución de Taiga.io por GitHub Project, estructuración de la documentación y adición de apartado *Gestión del Cambio* y *Gestión de los Riesgos*. |
 | 25/02/2025   | v2.3     | Antonio Macías Ferrera           | Añadida la plantilla de incidencias y pull requests.              |
+| 10/03/2025   | v2.4     | Antonio Macías Ferrera           | Añadido tutorial sobre la gestión de la configuración.              |
+| 17/03/2025   | v2.5     | Antonio Macías Ferrera           | Añadido enlaces a herramientas y tutorial            |
 
 
 <br>
@@ -103,9 +105,49 @@ classoption: "table"
 <br>
 
 
-# **1. NORMAS Y PROCEDIMIENTOS APLICABLES**
+# **1. INTRODUCCIÓN**
 
 Este plan contiene la información sobre cómo el equipo de trabajo realizará el seguimiento y control del cambio durante el desarrollo del proyecto, además de cómo se llevará a cabo el control de versiones a lo largo del mismo.
+
+Como resumen de este documento, se ha elaborado el siguiente tutorial que trata los aspectos más prácticos y que mas problemas han reportado respecto a la metodología a seguir en el proyecto:
+
+- [Tutorial Sobre la Gestión de la Configuración](https://www.youtube.com/watch?v=GEilyFK2n8Y)
+
+<p align="center">
+ 	<a href="https://www.youtube.com/watch?v=GEilyFK2n8Y">
+ 		<img src="https://i9.ytimg.com/vi/GEilyFK2n8Y/maxresdefault.jpg?v=67d08eb5&sqp=CNSL4b4G&rs=AOn4CLCu-fVmI8BxWMNnqQor0N7o3MjeWg" alt="An Tutorial sobre la gestión de la configuración - FISIO FIND" width="25%">
+ 	</a>
+</p>
+
+- ENLACES DE INTERÉS:
+    - Pandoc: https://pandoc.org/installing.html
+
+    - ReadmeAI: https://eli64s.github.io/readme-ai/getting-started/installation/ 
+
+    - Google Gemini API Key: https://aistudio.google.com/app/apikey 
+
+<br>
+
+- CAPÍTULOS DEL TUTORIAL:
+    - Intro 00:00
+
+    - Tareas en GitHub Project: 00:19
+
+    - Pull Requests: 01:40
+
+    - Tareas en Clockify: 02:03
+
+    - Organización de documentos: 02:52
+
+    - Documentos en Markdown: 04:16
+
+    - De Markdown a PDF: 05:51
+
+    - Estructura del README: 08:12
+
+    - Instalar ReadmeAI: 09:30
+
+    - Generar readme: 10:36
 
 <br>
 
@@ -135,13 +177,13 @@ Los elementos configurables del proyecto incluyen aquellos artefactos y entregab
 
 | Tecnología        | Elementos Configurables  | Descripción                                           |
 | ----------------- | ------------------------ | ----------------------------------------------------- |
-| Pandoc y Eisvogel | Documentación, Registros | Plataforma para la edición de documentos en Markdown. |
-| Clockify          | Tareas                   | Seguimiento del tiempo de trabajo por actividad.      |
-| GitHub Project    | Hitos, requisitos, HU    | Herramienta ágil para gestión de proyectos.           |
-| Git               | Código fuente            | Control de versiones del código fuente.               |
-| GitHub            | Código fuente, Hitos, HU | Gestión del desarrollo colaborativo.                  |
-| Draw.io, ChartDB  | Requisitos, HU           | Elaboración de diagramas de clases / UML.             |
-
+| [Pandoc](https://pandoc.org) y [Eisvogel](https://github.com/enhuiz/eisvogel) | Documentación, Registros | Plataforma para la edición de documentos en Markdown. |
+| [Clockify](https://clockify.me)          | Tareas                   | Seguimiento del tiempo de trabajo por actividad.      |
+| [GitHub Project](https://github.com/orgs/Proyecto-ISPP/projects/2)    | Hitos, requisitos, HU    | Herramienta ágil para gestión de proyectos.           |
+| [Git](https://git-scm.com)               | Código fuente            | Control de versiones del código fuente.               |
+| [GitHub](https://github.com)            | Código fuente, Hitos, HU | Gestión del desarrollo colaborativo.                  |
+| [Draw.io](https://app.diagrams.net), [ChartDB](https://chartdb.io)  | Requisitos, HU           | Elaboración de diagramas de clases / UML.             |
+| [HoppScotch](https://hoppscotch.io)  | Pruebas de integración / API    | Herramienta para elaboración de suite de tests de cobertura y acceso de APIs         |
 
 <br>
 

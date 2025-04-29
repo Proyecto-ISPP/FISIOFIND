@@ -1,0 +1,86 @@
+name: Sonarqube Coverage
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_DB: sample
+          POSTGRES_USER: sample
+          POSTGRES_PASSWORD: S3cur3P@ssw0rd2024
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DEBUG: 'True'
+      DATABASE_NAME: sample
+      DATABASE_USER: sample
+      DATABASE_PASSWORD: S3cur3P@ssw0rd2024
+      DATABASE_HOST: localhost
+      DATABASE_PORT: 5432
+      SECRET_KEY: django-insecure-w^r4z1$k&9^#7p(u@1234567890abcd
+      EMAIL_HOST: localhost
+      EMAIL_PORT: 487
+      EMAIL_USE_TLS: 'true'
+      EMAIL_HOST_USER: 'noreply@fisiotest.com'
+      EMAIL_HOST_PASSWORD: smtpStrong!Pass123
+      STRIPE_SECRET_KEY: sk_test_51Lx0MkLdV4example1234567890abcdef
+      STRIPE_PUBLISHABLE_KEY: pk_test_51Lx0MkLdV4example1234567890abcdef
+      PAYMENT_API_KEY: pay_abc_9876543210xyz12345678
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+# Descomentar cuando se quiera hacer coverage con selenium
+#    - name: Install Chrome for Selenium
+#      run: |
+#        sudo apt update
+#        sudo apt install -y wget gnupg unzip xvfb libnss3 libxss1 libatk-bridge2.0-0 libgtk-3-0
+#        wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+#        sudo dpkg -i google-chrome-stable_current_amd64.deb || sudo apt-get -f install -y
+#        google-chrome --version
+
+    - name: Install backend dependencies
+      working-directory: backend/
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install coverage
+
+    - name: Run Django tests with coverage
+      working-directory: backend/fisio_find
+      run: |
+        python3 manage.py makemigrations
+        python3 manage.py migrate
+        coverage run manage.py test || true
+        coverage xml
+
+    - name: Run SonarCloud analysis (scans full repo, uses backend coverage)
+      uses: sonarsource/sonarcloud-github-action@master
+      with:
+        projectBaseDir: .
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+    - name: Show coverage summary
+      working-directory: backend/fisio_find
+      run: coverage report

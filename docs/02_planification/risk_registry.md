@@ -1,8 +1,8 @@
 ---
 title: "REGISTRO DE RIESGOS"
-subtitle: "FISIO FIND - Grupo 6 - #DP"
+subtitle: "FISIO FIND - Grupo 6 - #SPRINT 1"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]
-date: "16/02/2025"                                                 
+date: "09/03/2025"                                                 
 subject: "ISPP"
 lang: "es"
 toc: true
@@ -14,7 +14,7 @@ colorlinks: true
 linkcolor: blue
 titlepage-background: "../.backgrounds/background1V.pdf"                            
 header-left: "REGISTRO DE RIESGOS"                 
-header-right: "16/02/2025"                                         
+header-right: "09/03/2025"                                         
 footer-left: "FISIO FIND"
 documentclass: scrartcl
 classoption: "table"
@@ -23,7 +23,7 @@ classoption: "table"
 
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
 <p align="center">
-  <img src="../.img/Logo_FisioFind_Verde_sin_fondo.PNG" alt="Logo FisioFind" width="300" />
+  <img src="../.img/Logo_FisioFind_Verde_sin_fondo.webp" alt="Logo FisioFind" width="300" />
 </p>
 
 <h1 align="center" style="font-size: 30px; font-weight: bold;">
@@ -47,15 +47,15 @@ classoption: "table"
 
 - **Número de Grupo:** Grupo 6
 
-- **Entregable:** #DP
+- **Entregable:** #SPRINT 1
 
 - **Miembros del grupo:** Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes.
 
-- **Autores:** Delfín Santana Rubio, Julen Redondo Pacheco
+- **Contribuidores:** [Delfín Santana Rubio](https://github.com/DelfinSR) (autor y revisor), [Julen Redondo Pacheco](https://github.com/Julenrp) (autor)
 
 - **Fecha de Creación:** 16/02/2025  
 
-- **Versión:** v1.6
+- **Versión:** v2.0
 
 <br>
 
@@ -72,6 +72,8 @@ classoption: "table"
 | 18/02/2025 | v1.4    | Delfín Santana Rubio          | Modificación del título de RIG-001 por feedback de pull request |
 | 19/02/2025 | v1.5    | Delfín Santana Rubio          | Cambiado estilo de las tablas para que se genere correctamente el pdf y añadido nuevo riesgo |
 | 20/02/2025 | v1.6    | Delfín Santana Rubio          | Explicadas mejor consecuencias de riesgos |
+| 26/02/2025 | v1.7    | Delfín Santana Rubio          | Añadido el RIG-012 |
+| 09/03/2025 | v2.0    | Delfín Santana Rubio          | Añadidos nuevos riesgos registrados en el primer sprint | 
 
 <br>
 
@@ -216,3 +218,50 @@ En este documento se detallan cada uno de los riesgos contemplados en el proyect
 | **Contramedidas actuales** | Utilizar APIs de servicios que estén bien establecidos en el mercado, como puede ser la API de Google Maps. |
 | **Plan de contingencia** | Evaluar la posibilidad de utilizar otra API o seguir usando la misma API pero asumiendo el nuevo precio. |
 
+| **RIG-012** | **Usuarios piloto**  |  
+| --- | --- |
+| **Versión** | V1.0 |
+| **Descripción** | Puede suceder que algunos de nuestros usuarios piloto que se han comprometido a probar la aplicación, no terminen cumpliendo con esto. Si el número de usuarios piloto que nos fallan es muy alto, podría desencadenar que se cumpla el riesgo **RIG-005**, haciendo que perdamos o no tengamos clientes.  |
+| **Clasificación** | Externos |
+| **Probabilidad** | 3 |
+| **Impacto** | 8 |
+| **Factor** | 24 |
+| **Prioridad** | 7 |
+| **Contramedidas actuales** | Conseguir muchos usuarilos piloto para que sea improbable que nos fallen todos. |
+| **Plan de contingencia** | Buscar nuevos usuarios piloto y cambiar la forma en la que se gestionan los usuarios piloto. |
+
+| **RIG-013** | **Nuevas tecnologías de desarrollo**  |  
+| --- | --- |
+| **Versión** | V1.0 |
+| **Descripción** | Para el desarrollo de la aplicación se están utilizando nuevas tecnologías que una gran parte del equipo no ha usado nunca. Esto puede causar que el desarrollo sea más lento de lo esperado, haciendo que se tarde más tiempo y por lo tanto se gasten recursos.  |
+| **Clasificación** | Internos |
+| **Probabilidad** | 4 |
+| **Impacto** | 6 |
+| **Factor** | 24 |
+| **Prioridad** | 7 |
+| **Contramedidas actuales** | Aquellos compañeros que si hayan utilizado la tecnología deberán de hacer contenido(videos, documentos, etc.) para formar al resto del equipo. |
+| **Plan de contingencia** | Revisar el contenido que se ha generado. |
+
+| **RIG-014** | **Mala estimación de las tareas**  |  
+| --- | --- |
+| **Versión** | V1.0 |
+| **Descripción** | Puede suceder que en la estimación y reparto de las tareas estas se estimen mal. Esto puede suceder que el desarrollo sea más lento de lo esperado, haciendo que se tarde más tiempo y por lo tanto se gasten recursos.  |
+| **Clasificación** | Internos |
+| **Probabilidad** | 4 |
+| **Impacto** | 5 |
+| **Factor** | 20 |
+| **Prioridad** | 6 |
+| **Contramedidas actuales** | La planificación de los sprints no se está haciendo solo con las tareas necesarias, sino que también se hace con tareas extras para intentar ahorrar trabajo para el resto de sprints. Esto hace que de necesitarse dejar una tarea para el siguiente sprint se pueda hacer. Además, existen canales de comunicación destinados a compartir información importante, como es la de que existe una tarea que es demasiado grande para los asignados. Las personas que ya hayan acabado, podrán ayudar a aquellas que tengan tareas mal estimadas. |
+| **Plan de contingencia** | Se deberá de hacer una nueva estimación de las tareas y una redistribución de los recursos para intentar solucionar el problema. De no poderse arreglar, se deberán de gastar más recursos para terminar todas las tareas. |
+
+| **RIG-015** | **Dependencia entre tareas**  |  
+| --- | --- |
+| **Versión** | V1.0 |
+| **Descripción** | Puede suceder que en la estimación y reparto de las tareas no se tengan en cuenta las dependencias entre las tareas. Esto puede suceder que el desarrollo sea más lento de lo esperado, haciendo que se tarde más tiempo y por lo tanto se gasten recursos.  |
+| **Clasificación** | Internos |
+| **Probabilidad** | 4 |
+| **Impacto** | 5 |
+| **Factor** | 20 |
+| **Prioridad** | 7 |
+| **Contramedidas actuales** | La planificación de los sprints no se está haciendo solo con las tareas necesarias, sino que también se hace con tareas extras para intentar ahorrar trabajo para el resto de sprints. Esto hace que de necesitarse dejar una tarea para el siguiente sprint se pueda hacer. Además, existen canales de comunicación destinados a compartir información importante, como es la de que existe una tarea que tiene dependencias no esperadas. Aquellas personas que están trabajando en la dependencia, deberán de acabarla(al menos aquello que se necesite para solucionar la dependencia) cuanto antes.  Las personas que ya hayan acabado, podrán ayudar a aquellas que tengan tareas mal estimadas.  |
+| **Plan de contingencia** | Se deberá de hacer una nueva estimación de las tareas y una redistribución de los recursos para intentar solucionar el problema. De no poderse arreglar, se deberán de gastar más recursos para terminar todas las tareas. |

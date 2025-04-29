@@ -17,7 +17,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -25,26 +24,70 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-temporary-key-for-deployment')
 
-# SECURITY WARNING: don't run with debug turned on in production!
+PAYMENT_API_KEY = os.getenv("PAYMENT_API_KEY", 'key')
+                            
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    'fisiofind-backend.azurewebsites.net',
+    'fisiofind.netlify.app',
+    '138.68.80.34',
+    '167.99.246.186',
+    's2.fisiofind.com',
+    's2-api.fisiofind.com',
+    's3.fisiofind.com',
+    's3-api.fisiofind.com',
+    'turn.fisiofind.com',
+    'ppl.fisiofind.com',
+    'ppl-api.fisiofind.com'
+]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://fisiofind-backend.azurewebsites.net",
+    "http://138.68.80.34",
+    "http://167.99.246.186",
+    "https://s2.fisiofind.com",
+    "https://s2-api.fisiofind.com",
+    "wss://s2-api.fisiofind.com",
+    "wss://s3-api.fisiofind.com",
+    "https://s3.fisiofind.com",
+    "https://s3-api.fisiofind.com",
+    "https://ppl.fisiofind.com",
+    "https://ppl-api.fisiofind.com"
+  
+]
+
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ("X-Forwarded-Proto", "https")
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    CSRF_USE_SESSIONS = True
+else:
+    SECURE_PROXY_SSL_HEADER = None
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
+    CSRF_USE_SESSIONS = True
 
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',
+    'videocall',
+    'ratings'
 ]
 
-# DJANGO REST FRAMEWORK 
+# DJANGO REST FRAMEWORK
 INSTALLED_APPS += [
     'rest_framework',               # API REST principal
     'rest_framework.authtoken',     # Autenticación por tokens (opcional)
@@ -54,27 +97,52 @@ INSTALLED_APPS += [
 # APPS PROPIAS
 
 INSTALLED_APPS += [
-    'gestion_usuarios',
-    'gestion_citas',
-    'gestion_terminos'
+    'users',
+    'appointment',
+    'terms',
+    'guest_session',
+    'questionnaire',
+    'treatments',
+    'gestion_survey',
+    'payment',
+    'files',
+    'appointment_rating',
 ]
 
-
-
-INSTALLED_APPS += [ 'corsheaders', 'django_extensions',
-    'django_filters']
+INSTALLED_APPS += ['corsheaders', 'django_extensions', 'django_filters']
 
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+]
+
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
 ]
 
 REST_FRAMEWORK = {
@@ -95,8 +163,22 @@ SIMPLE_JWT = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:3000",  # Add your frontend URL here
-    "http://localhost:3000",  # Add your frontend URL here
+    "http://127.0.0.1:3000",
+    "http://localhost:3000",
+    "https://fisiofind-backend.azurewebsites.net",
+    "https://fisiofind.netlify.app",
+    "http://138.68.80.34",
+    "http://167.99.246.186",
+    "https://s2-api.fisiofind.com",
+    "https://s2.fisiofind.com",
+    "wss://s2-api.fisiofind.com",
+    "https://s3-api.fisiofind.com",
+    "https://s3.fisiofind.com",
+    "wss://s3-api.fisiofind.com",
+    "https://ppl.fisiofind.com",
+    "https://ppl-api.fisiofind.com",
+    "wss://ppl-api.fisiofind.com",
+    
 ]
 
 ROOT_URLCONF = 'fisio_find.urls'
@@ -104,7 +186,7 @@ ROOT_URLCONF = 'fisio_find.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -118,62 +200,117 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'fisio_find.wsgi.application'
+ASGI_APPLICATION = 'fisio_find.asgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+if not DEBUG:
+    # Configurar Redis como backend de WebSockets
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [("127.0.0.1", 6379)],
+            },
+        },
+    }
+else:
+    CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
+    
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DATABASE_NAME'),
-        'USER': os.getenv('DATABASE_USER'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
-        'HOST': os.getenv('DATABASE_HOST'),
-        'PORT': os.getenv('DATABASE_PORT'),
+        'NAME': os.getenv('DATABASE_NAME', 'postgres'),
+        'USER': os.getenv('DATABASE_USER', 'postgres'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD', ''),
+        'HOST': os.getenv('DATABASE_HOST', 'localhost'),
+        'PORT': os.getenv('DATABASE_PORT', '5432'),
+        'OPTIONS': {
+            'sslmode': 'require' if not DEBUG else 'prefer',
+        },
     }
 }
 
-AUTH_USER_MODEL = 'gestion_usuarios.AppUser'
+
+# Configuración del servicio de correos
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = os.getenv('EMAIL_PORT') 
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER)
+API_KEY = os.getenv('API_KEY')
+ENCRYPTION_KEY = os.getenv('ENCRYPTION_KEY')
+API_MAIL_URL = os.getenv('API_MAIL_URL')
+FRONTEND_URL = os.getenv('FRONTEND_URL')
+
+
+AUTH_USER_MODEL = 'users.AppUser'
 
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/5.1/topics/i18n/
-
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
+LANGUAGE_CODE = 'es-es'
+TIME_ZONE = 'Europe/Madrid'
 USE_I18N = True
-
 USE_TZ = True
 
+STATIC_URL = '/static/'
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
-
-STATIC_URL = 'static/'
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
+if DEBUG:
+    # Solo en desarrollo
+    STATICFILES_DIRS = [BASE_DIR / "static"]
+else:
+    # Solo en producción
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+#Stripe payment
+STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
+
+# Claves de Digital Ocean Spaces
+DIGITALOCEAN_ACCESS_KEY_ID = os.getenv('DIGITALOCEAN_ACCESS_KEY_ID')
+DIGITALOCEAN_SECRET_ACCESS_KEY = os.getenv('DIGITALOCEAN_SECRET_ACCESS_KEY')
+DIGITALOCEAN_SPACE_NAME = os.getenv('DIGITALOCEAN_SPACE_NAME')
+DIGITALOCEAN_REGION = os.getenv('DIGITALOCEAN_REGION')  # Ejemplo: nyc3, ams3, sgp1
+DIGITALOCEAN_ENDPOINT_URL = os.getenv('DIGITALOCEAN_ENDPOINT_URL')  # URL del espacio de DigitalOcean
+
+# Configuración de almacenamiento en DigitalOcean Spaces
+DEFAULT_FILE_STORAGE = "backend.custom_storages.DigitalOceanMediaStorage"
+MEDIA_URL = f"{DIGITALOCEAN_ENDPOINT_URL}/"
+
+PROFILE_PHOTOS_URL = '/media/'
+PROFILE_PHOTOS_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Create profile photos directory if it doesn't exist
+if not os.path.exists(PROFILE_PHOTOS_ROOT):
+    os.makedirs(PROFILE_PHOTOS_ROOT)
+
+
+# Aumentar límite de tamaño de archivos subidos
+DATA_UPLOAD_MAX_MEMORY_SIZE = 524288000  # 500MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 524288000  # 500MB
+
+SALT_KEY = [
+    "!(m!c,nlwymN^;DaRi4~LW4c^n]K227*=!S/",
+    "Yi^_w32W&8(Ev@pl5BJvFFe{}]R}zSgQ9n~T",
+    "~x7}<:29'gF4Z6ozJ-~@nn£`TrjB`Hg|N]IJ",
+    "£U9fRHk`_]NeP2q86.£BT}SP>J-b^dC/h6!O",
+    "RRL7*cJo£5&34#KN(w~>Z>)}$:zD/H6!uH~r"
+]

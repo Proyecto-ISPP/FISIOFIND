@@ -1,8 +1,8 @@
 ---
 title: "PLAN DE GESTIÓN DE RIESGOS"                       # CHANGE IF NEEDED
-subtitle: "FISIO FIND - Grupo 6 - #DP"
+subtitle: "FISIO FIND - Grupo 6 - #SPRINT 1"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]
-date: "17/02/2025"                                        # CHANGE IF NEEDED
+date: "09/03/2025"                                        # CHANGE IF NEEDED
 subject: "ISPP"
 lang: "es"
 toc: true
@@ -14,7 +14,7 @@ colorlinks: true
 linkcolor: blue
 titlepage-background: "../.backgrounds/background1V.pdf"  # CHANGE IF NEEDED
 header-left: "PLAN DE GESTIÓN DE RIESGOS"                 # CHANGE IF NEEDED
-header-right: "17/02/2025"                                # CHANGE IF NEEDED
+header-right: "09/03/2025"                                # CHANGE IF NEEDED
 footer-left: "FISIO FIND"
 documentclass: scrartcl
 classoption: "table"
@@ -22,7 +22,7 @@ classoption: "table"
 
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
 <p align="center">
-  <img src="../.img/Logo_FisioFind_Verde_sin_fondo.PNG" alt="Logo FisioFind" width="300" />
+  <img src="../.img/Logo_FisioFind_Verde_sin_fondo.webp" alt="Logo FisioFind" width="300" />
 </p>
 
 <h1 align="center" style="font-size: 30px; font-weight: bold;">
@@ -36,7 +36,7 @@ classoption: "table"
 - [2. REGISTRO DE RIESGOS](#2-registro-de-riesgos)
 - [3. CLASIFICACIÓN DE RIESGOS](#3-clasificación-de-riesgos)
 - [4. EVALUACIÓN DE RIESGOS](#4-evaluación-de-riesgos)
-- [5. PLANES DE CONTINGENCIA Y CONTRAMEDIDAS](#5-planes-de-contigencia-y-contramedidas)
+- [5. PLANES DE CONTINGENCIA Y CONTRAMEDIDAS](#5-planes-de-contingencia-y-contramedidas)
 - [6. SEGUIMIENTO DE RIESGOS](#6-seguimiento-de-riesgos)
 - [7. MATRIZ DE RIESGOS](#7-matriz-de-riesgos)
 
@@ -50,15 +50,15 @@ classoption: "table"
 
 - **Número de Grupo:** Grupo 6
 
-- **Entregable:** #DP
+- **Entregable:** #SPRINT 1
 
 - **Miembros del grupo:** Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes.
 
-- **Autores:** Delfín Santana Rubio, Julen Redondo Pacheco
+- **Contribuidores:** [Delfín Santana Rubio](https://github.com/DelfinSR) (autor y revisor), [Julen Redondo Pacheco](https://github.com/Julenrp) (autor)
 
-- **Fecha de Creación:** 17/02/2025  
+- **Fecha de Creación:** 09/03/2025
 
-- **Versión:** v1.4
+- **Versión:** v2.0
 
 <br>
 
@@ -73,7 +73,8 @@ classoption: "table"
 | 18/02/2025 | v1.2    | Delfín Santana Rubio        | Modificado punto 5 para añadir tipos de contramedidas a riesgos |
 | 19/02/2025 | v1.3    | Delfín Santana Rubio        | Modificado punto 5 y matriz de riesgos |
 | 19/02/2025 | v1.4    | Delfín Santana Rubio        | Añadido nuevo riesgo a matriz de riesgos |
-
+| 26/02/2025 | v1.5    | Delfín Santana Rubio        | Añadido riesgo RIG-012 a matriz de riesgos |
+| 09/03/2025 | v2.0    | Delfín Santana Rubio        | Añadidos nuevos riesgos RIG-013, 14, 15 a la matriz de riesgos| 
 
 <br>
 
@@ -133,6 +134,6 @@ Además, se entiende que el proceso de registro de riesgos es un proceso constan
 |-------------------------------|----------------|----------------|----------------|----------------|----------------|
 | **1-2 (Bajo impacto)**      |         |   |   |     |  |
 | **3-4 (Moderado impacto)**  |       |   |       |   |  |
-| **5-6 (Alto impacto)**      | RIG-007, RIG-008  | RIG-005, RIG-004       |    | |   |
-| **7-8 (Crítico impacto)**   | RIG-009, RIG-011      |     | RIG-002, RIG-003, RIG-010   |  |  |
+| **5-6 (Alto impacto)**      | RIG-007, RIG-008  | RIG-005, RIG-004, RIG-013, RIG-014, RIG-015       |    | |   |
+| **7-8 (Crítico impacto)**   | RIG-009, RIG-011      | RIG-012    | RIG-002, RIG-003, RIG-010   |  |  |
 | **9-10 (Extremo impacto)**  | RIG-006   | RIG-001    |   |   |  |

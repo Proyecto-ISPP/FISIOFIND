@@ -16,10 +16,14 @@ venv/
 # Archivos de configuración de bases de datos locales
 db.sqlite3
 *.sqlite3
+setup.cfg
 
-# Migraciones (manténlas si quieres control de versiones)
-*/migrations/*.py
-*/migrations/*.pyc
+# Migraciones de Django
+**/migrations/*.py
+**/migrations/*.pyc
+!**/migrations/__init__.py
+
+# static/
 
 # Archivos estáticos y subidos
 staticfiles/
@@ -32,6 +36,7 @@ media/
 *.swp
 *.swo
 *.DS_Store
+setup.cfg
 
 # Django Debug Toolbar
 debug_toolbar/
