@@ -525,9 +525,9 @@ const SeguimientoPage = () => {
     );
   }
 
-  if (!token) {
+  if (!token || !userRole) {
     return (
-      <RestrictedAccess message="Necesitas iniciar sesión para acceder a los tratamientos." />
+      <RestrictedAccess message="Necesitas iniciar sesión para acceder a los tratamientos" />
     );
   }
 

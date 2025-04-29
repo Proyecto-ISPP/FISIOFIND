@@ -155,26 +155,35 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [slots, setSlots] = useState<string[]>([]);
   const [backgroundEvents, setBackgroundEvents] = useState<any[]>([]);
-  const { dispatch } = useAppointment();
-  const { id } = useParams();
   const [schedule, setSchedule] = useState<any>(null);
+  // Move these state declarations up
+  const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
+  const [clickedDate, setClickedDate] = useState<string>("");
+  const [hoveredDate, setHoveredDate] = useState<string | null>(null);
   const [alertConfig, setAlertConfig] = useState<{
     show: boolean;
     type: "success" | "error" | "info" | "warning";
     message: string;
   } | null>(null);
-
-  const [showModal, setShowModal] = useState<boolean>(false);
-  const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
-  const [clickedDate, setClickedDate] = useState<string>("");
-  const [hoveredDate, setHoveredDate] = useState<string | null>(null);
-  // Add calendar ref to force rerenders
-  const calendarRef = useRef<any>(null);
+  const { dispatch } = useAppointment();
+  const { id } = useParams();
 
   const showAlert = (type: "success" | "error" | "info" | "warning", message: string) => {
     setAlertConfig({ show: true, type, message });
   };
 
+  const formatDate = (dateStr: string): string => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('es-ES', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  };
+
+
+  // Traer el schedule desde la API usando la id del fisioterapeuta
+  // Modificar el useEffect existente para incluir la generación inicial de eventos
   useEffect(() => {
     const fetchSchedule = async () => {
       try {
@@ -183,13 +192,45 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
         );
         if (response.status === 200 && response.data.schedule) {
           setSchedule(response.data.schedule);
+          
+          // Generar eventos iniciales después de obtener el schedule
+          const start = new Date();
+          const end = new Date();
+          end.setMonth(end.getMonth() + 2); // Mostrar 2 meses adelante
+          
+          const events = [];
+          const currentDate = new Date(start);
+          while (currentDate < end) {
+            const dateStr = currentDate.toISOString().split('T')[0];
+            const available = getAvailableSlots(
+              dateStr,
+              serviceDuration,
+              slotInterval,
+              response.data.schedule
+            );
+            const count = available.length;
+            const isSelectedDay = dateStr === clickedDate;
+            const isHoveredDay = dateStr === hoveredDate;
+            const bgColor = getDayColor(count, isSelectedDay, isHoveredDay, new Date(dateStr));
+            
+            events.push({
+              id: dateStr,
+              start: dateStr,
+              allDay: true,
+              display: "background",
+              backgroundColor: bgColor,
+            });
+            
+            currentDate.setDate(currentDate.getDate() + 1);
+          }
+          setBackgroundEvents(events);
         }
       } catch (error) {
         console.error("Error fetching schedule:", error);
       }
     };
     fetchSchedule();
-  }, [id]);
+  }, [id, serviceDuration, slotInterval, clickedDate, hoveredDate]);
 
   // Update background events whenever selection changes
   useEffect(() => {
@@ -205,17 +246,29 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
   const handleDateLeave = () => {
     setHoveredDate(null);
   };
+  
+  const isWithinFirstThreeDays = (date: Date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const dayAfterTomorrow = new Date(today);
+    dayAfterTomorrow.setDate(today.getDate() + 3);
+    dayAfterTomorrow.setHours(0, 0, 0, 0);
+    return date < dayAfterTomorrow;
+  };
 
-  const getDayColor = (count: number, isSelected: boolean, isHovered: boolean, hasSelectedSlot: boolean) => {
-    if (hasSelectedSlot) return "#41B8D5";
-    if (isSelected || isHovered) return "#05AC9C33";
-    if (count === 0) return "#333333";
-    if (count === 1) return "#b6d9b0";
-    if (count === 2) return "#8fcf8c";
-    if (count === 3) return "#66c266";
-    if (count === 4) return "#4CAF60";
-    if (count >= 5) return "#0B6B31";
-    return "#333333";
+  // Modify getDayColor to include hover state
+  const getDayColor = (count: number, isSelected: boolean, isHovered: boolean, date: Date) => {
+    if (isWithinFirstThreeDays(date)) {
+      return "#666666"; // Gray for blocked days
+    }
+    if (isSelected) {
+      return "#05668D";
+    }
+    if (isHovered) {
+      return "#05AC9C33";
+    }
+    if (count === 0) return "#666666";
+    return "#4CAF60"; // Simplified color logic for available slots
   };
 
   const formatDate = (dateStr: string) => {
@@ -300,13 +353,9 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
     setShowModal(false);
   };
 
-  // New function to update background events
-  const updateBackgroundEvents = () => {
-    if (!calendarRef.current || !schedule) return;
-    
-    const calendarApi = calendarRef.current.getApi();
-    const viewStart = calendarApi.view.activeStart;
-    const viewEnd = calendarApi.view.activeEnd;
+  // Actualiza los eventos de fondo en el calendario (colores según disponibilidad)
+  const handleDatesSet = (arg: DatesSetArg) => {
+    if (!schedule) return; // Don't proceed if schedule isn't loaded yet
     
     const events = [];
     const today = new Date();
@@ -320,16 +369,14 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
         slotInterval,
         schedule
       );
-      
+
       const count = available.length;
       const isPast = currentDate < today;
       const isSelectedDay = dateStr === clickedDate;
       const isHoveredDay = dateStr === hoveredDate;
-      const hasSelectedSlot = dateStr === selectedDate && selectedSlot !== null;
-      
       const bgColor = isPast 
         ? "#666666" 
-        : getDayColor(count, isSelectedDay, isHoveredDay, hasSelectedSlot);
+        : getDayColor(count, isSelectedDay, isHoveredDay, new Date(dateStr));
       
       events.push({
         id: dateStr,
@@ -431,11 +478,32 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
           info.el.addEventListener('mouseenter', () => handleDateHover(info));
           info.el.addEventListener('mouseleave', handleDateLeave);
         }}
+        lazyFetching={false}
+        firstDay={1}
       />
-      
-      {selectedDate && selectedSlot && (
-        <div className="mt-4 p-4 bg-blue-100 text-blue-800 rounded-lg">
-          Fecha y hora seleccionadas: {formatDate(selectedDate)} a las {selectedSlot}
+      {selectedDate && (
+        <div className="mt-4">
+          <h4 className="text-lg font-semibold">
+            Horarios disponibles para {formatDate(selectedDate)}:
+          </h4>
+          {slots.length > 0 ? (
+            <div className="grid grid-cols-4 gap-2 mt-2">
+              {slots.map((slot, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleSlotClick(slot)}
+                  className={`px-3 py-1 rounded border text-center transition-colors ${selectedSlot === slot
+                    ? "bg-[#05668d] text-white border-[#05668d]"
+                    : "bg-white text-black border-gray-300 hover:bg-gray-100"
+                    }`}
+                >
+                  {slot}
+                </button>
+              ))}
+            </div>
+          ) : (
+            <p className="mt-2">No hay horarios disponibles</p>
+          )}
         </div>
       )}
       

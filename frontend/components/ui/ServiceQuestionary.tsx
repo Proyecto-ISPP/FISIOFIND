@@ -174,21 +174,74 @@ const ServiceQuestionary = forwardRef<ServiceQuestionaryRef>((props, ref) => {
     const errorClass = hasError ? 'error-field' : '';
     
     if (element.type === 'Control') {
+      // Check if this is the physical activity field
+      const isPhysicalActivityField = 
+        element.label.toLowerCase().includes('actividad física') || 
+        propertyName.toLowerCase().includes('physical_activity') ||
+        propertyName.toLowerCase().includes('actividad_fisica');
+      
       return (
         <div className={`form-field ${errorClass}`} key={propertyName}>
           <label>
             {element.label}
             <span className="required">*</span>
+
+            {isPhysicalActivityField && (
+              <div className="relative inline-block group">
+                <div className="cursor-help inline-flex align-middle ml-1">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-4 h-4"
+                  >
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="#1C274C"
+                      strokeWidth="1.5"
+                    />
+                    <path
+                      d="M12 17V11"
+                      stroke="#1C274C"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                    />
+                    <circle
+                      cx="1"
+                      cy="1"
+                      r="1"
+                      transform="matrix(1 0 0 -1 11 9)"
+                      fill="#1C274C"
+                    />
+                  </svg>
+                </div>
+                <div className="absolute bottom-full right-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-[100] mb-2">
+                  <div className="bg-gray-700 text-white text-xs rounded py-2 px-3 w-72 shadow-lg">
+                    <b>Nula</b> implica no salir de casa o tener movilidad alguna. <br/>
+                    <b>Baja</b> implica cualquier actividad diaria. <br/>
+                    <b>Moderada</b> implica realizar ejercicio activo varias veces en semana. <br/>
+                    <b>Elevada</b> implica sesiones de ejercicio prologadas casi todos los días de la semana. 
+                  </div>
+                  <div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-gray-700 absolute top-full right-4 transform"></div>
+                </div>
+              </div>
+            )}
           </label>
-          <input 
+          <input
             type="text"
             name={propertyName}
-            className={`form-input ${hasError ? 'form-input-error' : ''}`}
-            value={responses[propertyName] || ''}
-            onChange={(e) => handleInputChange(propertyName, e.target.value, 'Control')}
+            className={`form-input ${hasError ? "form-input-error" : ""}`}
+            value={responses[propertyName] || ""}
+            onChange={(e) =>
+              handleInputChange(propertyName, e.target.value, "Control")
+            }
             maxLength={150}
           />
-          {hasError && <p className="input-error-message">{errors[propertyName]}</p>}
+          {hasError && (
+            <p className="input-error-message">{errors[propertyName]}</p>
+          )}
           <div className="character-counter">
             {responses[propertyName] ? responses[propertyName].length : 0}/150
           </div>
