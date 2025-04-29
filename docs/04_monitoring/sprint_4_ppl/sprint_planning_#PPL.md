@@ -157,7 +157,7 @@ Los objetivos marcados para este Sprint son los siguientes:
 [***[Feature] Actualizar README #522***](https://github.com/Proyecto-ISPP/FISIOFIND/issues/522)
 
 **Descripción de la funcionalidad:**
-Modificar el README para actualizarlo a todos los nuevos cambios del #PPL y nueva estructura del proyecto: Actualizar `Project Scruture` con todas las nuevas apps añadidas desde la última versión del readme. ¡HAY QUE TENER MUCHO CUIDADO CON ESTA SECCIÓN!
+Modificar el README para actualizarlo a todos los nuevos cambios del #PPL y nueva estructura del proyecto: Actualizar `Project Structure` con todas las nuevas apps añadidas desde la última versión del readme. ¡HAY QUE TENER MUCHO CUIDADO CON ESTA SECCIÓN!
 
 **Motivación e impacto:**
 - Mejorar la calidad y claridad del código y la documentación
