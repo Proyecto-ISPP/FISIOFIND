@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { getApiBaseUrl } from "@/utils/api";
 // Se ha eliminado la importación de MultiSelectDropdown
 
@@ -763,8 +763,13 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
 };
 
 // Main page component
-const SessionsPage = ({ params }: { params: { id: string } }) => {
-  return <SessionsContent treatmentId={params.id} />;
+const SessionsPage = () => {
+  const params = useParams();
+  // Add type check to ensure params.id is not undefined
+  if (!params.id) {
+    return null;
+  }
+  return <SessionsContent treatmentId={params.id.toString()} />;
 };
 
 export default SessionsPage;
