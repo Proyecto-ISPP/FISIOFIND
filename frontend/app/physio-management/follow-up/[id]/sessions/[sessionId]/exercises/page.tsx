@@ -1072,7 +1072,7 @@ const ExercisesPage = ({
                           </label>
                           <input
                             type="number"
-                            value={serie.repetitions}
+                            value={serie.repetitions || 1}
                             onChange={(e) =>
                               handleUpdateSeries(
                                 index,
@@ -1482,7 +1482,7 @@ const ExercisesPage = ({
                         </label>
                         <input
                           type="number"
-                          value={serie.repetitions}
+                          value={serie.repetitions || 1}
                           onChange={(e) =>
                             handleUpdateSeries(
                               index,
