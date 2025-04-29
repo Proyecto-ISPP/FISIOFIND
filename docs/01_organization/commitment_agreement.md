@@ -137,8 +137,7 @@ Se establece el siguiente horario de comunicación y trabajo:
 
 - Se establece un sistema de compensación para aquellos miembros que no cumplan con las 10 horas semanales asignadas (sólo en caso de que no hayan realizado algunas de sus tareas asignadas), con el fin de mantener un equilibrio en la carga de trabajo. Las personas que no cumplan con el tiempo asignado deberán compensar el tiempo en la semana siguiente trabajando la cantidad de horas que faltan.
 
-- Del mismo modo, en caso de que algún miembro tenga más carga de trabajo durante una semana e invierte más tiempo que el resto del equipo, el tiempo extra dedicado en esa semana podrá ser descontado de futuras semanas. Más concretamente, durante las fases finales del #PPL y #WPL, se permitirá reducir las 10 horas mínimas semanales (4 horas de clase + 6 horas de trabajo) de forma excepcional, siempre que el miembro haya acumulado más de 10 horas en semanas previas. La reducción será de hasta 2 horas por semana y estará limitada a las horas extra previamente realizadas.
-
+- Del mismo modo, en caso de que algún miembro tenga más carga de trabajo durante una semana e invierta más tiempo que el resto del equipo, el tiempo extra dedicado en esa semana podrá ser descontado de futuras semanas. Más concretamente, durante las fases finales del #PPL y #WPL, se permitirá reducir las 10 horas mínimas semanales (4 horas de clase + 6 horas de trabajo) de forma excepcional, siempre que el miembro haya acumulado más de 10 horas en semanas previas. La reducción será de hasta 2 horas por semana y estará limitada a las horas extra previamente realizadas.
 ## 2.4 COMPROMISO Y REALIZACIÓN DE LAS TAREAS
 
 - En caso de conflicto, este será abordado primeramente a nivel de grupo y luego a nivel de proyecto, para así mantener un ambiente de trabajo eficiente.
