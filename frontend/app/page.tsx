@@ -153,7 +153,29 @@ const Home = () => {
             <div className="relative hidden md:block">
               {/* Floating images around the logo */}
               <div className="absolute top-0 left-0 w-full h-full hidden lg:block">
-                <div className="floating-image" style={{ right: "  0%", top: "3%" }}>
+                <div
+                  className="floating-image relative transition-all duration-300"
+                  style={{ right: '0%', top: '3%' }}
+                >
+                  {/* Línea de puntitos crecientes */}
+                  <div className="speech-path">
+                    <div className="speech-dot small" />
+                    <div className="speech-dot medium" />
+                    <div className="speech-dot large" />
+                  </div>
+
+                  {/* Burbuja de ayuda */}
+                  <div className="help-bubble absolute -top-12 max-w-[90%] md:max-w-[280px] bg-white text-[#05668D] font-semibold text-sm p-4 rounded-xl shadow-lg">
+                    ¿Necesitas ayuda con la app?
+                    <br />
+                    <Link
+                      href="/help"
+                      className="underline text-[#1E5ACD] hover:text-[#05AC9C]"
+                    >
+                      Visita nuestra sección de ayuda
+                    </Link>
+                  </div>
+
                   <Image
                     src="/static/Gif-mascota-despedida-unscreen.gif"
                     alt="Floating Image 3"
@@ -162,7 +184,108 @@ const Home = () => {
                     loading="lazy"
                   />
                 </div>
+
+                <style jsx>{`
+                  /* Contenedor de los puntos, rotado hacia la burbuja */
+                  .speech-path {
+                    position: absolute;
+                    top: 5%; /* Ajustado para que salga de la parte superior de la cabeza */
+                    left: 65%; /* Posición horizontal ajustada */
+                    display: flex;
+                    align-items: center;
+                    transform: rotate(-25deg); /* Ángulo ajustado para apuntar a la burbuja */
+                    z-index: 10; /* Asegura que están por encima de otros elementos */
+                  }
+
+                  .speech-dot {
+                    background: white;
+                    border-radius: 50%;
+                    margin-right: 10px; /* Espacio entre puntos reducido */
+                    box-shadow: 0 0 3px rgba(0, 0, 0, 0.1); /* Sombra sutil para destacar */
+                  }
+
+                  .speech-dot.small {
+                    width: 5px;
+                    height: 5px;
+                  }
+
+                  .speech-dot.medium {
+                    width: 7px;
+                    height: 7px;
+                  }
+
+                  .speech-dot.large {
+                    width: 9px;
+                    height: 9px;
+                    margin-right: 0; /* El último no necesita margen */
+                  }
+
+                  /* Estilos para la burbuja - totalmente responsive */
+                  .help-bubble {
+                    border-radius: 12px;
+                    max-width: 100%;
+                    box-sizing: border-box;
+                    transition: all 0.3s ease;
+                    position: absolute;
+                    right: 5%; /* Ajustado para mantener la burbuja alineada con la imagen */
+                  }
+
+                  /* Eliminamos la flecha */
+                  .help-bubble::before {
+                    display: none;
+                  }
+
+                  /* Ajustar la posición del contenedor flotante según el tamaño de la pantalla */
+                  .floating-image {
+                    transition: right 0.3s ease; /* Transición suave para el movimiento */
+                  }
+
+                  /* Media queries para mover el contenedor hacia la izquierda */
+                  @media (max-width: 1200px) {
+                    .floating-image {
+                      right: 10%; /* Empieza a moverse hacia la izquierda */
+                    }
+
+                    .speech-path {
+                      left: 42%;
+                      top: 22%;
+                      transform: rotate(-35deg);
+                    }
+
+                    .help-bubble {
+                      right: 15px; /* Margen fijo desde el borde derecho */
+                      max-width: 250px;
+                    }
+                  }
+
+                  @media (max-width: 992px) {
+                    .floating-image {
+                      right: 20%; /* Se mueve más hacia la izquierda */
+                    }
+
+                    .speech-path {
+                      left: 40%;
+                      top: 25%;
+                      transform: rotate(-30deg);
+                    }
+
+                    .help-bubble {
+                      right: 10px; /* Margen más pequeño en pantallas medianas */
+                      max-width: 220px;
+                    }
+                  }
+
+                  @media (max-width: 768px) {
+                    /* En pantallas más pequeñas donde la mascota se oculta */
+                    .speech-path,
+                    .help-bubble,
+                    .floating-image {
+                      display: none; /* Ocultar cuando la mascota también está oculta */
+                    }
+                  }
+                `}</style>
               </div>
+
 
               {/* Ajuste de la posición del logo */}
               <div className="relative flex justify-start items-center mt-8 ml-[-100px]">
@@ -525,6 +648,28 @@ const Home = () => {
                     />
                   </svg>
                   Términos de Servicio
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/help"
+                  className="hover:text-[#41B8D5] transition-colors flex items-center justify-center"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4 mr-2"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  Ayuda
                 </Link>
               </li>
             </ul>

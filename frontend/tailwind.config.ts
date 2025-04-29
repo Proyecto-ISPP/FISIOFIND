@@ -100,6 +100,8 @@ module.exports = {
       animation: {
         'slide-down': 'slide-down 0.3s ease-out',
       },
+
+      
       
     },
   },
