@@ -496,6 +496,7 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
                 }
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300"
                 placeholder="Nombre de la sesión"
+                maxLength={50}
               />
             </div>
             <div className="space-y-2">
@@ -565,7 +566,7 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
                   </button>
                 </div>
 
-                <h3 className="text-xl font-semibold text-[#05668D] mb-3">
+                <h3 className="text-xl font-semibold text-[#05668D] mb-3 break-words w-full pr-12">
                   {session.name || `Sesión ${session.id}`}
                 </h3>
 
@@ -691,6 +692,7 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
                     }
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300"
                     placeholder="Nombre de la sesión"
+                    maxLength={50}
                   />
                 </div>
                 <div>
