@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import RestrictedAccess from "@/components/RestrictedAccess";
 import { getApiBaseUrl } from "@/utils/api";
 import axios from "axios";
+import PatientHistoryViewerModal from "@/app/physio-management/follow-up/components/PatientHistoryViewerModal";
 
 // Definir las interfaces para los datos
 interface User {
@@ -80,53 +81,75 @@ const SeguimientoPage = () => {
   const [creatingTreatment, setCreatingTreatment] = useState(false);
 
   const [showDateForm, setShowDateForm] = useState(false);
-  const [selectedPatient, setSelectedPatient] = useState<{id: number, appointmentId: number} | null>(null);
+  const [selectedPatient, setSelectedPatient] = useState<{
+    id: number;
+    appointmentId: number;
+  } | null>(null);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [dateError, setDateError] = useState<string | null>(null);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [selectedPatientId, setSelectedPatientId] = useState<number | null>(
+    null
+  );
 
   // Function to handle the initial click on "Crear tratamiento"
-  const handleInitiateTreatmentCreation = (appointmentId: number, patientId: number) => {
-    setSelectedPatient({id: patientId, appointmentId});
+  const handleInitiateTreatmentCreation = (
+    appointmentId: number,
+    patientId: number
+  ) => {
+    setSelectedPatient({ id: patientId, appointmentId });
     setShowDateForm(true);
-    
+
     // Set default dates (today for start, 30 days later for end)
     const today = new Date();
     const thirtyDaysLater = new Date(today);
     thirtyDaysLater.setDate(today.getDate() + 30);
-    
-    setStartDate(today.toISOString().split('T')[0]);
-    setEndDate(thirtyDaysLater.toISOString().split('T')[0]);
+
+    setStartDate(today.toISOString().split("T")[0]);
+    setEndDate(thirtyDaysLater.toISOString().split("T")[0]);
     setDateError(null);
   };
 
+  // Function to handle the click on "Historial Clínico"
+  const handleViewHistory = (patientId: number) => {
+    setSelectedPatientId(patientId);
+    setShowHistoryModal(true);
+  };
+
+  const handleCloseHistoryModal = () => {
+    setShowHistoryModal(false);
+    setSelectedPatientId(null);
+  };
   // Function to validate dates
   const validateDates = () => {
     const start = new Date(startDate);
     const end = new Date(endDate);
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Reset time to beginning of day for comparison
-    
+
     if (start < today) {
-      setDateError("La fecha de inicio no puede ser anterior a la fecha actual.");
+      setDateError(
+        "La fecha de inicio no puede ser anterior a la fecha actual."
+      );
       return false;
     }
-    
+
     if (end <= start) {
       setDateError("La fecha de fin debe ser posterior a la fecha de inicio.");
       return false;
     }
-    
+
     return true;
   };
 
   // Function to handle form submission
   const handleDateFormSubmit = async () => {
     if (!validateDates() || !selectedPatient) return;
-    
+
     setCreatingTreatment(true);
     setDateError(null);
-    
+
     try {
       // First, get the current physiotherapist ID using the correct endpoint
       const physioResponse = await fetch(
@@ -145,16 +168,22 @@ const SeguimientoPage = () => {
 
       const physioData = await physioResponse.json();
       const physiotherapistId = physioData.physio?.id;
-      
+
       if (!physiotherapistId) {
         throw new Error("No se pudo obtener el ID del fisioterapeuta");
       }
 
       // Format dates for API
-      const formattedStartDate = new Date(startDate + "T12:00:00").toISOString();
+      const formattedStartDate = new Date(
+        startDate + "T12:00:00"
+      ).toISOString();
       const formattedEndDate = new Date(endDate + "T12:00:00").toISOString();
 
-      console.log("Creating treatment with dates:", formattedStartDate, formattedEndDate);
+      console.log(
+        "Creating treatment with dates:",
+        formattedStartDate,
+        formattedEndDate
+      );
 
       // Create the treatment with user-selected dates
       const response = await fetch(
@@ -180,14 +209,14 @@ const SeguimientoPage = () => {
       if (!response.ok) {
         const errorData = await response.json();
         console.error("Treatment creation error:", errorData);
-        
+
         // Handle specific validation errors from backend
         if (errorData.start_time) {
           setDateError(errorData.start_time[0]);
           setCreatingTreatment(false);
           return;
         }
-        
+
         throw new Error(
           `Error al crear el tratamiento: ${JSON.stringify(errorData)}`
         );
@@ -356,7 +385,7 @@ const SeguimientoPage = () => {
         setLoading(false);
         return;
       }
-      
+
       try {
         setLoading(true);
 
@@ -505,10 +534,15 @@ const SeguimientoPage = () => {
   }
 
   return (
-    <div className="min-h-screen w-full" style={{ backgroundColor: "rgb(238, 251, 250)" }}>
+    <div
+      className="min-h-screen w-full"
+      style={{ backgroundColor: "rgb(238, 251, 250)" }}
+    >
       <div className="container mx-auto px-4 py-12">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold text-[#05668D]">Seguimiento de Tratamientos</h1>
+          <h1 className="text-4xl font-bold text-[#05668D]">
+            Seguimiento de Tratamientos
+          </h1>
         </div>
 
         {error && (
@@ -548,7 +582,7 @@ const SeguimientoPage = () => {
                       </div>
                     </div>
 
-                    <div className="mt-4">
+                    <div className="mt-4 flex space-x-4">
                       <button
                         onClick={() =>
                           handleInitiateTreatmentCreation(
@@ -560,6 +594,14 @@ const SeguimientoPage = () => {
                       >
                         Crear tratamiento
                       </button>
+
+                      {/* Botón para abrir el historial clínico */}
+                      <button
+                        onClick={() => handleViewHistory(patient.id)} // Llama la función para mostrar el modal
+                        className="w-full py-2 bg-gradient-to-r from-[#F5A623] to-[#D77F17] text-white rounded-xl hover:opacity-90 transition-all duration-300"
+                      >
+                        Historial Clínico
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -568,42 +610,56 @@ const SeguimientoPage = () => {
           </div>
         )}
 
+        {/* Modal for viewing patient history */}
+        {showHistoryModal && selectedPatientId && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-xl w-full max-w-4xl h-[85vh] overflow-hidden">
+              <PatientHistoryViewerModal
+                patientId={selectedPatientId}
+                token={token!}
+                onClose={handleCloseHistoryModal}
+              />
+            </div>
+          </div>
+        )}
+
         {/* Existing treatments section */}
         <div className="bg-white rounded-2xl shadow-lg p-8">
-          <h2 className="text-2xl font-bold mb-6 text-[#05668D]">Tratamientos existentes</h2>
+          <h2 className="text-2xl font-bold mb-6 text-[#05668D]">
+            Tratamientos existentes
+          </h2>
 
           <div className="bg-gradient-to-br from-[#f8fdfc] to-[#edf8f7] rounded-xl shadow-md p-6 mb-8">
             <div className="flex flex-col md:flex-row md:items-center justify-between">
               <div className="mb-4 md:mb-0">
-                <h2 className="text-lg font-semibold mb-3 text-[#05668D]">Filtrar por estado</h2>
+                <h2 className="text-lg font-semibold mb-3 text-[#05668D]">
+                  Filtrar por estado
+                </h2>
                 <div className="flex space-x-3">
                   <button
                     onClick={() => handleFilterChange(null)}
-                    className={`px-4 py-2 rounded-xl transition-all duration-300 ${
-                      activeFilter === null
-                        ? "bg-gradient-to-r from-[#41B8D5] to-[#1E5ACD] text-white"
-                        : "bg-gray-200 hover:bg-gray-300"
-                    }`}
+                    className={`px-4 py-2 rounded-xl transition-all duration-300 ${activeFilter === null
+                      ? "bg-gradient-to-r from-[#41B8D5] to-[#1E5ACD] text-white"
+                      : "bg-gray-200 hover:bg-gray-300"
+                      }`}
                   >
                     Todos
                   </button>
                   <button
                     onClick={() => handleFilterChange(true)}
-                    className={`px-4 py-2 rounded-xl transition-all duration-300 ${
-                      activeFilter === true
-                        ? "bg-gradient-to-r from-[#41B8D5] to-[#1E5ACD] text-white"
-                        : "bg-gray-200 hover:bg-gray-300"
-                    }`}
+                    className={`px-4 py-2 rounded-xl transition-all duration-300 ${activeFilter === true
+                      ? "bg-gradient-to-r from-[#41B8D5] to-[#1E5ACD] text-white"
+                      : "bg-gray-200 hover:bg-gray-300"
+                      }`}
                   >
                     Activos
                   </button>
                   <button
                     onClick={() => handleFilterChange(false)}
-                    className={`px-4 py-2 rounded-xl transition-all duration-300 ${
-                      activeFilter === false
-                        ? "bg-gradient-to-r from-[#41B8D5] to-[#1E5ACD] text-white"
-                        : "bg-gray-200 hover:bg-gray-300"
-                    }`}
+                    className={`px-4 py-2 rounded-xl transition-all duration-300 ${activeFilter === false
+                      ? "bg-gradient-to-r from-[#41B8D5] to-[#1E5ACD] text-white"
+                      : "bg-gray-200 hover:bg-gray-300"
+                      }`}
                   >
                     Históricos
                   </button>
@@ -627,8 +683,19 @@ const SeguimientoPage = () => {
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300"
                   />
                   <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 text-gray-400"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                      />
                     </svg>
                   </div>
                 </div>
@@ -668,7 +735,10 @@ const SeguimientoPage = () => {
                 </div>
 
                 <div className="mb-6">
-                  <label htmlFor="end-date" className="block text-gray-700 mb-2 font-medium">
+                  <label
+                    htmlFor="end-date"
+                    className="block text-gray-700 mb-2 font-medium"
+                  >
                     Fecha de fin
                   </label>
                   <input
@@ -702,8 +772,19 @@ const SeguimientoPage = () => {
 
           {filteredTreatments.length === 0 ? (
             <div className="text-center py-12 bg-gray-50 rounded-xl">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M12 2a10 10 0 110 20 10 10 0 010-20z" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-16 w-16 mx-auto text-gray-400 mb-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M12 2a10 10 0 110 20 10 10 0 010-20z"
+                />
               </svg>
               <p className="text-gray-500 text-lg">
                 No se encontraron tratamientos con los filtros seleccionados
@@ -718,11 +799,10 @@ const SeguimientoPage = () => {
                   onClick={() => handleCardClick(treatment.id)}
                 >
                   <div
-                    className={`p-1 text-center text-white ${
-                      treatment.is_active 
-                        ? "bg-gradient-to-r from-green-400 to-green-600" 
-                        : "bg-gradient-to-r from-gray-400 to-gray-600"
-                    }`}
+                    className={`p-1 text-center text-white ${treatment.is_active
+                      ? "bg-gradient-to-r from-green-400 to-green-600"
+                      : "bg-gradient-to-r from-gray-400 to-gray-600"
+                      }`}
                   >
                     {treatment.is_active ? "Activo" : "Histórico"}
                   </div>
@@ -780,5 +860,3 @@ const SeguimientoPage = () => {
 };
 
 export default SeguimientoPage;
-
-
