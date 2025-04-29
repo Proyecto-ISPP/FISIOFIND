@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Camera, Plus, Trash2, Edit, Save, StarIcon, Film, Bell, BicepsFlexed, Lock } from 'lucide-react';
+import { Camera, Plus, Trash2, Edit, Save, StarIcon, Film, Bell, BicepsFlexed, Lock, ClipboardList } from 'lucide-react';
 import ScheduleCalendar from "@/components/ui/ScheduleCalendar";
 import { getApiBaseUrl } from "@/utils/api";
 import { GradientButton } from "@/components/ui/gradient-button";
@@ -1869,6 +1869,20 @@ const FisioProfile = () => {
                     >
                       <BicepsFlexed className="w-4 h-4" /> Biblioteca de
                       Ejercicios
+                    </GradientButton>
+                  </Link>
+                  )}
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">Cuestionarios</h3>
+                  {id && (
+                    <Link href={`/questionnaires`} passHref>
+                    <GradientButton
+                      variant="create"
+                      className="px-3 py-2 font-medium rounded-xl flex items-center gap-2"
+                    >
+                      <ClipboardList className="w-4 h-4" /> Cuestionarios 
+                      Personalizables
                     </GradientButton>
                   </Link>
                   )}
