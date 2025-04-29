@@ -372,6 +372,6 @@ export default function Home() {
           onClose={() => setAlertConfig(null)}
         />
       )}
-    </>
+    </div>
   );
 }
