@@ -26,16 +26,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           src="https://animatedicons.co/scripts/embed-animated-icons.js"
           strategy="afterInteractive"
         />
+  <Script
+    src="https://cdn.botpress.cloud/webchat/v2.3/inject.js"
+    strategy="afterInteractive"
+  />
+  <Script
+    src="https://files.bpcontent.cloud/2025/03/29/10/20250329105351-SFPYS2KS.js"
+    strategy="afterInteractive"
+  />
       </head>
+    
       <body
         className={`${poppins.variable} font-sans antialiased`}
         style={{ backgroundColor: "rgb(238, 251, 250)" }}
       >
         <AppointmentProvider>
           <ClientWrapper>
-            <div className="flex min-h-screen" style={{ backgroundColor: "rgb(238, 251, 250)" }}>
+            <div className="flex min-h-screen">
               <SidebarDemo />
-              <main className="flex-1 transition-all duration-300 h-screen overflow-auto" style={{ backgroundColor: "rgb(238, 251, 250)" }}>
+              <main className="flex-1 transition-all duration-300 h-screen overflow-auto">
                 {children}
               </main>
             </div>

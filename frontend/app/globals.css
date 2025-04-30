@@ -2065,3 +2065,12 @@ input:checked + .slider:before {
   transform: translateX(1.9em);
 }
 
+
+iframe.bpFab {
+  bottom: 70px !important;
+  right: 20px !important; 
+  position: fixed !important;
+  z-index: 9999 !important;
+  transform: scale(0.75);
+  transform-origin: bottom right;
+}
