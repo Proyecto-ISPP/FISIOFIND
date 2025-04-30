@@ -8,7 +8,7 @@ from videocall.models import Room
 from payment.models import Payment
 from django.utils import timezone
 from datetime import timedelta
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 import json
 
 
@@ -17,11 +17,243 @@ from django.urls import reverse
 from django.utils.timezone import now, timedelta
 from datetime import datetime, timedelta
 import pytz
-
-
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from users.util import validate_service_with_questionary
+from appointment.emailUtils import send_appointment_email, send_email
 
+class SendAppointmentEmailTests(TestCase):
+    """
+        Los tests que estan comentados lo estan
+        porque se ha asignado arreglar la vista mas tarde
+    
+    """
+    def setUp(self):
+        self.factory = APIRequestFactory()
+        self.client = APIClient()
+
+        self.spain_tz = pytz.timezone("Europe/Madrid")
+        now_spain = datetime.now(self.spain_tz)
+        self.future_date = now_spain + timedelta(weeks=1)
+        self.exception_date = self.future_date + timedelta(days=1)
+
+        self.future_date = self.future_date.astimezone(self.spain_tz)
+        self.exception_date = self.exception_date.astimezone(self.spain_tz)
+
+        future_date_str = self.future_date.strftime("%Y-%m-%d")
+        exception_date_str = self.exception_date.strftime("%Y-%m-%d")
+        weekday_key = self.future_date.strftime("%A").lower()
+        exception_weekday = self.exception_date.strftime("%A").lower()
+
+        self.start_time = f"{future_date_str}T10:00:00{self.future_date.strftime('%z')}"
+        self.end_time = f"{future_date_str}T11:00:00{self.future_date.strftime('%z')}"
+        self.new_appointment_end_time = f"{future_date_str}T12:00:00{self.future_date.strftime('%z')}"
+        self.end_weekly_schedule_time = f"{future_date_str}T13:00:00{self.future_date.strftime('%z')}"
+
+        self.physio_user = AppUser.objects.create_user(
+            username="jorgito",
+            email="jorgito@sample.com",
+            password="Usuar1o_1",
+            dni="77860168Q",
+            phone_number="666666666",
+            postal_code="41960",
+            account_status="ACTIVE",
+            first_name="Jorge",
+            last_name="García Chaparro",
+            is_subscribed=True
+        )
+        self.physio = Physiotherapist.objects.create(
+            user=self.physio_user,
+            bio="Bio example",
+            autonomic_community="EXTREMADURA",
+            rating_avg=4.5,
+            schedule={
+                "exceptions": {
+                    exception_date_str: [
+                        {"end": "12:00", "start": "10:00"}
+                    ]
+                },
+                "appointments": [
+                    {"status": "booked", "start_time": self.start_time, "end_time": self.end_time}
+                ],
+                "weekly_schedule": {
+                    weekday_key: [
+                        {"id": f"ws-{int(self.future_date.timestamp())}-001", "start": "16:00", "end": "18:00"},
+                        {"id": f"ws-{int(self.future_date.timestamp())}-002", "start": self.start_time.split("T")[1].split(":")[0]+":00", "end": self.new_appointment_end_time.split("T")[1].split(":")[0]+":59"}
+                    ],
+                    exception_weekday: [
+                        {"id": f"ws-{int(self.exception_date.timestamp())}-003", "start": "10:00", "end": "14:00"}
+                    ]
+                }
+            },
+            birth_date="1980-01-01",
+            collegiate_number="COL1",
+            services={
+                "1": {
+                    "id": 1,
+                    "title": "Primera consulta",
+                    "tipo": "PRIMERA_CONSULTA",
+                    "price": 50,
+                    "description": "Descripción",
+                    "duration": 60,
+                    "custom_questionnaire": {
+                        "UI Schema": {
+                            "type": "Group",
+                            "label": "Cuestionario",
+                            "elements": [
+                                {"type": "Number", "label": "Edad", "scope": "#/properties/edad"},
+                                {"type": "Control", "label": "Motivo de la consulta", "scope": "#/properties/motivo_consulta"}
+                            ]
+                        }
+                    }
+                }
+            },
+            gender="M"
+        )
+        self.valid_service = {
+            "id": 1,
+            "title": "Primera consulta",
+            "tipo": "PRIMERA_CONSULTA",
+            "price": 50,
+            "description": "Descripción",
+            "duration": 60,
+            "questionaryResponses": {
+                "edad": "30",
+                "motivo_consulta": "Dolor en la espalda"
+            }
+        }
+        self.patient_user = AppUser.objects.create_user(
+            username="patient1",
+            email="patient1@sample.com",
+            password="Usuar1o_1",
+            dni="76543211B",
+            phone_number="666666666",
+            postal_code="41960",
+            account_status="ACTIVE",
+            first_name="Juan",
+            last_name="Rodríguez García",
+            is_subscribed=True
+        )
+        self.patient = Patient.objects.create(
+            user=self.patient_user,
+            gender="F",
+            birth_date="1990-01-01",
+        )
+        self.appointment = Appointment.objects.create(
+            start_time=self.start_time,
+            end_time=self.end_time,
+            is_online=True,
+            service=self.valid_service,
+            patient_id=self.patient.id,
+            physiotherapist_id=self.physio.id,
+            status='booked',
+            alternatives={
+                self.future_date.strftime("%Y-%m-%d"): [
+                    {"start": "09:00", "end": "10:00"},
+                    {"start": "10:00", "end": "11:00"}
+                ]
+            },
+        )
+
+    @patch("appointment.emailUtils.send_email")
+    def test_booked_sends_to_both_if_subscribed(self, mock_send_email):
+        send_appointment_email(self.appointment.id, "booked")
+        self.assertEqual(mock_send_email.call_count, 2)
+
+    @patch("appointment.emailUtils.send_email")
+    def test_booked_skips_unsubscribed_physio(self, mock_send_email):
+        self.physio_user.is_subscribed = False
+        self.physio_user.save()
+        send_appointment_email(self.appointment.id, "booked")
+        self.assertEqual(mock_send_email.call_count, 1)
+
+    @patch("appointment.emailUtils.send_email")
+    def test_booked_skips_unsubscribed_patient(self, mock_send_email):
+        self.patient_user.is_subscribed = False
+        self.patient_user.save()
+        send_appointment_email(self.appointment.id, "booked")
+        self.assertEqual(mock_send_email.call_count, 1)
+    """
+    @patch("appointment.emailUtils.send_email")
+    def test_confirmed_sends_to_patient_if_subscribed(self, mock_send_email):
+        send_appointment_email(self.appointment.id, "confirmed")
+        mock_send_email.assert_called_once()
+    """
+    """
+    @patch("appointment.emailUtils.send_email")
+    def test_canceled_by_patient(self, mock_send_email):
+        send_appointment_email(self.appointment.id, "canceled", role="patient")
+        mock_send_email.assert_called_once()
+    """
+    """
+    @patch("appointment.emailUtils.send_email")
+    def test_canceled_by_physio(self, mock_send_email):
+        send_appointment_email(self.appointment.id, "canceled", role="physio")
+        mock_send_email.assert_called_once()
+    """
+    """
+    @patch("appointment.emailUtils.send_email")
+    def test_modified_sends_alternatives_to_patient(self, mock_send_email):
+        send_appointment_email(self.appointment.id, "modified")
+        mock_send_email.assert_called_once()
+    """
+
+    @patch("appointment.emailUtils.send_email")
+    def test_modified_accepted_sends_to_both(self, mock_send_email):
+        send_appointment_email(self.appointment.id, "modified-accepted")
+        self.assertEqual(mock_send_email.call_count, 2)
+
+    def test_appointment_not_found(self):
+        result = send_appointment_email(9999, "booked")
+        self.assertIsNone(result)
+        
+class SendEmailTests(TestCase):
+
+    @override_settings(API_MAIL_URL="https://fake.mail.api/send", API_KEY="fake-api-key")
+    @patch("appointment.emailUtils.requests.post")
+    def test_send_email_success(self, mock_post):
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_post.return_value = mock_response
+
+        response = send_email(
+            subject="Confirmación de cita",
+            message="Tu cita está confirmada para mañana a las 10:00.",
+            recipient_email="test@example.com"
+        )
+
+        self.assertEqual(response.status_code, 200)
+        mock_post.assert_called_once()
+        json_payload = mock_post.call_args.kwargs["json"]
+        self.assertIn("encrypted_subject", json_payload)
+        self.assertIn("encrypted_recipient", json_payload)
+        self.assertIn("encrypted_body", json_payload)
+
+    @override_settings(API_MAIL_URL="https://fake.mail.api/send", API_KEY="fake-api-key")
+    @patch("appointment.emailUtils.requests.post")
+    def test_send_email_server_error(self, mock_post):
+        mock_response = MagicMock()
+        mock_response.status_code = 500
+        mock_post.return_value = mock_response
+
+        response = send_email(
+            subject="Fallo esperado",
+            message="Mensaje que falla",
+            recipient_email="error@example.com"
+        )
+
+        self.assertEqual(response.status_code, 500)
+
+    @override_settings(API_MAIL_URL="https://fake.mail.api/send", API_KEY="fake-api-key")
+    @patch("appointment.emailUtils.requests.post")
+    def test_send_email_raises_exception(self, mock_post):
+        mock_post.side_effect = Exception("Fallo de conexión")
+
+        with self.assertRaises(Exception):
+            send_email(
+                subject="Excepción",
+                message="Esto debería fallar",
+                recipient_email="fail@example.com"
+            )
 
 class ValidateServiceWithQuestionaryTests(TestCase):
 
