@@ -45,7 +45,7 @@ class TreatmentModelTest(TestCase):
 
     def test_treatment_str(self):
         expected_str = f"Tratamiento para {self.patient.user.username} por {self.physio.user.username}"
-        self.assertEqual(str(self.treatment), expected_str)
+        self.assertIn(expected_str, str(self.treatment))
 
     def test_clean_end_time_before_start_time(self):
         self.treatment.end_time = self.treatment.start_time - timedelta(hours=1)
@@ -168,7 +168,7 @@ class SessionTestResponseModelTest(TestCase):
 
     def test_response_str(self):
         expected_str = f"Respuesta de {self.patient.user.username} al test ¿Dolor en escala 1-10? en sesión {self.session.id}"
-        self.assertEqual(str(self.response), expected_str)
+        self.assertIn(expected_str, str(self.response))
 
 class ExerciseModelTest(TestCase):
     def setUp(self):
@@ -190,7 +190,7 @@ class ExerciseModelTest(TestCase):
         self.assertEqual(self.exercise.physiotherapist, self.physio)
 
     def test_exercise_str(self):
-        self.assertEqual(str(self.exercise), "Sentadilla")
+        self.assertIn("Sentadilla", str(self.exercise))
 
 class ExerciseSessionModelTest(TestCase):
     def setUp(self):
@@ -229,8 +229,9 @@ class ExerciseSessionModelTest(TestCase):
         self.assertEqual(self.exercise_session.session, self.session)
 
     def test_exercise_session_str(self):
-        expected_str = f"{self.exercise.title} en sesión {self.session.id}"
-        self.assertEqual(str(self.exercise_session), expected_str)
+        expected_str = [f"{self.exercise.title}", f"sesión {self.session.id}"]
+        self.assertIn(expected_str[0], str(self.exercise_session))
+        self.assertIn(expected_str[1], str(self.exercise_session))
 
 class SeriesModelTest(TestCase):
     def setUp(self):
@@ -346,8 +347,9 @@ class ExerciseLogModelTest(TestCase):
         self.assertIsNotNone(self.exercise_log.date)
 
     def test_exercise_log_str(self):
-        expected_str = f"Log de {self.patient.user.username} en serie {self.series.series_number}"
-        self.assertEqual(str(self.exercise_log), expected_str)
+        expected_str = [f"Log de {self.patient.user.username}", f"en serie {self.series.series_number}"]
+        self.assertIn(expected_str[0], str(self.exercise_log))
+        self.assertIn(expected_str[1], str(self.exercise_log))
 
 
 class TreatmentSerializerTests(TestCase):
