@@ -1,0 +1,4 @@
+Hay hacerlo con el https://addons.mozilla.org/en-US/firefox/addon/selenium-ide/ porque grabarlos con este add-on es muy fácil.
+
+Se deben ejecutar paso a paso. Es decir, al play no, sino dándole click a cada paso porque hay veces que la app no carga suficientemente rápido. Además, así se puede ver que todo se esté mostrando correctamente.
+
