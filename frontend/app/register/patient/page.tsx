@@ -160,35 +160,30 @@ const FormField = ({
   );
 };
 
-
+// Modal Component
 const ConfirmationModal = ({ isOpen, onClose, email, onConfirm }: { isOpen: boolean, onClose: () => void, email: string, onConfirm: () => void }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300 ease-in-out">
-      <div className="bg-white dark:bg-neutral-900 p-6 rounded-lg shadow-xl max-w-md w-full transform transition-all duration-300 ease-in-out scale-100">
-        <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">Confirma tu correo electrónico</h2>
-        <p className="mb-6 text-gray-700 dark:text-gray-300">
-          ¡Registro casi completo! Te hemos enviado un correo de confirmación a <strong>{email}</strong>.
-          <br /><br />
-          Por favor, revisa tu bandeja de entrada (y la carpeta de spam, por si acaso) y sigue las instrucciones para activar tu cuenta.
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white dark:bg-black p-6 rounded-lg shadow-xl max-w-md w-full">
+        <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">Confirma tu correo</h2>
+        <p className="mb-4 text-gray-700 dark:text-gray-300">
+          Te hemos enviado un correo de confirmación a <strong>{email}</strong>. Por favor, verifica tu buzón y sigue las instrucciones para activar tu cuenta.
         </p>
-        <div className="flex justify-end">
-           <button
-             onClick={() => {
-               onClose(); // Cierra el modal
-               onConfirm(); // Ejecuta la acción de confirmación (redirección)
-             }}
-             className="px-5 py-2 bg-[#1E5ACD] text-white font-semibold rounded-lg hover:bg-[#1747A0] focus:outline-none focus:ring-2 focus:ring-[#1E5ACD] focus:ring-opacity-50 transition-colors"
-           >
-             Entendido
-           </button>
-        </div>
+        <button
+          onClick={() => {
+            onClose();
+            onConfirm();
+          }}
+          className="px-4 py-2 bg-[#1E5ACD] text-white font-medium rounded-lg hover:bg-[#1747A0] transition-colors"
+        >
+          Entendido
+        </button>
       </div>
     </div>
   );
 };
-
 
 const PatientRegistrationForm = () => {
   const router = useRouter();
@@ -353,87 +348,45 @@ const PatientRegistrationForm = () => {
     setCurrentStep((prev) => prev - 1);
   };
 
-  const handleModalConfirm = () => {
-    setShowModal(false);
-    router.push('/');
-  };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-  
-    if (!validateStep(currentStep)) {
-       showAlert("warning", "Por favor, corrige los errores en el formulario.");
-       return; 
-    }
-    setShowModal(true);
-    setIsSubmitting(true); 
-    setErrors({}); 
-  
-    const requestData: Partial<FormData> = { ...formData };
-    if (!requestData.phone_number?.trim()) {
+    setIsSubmitting(true);
+    // Create a new object with only the fields the server expects
+    const requestData = { ...formData };
+    // Remove phone_number if it's empty
+    if (!requestData.phone_number.trim()) {
       delete requestData.phone_number;
     }
+    // Remove confirm_password since the server doesn't expect it
     delete requestData.confirm_password;
-  
+
     try {
-  
       const response = await axios.post(
         `${getApiBaseUrl()}/api/app_user/patient/register/`,
         requestData,
         { headers: { "Content-Type": "application/json" } }
       );
-  
-      if (response.status === 201) {
-        try {
-          const loginResponse = await axios.post(
-            `${getApiBaseUrl()}/api/app_user/login/`,
-            { username: formData.username, password: formData.password },
-            { headers: { "Content-Type": "application/json" } }
-          );
-  
-          if (loginResponse.status === 200) {
-            localStorage.setItem("token", loginResponse.data.access);
-            localStorage.setItem("refresh_token", loginResponse.data.refresh);
-            setIsLoggedIn(true);
-  
-          } else {
-             showAlert("error", `Registro completado, pero hubo un error al iniciar sesión automáticamente. Por favor, inicia sesión manualmente.`);
-             setShowModal(false);
-          }
-        } catch (loginError) {
-            showAlert("error", `Registro completado, pero hubo un error al iniciar sesión automáticamente. Por favor, inicia sesión manualmente.`);
-            console.error("Login error after registration:", loginError);
 
-            setShowModal(false);
+      if (response.status === 201) {
+        showAlert("success", "¡Registro exitoso! Iniciando sesión...");
+        
+        // Auto login after registration
+        const loginResponse = await axios.post(
+          `${getApiBaseUrl()}/api/app_user/login/`,
+          { username: formData.username, password: formData.password },
+          { headers: { "Content-Type": "application/json" } }
+        );
+
+        if (loginResponse.status === 200) {
+          localStorage.setItem("token", loginResponse.data.access);
+          setIsLoggedIn(true); // Marcar que el usuario está logueado
         }
-  
       }
-  
     } catch (error: any) {
-        if (axios.isAxiosError(error) && error.response) {
-            console.error("Registration error data:", error.response.data);
-            const serverErrors = error.response.data;
-            const newErrors: { [key: string]: string } = {};
-            let generalErrorMessage = "Error en el registro. Verifica los campos.";
-            for (const key in serverErrors) {
-                if (Array.isArray(serverErrors[key])) {
-                    newErrors[key] = serverErrors[key].join(' ');
-                    if (['username', 'email', 'password'].includes(key) && currentStep === 2) {
-                        setCurrentStep(1);
-                    }
-                } else if (key === 'detail' || typeof serverErrors[key] === 'string') {
-                    generalErrorMessage = serverErrors[key];
-                }
-            }
-            setErrors(newErrors);
-            showAlert("error", generalErrorMessage);
-  
-        } else {
-          showAlert("error", "Ocurrió un error inesperado. Inténtalo de nuevo más tarde.");
-          console.error("Unexpected registration error:", error);
-        }
-  
-        setShowModal(false);
+      if (axios.isAxiosError(error) && error.response) {
+        showAlert("error", "Error en el registro. Por favor, verifica tus datos.");
+        setErrors(error.response.data);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -504,102 +457,28 @@ const PatientRegistrationForm = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="md:col-span-2">
                       <FormField
-                        name="password"
-                        label="Contraseña"
-                        type="password"
-                        value={formData.password}
+                        name="username"
+                        label="Nombre de usuario"
+                        value={formData.username}
                         onChange={handleChange}
-                        error={errors.password}
+                        error={errors.username}
                       />
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:col-span-2">
-                        <div>
-                          <FormField
-                            name="confirm_password"
-                            label="Confirmar contraseña"
-                            type="password"
-                            value={formData.confirm_password}
-                            onChange={handleChange}
-                            error={errors.confirm_password}
-                          />
-                        </div>
-                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex flex-col justify-center h-full">
-                          <h3 className="text-sm font-medium text-blue-800 mb-2 flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            Requisitos de contraseña
-                          </h3>
-                          <ul className="text-xs text-blue-700 space-y-1 ml-7 list-disc">
-                            <li>Mínimo 8 caracteres</li>
-                            <li>No debe ser similar a tu información personal</li>
-                            <li>No debe ser una contraseña común</li>
-                            <li>No puede ser únicamente numérica</li>
-                          </ul>
-                        </div>
-                      </div>
                     </div>
-                  </div>
-                )}
-              {currentStep === 2 && (
-                <div className="space-y-4">
-                  <h2 className="text-xl font-semibold mb-4">
-                    Información Personal
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <FormField
-                      name="first_name"
-                      label="Nombre"
-                      value={formData.first_name}
+                      name="email"
+                      label="Email"
+                      type="email"
+                      value={formData.email}
                       onChange={handleChange}
-                      error={errors.first_name}
+                      error={errors.email}
                     />
                     <FormField
-                      name="last_name"
-                      label="Apellidos"
-                      value={formData.last_name}
+                      name="password"
+                      label="Contraseña"
+                      type="password"
+                      value={formData.password}
                       onChange={handleChange}
-                      error={errors.last_name}
-                    />
-                    <FormField
-                      name="dni"
-                      label="DNI"
-                      value={formData.dni}
-                      onChange={handleChange}
-                      error={errors.dni}
-                      info="Necesitamos tu DNI para verificar tu identidad."
-                    />
-                    <FormField
-                      name="phone_number"
-                      label="Número de teléfono"
-                      type="tel"
-                      required={false}
-                      value={formData.phone_number || ""}
-                      onChange={handleChange}
-                      error={errors.phone_number}
-                    />
-                    <FormField
-                      name="birth_date"
-                      label="Fecha de nacimiento"
-                      type="date"
-                      value={formData.birth_date}
-                      onChange={handleChange}
-                      error={errors.birth_date}
-                    />
-                    <FormField
-                      name="gender"
-                      label="Género"
-                      type="select"
-                      options={GENDER_OPTIONS}
-                      value={formData.gender}
-                      onChange={handleChange}
-                      error={errors.gender}
-                    />
-                    <FormField
-                      name="postal_code"
-                      label="Código Postal"
-                      value={formData.postal_code}
-                      onChange={handleChange}
-                      error={errors.postal_code}
+                      error={errors.password}
                     />
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:col-span-2">
                       <div>
@@ -739,38 +618,35 @@ const PatientRegistrationForm = () => {
             <p className="text-gray-600 dark:text-gray-400">
               ¿Ya tienes una cuenta?{" "}
               <button
-                onClick={() => router.push("/register")} // Asume que /register es la selección de rol
-                className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 flex items-center gap-2 mx-auto"
+                onClick={() => router.push("/login")}
+                className="text-[#1E5ACD] hover:underline font-medium"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M19 12H5M12 19l-7-7 7-7" /> {/* Corregido d="" */}
-                </svg>
-                Volver a selección de rol
+                Iniciar sesión
               </button>
-            </div>
-
+            </p>
+            <button
+              onClick={() => router.push("/register")}
+              className="mt-4 text-gray-500 hover:text-gray-700 flex items-center gap-2 mx-auto"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+              </svg>
+              Volver a selección de rol
+            </button>
+          </div>
         </div>
-      </div> 
-
-      </div> 
-
-      <ConfirmationModal
-        isOpen={showModal}
-        onClose={handleModalConfirm}
-        email={formData.email}
-        onConfirm={handleModalConfirm}
-      />
-    </> 
+      </div>
+    </div>
   );
 };
 

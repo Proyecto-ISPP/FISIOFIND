@@ -611,7 +611,7 @@ def create_payment_setup(appointment_id, amount, user):
     except Exception as e:
         logging.error(f'Error al procesar el pago: {str(e)}')
         appointment.delete()  # Eliminar la cita si ocurre un error
-        return Response({'error': 'An error occurred while processing your payment. Please try again later.'+str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'An error occurred while processing your payment. Please try again later.'}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 @permission_classes([IsPatient])

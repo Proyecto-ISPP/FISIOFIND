@@ -32,7 +32,8 @@ urlpatterns = [
     path('exercises/', ExerciseListView.as_view(), name='exercise_list'),
     path('exercises/<int:pk>/', ExerciseDetailView.as_view(), name='exercise_detail'),
     path('exercises/search/', ExerciseSearchView.as_view(), name='search_exercise'),
-    #path('exercises/by-area/', ExerciseByAreaView.as_view(), name='exercise_by_area'),
+    # Se deberia de comentar, pero no la comento para evitar errores
+    path('exercises/by-area/', ExerciseByAreaView.as_view(), name='exercise_by_area'),
 
     # Asignación de ejercicios a sesiones
     path('sessions/<int:session_id>/assign-exercise/', AssignExerciseToSessionView.as_view(), name='assign_exercise'),

@@ -1,7 +1,5 @@
 import React from 'react';
 
-import { useRouter } from 'next/navigation';
-
 /**
  * Modal component for displaying messages and confirmation options
  * @param {Object} props - Component props
@@ -23,18 +21,7 @@ const RoomModal = ({
   onCancel,
   onClose
 }) => {
-
-  const router = useRouter();
-
   if (!show) return null;
-
-  const handleClose = () => {
-    if (onClose) {
-      onClose();
-    } else {
-      router.push('/videocalls');
-    }
-  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -58,7 +45,7 @@ const RoomModal = ({
           </div>
         ) : (
           <button
-            onClick={handleClose}
+            onClick={onClose || (() => window.location.href = '/videocalls/')}
             className="bg-gray-600 hover:bg-gray-700 text-black py-2 px-4 rounded"
           >
             Cerrar

@@ -214,16 +214,16 @@ const PatientProfile = () => {
     if (file) {
       // Validate file size (5MB)
       if (file.size > 5 * 1024 * 1024) {
-        setErrors({ photo: 'Las imágenes no pueden superar los 5MB' });
-        showAlert("error", "Las imágenes no pueden superar los 5MB");
+        setFormErrors({ photo: "Las imágenes no pueden superar los 5MB" });
         return;
       }
 
       // Validate file type
       const validTypes = ["image/jpeg", "image/jpg", "image/png"];
       if (!validTypes.includes(file.type)) {
-        setErrors({ photo: 'Solo imágenes en formato JPG, JPEG o PNG son permitidos' });
-        showAlert("error", 'Solo imágenes en formato JPG, JPEG o PNG son permitidos');
+        setFormErrors({
+          photo: "Solo imágenes en formato JPG, JPEG o PNG son permitidos",
+        });
         return;
       }
 

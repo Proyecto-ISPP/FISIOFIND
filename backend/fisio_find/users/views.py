@@ -91,10 +91,22 @@ def verify_user_and_update_status(user_id):
     Función para cambiar el estado del usuario a verified y devolver una Response.
     En principio, se llama desde la verificación de correo
     """
-    patient = Patient.objects.get(id=user_id)
-    patient.user.account_status = 'ACTIVE'
-    patient.user.save()
-    return True
+    try:
+        patient = Patient.objects.get(id=user_id)
+        patient.user.account_status = 'ACTIVE'
+        patient.user.save()
+        return True
+    except Exception:
+        pass
+
+    try:
+        user = AppUser.objects.get(id=user_id)
+        user.account_status = 'ACTIVE'
+        user.save()
+        return True
+    except Exception:
+        pass
+    return False
     
 @api_view(['GET'])
 @permission_classes([AllowAny])
