@@ -7,14 +7,13 @@
 - [Listado UP #PPL](#listado-up-ppl)
 	- [UP Técnicos](#up-técnicos)
 
-
 ## 🏥 Tercera prueba en FisioFind – Usuarios Piloto Técnicos (ISPP)
 
-Hola [Nombre],
+Hola, [Nombre]:
 
-¡Gracias por participar como usuario piloto en esta tercera prueba de FisioFind! 🎉 En esta fase, hemos planteado una dinámica similar a la anterior en la que cada uno de vosotros probará a ser 🔵 Fisioterapeuta y 🟢 Paciente. La idea es hacer una prueba rápida que no os tome más de 10 min en la que sólo nos centraremos en mostraros y probar las nuevas funciones de accesibilidad que hemos integrado en Fisio Find.
+¡Gracias por participar como usuario piloto en esta tercera prueba de FisioFind! 🎉 En esta fase, hemos planteado una dinámica similar a la anterior en la que cada uno de vosotros probará a ser 🔵 Fisioterapeuta y 🟢 Paciente. La idea es hacer una prueba rápida que no os tome más de 10 minutos, en la que solo nos centraremos en mostraros y probar las nuevas funciones de accesibilidad que hemos integrado en FisioFind.
 
-📝 En el siguiente enlace encontrarás todas las instrucciones detalladas para completar esta prueba y el formulario para darnos tu feedback:
+📝 En el siguiente enlace encontrarás todas las instrucciones detalladas para completar esta prueba y el formulario para darnos tu feedback:
 
 🔗 Enlace al formulario: https://tally.so/r/nGkE5o 
 
@@ -22,18 +21,17 @@ Hola [Nombre],
 
 Te llevará menos de 10 minutos, y te agradeceríamos mucho que la realizaras a lo largo del día **30 de abril antes de las 23:59**.
 
-
 Te dejo aquí las credenciales para ambos roles (ya te hemos creado la cuenta y pedido la cita para que pierdas el menor tiempo posible):
 
 🔵 Para el rol de fisioterapeuta:
-- nombre de usuario: uvus_fisio
-- correo: uvus_fisio@sample.com
-- contraseña:
+- Nombre de usuario: uvus_fisio
+- Correo: uvus_fisio@sample.com
+- Contraseña: 
 
 🟢 Para el rol de paciente:
-- nombre de usuario: uvus
-- correo: uvus@alum.us.es
-- contraseña: 
+- Nombre de usuario: uvus
+- Correo: uvus@alum.us.es
+- Contraseña: 
         
 Aquí tienes nuestros contactos por si necesitas comentarnos algo de forma más directa:
 
