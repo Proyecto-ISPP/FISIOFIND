@@ -9,6 +9,7 @@ from rest_framework import status
 from users.permissions import IsPatient, IsPhysioOrPatient, IsPhysiotherapist
 from .models import PatientFile, Video
 from mimetypes import guess_type
+from django.core.exceptions import ValidationError
 
 @api_view(['POST'])
 @permission_classes([IsPhysioOrPatient])
@@ -50,14 +51,20 @@ def create_file(request):
     serializer = PatientFileSerializer(data=mutable_data, context={'request': request})
 
     if serializer.is_valid():
-        file = serializer.save()
-        return Response(
-            {
-                "message": "Archivo creado correctamente",
-                "file": PatientFileSerializer(file).data
-            },
-            status=status.HTTP_201_CREATED
-        )
+        try:
+            file = serializer.save(user=request.user)
+            return Response(
+                {
+                    "message": "Archivo creado correctamente",
+                    "file": PatientFileSerializer(file).data
+                },
+                status=status.HTTP_201_CREATED
+            )
+        except ValidationError as ve:
+            return Response(
+                {"detail": str(ve.message)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -138,15 +145,15 @@ def get_patient_file_by_id(request, file_id):
 
 @api_view(['GET'])
 @permission_classes([IsPhysioOrPatient])
-def get_patient_files(request):
+def get_patient_files(request, id_treatment):
     user = request.user
     patient_files = []
 
     # Filtrar los archivos que el usuario puede acceder
     if hasattr(user, 'patient'):
-        files = PatientFile.objects.filter(treatment__patient=user.patient)
+        files = PatientFile.objects.filter(treatment__patient=user.patient, treatment__id=id_treatment)
     elif hasattr(user, 'physio'):
-        files = PatientFile.objects.filter(treatment__physiotherapist=user.physio)
+        files = PatientFile.objects.filter(treatment__physiotherapist=user.physio, treatment__id=id_treatment)
     else:
         files = []
 
@@ -265,14 +272,20 @@ def create_video(request):
     serializer = VideoSerializer(data=request.data, context={"request": request})
 
     if serializer.is_valid():
-        video = serializer.save()
-        return Response(
-            {
-                "message": "Video creado correctamente.",
-                "video": VideoSerializer(video).data
-            },
-            status=status.HTTP_201_CREATED
-        )
+        try:
+            video = serializer.save()
+            return Response(
+                {
+                    "message": "Video creado correctamente.",
+                    "video": VideoSerializer(video).data
+                },
+                status=status.HTTP_201_CREATED
+            )
+        except ValidationError as ve:
+                return Response(
+                    {"detail": str(ve.message)},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -316,14 +329,14 @@ def list_video_by_id(request, video_id):
 
 @api_view(['GET'])
 @permission_classes([IsPhysioOrPatient])
-def list_my_videos(request):
+def list_my_videos(request, id_treatment):
     user = request.user
     videos_owner = []
 
     if hasattr(user, 'patient'):
-        videos = Video.objects.filter(treatment__patient=user.patient)
+        videos = Video.objects.filter(treatment__patient=user.patient, treatment__id=id_treatment)
     elif hasattr(user, 'physio'):
-        videos = Video.objects.filter(treatment__physiotherapist=user.physio)
+        videos = Video.objects.filter(treatment__physiotherapist=user.physio, treatment__id=id_treatment)
     else:
         videos = []
 

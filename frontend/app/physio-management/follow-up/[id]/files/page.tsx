@@ -96,7 +96,7 @@ const PhysioFiles = () => {
       }
 
       try {
-        const response = await axios.get(`${getApiBaseUrl()}/api/cloud/files/list-files/`, {
+        const response = await axios.get(`${getApiBaseUrl()}/api/cloud/files/list-files/${id}`, {
           headers: {
             Authorization: `Bearer ${storedToken}`,
           },
@@ -187,11 +187,30 @@ const PhysioFiles = () => {
       setDescription("");
       setFile(null);
       setFilePreview(null);
-    } catch (err) {
-      showAlert("error", "Hubo un error al guardar el archivo.");
+    } catch (err: any) {
+      const errorDetail = err.response?.data?.detail;
+      console.log("Error detail:", errorDetail);
+    
+      if (
+        err.response?.status === 400 &&
+        typeof errorDetail === "string" &&
+        errorDetail.toLowerCase().includes("tipo mime")
+      ) {
+        showAlert("error", "Tipo de archivo no permitido. Solo se permiten imágenes (jpg, png) o PDFs.");
+      } else if (
+        err.response?.status === 400 &&
+        typeof errorDetail === "string" &&
+        errorDetail.toLowerCase().includes("límite de archivos alcanzado")
+      ) {
+        showAlert("error", "Has alcanzado el límite de archivos y vídeos permitidos. Elimina algunos o mejora tu plan de precio.");
+      } else {
+        showAlert("error", "Hubo un error al guardar el archivo.");
+      }
+    
     } finally {
       setLoading(false);
     }
+    
   };
 
   const handleEdit = (file: any) => {
@@ -314,6 +333,13 @@ const PhysioFiles = () => {
           Volver al tratamiento
         </button>
         <div className="text-center mb-9">
+          {alert.show && (
+            <Alert
+              type={alert.type}
+              message={alert.message}
+              onClose={() => setAlert({ ...alert, show: false })}
+            />
+          )}
           <h1 className="text-3xl font-bold mb-2" style={{ background: "linear-gradient(90deg, #1E5ACD, #3a6fd8)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
             Archivos del Tratamiento
           </h1>

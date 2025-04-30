@@ -112,7 +112,7 @@ class PatientFileSerializer(serializers.ModelSerializer):
 
         # Guardar el archivo actualizado
         treatment_file.file_key = ",".join(file_keys)
-        treatment_file.save()
+        treatment_file.save(user=request.user)
 
         return treatment_file
 

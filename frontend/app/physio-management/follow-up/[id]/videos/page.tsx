@@ -91,7 +91,7 @@ const PhysioVideo = () => {
         return;
       }
       try {
-        const response = await axios.get(`${getApiBaseUrl()}/api/cloud/videos/list-videos/`, {
+        const response = await axios.get(`${getApiBaseUrl()}/api/cloud/videos/list-videos/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
           params: { treatment_id: id } // Ensure the correct parameter name is used
         });
@@ -173,16 +173,28 @@ const PhysioVideo = () => {
       setEditingVideo(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
 
-      const response = await axios.get(`${getApiBaseUrl()}/api/cloud/videos/list-videos/`, {
+      const response = await axios.get(`${getApiBaseUrl()}/api/cloud/videos/list-videos/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
         params: { treatment: id },
       });
       setVideos(response.data);
-    } catch (error) {
-      showAlert("error", error.response?.data?.message || "Error al procesar el video.");
-    } finally {
-      setLoading(false);
+    } catch (err: any) {
+    const errorDetail = err.response?.data?.detail;
+    console.log("Error detail:", errorDetail);
+  
+    if (
+      err.response?.status === 400 &&
+      typeof errorDetail === "string" &&
+      errorDetail.toLowerCase().includes("límite de archivos alcanzado")
+    ) {
+      showAlert("error", "Has alcanzado el límite de archivos y vídeos permitidos. Elimina algunos o mejora tu plan de precio.");
+    } else {
+      showAlert("error", "Hubo un error al guardar el archivo.");
     }
+  
+  } finally {
+    setLoading(false);
+  }
   };
 
   const handleEdit = (video) => {
