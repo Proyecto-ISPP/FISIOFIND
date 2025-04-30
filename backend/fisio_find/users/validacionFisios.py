@@ -45,7 +45,7 @@ class SeleniumScraper:
             options.add_argument("--window-size=1920,1080")
             options.add_argument("--disable-dev-shm-usage")
             options.binary_location = "/usr/bin/chromium-browser"
-            self.driver = uc.Chrome(options=options)  # Usamos undetected-chromedriver
+            self.driver = uc.Chrome(options=options, version_main=135)  # Usamos undetected-chromedriver
             logging.info("SeleniumScraper inicializado en modo producción con undetected-chromedriver")
 
     def obtener_colegiado(
