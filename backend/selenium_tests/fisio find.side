@@ -4658,6 +4658,424 @@
       ],
       "value": ""
     }]
+  }, {
+    "id": "f066d2ed-7e92-4fad-a318-107671072c32",
+    "name": "Test valorar fisio find fisio",
+    "commands": [{
+      "id": "796dcdfd-dad0-4543-bb5c-12c23a912028",
+      "comment": "",
+      "command": "open",
+      "target": "/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "bd99dbe9-5ca3-4bec-9d5f-0737e0bb71b4",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1866x714",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "9f4850a7-f111-4021-aecc-d94d141b93db",
+      "comment": "",
+      "command": "click",
+      "target": "css=.hover\\3Atext-\\[\\#05AC9C\\]",
+      "targets": [
+        ["css=.hover\\3Atext-\\[\\#05AC9C\\]", "css:finder"],
+        ["xpath=//header/div/div/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Iniciar sesión')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "22352f55-2a40-4a47-ad02-cd023207b837",
+      "comment": "",
+      "command": "click",
+      "target": "id=username",
+      "targets": [
+        ["id=username", "id"],
+        ["name=username", "name"],
+        ["css=#username", "css:finder"],
+        ["xpath=//input[@id='username']", "xpath:attributes"],
+        ["xpath=//div/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "f54fbc04-129a-4d2c-8b23-36e63c8698a3",
+      "comment": "",
+      "command": "type",
+      "target": "id=username",
+      "targets": [
+        ["id=username", "id"],
+        ["name=username", "name"],
+        ["css=#username", "css:finder"],
+        ["xpath=//input[@id='username']", "xpath:attributes"],
+        ["xpath=//div/input", "xpath:position"]
+      ],
+      "value": "sandra"
+    }, {
+      "id": "9b7501c7-0251-432d-ae0c-2a74ef691ce9",
+      "comment": "",
+      "command": "click",
+      "target": "id=password",
+      "targets": [
+        ["id=password", "id"],
+        ["name=password", "name"],
+        ["css=#password", "css:finder"],
+        ["xpath=//input[@id='password']", "xpath:attributes"],
+        ["xpath=//div[2]/div/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "d8b88671-85b9-4923-bc85-d589ecc7e997",
+      "comment": "",
+      "command": "type",
+      "target": "id=password",
+      "targets": [
+        ["id=password", "id"],
+        ["name=password", "name"],
+        ["css=#password", "css:finder"],
+        ["xpath=//input[@id='password']", "xpath:attributes"],
+        ["xpath=//div[2]/div/input", "xpath:position"]
+      ],
+      "value": "99759550V99759550V"
+    }, {
+      "id": "1925430f-6388-4510-92ee-f3b6009ac40c",
+      "comment": "",
+      "command": "click",
+      "target": "css=.bg-\\[\\#05668D\\]",
+      "targets": [
+        ["css=.bg-\\[\\#05668D\\]", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"],
+        ["xpath=//form/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Iniciar Sesión')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "ab5f4dc6-ecae-4b90-8177-e519a1fb5de3",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Mi perfil",
+      "targets": [
+        ["linkText=Mi perfil", "linkText"],
+        ["css=.flex:nth-child(6)", "css:finder"],
+        ["xpath=//a[contains(@href, '/physio-management/profile')]", "xpath:href"],
+        ["xpath=//a[6]", "xpath:position"],
+        ["xpath=//a[contains(.,'Mi perfil')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "93ef438b-f0f5-4c3e-811f-0701705e4775",
+      "comment": "",
+      "command": "click",
+      "target": "css=.p-6 > .text-white",
+      "targets": [
+        ["css=.p-6 > .text-white", "css:finder"],
+        ["xpath=//div[2]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Valorar ahora')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "0d9a2615-8579-4b0a-ad1b-3c184ea1937b",
+      "comment": "",
+      "command": "click",
+      "target": "css=.border-gray-300",
+      "targets": [
+        ["css=.border-gray-300", "css:finder"],
+        ["xpath=//div[2]/textarea", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "ec20a53d-bd7d-4c1a-b49e-e494fd1dd653",
+      "comment": "",
+      "command": "type",
+      "target": "css=.border-gray-300",
+      "targets": [
+        ["css=.border-gray-300", "css:finder"],
+        ["xpath=//div[2]/textarea", "xpath:position"]
+      ],
+      "value": "Me encanta!"
+    }, {
+      "id": "6a4093ed-0a8e-43ae-8c79-6780289a8ae6",
+      "comment": "",
+      "command": "click",
+      "target": "css=.from-\\[\\#41B8D5\\]",
+      "targets": [
+        ["css=.from-\\[\\#41B8D5\\]", "css:finder"],
+        ["xpath=//div[3]/button[2]", "xpath:position"],
+        ["xpath=//button[contains(.,'Enviar')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "45de3405-70ae-4d61-8812-c5a78b557e7f",
+      "comment": "",
+      "command": "click",
+      "target": "css=.w-auto",
+      "targets": [
+        ["css=.w-auto", "css:finder"],
+        ["xpath=//img[@alt='Logo']", "xpath:img"],
+        ["xpath=//a/img", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "d8e12e60-199d-4b58-bd8d-4b21858c730a",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Mi perfil",
+      "targets": [
+        ["linkText=Mi perfil", "linkText"],
+        ["css=.flex:nth-child(6)", "css:finder"],
+        ["xpath=//a[contains(@href, '/physio-management/profile')]", "xpath:href"],
+        ["xpath=//a[6]", "xpath:position"],
+        ["xpath=//a[contains(.,'Mi perfil')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "ebe15e69-ee40-4154-bd43-5b0598064b48",
+      "comment": "",
+      "command": "runScript",
+      "target": "window.scrollTo(0,0)",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "86ab6057-8e4d-4155-ab6b-7ccfa84c42d2",
+      "comment": "",
+      "command": "click",
+      "target": "css=.space-x-3 > .text-white:nth-child(1)",
+      "targets": [
+        ["css=.space-x-3 > .text-white:nth-child(1)", "css:finder"],
+        ["xpath=//div[2]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Editar')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "e5ae9dd4-df06-4601-9897-1bb0d11dc43e",
+      "comment": "",
+      "command": "mouseOver",
+      "target": "css=.space-x-3 > .text-white:nth-child(1)",
+      "targets": [
+        ["css=.space-x-3 > .text-white:nth-child(1)", "css:finder"],
+        ["xpath=//div[2]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Editar')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "2599f73a-afbc-4a64-aa74-b81c5266571c",
+      "comment": "",
+      "command": "mouseOut",
+      "target": "css=.space-x-3 > .text-white:nth-child(1)",
+      "targets": [
+        ["css=.space-x-3 > .text-white:nth-child(1)", "css:finder"],
+        ["xpath=//div[2]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Editar')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "b449ef97-0743-495c-863f-4b693f337c49",
+      "comment": "",
+      "command": "click",
+      "target": "css=.border-gray-300",
+      "targets": [
+        ["css=.border-gray-300", "css:finder"],
+        ["xpath=//div[2]/textarea", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "96212255-d68f-4223-86ca-05f1d63752ea",
+      "comment": "",
+      "command": "type",
+      "target": "css=.border-gray-300",
+      "targets": [
+        ["css=.border-gray-300", "css:finder"],
+        ["xpath=//div[2]/textarea", "xpath:position"]
+      ],
+      "value": "Me encanta! "
+    }, {
+      "id": "aa6fd0ee-0638-4132-8444-35aa05ce8f3d",
+      "comment": "",
+      "command": "click",
+      "target": "css=.focus\\3Aoutline-none:nth-child(4) path",
+      "targets": [
+        ["css=.focus\\3Aoutline-none:nth-child(4) path", "css:finder"]
+      ],
+      "value": ""
+    }, {
+      "id": "cc1cf4a6-d524-4663-bdb0-786c976a6f71",
+      "comment": "",
+      "command": "click",
+      "target": "css=.border-gray-300",
+      "targets": [
+        ["css=.border-gray-300", "css:finder"],
+        ["xpath=//div[2]/textarea", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "55256ccd-c915-4550-a546-8d2b41ede266",
+      "comment": "",
+      "command": "type",
+      "target": "css=.border-gray-300",
+      "targets": [
+        ["css=.border-gray-300", "css:finder"],
+        ["xpath=//div[2]/textarea", "xpath:position"]
+      ],
+      "value": "Me encanta! Pero no del todo"
+    }, {
+      "id": "cf5bc4c0-22a5-430b-8f00-8964d2133fc8",
+      "comment": "",
+      "command": "click",
+      "target": "css=.from-\\[\\#41B8D5\\]",
+      "targets": [
+        ["css=.from-\\[\\#41B8D5\\]", "css:finder"],
+        ["xpath=//div[3]/button[2]", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "50603263-822b-446f-8423-1a213e0d187c",
+      "comment": "",
+      "command": "click",
+      "target": "css=.space-x-3 > .text-white:nth-child(2)",
+      "targets": [
+        ["css=.space-x-3 > .text-white:nth-child(2)", "css:finder"],
+        ["xpath=//button[2]", "xpath:position"],
+        ["xpath=//button[contains(.,'Eliminar')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "dee438cb-98d1-429e-b34b-131952dc2cc7",
+      "comment": "",
+      "command": "click",
+      "target": "css=.from-\\[\\#1E5ACD\\]",
+      "targets": [
+        ["css=.from-\\[\\#1E5ACD\\]", "css:finder"],
+        ["xpath=//div[4]/div/div/button[2]", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "f60a1914-d546-49e0-8d50-4d332feed3c2",
+      "comment": "",
+      "command": "click",
+      "target": "css=.w-auto",
+      "targets": [
+        ["css=.w-auto", "css:finder"],
+        ["xpath=//img[@alt='Logo']", "xpath:img"],
+        ["xpath=//a/img", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "250a63e7-2e1f-49d3-9c3d-8d5a479786f7",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ratings_message__eC5qq > span",
+      "targets": [
+        ["css=.ratings_message__eC5qq > span", "css:finder"],
+        ["xpath=//div[2]/div/p/span", "xpath:position"],
+        ["xpath=//span[contains(.,'¡Sé el primero en valorar nuestra app!')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "50dd7937-507b-456d-9398-6b021046981a",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ratings_opinionInput__e0EX5",
+      "targets": [
+        ["css=.ratings_opinionInput__e0EX5", "css:finder"],
+        ["xpath=//textarea", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "bdcc559c-c1e3-42a8-9477-a4d4d732429b",
+      "comment": "",
+      "command": "type",
+      "target": "css=.ratings_opinionInput__e0EX5",
+      "targets": [
+        ["css=.ratings_opinionInput__e0EX5", "css:finder"],
+        ["xpath=//textarea", "xpath:position"]
+      ],
+      "value": "Me vuelve a encantar!"
+    }, {
+      "id": "babc9a75-6ca3-4068-86f6-bda0c341a894",
+      "comment": "",
+      "command": "click",
+      "target": "css=.text-white:nth-child(2)",
+      "targets": [
+        ["css=.text-white:nth-child(2)", "css:finder"],
+        ["xpath=//button[2]", "xpath:position"],
+        ["xpath=//button[contains(.,'Enviar valoración')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "af2aba0b-d296-43a9-8152-3c8a76000ed5",
+      "comment": "",
+      "command": "runScript",
+      "target": "window.scrollTo(0,0)",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "b17f343e-9958-4c17-816c-83d8fb5f86c4",
+      "comment": "",
+      "command": "click",
+      "target": "css=.h-16",
+      "targets": [
+        ["css=.h-16", "css:finder"],
+        ["xpath=//img[@alt='Logo']", "xpath:img"],
+        ["xpath=//a/img", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "609a27c7-4541-4205-b1b6-bbe0723ce7e0",
+      "comment": "",
+      "command": "click",
+      "target": "css=.flex:nth-child(6) > .text-\\[\\#253240\\]",
+      "targets": [
+        ["css=.flex:nth-child(6) > .text-\\[\\#253240\\]", "css:finder"],
+        ["xpath=//a[6]/span", "xpath:position"],
+        ["xpath=//span[contains(.,'Mi perfil')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "2eb76042-cdca-42f8-845e-90f83c86a7c2",
+      "comment": "",
+      "command": "runScript",
+      "target": "window.scrollTo(0,0)",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "dad1cce9-40ee-481d-9409-568d4eb720ea",
+      "comment": "",
+      "command": "click",
+      "target": "css=.py-2 > .lucide-trash2 > path:nth-child(2)",
+      "targets": [
+        ["css=.py-2 > .lucide-trash2 > path:nth-child(2)", "css:finder"]
+      ],
+      "value": ""
+    }, {
+      "id": "4d85365f-4497-45b0-963f-029cee1fe94c",
+      "comment": "",
+      "command": "mouseOver",
+      "target": "css=.py-2 > .lucide-trash2 > path:nth-child(2)",
+      "targets": [
+        ["css=.py-2 > .lucide-trash2 > path:nth-child(2)", "css:finder"]
+      ],
+      "value": ""
+    }, {
+      "id": "c38360f7-3a09-4ff9-960a-e62cf0ec3a69",
+      "comment": "",
+      "command": "mouseOut",
+      "target": "css=.py-2 > .lucide-trash2 > path:nth-child(2)",
+      "targets": [
+        ["css=.py-2 > .lucide-trash2 > path:nth-child(2)", "css:finder"]
+      ],
+      "value": ""
+    }, {
+      "id": "a8f02577-3f9e-4b0e-b23a-49c65fe7d752",
+      "comment": "",
+      "command": "click",
+      "target": "css=.from-\\[\\#1E5ACD\\]",
+      "targets": [
+        ["css=.from-\\[\\#1E5ACD\\]", "css:finder"],
+        ["xpath=//div[4]/div/div/button[2]", "xpath:position"]
+      ],
+      "value": ""
+    }]
   }],
   "suites": [{
     "id": "42de3e55-4103-4f30-bc15-7e2c353aca7f",
