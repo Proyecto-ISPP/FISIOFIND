@@ -18,6 +18,7 @@ import {
 } from "chart.js";
 import { getApiBaseUrl } from "@/utils/api";
 import { use } from "react";
+import PatientHistoryViewerModal from "@/app/physio-management/follow-up/components/PatientHistoryViewerModal"
 
 
 // Registrar los componentes necesarios de Chart.js
@@ -105,6 +106,10 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
   const [evolutionLoading, setEvolutionLoading] = useState(false);
   const [evolutionError, setEvolutionError] = useState<string | null>(null);
   const [activeExerciseIndex, setActiveExerciseIndex] = useState(0);
+  const [currentPatientId, setCurrentPatientId] = useState<number | null>(
+    null
+  );
+  const [showPatientHistory, setShowPatientHistory] = useState(false);
 
   const fetchEvolutionData = async () => {
     try {
@@ -221,7 +226,7 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
     try {
       setLoading(true);
       const token = localStorage.getItem("token") || "";
-  
+
       const response = await fetch(
         `${getApiBaseUrl()}/api/treatments/${id}/`,
         {
@@ -231,11 +236,11 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
           },
         }
       );
-  
+
       if (!response.ok) {
         throw new Error("Error al obtener el tratamiento");
       }
-  
+
       const data = await response.json();
       setTreatment(data);
       setEditedTreatment({
@@ -252,7 +257,7 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
       setLoading(false);
     }
   };
-  
+
   useEffect(() => {
     const fetchTreatmentDetails = async () => {
       try {
@@ -279,6 +284,7 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
           const data = await response.json();
           console.log("Datos del tratamiento:", data);
           setTreatment(data);
+          setCurrentPatientId(data.patient.id)
           // Inicializar el formulario de edición con los datos actuales
           setEditedTreatment({
             start_time: data.start_time,
@@ -460,8 +466,7 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
 
       if (!response.ok) {
         throw new Error(
-          `Error al marcar el tratamiento como ${
-            newStatus ? "activo" : "inactivo"
+          `Error al marcar el tratamiento como ${newStatus ? "activo" : "inactivo"
           }`
         );
       }
@@ -480,8 +485,7 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
       setAlertType("success");
       // Mostrar mensaje de éxito
       setAlertMessage(
-        `Tratamiento marcado como ${
-          newStatus ? "activo" : "inactivo"
+        `Tratamiento marcado como ${newStatus ? "activo" : "inactivo"
         } correctamente`
       );
     } catch (error) {
@@ -506,14 +510,14 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
   if (!treatment) {
     return (
       <div className="container mx-auto px-4 py-8">
-      <button
-        onClick={handleGoBack}
-        className="mb-6 flex items-center text-blue-600 hover:text-blue-800 transition-colors duration-200 font-medium"
-      >
-        <ArrowLeft className="mr-2" size={20} />
-        Volver a mis tratamientos
-      </button>
-  
+        <button
+          onClick={handleGoBack}
+          className="mb-6 flex items-center text-blue-600 hover:text-blue-800 transition-colors duration-200 font-medium"
+        >
+          <ArrowLeft className="mr-2" size={20} />
+          Volver a mis tratamientos
+        </button>
+
         <Alert
           type="error"
           message="No se encontró el tratamiento solicitado"
@@ -586,394 +590,416 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
           />
         </div>
       )}
-        <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-6">
+        <button
+          onClick={handleGoBack}
+          className="bg-white hover:bg-gray-100 text-[#05668D] font-semibold py-2 px-4 rounded-xl inline-flex items-center shadow-md transition-all duration-300"
+        >
+          ← Volver
+        </button>
+        <h1 className="text-3xl font-bold text-[#05668D]">
+          Detalles del Tratamiento
+        </h1>
+        <div className="flex space-x-2">
           <button
-            onClick={handleGoBack}
-            className="bg-white hover:bg-gray-100 text-[#05668D] font-semibold py-2 px-4 rounded-xl inline-flex items-center shadow-md transition-all duration-300"
+            onClick={() =>
+              router.push(`/physio-management/follow-up/${id}/sessions`)
+            }
+            className="bg-gradient-to-r from-[#6BC9BE] to-[#05668D] hover:opacity-90 text-white font-semibold py-2 px-4 rounded-xl inline-flex items-center shadow-md transition-all duration-300 border-r border-white/20"
           >
-            ← Volver
+            Gestionar Sesiones
           </button>
-          <h1 className="text-3xl font-bold text-[#05668D]">
-            Detalles del Tratamiento
-          </h1>
-          <div className="flex space-x-2">
-            <button
-              onClick={() =>
-                router.push(`/physio-management/follow-up/${id}/sessions`)
-              }
-              className="bg-gradient-to-r from-[#6BC9BE] to-[#05668D] hover:opacity-90 text-white font-semibold py-2 px-4 rounded-xl inline-flex items-center shadow-md transition-all duration-300 border-r border-white/20"
-            >
-              Gestionar Sesiones
-            </button>
-            <button
-              onClick={() =>
-                router.push(`/physio-management/follow-up/${id}/videos`)
-              }
-              className="bg-gradient-to-r from-[#05668D] to-[#6BC9BE] hover:opacity-90 text-white font-semibold py-2 px-4 rounded-xl inline-flex items-center shadow-md transition-all duration-300"
-            >
-              <Film className="mr-2" size={20} />
-              Vídeos subidos
-            </button>
-            <button
+          <button
+            onClick={() =>
+              router.push(`/physio-management/follow-up/${id}/videos`)
+            }
+            className="bg-gradient-to-r from-[#05668D] to-[#6BC9BE] hover:opacity-90 text-white font-semibold py-2 px-4 rounded-xl inline-flex items-center shadow-md transition-all duration-300"
+          >
+            <Film className="mr-2" size={20} />
+            Vídeos subidos
+          </button>
+          <button
             onClick={() =>
               router.push(`/physio-management/follow-up/${id}/files`)
             }
             className="bg-gradient-to-r from-[#05668D] to-[#6BC9BE] hover:opacity-90 text-white font-semibold py-2 px-4 rounded-xl inline-flex items-center shadow-md transition-all duration-300"
-            >
+          >
             <File className="mr-2" size={20} />
             Archivos subidos
           </button>
-            <button
-              onClick={handleEditToggle}
-              className="bg-white hover:bg-gray-100 text-[#05668D] border border-[#05668D] font-semibold py-2 px-4 rounded-xl inline-flex items-center shadow-md transition-all duration-300"
+          <button
+            onClick={handleEditToggle}
+            className="bg-white hover:bg-gray-100 text-[#05668D] border border-[#05668D] font-semibold py-2 px-4 rounded-xl inline-flex items-center shadow-md transition-all duration-300"
+          >
+            {isEditing ? "Cancelar" : "Editar"}
+          </button>
+
+        </div>
+      </div>
+
+      <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold text-[#05668D]">{patientName}</h1>
+          <div className="flex items-center space-x-3">
+            <span
+              className={`px-4 py-1.5 rounded-full text-white font-medium ${treatment.is_active
+                  ? "bg-gradient-to-r from-green-400 to-green-600"
+                  : "bg-gradient-to-r from-gray-400 to-gray-600"
+                }`}
             >
-              {isEditing ? "Cancelar" : "Editar"}
-            </button>
-            
+              {treatment.is_active ? "Activo" : "Inactivo"}
+            </span>
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl font-bold text-[#05668D]">{patientName}</h1>
-            <div className="flex items-center space-x-3">
-              <span
-                className={`px-4 py-1.5 rounded-full text-white font-medium ${
-                  treatment.is_active
-                    ? "bg-gradient-to-r from-green-400 to-green-600"
-                    : "bg-gradient-to-r from-gray-400 to-gray-600"
-                }`}
-              >
-                {treatment.is_active ? "Activo" : "Inactivo"}
-              </span>
-            </div>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
+          <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-md p-6">
+            <h2 className="text-xl font-semibold mb-4 text-[#05668D]">
+              Información del tratamiento
+            </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
-            <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-md p-6">
-              <h2 className="text-xl font-semibold mb-4 text-[#05668D]">
-                Información del tratamiento
-              </h2>
-
-              {isEditing ? (
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Fecha de inicio
-                    </label>
-                    <input
-                      type="date"
-                      name="start_time"
-                      value={formatDateForInput(
-                        editedTreatment.start_time || treatment.start_time
-                      )}
-                      onChange={handleDateChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Fecha de fin
-                    </label>
-                    <input
-                      type="date"
-                      name="end_time"
-                      value={formatDateForInput(
-                        editedTreatment.end_time || treatment.end_time
-                      )}
-                      onChange={handleDateChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300"
-                    />
-                  </div>
-
-                  <div className="flex items-center">
-                    <input
-                      type="checkbox"
-                      id="is_active"
-                      name="is_active"
-                      checked={
-                        editedTreatment.is_active !== undefined
-                          ? editedTreatment.is_active
-                          : treatment.is_active
-                      }
-                      onChange={(e) =>
-                        setEditedTreatment({
-                          ...editedTreatment,
-                          is_active: e.target.checked,
-                        })
-                      }
-                      className="h-5 w-5 text-[#05668D] focus:ring-[#41B8D5] border-gray-300 rounded"
-                    />
-                    <label
-                      htmlFor="is_active"
-                      className="ml-2 block text-sm text-gray-900"
-                    >
-                      Tratamiento activo
-                    </label>
-                  </div>
-
-                  {saveError && (
-                    <div className="text-red-600 text-sm mt-2">{saveError}</div>
-                  )}
-
-                  <div className="flex justify-end">
-                    <button
-                      onClick={handleSaveChanges}
-                      disabled={isSaving}
-                      className="px-4 py-2 bg-gradient-to-r from-[#6BC9BE] to-[#05668D] text-white rounded-xl hover:opacity-90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {isSaving ? "Guardando..." : "Guardar cambios"}
-                    </button>
-                  </div>
+            {isEditing ? (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Fecha de inicio
+                  </label>
+                  <input
+                    type="date"
+                    name="start_time"
+                    value={formatDateForInput(
+                      editedTreatment.start_time || treatment.start_time
+                    )}
+                    onChange={handleDateChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300"
+                  />
                 </div>
-              ) : (
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center border-b border-gray-100 pb-2">
-                    <span className="font-medium text-gray-600">Inicio:</span>
-                    <span className="text-[#05668D]">
-                      {new Date(treatment.start_time).toLocaleDateString(
-                        "es-ES"
-                      )}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center border-b border-gray-100 pb-2">
-                    <span className="font-medium text-gray-600">Fin:</span>
-                    <span className="text-[#05668D]">
-                      {new Date(treatment.end_time).toLocaleDateString("es-ES")}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="font-medium text-gray-600">Estado:</span>
-                    <span
-                      className={
-                        treatment.is_active
-                          ? "text-[#05AC9C] font-medium"
-                          : "text-gray-500 font-medium"
-                      }
-                    >
-                      {treatment.is_active ? "Activo" : "Inactivo"}
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
 
-            <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-md p-6">
-              <h2 className="text-xl font-semibold mb-4 text-[#05668D]">
-                Información del paciente
-              </h2>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Fecha de fin
+                  </label>
+                  <input
+                    type="date"
+                    name="end_time"
+                    value={formatDateForInput(
+                      editedTreatment.end_time || treatment.end_time
+                    )}
+                    onChange={handleDateChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300"
+                  />
+                </div>
+
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="is_active"
+                    name="is_active"
+                    checked={
+                      editedTreatment.is_active !== undefined
+                        ? editedTreatment.is_active
+                        : treatment.is_active
+                    }
+                    onChange={(e) =>
+                      setEditedTreatment({
+                        ...editedTreatment,
+                        is_active: e.target.checked,
+                      })
+                    }
+                    className="h-5 w-5 text-[#05668D] focus:ring-[#41B8D5] border-gray-300 rounded"
+                  />
+                  <label
+                    htmlFor="is_active"
+                    className="ml-2 block text-sm text-gray-900"
+                  >
+                    Tratamiento activo
+                  </label>
+                </div>
+
+                {saveError && (
+                  <div className="text-red-600 text-sm mt-2">{saveError}</div>
+                )}
+
+                <div className="flex justify-end">
+                  <button
+                    onClick={handleSaveChanges}
+                    disabled={isSaving}
+                    className="px-4 py-2 bg-gradient-to-r from-[#6BC9BE] to-[#05668D] text-white rounded-xl hover:opacity-90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isSaving ? "Guardando..." : "Guardar cambios"}
+                  </button>
+                </div>
+              </div>
+            ) : (
               <div className="space-y-3">
                 <div className="flex justify-between items-center border-b border-gray-100 pb-2">
-                  <span className="font-medium text-gray-600">Nombre:</span>
-                  <span className="text-[#05668D]">{patientName}</span>
-                </div>
-                <div className="flex justify-between items-center border-b border-gray-100 pb-2">
-                  <span className="font-medium text-gray-600">Email:</span>
-                  <span className="text-[#05668D]">{patientEmail}</span>
-                </div>
-                <div className="flex justify-between items-center border-b border-gray-100 pb-2">
-                  <span className="font-medium text-gray-600">Género:</span>
-                  <span className="text-[#05668D]">{patientGender}</span>
-                </div>
-                <div className="flex justify-between items-center border-b border-gray-100 pb-2">
-                  <span className="font-medium text-gray-600">Edad:</span>
+                  <span className="font-medium text-gray-600">Inicio:</span>
                   <span className="text-[#05668D]">
-                    {calculateAge(patientData?.birth_date)}
+                    {new Date(treatment.start_time).toLocaleDateString(
+                      "es-ES"
+                    )}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center border-b border-gray-100 pb-2">
+                  <span className="font-medium text-gray-600">Fin:</span>
+                  <span className="text-[#05668D]">
+                    {new Date(treatment.end_time).toLocaleDateString("es-ES")}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="font-medium text-gray-600">
-                    Última cita:
-                  </span>
-                  <span className="text-[#05668D]">
-                    {formatLastAppointment()}
+                  <span className="font-medium text-gray-600">Estado:</span>
+                  <span
+                    className={
+                      treatment.is_active
+                        ? "text-[#05AC9C] font-medium"
+                        : "text-gray-500 font-medium"
+                    }
+                  >
+                    {treatment.is_active ? "Activo" : "Inactivo"}
                   </span>
                 </div>
+              </div>
+            )}
+          </div>
+
+          <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-md p-6">
+            <h2 className="text-xl font-semibold mb-4 text-[#05668D]">
+              Información del paciente
+            </h2>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center border-b border-gray-100 pb-2">
+                <span className="font-medium text-gray-600">Nombre:</span>
+                <span className="text-[#05668D]">{patientName}</span>
+              </div>
+              <div className="flex justify-between items-center border-b border-gray-100 pb-2">
+                <span className="font-medium text-gray-600">Email:</span>
+                <span className="text-[#05668D]">{patientEmail}</span>
+              </div>
+              <div className="flex justify-between items-center border-b border-gray-100 pb-2">
+                <span className="font-medium text-gray-600">Género:</span>
+                <span className="text-[#05668D]">{patientGender}</span>
+              </div>
+              <div className="flex justify-between items-center border-b border-gray-100 pb-2">
+                <span className="font-medium text-gray-600">Edad:</span>
+                <span className="text-[#05668D]">
+                  {calculateAge(patientData?.birth_date)}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="font-medium text-gray-600">
+                  Última cita:
+                </span>
+                <span className="text-[#05668D]">
+                  {formatLastAppointment()}
+                </span>
+              </div>
+              <div className="flex justify-center mt-4">
+                <button
+                  onClick={() => setShowPatientHistory(true)}
+                  className="px-4 py-2 bg-gradient-to-r from-[#05668D] to-[#6BC9BE] text-white rounded-xl hover:opacity-90 transition-all duration-300"
+                >
+                  Ver historial del paciente
+                </button>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <div className="grid grid-cols-1 gap-6 mb-8">
-          <div className="bg-white rounded-2xl shadow-lg p-6">
-            <h2 className="text-2xl font-semibold mb-6 text-[#05668D]">
-              Evolución del Paciente
-            </h2>
+      <div className="grid grid-cols-1 gap-6 mb-8">
+        <div className="bg-white rounded-2xl shadow-lg p-6">
+          <h2 className="text-2xl font-semibold mb-6 text-[#05668D]">
+            Evolución del Paciente
+          </h2>
 
-            {evolutionLoading ? (
-              <div className="flex justify-center items-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#41B8D5]"></div>
-              </div>
-            ) : evolutionError ? (
-              <div className="text-center text-red-500 py-8 bg-red-50 rounded-xl">
-                {evolutionError}
-              </div>
-            ) : evolutionData.length === 0 ? (
-              <div className="text-center text-gray-500 py-12 bg-gray-50 rounded-xl">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-16 w-16 mx-auto text-gray-400 mb-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                  />
-                </svg>
-                <p className="text-lg">
-                  No hay datos de evolución disponibles para este tratamiento.
-                </p>
-              </div>
-            ) : (
-              <div>
-                {/* Exercise navigation */}
-                <div className="bg-gradient-to-br from-[#f8fdfc] to-[#edf8f7] rounded-xl shadow-md p-4 mb-6">
-                  <div className="flex justify-between items-center">
-                    <button
-                      onClick={prevExercise}
-                      disabled={activeExerciseIndex === 0}
-                      className="px-4 py-2 bg-white rounded-xl shadow-sm hover:bg-gray-50 transition-all duration-300 border border-transparent hover:border-[#6BC9BE] disabled:border-gray-200 disabled:hover:border-gray-200 disabled:opacity-50 disabled:hover:bg-white"
-                    >
-                      ← Ejercicio anterior
-                    </button>
+          {evolutionLoading ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#41B8D5]"></div>
+            </div>
+          ) : evolutionError ? (
+            <div className="text-center text-red-500 py-8 bg-red-50 rounded-xl">
+              {evolutionError}
+            </div>
+          ) : evolutionData.length === 0 ? (
+            <div className="text-center text-gray-500 py-12 bg-gray-50 rounded-xl">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-16 w-16 mx-auto text-gray-400 mb-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M9 19v-6a2 2 00-2-2H5a2 2 00-2 2v6a2 2 002 2h2a2 2 002-2zm0 0V9a2 2 012-2h2a2 2 012 2v10m-6 0a2 2 002 2h2a2 2 002-2m0 0V5a2 2 012-2h2a2 2 012 2v14a2 2 01-2 2h-2a2 2 01-2-2z"
+                />
+              </svg>
+              <p className="text-lg">
+                No hay datos de evolución disponibles para este tratamiento.
+              </p>
+            </div>
+          ) : (
+            <div>
+              {/* Exercise navigation */}
+              <div className="bg-gradient-to-br from-[#f8fdfc] to-[#edf8f7] rounded-xl shadow-md p-4 mb-6">
+                <div className="flex justify-between items-center">
+                  <button
+                    onClick={prevExercise}
+                    disabled={activeExerciseIndex === 0}
+                    className="px-4 py-2 bg-white rounded-xl shadow-sm hover:bg-gray-50 transition-all duration-300 border border-transparent hover:border-[#6BC9BE] disabled:border-gray-200 disabled:hover:border-gray-200 disabled:opacity-50 disabled:hover:bg-white"
+                  >
+                    ← Ejercicio anterior
+                  </button>
 
-                    <h4 className="text-lg font-medium text-[#05668D]">
-                      {evolutionData[activeExerciseIndex]?.exercise_name ||
-                        "Ejercicio"}{" "}
-                      ({activeExerciseIndex + 1} de {evolutionData.length})
-                      {" - "}
-                      {getMetricLabel(
-                        evolutionData[activeExerciseIndex]?.metric_type || ""
-                      )}
-                    </h4>
+                  <h4 className="text-lg font-medium text-[#05668D]">
+                    {evolutionData[activeExerciseIndex]?.exercise_name ||
+                      "Ejercicio"}{" "}
+                    ({activeExerciseIndex + 1} de {evolutionData.length})
+                    {" - "}
+                    {getMetricLabel(
+                      evolutionData[activeExerciseIndex]?.metric_type || ""
+                    )}
+                  </h4>
 
-                    <button
-                      onClick={nextExercise}
-                      disabled={activeExerciseIndex >= evolutionData.length - 1}
-                      className="px-4 py-2 bg-white rounded-xl shadow-sm disabled:opacity-50 hover:bg-gray-50 transition-all duration-300"
-                    >
-                      Siguiente ejercicio →
-                    </button>
-                  </div>
+                  <button
+                    onClick={nextExercise}
+                    disabled={activeExerciseIndex >= evolutionData.length - 1}
+                    className="px-4 py-2 bg-white rounded-xl shadow-sm disabled:opacity-50 hover:bg-gray-50 transition-all duration-300"
+                  >
+                    Siguiente ejercicio →
+                  </button>
                 </div>
+              </div>
 
-                {/* Chart */}
-                <div className="bg-white rounded-xl shadow-md p-6 h-80">
-                  <Line
-                    data={chartData}
-                    options={{
-                      responsive: true,
-                      maintainAspectRatio: false,
-                      scales: {
-                        y: {
-                          beginAtZero: true,
-                          title: {
-                            display: true,
-                            text: getMetricLabel(
-                              evolutionData[activeExerciseIndex]?.metric_type ||
-                                ""
-                            ),
-                            font: {
-                              weight: "bold",
-                            },
-                          },
-                          grid: {
-                            color: "rgba(0, 0, 0, 0.05)",
+              {/* Chart */}
+              <div className="bg-white rounded-xl shadow-md p-6 h-80">
+                <Line
+                  data={chartData}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                      y: {
+                        beginAtZero: true,
+                        title: {
+                          display: true,
+                          text: getMetricLabel(
+                            evolutionData[activeExerciseIndex]?.metric_type ||
+                            ""
+                          ),
+                          font: {
+                            weight: "bold",
                           },
                         },
-                        x: {
-                          title: {
-                            display: true,
-                            text: "Fecha",
-                            font: {
-                              weight: "bold",
-                            },
-                          },
-                          grid: {
-                            color: "rgba(0, 0, 0, 0.05)",
-                          },
+                        grid: {
+                          color: "rgba(0, 0, 0, 0.05)",
                         },
                       },
-                      plugins: {
-                        legend: {
-                          labels: {
-                            font: {
-                              size: 14,
-                            },
+                      x: {
+                        title: {
+                          display: true,
+                          text: "Fecha",
+                          font: {
+                            weight: "bold",
                           },
                         },
-                        tooltip: {
-                          backgroundColor: "rgba(0, 0, 0, 0.7)",
-                          padding: 10,
-                          cornerRadius: 6,
-                          titleFont: {
-                            size: 14,
-                          },
-                          bodyFont: {
+                        grid: {
+                          color: "rgba(0, 0, 0, 0.05)",
+                        },
+                      },
+                    },
+                    plugins: {
+                      legend: {
+                        labels: {
+                          font: {
                             size: 14,
                           },
                         },
                       },
-                    }}
-                  />
-                </div>
+                      tooltip: {
+                        backgroundColor: "rgba(0, 0, 0, 0.7)",
+                        padding: 10,
+                        cornerRadius: 6,
+                        titleFont: {
+                          size: 14,
+                        },
+                        bodyFont: {
+                          size: 14,
+                        },
+                      },
+                    },
+                  }}
+                />
               </div>
-            )}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {!isEditing && (
+        <div className="flex justify-end space-x-4 mb-8">
+          {treatment.is_active ? (
+            <button
+              className="px-6 py-3 bg-gradient-to-r from-red-400 to-red-600 text-white font-medium rounded-xl hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-red-300 focus:ring-offset-2 transition-all duration-300 shadow-md flex items-center space-x-2"
+              onClick={() => handleStatusChange(false)}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              Marcar como Inactivo
+            </button>
+          ) : (
+            <button
+              className="px-6 py-3 bg-gradient-to-r from-[#6BC9BE] to-[#05668D] text-white font-medium rounded-xl hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#6BC9BE] focus:ring-offset-2 transition-all duration-300 shadow-md flex items-center space-x-2"
+              onClick={() => handleStatusChange(true)}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              Reactivar Tratamiento
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Modal para mostrar el historial del paciente */}
+      {showPatientHistory && currentPatientId && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+            <div className="overflow-y-auto max-h-full">
+              <PatientHistoryViewerModal
+                patientId={currentPatientId}
+                token={localStorage.getItem("token") || ""}
+                onClose={() => setShowPatientHistory(false)}
+              />
+            </div>
           </div>
         </div>
-
-        {!isEditing && (
-          <div className="flex justify-end space-x-4 mb-8">
-            {treatment.is_active ? (
-              <button
-                className="px-6 py-3 bg-gradient-to-r from-red-400 to-red-600 text-white font-medium rounded-xl hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-red-300 focus:ring-offset-2 transition-all duration-300 shadow-md flex items-center space-x-2"
-                onClick={() => handleStatusChange(false)}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 mr-2"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                Marcar como Inactivo
-              </button>
-            ) : (
-              <button
-                className="px-6 py-3 bg-gradient-to-r from-[#6BC9BE] to-[#05668D] text-white font-medium rounded-xl hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#6BC9BE] focus:ring-offset-2 transition-all duration-300 shadow-md flex items-center space-x-2"
-                onClick={() => handleStatusChange(true)}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 mr-2"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                Reactivar Tratamiento
-              </button>
-            )}
-          </div>
-        )}
+      )}
     </div>
   );
 };
