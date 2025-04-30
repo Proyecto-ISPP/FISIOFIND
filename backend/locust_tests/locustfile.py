@@ -1,5 +1,7 @@
-import random
 from locust import HttpUser, task, between
+import random
+from datetime import datetime, timedelta
+
 
 class UserBehavior(HttpUser):
     wait_time = between(1, 5)
@@ -383,6 +385,147 @@ class UserBehavior(HttpUser):
                             create_response.success()
                         elif create_response.status_code >= 500:
                             create_response.failure(f"Server error: {create_response.status_code}")
+                else:
+                    print("No access token received. Login response:", login_response.text)
+                    login_response.failure("No access token received")
+            elif login_response.status_code == 400:
+                login_response.success()
+            elif login_response.status_code >= 500:
+                login_response.failure(f"Server error: {login_response.status_code}")
+
+    @task(1)
+    def login_and_update_weekly_schedule(self):
+        """Se loguea como fisio y actualiza su horario semanal"""
+        login_payload = {
+            "username": "LOCUST_USER",
+            "password": "Usuar1o_5"
+        }
+        headers = {"Content-Type": "application/json"}
+
+        with self.client.post(
+            "/api/app_user/login/",
+            json=login_payload,
+            headers=headers,
+            name="Login Physio for Schedule Update",
+            catch_response=True
+        ) as login_response:
+            if login_response.status_code == 200:
+                token = login_response.json().get("access")
+                if token:
+                    schedule_payload = {
+                        "schedule": {
+                            "exceptions": {},
+                            "appointments": [],
+                            "weekly_schedule": {
+                                "monday": [{"id": "ws-1746029001001-4", "start": "00:00", "end": "23:00"}],
+                                "tuesday": [{"id": "ws-1746029004121-52", "start": "00:00", "end": "23:00"}],
+                                "wednesday": [{"id": "ws-1746028978666-425", "start": "00:00", "end": "23:00"}],
+                                "thursday": [{"id": "ws-1746028983217-593", "start": "00:00", "end": "23:00"}],
+                                "friday": [{"id": "ws-1746028986361-975", "start": "00:00", "end": "23:00"}],
+                                "saturday": [{"id": "ws-1746028989961-534", "start": "00:00", "end": "23:00"}],
+                                "sunday": [{"id": "ws-1746028993880-795", "start": "00:00", "end": "23:00"}]
+                            }
+                        }
+                    }
+
+                    auth_headers = {
+                        "Authorization": f"Bearer {token}",
+                        "Content-Type": "application/json"
+                    }
+
+                    with self.client.put(
+                        "/api/appointment/physio/schedule/weekly/",
+                        json=schedule_payload,
+                        headers=auth_headers,
+                        name="Update Weekly Schedule",
+                        catch_response=True
+                    ) as schedule_response:
+                        print("Schedule Update response status:", schedule_response.status_code)
+                        print("Schedule Update response body:", schedule_response.text)
+
+                        if schedule_response.status_code == 400:
+                            schedule_response.success()
+                        elif schedule_response.status_code >= 500:
+                            schedule_response.failure(f"Server error: {schedule_response.status_code}")
+                else:
+                    print("No access token received. Login response:", login_response.text)
+                    login_response.failure("No access token received")
+            elif login_response.status_code == 400:
+                login_response.success()
+            elif login_response.status_code >= 500:
+                login_response.failure(f"Server error: {login_response.status_code}")
+                    
+    @task(1)
+    def login_and_create_appointment(self):
+        """Se loguea como paciente y crea una cita con fecha aleatoria futura"""
+        # Da error sin wifi porque no se puede conectar a stripe, 
+        # pero sino manda muchos correos
+        login_payload = {
+            "username": "LOCUST_patient",
+            "password": "74066738E74066738E"
+        }
+        headers = {"Content-Type": "application/json"}
+
+        with self.client.post(
+            "/api/app_user/login/",
+            json=login_payload,
+            headers=headers,
+            name="Login Patient for Appointment",
+            catch_response=True
+        ) as login_response:
+            if login_response.status_code == 200:
+                token = login_response.json().get("access")
+                if token:
+                    # Fecha aleatoria en el futuro: entre 1 y 30 días
+                    days_in_future = random.randint(1, 30)
+                    future_date = datetime.now() + timedelta(days=days_in_future)
+                    date_str = future_date.strftime("%Y-%m-%d")
+                    start_time = f"{date_str}T01:00:00+02:00"
+                    end_time = f"{date_str}T02:00:00+02:00"
+
+                    appointment_payload = {
+                        "start_time": start_time,
+                        "end_time": end_time,
+                        "is_online": True,
+                        "service": {
+                            "id": 1,
+                            "title": "Primera consulta",
+                            "type": "Primera consulta",
+                            "tipo": "PRIMERA_CONSULTA",
+                            "price": 90,
+                            "duration": 60,
+                            "questionaryResponses": {
+                                "peso": "60",
+                                "altura": "170",
+                                "edad": "30",
+                                "actividad_fisica": "Mucho",
+                                "motivo_consulta": "Motivo muy importante"
+                            }
+                        },
+                        "physiotherapist": 7,
+                        "status": "booked",
+                        "alternatives": ""
+                    }
+
+                    auth_headers = {
+                        "Authorization": f"Bearer {token}",
+                        "Content-Type": "application/json"
+                    }
+
+                    with self.client.post(
+                        "/api/appointment/patient/",
+                        json=appointment_payload,
+                        headers=auth_headers,
+                        name="Create Appointment",
+                        catch_response=True
+                    ) as appt_response:
+                        print("Create Appointment status:", appt_response.status_code)
+                        print("Create Appointment body:", appt_response.text)
+
+                        if appt_response.status_code == 400:
+                            appt_response.success()
+                        elif appt_response.status_code >= 500:
+                            appt_response.failure(f"Server error: {appt_response.status_code}")
                 else:
                     print("No access token received. Login response:", login_response.text)
                     login_response.failure("No access token received")
