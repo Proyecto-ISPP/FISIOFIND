@@ -1,8 +1,8 @@
-<!-- ---
-title: "REPORTE BASE DE CONOCIMIENTO #SPRINT 3"            # CHANGE IF NEEDED
-subtitle: "FISIO FIND - Grupo 6 - #SPRINT 3"
+---
+title: "REPORTE BASE DE CONOCIMIENTO #PPL"            # CHANGE IF NEEDED
+subtitle: "FISIO FIND - Grupo 6 - #PPL"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]
-date: "10/04/2025"                                          # CHANGE IF NEEDED
+date: "30/04/2025"                                          # CHANGE IF NEEDED
 subject: "ISPP"
 lang: "es"
 toc: true
@@ -15,11 +15,11 @@ colorlinks: true
 linkcolor: blue
 titlepage-background: "../.backgrounds/background2V.pdf"    # CHANGE IF NEEDED
 header-left: "REPORTE BASE DE CONOCIMIENTO #SPRINT 3"       # CHANGE IF NEEDED
-header-right: "10/04/2025"                                  # CHANGE IF NEEDED
+header-right: "30/04/2025"                                  # CHANGE IF NEEDED
 footer-left: "FISIO FIND"
 documentclass: scrartcl
 classoption: "table"  
---- -->
+---
 
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
 <p align="center">
@@ -27,7 +27,7 @@ classoption: "table"
 </p>
 
 <h1 align="center" style="font-size: 30px; font-weight: bold;">
-  FISIO FIND  -  REPORTE BASE DE CONOCIMIENTO #SPRINT 3
+  FISIO FIND  -  REPORTE BASE DE CONOCIMIENTO #PPL
 </h1>
 
 <br>
@@ -44,11 +44,12 @@ classoption: "table"
     - [3.2.3. Informes](#323-informes)
     - [3.2.4. Seguimiento](#324-seguimiento)
     - [3.2.5. Recursos](#325-recursos)
-    - [3.2.6. Ideando un proyecto](#326-ideando-un-proyecto)
-    - [3.2.7. Términos](#327-términos)
+    - [3.2.6. Términos](#326-términos)
+    - [3.2.7. Ideando un proyecto](#327-ideando-un-proyecto)
     - [3.2.8. SPRINT 1](#328-sprint-1)
     - [3.2.9. SPRINT 2](#329-sprint-2)
     - [3.2.10. SPRINT 3](#3210-sprint-3)
+    - [3.2.11. Preparar el lanzamiento del proyecto](#3211-preparar-el-lanzamiento-del-proyecto)
   - [3.2 USO Y GESTIÓN GENERAL](#32-uso-y-gestión-general)
 - [4. CONTRIBUCIONES DEL EQUIPO](#4-contribuciones-del-equipo)
   - [4.1. CONTRIBUCIONES A LA BASE DE CONOCIMIENTO GRUPAL](#41-contribuciones-a-la-base-de-conocimiento-grupal)
@@ -57,11 +58,12 @@ classoption: "table"
     - [4.1.3. Informes](#413-informes)
     - [4.1.4. Seguimiento](#414-seguimiento)
     - [4.1.5. Recursos ("Base de conocimiento" en el repositorio oficial de Fisio Find)](#415-recursos-base-de-conocimiento-en-el-repositorio-oficial-de-fisio-find)
-    - [4.1.6. Ideando un proyecto](#416-ideando-un-proyecto)
-    - [4.1.7. Términos](#417-términos)
+    - [4.1.6. Términos](#416-términos)
+    - [4.1.7. Ideando un proyecto](#417-ideando-un-proyecto)
     - [4.1.8. Sprint 1](#418-sprint-1)
     - [4.1.9 Sprint 2](#419-sprint-2)
     - [4.1.10. Sprint 3](#4110-sprint-3)
+    - [4.1.11. Preparar el lanzamiento del proyecto](#4111-preparar-el-lanzamiento-del-proyecto)
   - [4.2 CONTRIBUCIONES A LA BASE DE CONOCIMIENTO GENERAL](#42-contribuciones-a-la-base-de-conocimiento-general)
   - [4.2.1. Feedback individual del grupo 6](#421-feedback-individual-del-grupo-6)
     - [Semana 8](#semana-8)
@@ -131,15 +133,15 @@ classoption: "table"
 
 - **Número de Grupo:** Grupo 6
 
-- **Entregable:** #SPRINT 3
+- **Entregable:** #PPL
 
 - **Miembros del grupo:** Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes.
 
 - **Contribuidores:** [Alberto Carmona Sicre](https://github.com/albcarsic) (autor), [Rafael Pulido Cifuentes](https://github.com/rafaelpulido) (revisor)
 
-- **Fecha de Creación:** 10/04/2025
+- **Fecha de Creación:** 30/04/2025
 
-- **Versión:** v1.1
+- **Versión:** v1.0
 
 <br>
 
@@ -150,8 +152,7 @@ classoption: "table"
 
 | Fecha      | Versión | Realizada por                    | Descripción de los cambios |
 |------------|---------|----------------------------------|----------------------------|
-| 10/04/2025 | v1.0    | Alberto Carmona Sicre | Creación del informe de base de conocimiento del sprint 3 |
-| 10/04/2025 | v1.1    | Alberto Carmona Sicre | Finalización puntos 4 y 5 |
+| 30/04/2025 | v1.0    | Alberto Carmona Sicre | Creación del informe de base de conocimiento del PPL |
 
 <br>
 
@@ -161,7 +162,7 @@ classoption: "table"
 
 # 1. INTRODUCCIÓN  
 
-La base de conocimiento ha sido desarrollada siguiendo las directrices establecidas en nuestro Acuerdo de Base de Conocimiento. Cada acción realizada ha sido regulada conforme a sus disposiciones. En este documento puede encontrar la información correspondiente al sprint 3.
+La base de conocimiento ha sido desarrollada siguiendo las directrices establecidas en nuestro Acuerdo de Base de Conocimiento. Cada acción realizada ha sido regulada conforme a sus disposiciones. En este documento puede encontrar la información correspondiente a las actividades realizadas durante el proceso: Prepare Project Launch.
 
 Importante: el repositorio de documentación en el que se suben los documentos generados durante los sprints no se actualiza directamente tras la creación de un archivo, sino que se va actualizando una vez se conoce que los archivos van a dejar de ser modificados, para así evitar trabajo extra a los responsables de poblar dicho repositorio.
 
@@ -173,7 +174,7 @@ Para consultar la documentación, visita [Documentación Fisio Find](https://fis
 
 Por otro lado, la base de conocimiento de toda la clase se encuentra en el siguiente enlace: [https://bcc-three.vercel.app/](https://bcc-three.vercel.app/).
 
-Por último, en caso de que la Base de Conocimiento no haya sido actualizada, usted puede encontrar los diferentes documentos mencionados en la carpeta docs del repositorio oficial de Fisio Find, haciendo click en este enlace: [Documentación repositorio oficial Fisio Find](https://github.com/FisioFind/FisioFind/tree/main/docs).
+Por último, en caso de que la Base de Conocimiento no haya sido actualizada, puede encontrar los diferentes documentos mencionados en la carpeta docs del repositorio oficial de Fisio Find, haciendo click en este enlace: [Documentación repositorio oficial Fisio Find](https://github.com/FisioFind/FisioFind/tree/main/docs).
 
 # 3. USO Y GESTIÓN DE LA BASE DE CONOCIMIENTO
 
@@ -211,19 +212,19 @@ En esta sección encontramos tres subapartados: Reuniones, Sprint 1 y Sprint 2.
 
 - En la sección de **Reuniones** se guardan cada una de las actas de las reuniones realizadas. La redacción de las actas de reuniones es responsabilidad del **Scrum Master**, Antonio Macías, o de los **Secretarios**, Alberto Carmona, Delfín Santana y Daniel Vela.
 
-- En los apartados **Sprint 1**, **Sprint 2** y **Sprint 3**, se almacenan los informes relacionados con el sprint en sí (planificación, retrospectiva, etc.). Documentos como la retrospectiva se encargaron al equipo de **QA**, mientras que la **planificación** fue responsabilidad del **Scrum Master**.
+- En los apartados **Sprint 1**, **Sprint 2**, **Sprint 3**, **Sprint 4 ppl** y **Sprint 5 wpl**, se almacenan los informes relacionados con el sprint en sí (planificación, retrospectiva, etc.). Documentos como la retrospectiva se encargaron al equipo de **QA**, mientras que la **planificación** fue responsabilidad del **Scrum Master**.
 
 ### 3.2.5. Recursos
 
 - La gestión de la carpeta **Recursos** siguió la siguiente dinámica: los **Secretarios** y el **Scrum Master** fueron los encargados de añadir los informes de **feedback**, las notas sobre las **píldoras teóricas** y otros documentos relevantes, como el Informe de Base de Conocimiento.
 
-### 3.2.6. Ideando un proyecto
-
-- En la carpeta **Ideando un proyecto** simplemente se pueden encontrar juntos todos los documentos generados durante esta fase inicial del proyecto.
-
-### 3.2.7. Términos
+### 3.2.6. Términos
 
 - En esta carpeta se pueden encontrar todos los documentos relacionados con los términos y condiciones, la privacidad, las cookies y las licencias. Los encargados de la elaboración de estos fueron el **Scrum Master**, Antonío Macías, el **Secretario** Delfín Santana y Daniel Ruiz.
+
+### 3.2.7. Ideando un proyecto
+
+- En la carpeta **Ideando un proyecto** se pueden encontrar juntos todos los documentos generados durante esta fase inicial del proyecto.
 
 ### 3.2.8. SPRINT 1
 
@@ -236,6 +237,10 @@ En esta sección encontramos tres subapartados: Reuniones, Sprint 1 y Sprint 2.
 ### 3.2.10. SPRINT 3
 
 - En la carpeta **Sprint 3** se pueden encontrar juntos todos los documentos generados o modificados durante esta fase del proyecto.
+
+### 3.2.11. Preparar el Lanzamiento del proyecto
+
+- En la carpeta **Preparar el Lanzamiento del proyecto** se pueden encontrar juntos todos los documentos generados o modificados durante esta fase del proyecto.
 
 <br>
 
@@ -265,57 +270,39 @@ A continuación, se muestran las contribuciones del equipo a la base de conocimi
 
 ### 4.1.1. Organización
 
-- Modificación del Acuerdo de usuarios piloto: adecuación para la entrega del #SPRINT 3. Adición de nuevos UP (fisioterapeutas).
+- Modificación del Acuerdo de compromiso: Adición del punto "2.12 SOBRE EL ESTADO DEL PROYECTO TRAS LA ASIGNATURA"
 
 ### 4.1.2. Planificación
 
-- Modificación del Documento de seguimiento de costes: Actualización del documento acorde a los gastos a mitad de Sprint 3.
-
-- Modificación del Plan de gestión de usuarios piloto: Adecuación para la entrega del #SPRINT 3. Adición de nuevos UP (fisioterapeutas).
-
-- Adición del documento Plan de pruebas.
+- Adición del documento Planificación del marketing.
 
 ### 4.1.3. Informes
 
-- Informe de tiempo del Sprint 3.
+- Adición del informe de tiempo del PPL.
 
-- Informe de tiempo de la semana 8.
+- Adicción del informe de IA del PPL.
 
-<br>
+- Adición del informe de usuarios piloto del PPL.
 
-- Informe de IA de la semana 9.
+- Adición del informe de Comunicaciones usuarios piloto PPL.
 
-- Informe de IA del sprint 3.
+- Adición del informe de calidad del PPL.
 
-<br>
-
-- Informe de usuarios piloto del sprint 3.
-
-- Comunicaciones usuarios piloto sprint 3.
+- Adición del informe de seguridad del PPL.
 
 <br>
 
-- Informe de calidad del Sprint 3.
+De manera independiente:
 
-<br>
-
-- Informe de seguridad del Backend 2025-04-27 ZAP.
-
-- Informe de seguridad del Frontend 2025-04-27 ZAP.
-
-- Informe de seguridad del Backend 2025-04-29 ZAP.
-
-- Informe de seguridad del Frontend 2025-04-29 ZAP.
-
-- Informe de seguridad del sprint 3
+- Lecciones aprendidas del sprint 1.
 
 ### 4.1.4. Seguimiento
 
-En la carpeta sprint_3:
+En la carpeta sprint_4_ppl:
 
-- Planificación del Sprint 3.
+- Planificación del PPL.
 
-- Retrospectiva global del Sprint 3.
+- Retrospectiva global del PPL.
 
 - Retrospectiva del Sprint del grupo 1.
 
@@ -323,23 +310,23 @@ En la carpeta sprint_3:
 
 - Retrospectiva del Sprint del grupo 3.
 
-- Retrospectiva de mitad del Sprint 3.
+- Retrospectiva de mitad del PPL.
+
+En la carpeta sprint_5_wpl:
+
+- Planificación del WPL.
 
 ### 4.1.5. Recursos ("Base de conocimiento" en el repositorio oficial de Fisio Find)
 
-- Feedback de la clase del día 28 de marzo de 2025.
+- Feedback de la clase del día 11 de abril de 2025.
 
-- Feedback de la clase del día 4 de abril de 2025.
+- Feedback de la clase del día 25 de abril de 2025.
 
-- Informe de la base de conocimiento del Sprint 3.
+- Informe de la base de conocimiento del PPL.
 
 En el anexo, se muestra tanto el feedback grupal como las anotaciones generales.
 
-### 4.1.6. Ideando un proyecto
-
-- No se han añadido ni modificado documentos.
-
-### 4.1.7. Términos
+### 4.1.6. Términos
 
 - Documento de "cookies" de Fisio Find en formato pdf y md.
 
@@ -349,30 +336,20 @@ En el anexo, se muestra tanto el feedback grupal como las anotaciones generales.
 
 - Documento de licencias de Fisio Find en formato pdf y md.
 
+### 4.1.7. Ideando un proyecto
+
+- No se han añadido ni modificado documentos.
+
 ### 4.1.8. Sprint 1
 
-- Informe de uso de la Inteligencia Artificial.
-
-- Informe de la base de conocimiento.
-
-- Acuerdo de compromiso con las modificaciones del sprint.
-
-- Documento de evaluación del rendimiento.
-
-- Documento de usuarios piloto.
-
-- Documento de acuerdo de compromiso de usuarios piloto.
-
-- Documento de evaluación del rendimiento de usuarios piloto.
-
-- Presentación del sprint en formato pdf.
-
-- Guía de uso y revisión.
-
-- Informe del esfuerzo de tiempo.
+- No se han añadido ni modificado documentos.
 
 ### 4.1.9 Sprint 2
 
+- No se han añadido ni modificado documentos.
+
+### 4.1.10. Sprint 3
+
 - Informe de uso de la Inteligencia Artificial.
 
 - Informe de la base de conocimiento.
@@ -393,7 +370,7 @@ En el anexo, se muestra tanto el feedback grupal como las anotaciones generales.
 
 - Informe del esfuerzo de tiempo.
 
-### 4.1.10. Sprint 3
+### 4.1.11. Preparar el lanzamiento del proyecto
 
 - Informe de uso de la Inteligencia Artificial.
 
@@ -422,7 +399,7 @@ Para consultar la documentación, visita [Documentación Fisio Find](https://fis
 
 ## 4.2 CONTRIBUCIONES A LA BASE DE CONOCIMIENTO GENERAL
 
-A continuación, se muestran las contribuciones a la base de conocimiento general. Cabe destacar que, para los demás grupos, el feedback es igual al que se añade en el feedback de la base de conocimiento grupal, por lo que solo se va a añadir el feedback del grupo 6. Además, aunque resulte parecida, la información añadida en la base de conocimiento general tiene una estructura similar pero un poco diferente a la recogida en el feedback grupal, por ello, este feedback individual si se muestra como parte de una contribución a nivel general.
+A continuación, se muestran las contribuciones a la base de conocimiento general. Cabe destacar que, para los demás grupos, el feedback es igual al que se añade en el feedback de la base de conocimiento grupal, por lo que solo se va a añadir el feedback del grupo 6. Como aclaración, la información añadida en la base de conocimiento general tiene una estructura similar pero un poco diferente a la recogida en el feedback grupal, por ello, este feedback individual si se muestra como parte de una contribución a nivel general.
 
 ## 4.2.1. Feedback individual del grupo 6
 
@@ -1051,11 +1028,11 @@ Tras el _feedback_ recibido en la sesión del 04/04/2025, se tomaron medidas par
 
 - Retrospectiva sprint 3:
 
-	- Análisis de código, rendimiento, problemas encontrados. Hay que decir cómo van las soluciones, hay que explicar para cada problema las acciones CONCRETAS (no mejorar las cosas, no reunirnos más, si puede ser reunirnos una vez más para reducir x) y después el cómo sabéis que está funcionando (poniendo medidas como el número diario de pull requests) hay que poner un objetivo (medir si la media de pull requests es tanto, ese sería el objetivo, dentro de x días, así sí se puede decir si están funcionando o no).
+    - Análisis de código, rendimiento, problemas encontrados. Hay que decir cómo van las soluciones, hay que explicar para cada problema las acciones CONCRETAS (no mejorar las cosas, no reunirnos más, si puede ser reunirnos una vez más para reducir x) y después el cómo sabéis que está funcionando (poniendo medidas como el número diario de pull requests) hay que poner un objetivo (medir si la media de pull requests es tanto, ese sería el objetivo, dentro de x días, así sí se puede decir si están funcionando o no).
 
-		- Los problemas se repiten, hay que tomarse en serio el cómo se mide.
+        - Los problemas se repiten, hay que tomarse en serio el cómo se mide.
 
-	- Hacer plan de pruebas previo al WPL.
+    - Hacer plan de pruebas previo al WPL.
 
 - Reloj.
 
