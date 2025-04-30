@@ -11,6 +11,78 @@ from users.models import Patient
 from users.models import Physiotherapist
 from django.core.exceptions import ObjectDoesNotExist
 from unittest.mock import patch
+from appointment_rating.emailUtils import send_rating_email
+import pytz
+from datetime import datetime, timedelta
+from django.test import TestCase
+
+
+class SendRatingEmailTests(TestCase):
+
+    def setUp(self):
+        spain_tz = pytz.timezone("Europe/Madrid")
+        future_date = datetime.now(spain_tz) + timedelta(days=1)
+
+        # Crear fisioterapeuta
+        self.physio_user = AppUser.objects.create_user(
+            username="fisio",
+            email="fisio@example.com",
+            password="pass",
+            is_subscribed=True
+        )
+        self.physio = Physiotherapist.objects.create(
+            user=self.physio_user,
+            birth_date="1980-01-01",
+            collegiate_number="COL123",
+            autonomic_community="MADRID"
+        )
+
+        # Crear paciente
+        self.patient_user = AppUser.objects.create_user(
+            username="paciente",
+            email="paciente@example.com",
+            password="pass",
+            is_subscribed=True
+        )
+        self.patient = Patient.objects.create(
+            user=self.patient_user,
+            birth_date="1990-01-01",
+            gender="F"
+        )
+
+        # Crear cita
+        self.appointment = Appointment.objects.create(
+            start_time=future_date,
+            end_time=future_date + timedelta(hours=1),
+            is_online=True,
+            service={"type": "PRIMERA_CONSULTA"},
+            patient=self.patient,
+            physiotherapist=self.physio,
+            status="confirmed",
+            alternatives={}
+        )
+
+        # Crear valoración
+        self.rating = AppointmentRating.objects.create(
+            appointment=self.appointment,
+            patient=self.patient,
+            physiotherapist=self.physio,
+            score=5,
+            comment="Muy buen trato"
+        )
+
+    @patch("appointment_rating.emailUtils.send_email")
+    def test_send_rating_email_triggers_email(self, mock_send_email):
+        send_rating_email(self.rating)
+        mock_send_email.assert_called_once()
+
+        subject, message, to = mock_send_email.call_args[0]
+
+        self.assertIn("Nueva valoración", subject)
+        self.assertIn("fisio", subject)  # nombre de usuario
+        self.assertEqual(to, "fisio@example.com")
+        self.assertIn("Muy buen trato", message)
+        self.assertIn("5/5", message)
 
 class AppointmentRatingIntegrationTests(APITestCase):
 
