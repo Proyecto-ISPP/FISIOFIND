@@ -66,7 +66,7 @@ classoption: "table"
 
 - **Fecha de Creación:** 06/04/2025  
 
-- **Versión:** v1.0
+- **Versión:** v2.0
 
 <br>
 
