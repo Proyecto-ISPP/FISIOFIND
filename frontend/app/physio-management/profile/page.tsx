@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Camera, Plus, Trash2, Edit, Save, StarIcon, Film, Bell, BicepsFlexed, Lock, ClipboardList } from 'lucide-react';
+import { Camera, Plus, Trash2, Edit, Save, StarIcon, Film, Bell, BicepsFlexed, Lock, X, ClipboardList } from 'lucide-react';
 import ScheduleCalendar from "@/components/ui/ScheduleCalendar";
 import { getApiBaseUrl } from "@/utils/api";
 import { GradientButton } from "@/components/ui/gradient-button";
@@ -44,7 +44,6 @@ const FisioProfile = () => {
     duracion: number; // En minutos
     custom_questionnaire?: Questionary;
   }
-
     const [profile, setProfile] = useState({
         user: {
             dni: "",
@@ -66,12 +65,16 @@ const FisioProfile = () => {
         schedule: "",
         specializations: "",
         services: [] as Service[],
-        plan: "",
+        plan: 0,
         degree: "",
         university:"",
         experience: "",
         workplace:""
     });
+
+  if (profile) {
+    console.log("type of plan", typeof profile.plan);
+  }
 
   const [editingServiceIndex, setEditingServiceIndex] = useState<number | null>(
     null
@@ -99,6 +102,7 @@ const FisioProfile = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
   const [showUpdatePasswordModal, setShowUpdatePasswordModal] = useState(false);
+  const [showDeleteAccountModal, setShowDeleteAccountModal] = useState(false);
   const [schedule, setSchedule] = useState({
     exceptions: {},
     appointments: [],
@@ -491,48 +495,56 @@ const FisioProfile = () => {
   };
 
   const handleSubmitRating = async () => {
+    if (!newRating.opinion.trim()) {
+      showAlert("error", "Por favor, escribe una opinión");
+      return;
+    }
+
+    if (newRating.opinion.trim().length > 140) {
+      showAlert("error", "La opinión no puede exceder los 140 caracteres.");
+      return;
+    }
+
     try {
-      if (!newRating.opinion.trim()) {
-        showAlert("error", "Por favor, proporciona una opinión.");
-        return;
-      }
-
-      if (newRating.opinion.trim().length > 140) {
-        showAlert("error", "La opinión no puede exceder los 140 caracteres.");
-        return;
-      }
-
+      const url = hasRated
+        ? `${getApiBaseUrl()}/api/ratings/update/${rating?.id}/`
+        : `${getApiBaseUrl()}/api/ratings/create/`;
+      
+      const method = hasRated ? "put" : "post";
+      
       const payload = {
         punctuation: newRating.punctuation,
         opinion: newRating.opinion,
         physiotherapist: profile.user.user_id,
       };
 
-      if (hasRated && rating) {
-        await axios.put(
-          `${getApiBaseUrl()}/api/ratings/update/${rating.id}/`,
-          payload,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-      } else {
-        await axios.post(`${getApiBaseUrl()}/api/ratings/create/`, payload, {
-          headers: { Authorization: `Bearer ${token}` },
+      const response = await axios({
+        method,
+        url,
+        data: payload,
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.status === 200 || response.status === 201) {
+        setShowRatingForm(false);
+        setHasRated(true);
+
+        if (newRating.punctuation >= 3) {
+          showAlert("success", "¡Gracias por valorar nuestra app!");
+        } else {
+          showAlert("success", "Valoración enviada correctamente.");
+        }
+        
+        // Update local state
+        setRating({
+          id: response.data.id || rating?.id,
+          punctuation: newRating.punctuation,
+          opinion: newRating.opinion,
         });
+        
+        // Refresh rating data
+        checkIfPhysioHasRated();
       }
-
-      setShowRatingForm(false);
-      setHasRated(true);
-
-      if (newRating.punctuation >= 3) {
-        showAlert("success", "¡Gracias por valorar nuestra app!");
-      } else {
-        showAlert("success", "Valoración enviada correctamente.");
-      }
-
-      // Reload the page after successful submission
-      window.location.reload();
     } catch (error) {
       console.error("Error submitting rating:", error);
       if (axios.isAxiosError(error) && error.response) {
@@ -587,7 +599,7 @@ const FisioProfile = () => {
 
     try {
       const response = await axios.get(
-        `${getApiBaseUrl()}/api/ratings/has-rated/`,
+        `${getApiBaseUrl()}/api/ratings/my-rating/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -595,10 +607,12 @@ const FisioProfile = () => {
         }
       );
 
-      if (response.data && response.data.has_rated) {
+      if (response.data) {
         setHasRated(true);
+        setRating(response.data);
       } else {
         setHasRated(false);
+        setRating(null);
       }
     } catch (err) {
       setHasRated(false);
@@ -1167,179 +1181,318 @@ const FisioProfile = () => {
       onSave(newService);
     };
 
+    const [isClosing, setIsClosing] = useState(false);
+
+    const handleClose = () => {
+      setIsClosing(true);
+      setTimeout(() => {
+        onClose();
+      }, 300);
+    };
+
     return (
-      <div className="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
-        <div className="modal-content">
-          <div className="modal-header flex justify-between items-center">
-            <h2>{editingService ? "Editar servicio" : "Añadir servicio"}</h2>
-            <button
-              className="schedule-modal-close text-white bg-white rounded-full"
-              onClick={onClose}
-              aria-label="Cerrar"
-            >
-              &times;
-            </button>
+      <div
+        className={`fixed inset-0 z-50 flex items-center justify-center transition-opacity duration-300 ${
+          isClosing ? "opacity-0" : "opacity-100"
+        }`}
+        onClick={handleClose}
+      >
+        {/* Enhanced Backdrop with blur effect */}
+        <div className="absolute inset-0 bg-gray-900 bg-opacity-50 backdrop-blur-sm"></div>
+
+        {/* Modal Container with improved styling */}
+        <div
+          className={`relative bg-white rounded-xl shadow-2xl max-w-xl w-full mx-4 overflow-hidden transition-all duration-300 ${
+            isClosing ? "scale-95 opacity-0" : "scale-100 opacity-100"
+          }`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Header with gradient background */}
+          <div className="bg-gradient-to-r from-[#41B8D5] to-[#1E5ACD] p-4 text-white flex justify-between items-center">
+            <h2 className="text-xl font-bold">
+              {editingService ? "Editar Servicio" : "Añadir Servicio"}
+            </h2>
+            <span className="bg-white bg-opacity-20 text-white text-xs px-3 py-1 rounded-full">
+              Servicio
+            </span>
           </div>
 
-          <label>Tipo de servicio:</label>
-          <select
-            value={tipo}
-            onChange={(e) => setTipo(e.target.value as string)}
-          >
-            <option value="PRIMERA_CONSULTA">Primera consulta</option>
-            <option value="CONTINUAR_TRATAMIENTO">Continuar tratamiento</option>
-            <option value="OTRO">Otro</option>
-          </select>
-
-          <label>
-            Título: <span className="required">*</span>
-          </label>
-          <input
-            type="text"
-            value={titulo}
-            onChange={(e) => setTitulo(e.target.value)}
-            disabled={tipo !== "OTRO"}
-            className={!titulo.trim() ? "error-input" : ""}
-          />
-
-          <label>Descripción:</label>
-          <textarea
-            value={descripcion}
-            onChange={(e) => setDescripcion(e.target.value)}
-            placeholder="Describe brevemente en qué consiste este servicio"
-          />
-
-          <label>
-            Precio por consulta: <span className="required">*</span>
-          </label>
-          <input
-            type="text"
-            value={precio}
-            onChange={(e) => setPrecio(e.target.value)}
-            placeholder="€"
-            className={!precio.trim() ? "error-input" : ""}
-          />
-
-          <label>
-            Duración (minutos): <span className="required">*</span>
-          </label>
-          <input
-            type="number"
-            value={duracion}
-            onChange={(e) => setDuracion(e.target.value)}
-            min="1"
-            placeholder="60"
-            className={
-              !duracion || parseInt(duracion) <= 0 ? "error-input" : ""
-            }
-          />
-
-          <div className="questionnaire-toggle">
-            <label>
-              Incluir cuestionario pre-intervención
+          <div className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Título
+              </label>
               <input
-                type="checkbox"
-                checked={showQuestionnaireSection}
-                onChange={() =>
-                  setShowQuestionnaireSection(!showQuestionnaireSection)
-                }
+                type="text"
+                value={titulo}
+                onChange={(e) => setTitulo(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] focus:border-transparent"
+                placeholder="Nombre del servicio"
               />
-              <span></span>
-            </label>
-            <p className="toggle-description">
-              Agrega un formulario personalizado que el paciente rellenará antes
-              de su cita
-            </p>
-          </div>
+            </div>
 
-          {showQuestionnaireSection && (
-            <div className="questionnaire-section">
-              <p className="note">
-                Las siguientes preguntas ya están incluidas por defecto:
-              </p>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Descripción
+              </label>
+              <textarea
+                value={descripcion}
+                onChange={(e) => setDescripcion(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] focus:border-transparent"
+                rows={3}
+                placeholder="Descripción del servicio"
+              />
+            </div>
 
-              <ul className="questions-list">
-                {questionary && questionary.elements ? (
-                  questionary.elements.map((element, index) => (
-                    <li
-                      key={index}
-                      className={index < 5 ? "default-question" : ""}
-                    >
-                      {element.label}
-                      <span className="question-type-badge">
-                        {element.type === "Number" ? "Numérico" : "Texto"}
-                      </span>
-                      {index >= 5 && (
-                        <GradientButton
-                          variant="danger"
-                          className="remove-question"
-                          onClick={() => removeQuestion(index)}
-                        >
-                          ×
-                        </GradientButton>
-                      )}
-                    </li>
-                  ))
-                ) : (
-                  <li>No hay preguntas definidas en este cuestionario.</li>
-                )}
-              </ul>
-
-              <div className="add-question">
-                <label>Añadir nueva pregunta:</label>
-                <div className="question-input-group">
-                  <div className="question-type-select">
-                    <select
-                      value={questionType}
-                      onChange={(e) => setQuestionType(e.target.value)}
-                      className="question-type-dropdown"
-                    >
-                      <option value="Control">Texto</option>
-                      <option value="Number">Numérico</option>
-                    </select>
-                  </div>
-                  <div className="question-input">
-                    <input
-                      type="text"
-                      value={newQuestion}
-                      onChange={(e) => {
-                        if (e.target.value.length <= 100) {
-                          setNewQuestion(e.target.value);
-                        }
-                      }}
-                      placeholder="Ej. ¿Tiene alguna lesión previa?"
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center text-gray-600">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 mr-2 text-[#41B8D5]"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                     />
-                    {newQuestion.length > 100 && (
-                      <p className="text-red-500 text-sm">
-                        Máximo 100 caracteres permitidos.
-                      </p>
-                    )}
-                    <GradientButton
-                      variant="create"
-                      onClick={addQuestion}
-                      disabled={!newQuestion.trim()}
-                      className="add-question-button"
-                    >
-                      Añadir
-                    </GradientButton>
-                  </div>
+                  </svg>
+                  <span className="font-medium">Precio</span>
                 </div>
-                <p className="type-hint">
-                  {questionType === "Control"
-                    ? "El campo de texto permite cualquier respuesta textual."
-                    : "El campo numérico solo permitirá introducir números."}
-                </p>
+                <input
+                  type="text"
+                  value={precio}
+                  onChange={(e) => setPrecio(e.target.value)}
+                  className="w-1/2 px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] focus:border-transparent text-right"
+                  placeholder="€"
+                />
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center text-gray-600">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 mr-2 text-[#41B8D5]"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  <span className="font-medium">Duración (minutos)</span>
+                </div>
+                <input
+                  type="number"
+                  value={duracion}
+                  onChange={(e) => {
+                    // Allow user to type the full number before rounding
+                    const inputValue = e.target.value;
+                    if (inputValue === '') {
+                      setDuracion('');
+                      return;
+                    }
+                    // Only round when user stops typing
+                    const handleRounding = () => {
+                      const numValue = parseInt(inputValue) || 0;
+                      const roundedValue = Math.max(5, Math.round(numValue / 5) * 5);
+                      setDuracion(roundedValue.toString());
+                    };
+                    // Update with raw input value
+                    setDuracion(inputValue);
+                    // Clear any existing timeout
+                    if (window.roundingTimeout) {
+                      clearTimeout(window.roundingTimeout);
+                    }
+                    // Set new timeout to round after user stops typing
+                    window.roundingTimeout = setTimeout(handleRounding, 500);
+                  }}
+                  min="5"
+                  step="5"
+                  className={`w-1/2 px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] focus:border-transparent text-right ${
+                    !duracion || parseInt(duracion) <= 0
+                      ? "border-red-300 focus:ring-red-500"
+                      : "border-gray-300 focus:ring-teal-500"
+                  } focus:border-transparent focus:ring-2`}
+                />
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center text-gray-600">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 mr-2 text-[#41B8D5]"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                    />
+                  </svg>
+                  <span className="font-medium">Tipo</span>
+                </div>
+                <select
+                  value={tipo}
+                  onChange={(e) => setTipo(e.target.value)}
+                  className="w-1/2 px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] focus:border-transparent text-right appearance-none"
+                >
+                  <option value="PRIMERA_CONSULTA">Primera consulta</option>
+                  <option value="CONTINUAR_TRATAMIENTO">
+                    Continuar tratamiento
+                  </option>
+                  <option value="OTRO">Otro</option>
+                </select>
               </div>
             </div>
-          )}
 
-          <div className="modal-buttons">
-            <GradientButton variant="edit" onClick={handleSave}>
-              Guardar
-            </GradientButton>
-            <GradientButton variant="grey" onClick={onClose}>
-              Cancelar
-            </GradientButton>
+            {/* Questionnaire section */}
+            <div className="mt-6 pt-4 border-t border-gray-200">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-medium text-gray-800">
+                  Cuestionario personalizado
+                </h3>
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="showQuestionnaire"
+                    checked={showQuestionnaireSection}
+                    onChange={() =>
+                      setShowQuestionnaireSection(!showQuestionnaireSection)
+                    }
+                    className="w-4 h-4 text-[#41B8D5] border-gray-300 rounded focus:ring-[#41B8D5]"
+                  />
+                  <label
+                    htmlFor="showQuestionnaire"
+                    className="ml-2 text-sm text-gray-700"
+                  >
+                    Incluir cuestionario
+                  </label>
+                </div>
+              </div>
+
+              {showQuestionnaireSection && (
+                <div className="space-y-4">
+                  <div className="bg-gray-50 p-4 rounded-xl">
+                    <h4 className="font-medium text-gray-700 mb-2">
+                      Preguntas predefinidas
+                    </h4>
+                    <ul className="space-y-2">
+                      {questionary.elements.map((element, index) => (
+                        <li
+                          key={index}
+                          className="flex items-center justify-between bg-white p-2 rounded border border-gray-200"
+                        >
+                          <div>
+                            <span className="text-sm font-medium">
+                              {element.label}
+                            </span>
+                            <span className="ml-2 text-xs text-gray-500">
+                              ({element.type})
+                            </span>
+                          </div>
+                          {index >= 5 && (
+                            <button
+                              type="button"
+                              onClick={() => removeQuestion(index)}
+                              className="text-red-500 hover:text-red-700"
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-5 w-5"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                />
+                              </svg>
+                            </button>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="bg-gray-50 p-4 rounded-xl">
+                    <h4 className="font-medium text-gray-700 mb-2">
+                      Añadir nueva pregunta
+                    </h4>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-sm text-gray-600 mb-1">
+                          Texto de la pregunta
+                        </label>
+                        <input
+                          type="text"
+                          value={newQuestion}
+                          onChange={(e) => setNewQuestion(e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] focus:border-transparent"
+                          placeholder="Ej: ¿Tiene alguna lesión previa?"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm text-gray-600 mb-1">
+                          Tipo de respuesta
+                        </label>
+                        <select
+                          value={questionType}
+                          onChange={(e) => setQuestionType(e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] focus:border-transparent"
+                        >
+                          <option value="Control">
+                            Texto (respuesta libre)
+                          </option>
+                          <option value="Number">Número</option>
+                          <option value="Boolean">Sí/No</option>
+                        </select>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={addQuestion}
+                        className="w-full px-4 py-2 bg-gradient-to-r from-[#41B8D5] to-[#1E5ACD] text-white rounded-xl hover:opacity-90 transition-colors"
+                      >
+                        Añadir pregunta
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="flex justify-end space-x-3 pt-4 mt-2 border-t border-gray-200">
+              <button
+                type="button"
+                onClick={handleClose}
+                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleSave}
+                className="px-4 py-2 bg-gradient-to-r from-[#41B8D5] to-[#1E5ACD] text-white rounded-xl hover:opacity-90 transition-colors"
+              >
+                {editingService ? "Actualizar" : "Añadir"}
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -1414,465 +1567,666 @@ const FisioProfile = () => {
   }
   if (error) return <p>Error: {error}</p>;
 
-  return (
-    <div
-      className="min-h-screen flex items-center justify-center px-6"
-      style={{ backgroundColor: "rgb(238, 251, 250)" }}
-    >
-      <div className="w-full max-w-5xl bg-white shadow-lg rounded-2xl overflow-hidden grid grid-cols-3">
-        {/* Barra lateral izquierda - Sección de perfil */}
-        <div
-          className="col-span-1 text-white p-6 flex flex-col items-center"
-          style={{ backgroundColor: "#05668D" }}
-        >
-          <div className="relative mb-4">
-            <img
-              src={getImageSrc()}
-              alt="Perfil"
-              className={`w-40 h-40 rounded-full object-cover border-4 ${
-                profile.plan === 2 ? "border-yellow-400" : "border-white"
-              }`}
+  return loading ? (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-teal-50 to-blue-50">
+      <div className="animate-pulse flex flex-col items-center">
+        <div className="h-12 w-12 rounded-full bg-blue-200 mb-4"></div>
+        <div className="h-4 w-24 bg-blue-200 rounded"></div>
+      </div>
+    </div>
+  ) : error ? (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-teal-50 to-blue-50">
+      <div className="bg-white p-8 rounded-xl shadow-lg max-w-md">
+        <div className="text-red-500 text-center mb-4">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-12 w-12 mx-auto"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
             />
-            <label
-              htmlFor="file-upload"
-              className="absolute bottom-0 right-0 bg-white text-blue-600 p-2 rounded-full cursor-pointer"
-            >
-              <Camera className="w-5 h-5" />
-              <input
-                id="file-upload"
-                type="file"
-                className="hidden"
-                onChange={handleFileChange}
-              />
-            </label>
-          </div>
-          {Number(profile.plan) === 2 && (
-            <label className="flex items-center gap-1">
-              <StarIcon className="w-4 h-4 text-amber-500 fill-amber-500" />
-              <span>Fisio GOLD</span>
-              <StarIcon className="w-4 h-4 text-amber-500 fill-amber-500" />
-            </label>
-          )}
+          </svg>
+        </div>
+        <h2 className="text-2xl font-bold text-center mb-4">Error</h2>
+        <p className="text-gray-600 text-center">{error}</p>
+        <div className="mt-6 text-center">
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-gradient-to-r from-teal-500 to-blue-600 text-white px-4 py-2 rounded-xl hover:from-teal-600 hover:to-blue-700 transition-all duration-200"
+          >
+            Reintentar
+          </button>
+        </div>
+      </div>
+    </div>
+  ) : (
+    <div className="min-h-screen bg-gradient-to-b from-teal-50 to-blue-50 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header with decorative elements */}
+        <div className="relative mb-8">
+          <div className="absolute -top-24 -left-24 w-64 h-64 bg-teal-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+          <div className="absolute -top-16 -right-16 w-64 h-64 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
 
-          <h2 className="text-xl font-bold mb-2">{profile.user.username}</h2>
-          <p className="text-blue-200 mb-4">Profesional</p>
-
-          {/* Sección de valoración general*/}
-
-          {id && <PhysioterapistRating physioterapistId={id} />}
-
-          {/* Sección de horario */}
-          <div className="w-full mt-4">
-            <h3 className="text-lg font-semibold mb-2">Mi Horario</h3>
-            <div
-              className="text-blue-200"
-              dangerouslySetInnerHTML={{ __html: getScheduleSummary() }}
-            ></div>
-            <br></br>
-            <GradientButton
-              variant="edit"
-              className="px-6 py-2 font-medium rounded-xl flex items-center gap-2 mx-auto"
-              onClick={() => setScheduleModalOpen(true)}
-            >
-              Editar Horario
-            </GradientButton>
-          </div>
-          <div className="w-full mt-4">
-          <GradientButton
-              variant="edit"
-              className="px-6 py-2 font-medium rounded-xl flex items-center gap-2 mx-auto"
-              onClick={() => window.location.href = "/physio-management/balance"}
-            >
-              Consultar Saldo
-            </GradientButton>
-          </div>
-
-          {/* Sección de valoración */}
-          <div className="space-y-4 mt-8">
-            <h3 className="text-lg font-semibold">Tu valoración de la App</h3>
-            {hasRated && rating ? (
-              <div className="border rounded-2xl p-4">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <p className="font-semibold">Tu valoración:</p>
-                    <div className={styles.stars}>
-                      {renderStars(rating.punctuation)}
-                    </div>
-                    <p className="text-sm text-white">
-                      {rating.opinion.split(" ")[0].length > 10
-                        ? rating.opinion.slice(0, 10).concat("...")
-                        : rating.opinion
-                            .split(" ")
-                            .slice(0, 5)
-                            .join(" ")
-                            .concat("...")}
-                    </p>
-                  </div>
-                  <div className="flex space-x-2">
-                    <GradientButton
-                      variant="edit"
-                      onClick={() => {
-                        setNewRating({
-                          punctuation: rating.punctuation,
-                          opinion: rating.opinion,
-                        });
-                        setShowRatingForm(true);
-                      }}
-                    >
-                      <Edit className="w-4 h-4" />
-                    </GradientButton>
-                    <GradientButton
-                      variant="danger"
-                      onClick={handleDeleteRating}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </GradientButton>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className={styles.rateButtonContainer}>
-                <GradientButton
-                  onClick={() => setShowRatingForm(true)}
-                  className="my-4 mx-2"
-                >
-                  <span className="mx-2">
-                    ¿Te gusta nuestra app? ¡Valóranos!
-                  </span>
-                </GradientButton>
-              </div>
-            )}
-
-            {showRatingForm && (
-              <div className="border rounded-2xl p-4">
-                <h4 className="font-semibold mb-2">
-                  {hasRated ? "Editar valoración" : "Nueva valoración"}
-                </h4>
-                <div className="flex items-center mb-2">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <svg
-                      key={star}
-                      onClick={() =>
-                        setNewRating((prev) => ({ ...prev, punctuation: star }))
-                      }
-                      className={`w-6 h-6 cursor-pointer ${
-                        star <= newRating.punctuation
-                          ? "text-[#22C55E]"
-                          : "text-gray-300"
-                      }`}
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-                    </svg>
-                  ))}
-                </div>
-                <textarea
-                  className={`w-full border rounded-md p-2 text-gray-800`}
-                  placeholder="Escribe tu opinión..."
-                  value={newRating.opinion}
-                  onChange={(e) =>
-                    setNewRating((prev) => ({
-                      ...prev,
-                      opinion: e.target.value,
-                    }))
-                  }
-                />
-                <div className="flex justify-end space-x-2 mt-2">
-                  <GradientButton
-                    variant="grey"
-                    onClick={() => setShowRatingForm(false)}
-                  >
-                    Cancelar
-                  </GradientButton>
-                  <GradientButton
-                    variant="edit"
-                    onClick={async () => {
-                      await handleSubmitRating();
-                      fetchFisioProfile(); // Refresh the page data after submitting the form
-                    }}
-                  >
-                    Guardar
-                  </GradientButton>
-                </div>
-              </div>
-            )}
-          </div>
+          <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-3">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-teal-600 to-blue-600">
+              Perfil Profesional
+            </span>
+          </h1>
+          <p className="text-center text-gray-500 text-lg max-w-2xl mx-auto mb-8">
+            Gestiona tu información profesional y servicios
+          </p>
         </div>
 
-        {/* Contenido derecho - Sección de formulario */}
-        <div className="col-span-2 p-8 space-y-6">
-          {/* Formulario de actualización de perfil */}
-          <form onSubmit={handleSubmit} className="space- y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="block text-sm font-large text-gray-700 mb-0.5">
-                  Correo Electrónico
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={profile.user.email}
-                  onChange={handleChange}
-                  className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
-                />
-                {formErrors.email && (
-                  <span className="text-red-500 text-sm">
-                    {formErrors.email}
-                  </span>
-                )}
+        {alert.show && (
+          <div className="mb-6">
+            <Alert
+              type={alert.type}
+              message={alert.message}
+              onClose={() => setAlert({ ...alert, show: false })}
+            />
+          </div>
+        )}
+
+        {/* Main content */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left column - Profile photo and basic info */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-6">
+              <div className="px-6 py-8 bg-gradient-to-r from-teal-500 to-blue-600">
+                <div className="flex justify-center">
+                  <div className="relative">
+                    <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg">
+                      <img
+                        src={getImageSrc()}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <label
+                      htmlFor="photo-upload"
+                      className="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-md cursor-pointer hover:bg-gray-100 transition-colors"
+                    >
+                      <Camera size={18} className="text-gray-700" />
+                      <input
+                        id="photo-upload"
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleFileChange}
+                      />
+                    </label>
+                  </div>
+                </div>
+                <h2 className="text-white text-xl font-bold text-center mt-4">
+                  {profile.user.first_name} {profile.user.last_name}
+                </h2>
+                <p className="text-teal-100 text-center">
+                  {profile.specializations
+                    ? Array.isArray(profile.specializations)
+                      ? profile.specializations.join(", ")
+                      : profile.specializations
+                    : "Sin especialidades"}
+                </p>
               </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-large text-gray-700 mb-0.5">
-                  Teléfono
-                </label>
-                <input
-                  type="text"
-                  name="phone_number"
-                  value={profile.user.phone_number}
-                  onChange={handleChange}
-                  className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
-                />
-                {formErrors.phone_number && (
-                  <span className="text-red-500 text-sm">
-                    {formErrors.phone_number}
-                  </span>
+
+              {/* Profile information section */}
+              <div className="p-6">
+                <div className="space-y-4">
+                  {/* Rating display */}
+                  <div className="flex items-center mb-4">
+                    <div className="flex items-center text-yellow-400 mr-2">
+                      {profile.rating_avg ? (
+                        renderStars(parseFloat(profile.rating_avg))
+                      ) : (
+                        <p className="text-gray-500 text-sm">
+                          Sin valoraciones
+                        </p>
+                      )}
+                    </div>
+                    {profile.rating_avg && (
+                      <span className="text-gray-700 font-medium">
+                        {parseFloat(profile.rating_avg).toFixed(1)}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Plan information */}
+                  <div className="bg-gradient-to-r from-blue-50 to-teal-50 rounded-xl p-4 mb-4">
+                    <h3 className="text-sm font-semibold text-gray-700 mb-2">
+                      Plan actual
+                    </h3>
+                    <div className="flex items-center">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-teal-500 to-blue-600 text-white">
+                        {profile.plan == 1
+                          ? "Fisio Blue"
+                          : profile.plan === 2
+                          ? "Fisio Gold"
+                          : "Sin Plan"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Contact information */}
+                  <div>
+                    <h3 className="text-sm font-semibold text-gray-700 mb-2">
+                      Información de contacto
+                    </h3>
+                    <ul className="space-y-2">
+                      <li className="flex items-start">
+                        <span className="text-gray-500 text-sm mr-2">
+                          Email:
+                        </span>
+                        <span className="text-gray-800 text-sm">
+                          {profile.user.email}
+                        </span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="text-gray-500 text-sm mr-2">
+                          Teléfono:
+                        </span>
+                        <span className="text-gray-800 text-sm">
+                          {profile.user.phone_number || "No especificado"}
+                        </span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="text-gray-500 text-sm mr-2">
+                          Código postal:
+                        </span>
+                        <span className="text-gray-800 text-sm">
+                          {profile.user.postal_code || "No especificado"}
+                        </span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  {/* Professional information */}
+                  <div>
+                    <h3 className="text-sm font-semibold text-gray-700 mb-2">
+                      Información profesional
+                    </h3>
+                    <ul className="space-y-2">
+                      <li className="flex items-start">
+                        <span className="text-gray-500 text-sm mr-2">
+                          Nº Colegiado:
+                        </span>
+                        <span className="text-gray-800 text-sm">
+                          {profile.collegiate_number || "No especificado"}
+                        </span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="text-gray-500 text-sm mr-2">
+                          Comunidad:
+                        </span>
+                        <span className="text-gray-800 text-sm">
+                          {profile.autonomic_community || "No especificado"}
+                        </span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  {/* Schedule button */}
+                  <div className="mt-6">
+                    <GradientButton
+                      variant="create"
+                      className="w-full py-2 px-4 font-medium rounded-xl flex items-center justify-center gap-2"
+                      onClick={() => setScheduleModalOpen(true)}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      Configurar Horario
+                    </GradientButton>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* App Rating - Moved here from below */}
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-6">
+              <div className="px-6 py-4 bg-gradient-to-r from-teal-500 to-blue-600">
+                <h2 className="text-xl font-bold text-white flex items-center">
+                  <StarIcon className="mr-2" size={20} />
+                  Valorar la aplicación
+                </h2>
+              </div>
+
+              <div className="p-6">
+                <p className="text-gray-600 mb-4">
+                  Tu opinión nos ayuda a mejorar. ¿Qué te parece FisioFind hasta ahora?
+                </p>
+                {hasRated ? (
+                  <div className="space-y-4">
+                    <div className="bg-gray-50 p-4 rounded-xl">
+                      <div className="flex items-center mb-2">
+                        <div className="flex text-yellow-400">
+                          {renderStars(rating?.punctuation || 0)}
+                        </div>
+                        <span className="ml-2 text-gray-700 font-medium">
+                          {rating?.punctuation}/5
+                        </span>
+                      </div>
+                      <p className="text-gray-700">"{rating?.opinion}"</p>
+                    </div>
+                    <div className="flex space-x-3">
+                      <GradientButton
+                        variant="edit"
+                        className="flex-1 py-2 px-4 font-medium rounded-xl flex items-center justify-center gap-2"
+                        onClick={() => {
+                          setNewRating({
+                            punctuation: rating?.punctuation || 5,
+                            opinion: rating?.opinion || "",
+                          });
+                          setShowRatingForm(true);
+                        }}
+                      >
+                        <Edit size={16} />
+                        Editar
+                      </GradientButton>
+                      <GradientButton
+                        variant="grey"
+                        className="flex-1 py-2 px-4 font-medium rounded-xl flex items-center justify-center gap-2"
+                        onClick={handleDeleteRating}
+                      >
+                        <Trash2 size={16} />
+                        Eliminar
+                      </GradientButton>
+                    </div>
+                  </div>
+                ) : (
+                  <GradientButton
+                    variant="create"
+                    className="w-full py-2 px-4 font-medium rounded-xl flex items-center justify-center gap-2"
+                    onClick={() => {
+                      setNewRating({ punctuation: 5, opinion: "" });
+                      setShowRatingForm(true);
+                    }}
+                  >
+                    <StarIcon size={16} />
+                    Valorar ahora
+                  </GradientButton>
                 )}
               </div>
             </div>
-            <div className="py-3 flex items-center flex-column justify-start w-full gap-3">
-              <div className="relative w-[50%] flex items-center flex-column justify-start">
-                <div className="absolute pl-3 flex items-center pointer-events-none text-gray-400">
-                  <Lock size={18} />
-                </div>
-                    <input
-                      disabled
-                      type="password"
-                      name="password"
-                      value={"******"}
-                      className="mb-0 w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm outline-none"
-                    />
-                </div>
-                <GradientButton
+            
+            {/* Notification preferences - Moved here from below */}
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-6">
+              <div className="px-6 py-4 bg-gradient-to-r from-teal-500 to-blue-600">
+                <h2 className="text-xl font-bold text-white flex items-center">
+                  <Bell className="mr-2" size={20} />
+                  Notificaciones
+                </h2>
+              </div>
+
+              <div className="p-6">
+                <p className="text-gray-600 mb-4">
+                  Configura si deseas recibir notificaciones sobre tus citas y
+                  actualizaciones.
+                </p>
+                <SubscriptionSlider />
+              </div>
+            </div>
+          </div>
+
+          {/* Right column - Form section */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-6">
+              <div className="px-6 py-4 bg-gradient-to-r from-teal-500 to-blue-600">
+                <h2 className="text-xl font-bold text-white flex items-center">
+                  <Edit className="mr-2" size={20} />
+                  Información Personal
+                </h2>
+              </div>
+
+              <div className="p-6">
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  {/* Contact information */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Correo Electrónico
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="email"
+                          name="email"
+                          value={profile.user.email}
+                          onChange={handleChange}
+                          className={`w-full px-4 py-3 border-2 ${
+                            formErrors.email
+                              ? "border-red-500"
+                              : "border-gray-200"
+                          } rounded-xl transition-all duration-200 outline-none focus:border-blue-500`}
+                        />
+                      </div>
+                      {formErrors.email && (
+                        <p className="mt-1 text-sm text-red-600">
+                          {formErrors.email}
+                        </p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Teléfono
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="text"
+                          name="phone_number"
+                          value={profile.user.phone_number}
+                          onChange={handleChange}
+                          className={`w-full px-4 py-3 border-2 ${
+                            (formErrors as {phone_number?: string})?.phone_number
+                              ? "border-red-500"
+                              : "border-gray-200"
+                          } rounded-xl transition-all duration-200 outline-none focus:border-blue-500`}
+                        />
+                      </div>
+                      {(formErrors as {phone_number?: string}).phone_number && (
+                        <p className="mt-1 text-sm text-red-600">
+                          {(formErrors as {phone_number?: string})?.phone_number}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Password section */}
+                  <div className="py-2 flex items-center justify-start w-full gap-3">
+                    <div className="relative w-[50%]">
+                      <input
+                        disabled
+                        type="password"
+                        name="password"
+                        value={"******"}
+                        className="w-full pl-5 pr-3 py-3 border-2 border-gray-200 rounded-xl bg-gray-50"
+                      />
+                    </div>
+                    <GradientButton
                       variant="create"
-                      className="px-3 py-2 mt-0 font-medium rounded-xl flex items-center gap-2"
+                      className="px-4 py-3 font-medium rounded-xl flex items-center gap-2 mb-8"
                       onClick={(e) => {
-                        e.preventDefault(); // Esto evita que se envíe el formulario
+                        e.preventDefault();
                         setShowUpdatePasswordModal(true);
                       }}
                     >
-                      <Plus className="w-4 h-4" /> Actualizar contraseña
-                </GradientButton>
-            </div>
-
-            {/* Desplegable de especializaciones */}
-            <div className="space-y-2">
-              <label className="block text-sm font-large text-gray-700 mb-4 mt-4">
-                Especializaciones
-              </label>
-              <div className="specializations-container">
-                <div className="selected-tags">
-                  {selectedSpecializations.map((spec) => (
-                    <div key={spec} className="tag">
-                      {spec}
-                      <span
-                        className="remove-tag"
-                        onClick={() =>
-                          setSelectedSpecializations((prev) =>
-                            prev.filter((s) => s !== spec)
-                          )
-                        }
-                      >
-                        ×
-                      </span>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="custom-dropdown">
-                  <div
-                    className="dropdown-header"
-                    onClick={() => setDropdownOpen(!dropdownOpen)}
-                  >
-                    {selectedSpecializations.length > 0
-                      ? `${selectedSpecializations.length} seleccionadas`
-                      : "Selecciona especializaciones"}
-                    <span className={`arrow ${dropdownOpen ? "open" : ""}`}>
-                      ↓
-                    </span>
+                      <Plus className="w-4 h-4"/> Actualizar contraseña
+                    </GradientButton>
                   </div>
 
-                  {dropdownOpen && (
-                    <div className="dropdown-options">
+                  {/* Specializations */}
+                  <div className="mt-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Especializaciones
+                    </label>
+                    <div className="border-2 border-gray-200 rounded-xl p-3 bg-white">
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        {selectedSpecializations.map((spec) => (
+                          <div
+                            key={spec}
+                            className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
+                          >
+                            {spec}
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-4 w-4 ml-1.5 text-blue-600 hover:text-blue-800 cursor-pointer"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                              onClick={() =>
+                                setSelectedSpecializations((prev) =>
+                                  prev.filter((s) => s !== spec)
+                                )
+                              }
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="relative">
+                        <button
+                          type="button"
+                          className="w-full px-4 py-3 text-left text-black border-2 border-gray-700 rounded-xl bg-white flex justify-between items-center hover:border-gray-300 hover:text-white transition-colors duration-200 group"
+                          onClick={() => setDropdownOpen(!dropdownOpen)}
+                        >
+                          {selectedSpecializations.length > 0
+                            ? `${selectedSpecializations.length} especializaciones seleccionadas`
+                            : "Selecciona tus especializaciones"}
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className={`h-5 w-5 text-gray-500 transition-transform duration-200 group-hover:text-white ${
+                              dropdownOpen ? "rotate-180" : ""
+                            }`}
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        </button>
+
+                        {dropdownOpen && (
+                          <div className="absolute z-10 mt-2 w-full bg-white border-2 border-gray-100 rounded-xl shadow-xl max-h-[300px] overflow-y-auto">
+                            <div className="p-2">
+                              {availableSpecializations
+                                .filter((spec) =>
+                                  spec
+                                    .toLowerCase()
+                                    .includes(searchQuery.toLowerCase())
+                                )
+                                .map((spec) => (
+                                  <label
+                                    key={spec}
+                                    className="flex items-center px-4 py-2.5 hover:bg-gray-50 rounded-xl cursor-pointer transition-colors duration-150"
+                                  >
+                                    <input
+                                      type="checkbox"
+                                      className="form-checkbox h-5 w-5 text-blue-600 rounded-md border-2 border-gray-300 focus:ring-blue-500 focus:ring-2 focus:ring-offset-2 transition-all duration-200"
+                                      checked={selectedSpecializations.includes(
+                                        spec
+                                      )}
+                                      onChange={(e) => {
+                                        if (e.target.checked) {
+                                          setSelectedSpecializations((prev) => [
+                                            ...prev,
+                                            spec,
+                                          ]);
+                                        } else {
+                                          setSelectedSpecializations((prev) =>
+                                            prev.filter((s) => s !== spec)
+                                          );
+                                        }
+                                      }}
+                                    />
+                                    <span className="ml-3 text-gray-700 font-medium">
+                                      {spec}
+                                    </span>
+                                  </label>
+                                ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Biography */}
+                  <div className="mt-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Biografía
+                    </label>
+                    <textarea
+                      name="bio"
+                      value={profile.bio || ""}
+                      onChange={handleChange}
+                      rows={4}
+                      placeholder="Cuéntanos sobre tu experiencia y enfoque profesional..."
+                      className={`w-full px-4 py-3 border-2 ${
+                        formErrors.bio ? "border-red-500" : "border-gray-200"
+                      } rounded-xl transition-all duration-200 outline-none focus:border-blue-500`}
+                    />
+                    {formErrors.bio && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {formErrors.bio}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Professional information */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Titulación <span className="text-red-500">*</span>
+                      </label>
                       <input
                         type="text"
-                        placeholder="Buscar especialización..."
-                        className="search-input"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
+                        name="degree"
+                        value={profile.degree || ""}
+                        onChange={handleChange}
+                        className={`w-full px-4 py-3 border-2 ${
+                          formErrors.degree
+                            ? "border-red-500"
+                            : "border-gray-200"
+                        } rounded-xl transition-all duration-200 outline-none focus:border-blue-500`}
                       />
-
-                      {availableSpecializations
-                        .filter((spec) =>
-                          spec.toLowerCase().includes(searchQuery.toLowerCase())
-                        )
-                        .map((spec) => (
-                          <label key={spec} className="option">
-                            <input
-                              type="checkbox"
-                              checked={selectedSpecializations.includes(spec)}
-                              onChange={(e) => {
-                                if (e.target.checked) {
-                                  setSelectedSpecializations((prev) => [
-                                    ...prev,
-                                    spec,
-                                  ]);
-                                } else {
-                                  setSelectedSpecializations((prev) =>
-                                    prev.filter((s) => s !== spec)
-                                  );
-                                }
-                              }}
-                            />
-                            <span className="checkmark"></span>
-                            {spec}
-                          </label>
-                        ))}
+                      {formErrors.degree && (
+                        <p className="mt-1 text-sm text-red-600">
+                          {formErrors.degree}
+                        </p>
+                      )}
                     </div>
-                  )}
-                </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Universidad <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        name="university"
+                        value={profile.university || ""}
+                        onChange={handleChange}
+                        className={`w-full px-4 py-3 border-2 ${
+                          formErrors.university
+                            ? "border-red-500"
+                            : "border-gray-200"
+                        } rounded-xl transition-all duration-200 outline-none focus:border-blue-500`}
+                      />
+                      {formErrors.university && (
+                        <p className="mt-1 text-sm text-red-600">
+                          {formErrors.university}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="mt-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Experiencia <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      name="experience"
+                      value={profile.experience || ""}
+                      onChange={handleChange}
+                      rows={3}
+                      placeholder="Describe tu experiencia profesional..."
+                      className={`w-full px-4 py-3 border-2 ${
+                        formErrors.experience
+                          ? "border-red-500"
+                          : "border-gray-200"
+                      } rounded-xl transition-all duration-200 outline-none focus:border-blue-500`}
+                    />
+                    {formErrors.experience && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {formErrors.experience}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="mt-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Lugar de trabajo <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="workplace"
+                      value={profile.workplace || ""}
+                      onChange={handleChange}
+                      className={`w-full px-4 py-3 border-2 ${
+                        formErrors.workplace
+                          ? "border-red-500"
+                          : "border-gray-200"
+                      } rounded-xl transition-all duration-200 outline-none focus:border-blue-500`}
+                    />
+                    {formErrors.workplace && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {formErrors.workplace}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Submit and Delete buttons */}
+                  <div className="mt-4 flex gap-4 items-center">
+                    
+                    <GradientButton
+                      variant="edit"
+                      className="flex-1 py-4 px-6 font-semibold rounded-xl flex items-center justify-center gap-2"
+                    >
+                      <Save size={18} />
+                      Actualizar Perfil
+                    </GradientButton>
+                    <GradientButton
+                      variant="red"
+                      onClick={() => setShowDeleteAccountModal(true)}
+                      className="flex-1 py-4 px-6 font-semibold rounded-xl flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white"
+                    >
+                      <Trash2 size={18} />
+                      Eliminar Cuenta
+                    </GradientButton>
+                  </div>
+                </form>
               </div>
             </div>
 
-            {/* Biografía */}
-            <div className="space-y-2">
-              <label className="block text-sm font-large text-gray-700 mb-2 mt-4">
-                Biografía
-              </label>
-              <textarea
-                name="bio"
-                value={profile.bio || ""}
-                onChange={handleChange}
-                rows={4}
-                className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
-              />
-              {formErrors.bio && (
-                <span className="text-red-500 text-sm">{formErrors.bio}</span>
-              )}
-            </div>
-
-                        {/* Titulación */}
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Titulación <span className="text-red-500">*</span>
-                          </label>
-                          <div className="relative">
-                            <input
-                              type="text"
-                              name="degree"
-                              value={profile.degree || ""}
-                              onChange={handleChange}
-                              className={`w-full pl-10 pr-3 py-3 border-2 ${
-                                formErrors.degree ? 'border-red-500' : 'border-gray-200'
-                              } rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD]`}
-                            />
-                          </div>
-                          {formErrors.degree && (
-                            <p className="mt-1 text-sm text-red-600">{formErrors.degree}</p>
-                          )}
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Universidad <span className="text-red-500">*</span>
-                          </label>
-                          <div className="relative">
-                            <input
-                              type="text"
-                              name="university"
-                              value={profile.university || ""}
-                              onChange={handleChange}
-                              className={`w-full pl-10 pr-3 py-3 border-2 ${
-                                formErrors.university ? 'border-red-500' : 'border-gray-200'
-                              } rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD]`}
-                            />
-                          </div>
-                          {formErrors.university && (
-                            <p className="mt-1 text-sm text-red-600">{formErrors.university}</p>
-                          )}
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Experiencia <span className="text-red-500">*</span>
-                          </label>
-                          <div className="relative">
-                            <textarea
-                              name="experience"
-                              value={profile.experience || ""}
-                              onChange={handleChange}
-                              className={`w-full pl-10 pr-3 py-3 border-2 ${
-                                formErrors.experience ? 'border-red-500' : 'border-gray-200'
-                              } rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD]`}
-                            />
-                          </div>
-                          {formErrors.experience && (
-                            <p className="mt-1 text-sm text-red-600">{formErrors.experience}</p>
-                          )}
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Lugar de trabajo <span className="text-red-500">*</span>
-                          </label>
-                          <div className="relative">
-                            <input
-                              type="text"
-                              name="workplace"
-                              value={profile.workplace || ""}
-                              onChange={handleChange}
-                              className={`w-full pl-10 pr-3 py-3 border-2 ${
-                                formErrors.workplace ? 'border-red-500' : 'border-gray-200'
-                              } rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD]`}
-                            />
-                          </div>
-                          {formErrors.workplace && (
-                            <p className="mt-1 text-sm text-red-600">{formErrors.workplace}</p>
-                          )}
-                        </div>
-
-            {/* Sección de servicios */}
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4 mb-4 mt-4">
-                <div>
-                  <h3 className="text-lg font-semibold mb-2">Servicios</h3>
-                  <GradientButton
-                    variant="create"
-                    className="px-3 py-2 font-medium rounded-xl flex items-center gap-2"
-                    onClick={(e) => {
-                      e.preventDefault(); // Esto evita que se envíe el formulario
-                      setEditingServiceIndex(null);
-                      setShowServiceModal(true);
-                    }}
-                  >
-                    <Plus className="w-4 h-4" /> Añadir Servicio
-                  </GradientButton>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold mb-2">Ejercicios</h3>
-                  {id && (
-                    <Link href={`/physio-management/${id}/exercises`} passHref>
-                    <GradientButton
-                      variant="create"
-                      className="px-3 py-2 font-medium rounded-xl flex items-center gap-2"
-                    >
-                      <BicepsFlexed className="w-4 h-4" /> Biblioteca de
-                      Ejercicios
-                    </GradientButton>
-                  </Link>
-                  )}
-                </div>
+            {/* Services section */}
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-6">
+              <div className="px-6 py-4 bg-gradient-to-r from-teal-500 to-blue-600 flex justify-between items-center">
+                <h2 className="text-xl font-bold text-white flex items-center">
+                  <Film className="mr-2" size={20} />
+                  Servicios
+                </h2>
+                <GradientButton
+                  variant="create"
+                  className="px-3 py-2 font-medium rounded-xl flex items-center gap-2"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setEditingServiceIndex(null);
+                    setShowServiceModal(true);
+                  }}
+                >
+                  <Plus className="w-4 h-4" /> Añadir
+                </GradientButton>
                 <div>
                   <h3 className="text-lg font-semibold mb-2">Cuestionarios</h3>
                   {id && (
@@ -1889,179 +2243,385 @@ const FisioProfile = () => {
                 </div>
               </div>
 
-              {services.length === 0 ? (
-                <p className="text-gray-500 text-center">
-                  No hay servicios registrados
-                </p>
-              ) : (
-                <div className="space-y-3">
-                  {services.map((service, index) => (
-                    <div
-                      key={index}
-                      className="border rounded-md p-3 flex justify-between items-center"
-                    >
-                      <div>
-                        <h4 className="font-semibold">{service.titulo}</h4>
-                        <p className="text-sm text-gray-600">
-                          {service.descripcion}
-                        </p>
-                      </div>
-                      <div className="flex space-x-2">
-                        <GradientButton
-                          variant="edit"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleEditService(index);
-                          }}
-                        >
-                          <Edit className="w-4 h-4" />
-                        </GradientButton>
-                        <GradientButton
-                          variant="danger"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleDeleteService(index);
-                          }}
-                          className="text-red-500 hover:bg-red-100 p-2 rounded"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </GradientButton>
-                      </div>
+              <div className="p-6">
+                {services.length === 0 ? (
+                  <div className="text-center py-8">
+                    <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-8 w-8 text-gray-400"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                        />
+                      </svg>
                     </div>
-                  ))}
-                </div>
-              )}
+                    <p className="text-gray-500">
+                      No hay servicios registrados
+                    </p>
+                    <p className="text-sm text-gray-400 mt-1">
+                      Añade servicios para que los pacientes puedan reservar
+                      citas contigo
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {services.map((service, index) => (
+                      <div
+                        key={index}
+                        className="border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow"
+                      >
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h4 className="font-semibold text-gray-800">
+                              {service.titulo}
+                            </h4>
+                            <p className="text-sm text-gray-600 mt-1">
+                              {service.descripcion}
+                            </p>
+                            <div className="flex items-center mt-2 space-x-4">
+                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                {service.duracion} min
+                              </span>
+                              <span className="text-sm font-medium text-gray-900">
+                                {service.precio}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex space-x-2">
+                            <button
+                              onClick={() => handleEditService(index)}
+                              className="p-2 text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+                            >
+                              <Edit className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteService(index)}
+                              className="p-2 text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
-                        <div>
-                            <GradientButton
-                                variant="edit"
-                                className="mt-8 w-full py-4 px-6 bg-gradient-to-r from-[#1E5ACD] to-[#3a6fd8] text-white font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center"
-                            >
-                                <Save size={18} className="mr-2" />
-                                Actualizar Perfil
-                            </GradientButton>
-                            {/* <Link href="/physio-management/video" passHref>
-                                <GradientButton
-                                    variant="edit"
-                                    className="w-full py-2 px-4 bg-gradient-to-r from-[#1E5ACD] to-[#3a6fd8] text-white font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center"
-                                >
-                                    <Film size={22} className="mr-2" />
-                                    Subir vídeo
-                                </GradientButton>
-                            </Link> */}
-                        </div>
-                        <div className="border-t border-gray-200 pt-5 mt-5">
-                <div className="mb-2">
-                  <div className="flex items-center mb-3 gap-2">
-                    <Bell size={16} className="text-gray-500 mr-1" />{" "}
-                    {/* Changed to gray */}
-                    <h3 className="text-base font-semibold text-gray-800">
-                      Preferencias de Notificaciones
-                    </h3>
-                  </div>
-                  <p className="text text-gray-600 mb-3">
-                    {" "}
-                    Configura si deseas recibir notificaciones sobre tus citas y
-                    actualizaciones.
-                  </p>
-                  <SubscriptionSlider />
-                </div>
-              </div>
-                    </form>
-                </div>
-        {showUpdatePasswordModal && (
-          <UpdatePasswordModal
-            onClose={() => {
-              setShowUpdatePasswordModal(false);
-            }}
-            onSave={changePasswordSendToApi}
-            showAlert={showAlert}
-          />
-        )}
-
-        {/* Modal para añadir/editar servicios */}
-        {showServiceModal && (
-          <ServiceModal
-            onClose={() => {
-              setShowServiceModal(false);
-              setEditingServiceIndex(null);
-            }}
-            onSave={handleAddService}
-            editingService={
-              editingServiceIndex !== null
-                ? services[editingServiceIndex]
-                : undefined
-            }
-          />
-        )}
-
-        {/* Modal para editar el horario */}
-        {scheduleModalOpen && (
-          <div className="schedule-modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
-            <div className="schedule-modal-content">
-              <div className="schedule-modal-header">
-                <h2 className="schedule-modal-title">
-                  Configuración de horario
+            {/* Exercises section */}
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-6">
+              <div className="px-6 py-4 bg-gradient-to-r from-teal-500 to-blue-600">
+                <h2 className="text-xl font-bold text-white flex items-center">
+                  <BicepsFlexed className="mr-2" size={20} />
+                  Ejercicios
                 </h2>
-                <button
-                  className="schedule-modal-close text-white bg-white rounded-full"
-                  onClick={() => setScheduleModalOpen(false)}
-                  aria-label="Cerrar"
-                >
-                  &times;
-                </button>
               </div>
-              <div className="schedule-modal-body">
-                <div className="schedule-calendar-container">
-                  <ScheduleCalendar
-                    initialSchedule={schedule}
-                    onScheduleChange={setSchedule}
-                    className="schedule-calendar"
-                  />
+
+              <div className="p-6">
+                <div className="text-center">
+                  {id && (
+                    <Link href={`/physio-management/${id}/exercises`} passHref>
+                      <GradientButton
+                        variant="create"
+                        className="px-4 py-3 font-medium rounded-xl flex items-center justify-center gap-2 w-full"
+                      >
+                        <BicepsFlexed className="w-5 h-5" />
+                        Acceder a Biblioteca de Ejercicios
+                      </GradientButton>
+                    </Link>
+                  )}
+                  <p className="text-sm text-gray-500 mt-3">
+                    Gestiona tu biblioteca de ejercicios para asignarlos a tus
+                    pacientes
+                  </p>
                 </div>
               </div>
-              <div className="schedule-modal-footer flex justify-end space-x-6 mt-10 px-6 pb-6">
-                <GradientButton
-                  variant="edit"
-                  onClick={saveScheduleToAPI}
-                  className="px-6 py-2 font-medium rounded-xl"
-                >
-                  Guardar Horario
-                </GradientButton>
-                <GradientButton
-                  variant="grey"
-                  onClick={() => setScheduleModalOpen(false)}
-                  className="px-6 py-2 font-medium rounded-xl"
+            </div>
+          </div>
+
+          {showUpdatePasswordModal && (
+            <UpdatePasswordModal
+              onClose={() => {
+                setShowUpdatePasswordModal(false);
+              }}
+              onSave={changePasswordSendToApi}
+              showAlert={showAlert}
+            />
+          )}
+
+          {/* Modal para añadir/editar servicios */}
+          {showServiceModal && (
+            <ServiceModal
+              onClose={() => {
+                setShowServiceModal(false);
+                setEditingServiceIndex(null);
+              }}
+              onSave={handleAddService}
+              editingService={
+                editingServiceIndex !== null
+                  ? services[editingServiceIndex]
+                  : undefined
+              }
+            />
+          )}
+
+          {/* Modal para editar el horario */}
+          {scheduleModalOpen && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4">
+              <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl overflow-hidden">
+                <div className="px-6 py-4 bg-gradient-to-r from-teal-500 to-blue-600 flex justify-between items-center">
+                  <h2 className="text-xl font-bold text-white flex items-center">
+                    <svg
+                      className="mr-2"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <rect
+                        x="3"
+                        y="4"
+                        width="18"
+                        height="18"
+                        rx="2"
+                        ry="2"
+                      ></rect>
+                      <line x1="16" y1="2" x2="16" y2="6"></line>
+                      <line x1="8" y1="2" x2="8" y2="6"></line>
+                      <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    Configuración de Horario
+                  </h2>
+                  <button
+                    className="text-white hover:text-gray-200 transition-colors"
+                    onClick={() => setScheduleModalOpen(false)}
+                    aria-label="Cerrar"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
+
+                <div className="p-6 max-h-[80vh] overflow-y-auto">
+                  <div className="mb-4">
+                    <p className="text-gray-600 mb-4">
+                      Configura los días y horarios en los que estás disponible
+                      para atender pacientes.
+                    </p>
+                    <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-md mb-6">
+                      <div className="flex">
+                        <svg
+                          className="text-blue-500 mr-2 w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                        <div>
+                          <p className="text-sm text-blue-700 font-medium">
+                            Consejos para configurar tu horario:
+                          </p>
+                          <ul className="text-sm text-blue-600 mt-1 list-disc list-inside">
+                            <li>
+                              Selecciona los días en que atiendes pacientes
+                            </li>
+                            <li>
+                              Define tus horas de inicio y fin para cada día
+                            </li>
+                            <li>
+                              Puedes establecer diferentes horarios para cada
+                              día de la semana
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="schedule-calendar-container">
+                    <ScheduleCalendar
+                      initialSchedule={schedule}
+                      onScheduleChange={setSchedule}
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+
+                <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
+                  <GradientButton
+                    variant="grey"
+                    onClick={() => setScheduleModalOpen(false)}
+                    className="px-4 py-2 rounded-xl"
+                  >
+                    Cancelar
+                  </GradientButton>
+                  <GradientButton
+                    variant="edit"
+                    onClick={saveScheduleToAPI}
+                    className="px-4 py-2 rounded-xl"
+                  >
+                    Guardar Horario
+                  </GradientButton>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Confirmation modals */}
+        <ConfirmModal
+          isOpen={confirmModal.isOpen}
+          message="¿Estás seguro de que deseas eliminar este servicio?"
+          onConfirm={handleConfirmDelete}
+          onCancel={() =>
+            setConfirmModal({ isOpen: false, serviceIndex: null })
+          }
+        />
+
+        <ConfirmModal
+          isOpen={confirmRatingDelete}
+          message="¿Estás seguro de que deseas eliminar tu valoración de la app?"
+          onConfirm={handleConfirmRatingDelete}
+          onCancel={() => setConfirmRatingDelete(false)}
+        />
+        
+        {/* Rating Form Modal */}
+        {showRatingForm && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white p-6 rounded-2xl shadow-2xl w-full max-w-md">
+              <h3 className="text-xl font-bold text-[#05668D] mb-4">
+                {hasRated ? "Editar" : "Valorar la aplicación"}
+              </h3>
+              <div className="mb-4">
+                <label className="block text-gray-700 mb-2">Puntuación</label>
+                <div className="flex">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() =>
+                        setNewRating({ ...newRating, punctuation: star })
+                      }
+                      className="focus:outline-none"
+                    >
+                      <svg
+                        className={`w-8 h-8 ${
+                          star <= newRating.punctuation
+                            ? "text-yellow-500"
+                            : "text-gray-300"
+                        }`}
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 mb-2">Opinión</label>
+                <textarea
+                  value={newRating.opinion}
+                  onChange={(e) =>
+                    setNewRating({
+                      ...newRating,
+                      opinion: e.target.value,
+                    })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  rows={4}
+                  placeholder="Comparte tu experiencia con la aplicación..."
+                ></textarea>
+              </div>
+              <div className="flex justify-end space-x-3">
+                <button
+                  onClick={() => setShowRatingForm(false)}
+                  className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
                 >
                   Cancelar
-                </GradientButton>
+                </button>
+                <button
+                  onClick={handleSubmitRating}
+                  className="px-4 py-2 bg-gradient-to-r from-[#41B8D5] to-[#1E5ACD] text-white rounded-md hover:opacity-90"
+                >
+                  {hasRated ? "Actualizar" : "Enviar"}
+                </button>
               </div>
             </div>
           </div>
         )}
-      </div>
 
-      <ConfirmModal
-        isOpen={confirmModal.isOpen}
-        message="¿Estás seguro de que deseas eliminar este servicio?"
-        onConfirm={handleConfirmDelete}
-        onCancel={() => setConfirmModal({ isOpen: false, serviceIndex: null })}
-      />
-      <ConfirmModal
-        isOpen={confirmRatingDelete}
-        message="¿Estás seguro de que deseas eliminar tu valoración de la app?"
-        onConfirm={handleConfirmRatingDelete}
-        onCancel={() => setConfirmRatingDelete(false)}
-      />
-      {alert.show && (
-        <Alert
-          type={alert.type}
-          message={alert.message}
-          onClose={() => setAlert({ ...alert, show: false })}
-          duration={5000}
-        />
-      )}
+        {/* Delete Account Modal */}
+        {showDeleteAccountModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-2xl p-8 max-w-2xl w-full mx-4 shadow-xl">
+              <h2 className="text-2xl font-bold mb-4 text-gray-800">¿Estás seguro de que quieres eliminar tu cuenta?</h2>
+              <p className="mb-4 text-gray-600">Esta acción no se podrá deshacer.</p>
+              <p className="mb-6 text-gray-600">
+                Si eliminas tu cuenta todos tus datos personales, tratamientos, vídeos y archivos subidos e historial serán eliminados. 
+                Si realmente deseas ejercer el derecho a eliminar tus datos, escribe un correo a info@fisiofind.com con asunto [Eliminar mi cuenta] y procederemos a eliminar tus datos.
+              </p>
+              <div className="flex justify-end gap-4">
+                <button
+                  onClick={() => setShowDeleteAccountModal(false)}
+                  className="px-6 py-2 rounded-lg text-white bg-gradient-to-r from-gray-400 to-gray-500 hover:from-gray-500 hover:to-gray-600 transition-all duration-200 font-medium shadow-sm hover:shadow-md"
+                >
+                  Cancelar
+                </button>
+                <a
+                  href="mailto:info@fisiofind.com?subject=[Eliminar mi cuenta]"
+                  className="px-6 py-2 rounded-lg text-white bg-blue-500 hover:bg-blue-600 transition-all duration-200 font-medium shadow-sm hover:shadow-md"
+                >
+                  Enviar correo
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Alert component */}
+        {alert.show && (
+          <Alert
+            type={alert.type}
+            message={alert.message}
+            onClose={() => setAlert({ ...alert, show: false })}
+            duration={5000}
+          />
+        )}
+      </div>
     </div>
   );
 };

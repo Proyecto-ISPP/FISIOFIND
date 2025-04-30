@@ -20,7 +20,7 @@ class Treatment(models.Model):
             raise ValidationError("La fecha de fin debe ser posterior a la fecha de inicio.")
 
     def __str__(self):
-        return f"Tratamiento para {self.patient.user.username} por {self.physiotherapist.user.username}"
+        return f"Tratamiento para {self.patient.user.username} por {self.physiotherapist.user.username} (inicio: {self.start_time.date()})"
 
     class Meta:
         verbose_name = "Tratamiento"
@@ -80,7 +80,7 @@ class SessionTestResponse(models.Model):
     submitted_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return f"Respuesta de {self.patient.user.username} al test {self.test.question} en sesión {self.test.session.id}"
+        return f"Respuesta de {self.patient.user.username} al test {self.test.question} en sesión {self.test.session.id}  (enviado: {self.submitted_at.date()})"
     
     class Meta:
         verbose_name = "Respuesta a test de sesión"
@@ -134,8 +134,7 @@ class Exercise(models.Model):
     )
 
     def __str__(self):
-        return self.title
-
+        return f"{self.title} - {self.get_body_region_display()}"
 
     class Meta:
         verbose_name = "Ejercicio"
@@ -147,7 +146,7 @@ class ExerciseSession(models.Model):
     session = models.ForeignKey(Session, on_delete=models.CASCADE, related_name='exercise_sessions', verbose_name = "Sesión")
 
     def __str__(self):
-        return f"{self.exercise.title} en sesión {self.session.id}"
+         return f"{self.exercise.title} asignado a sesión {self.session.id} de {self.session.treatment.patient.user.username}"
 
     class Meta:
         verbose_name = "Relación sesión-ejercicio"
@@ -195,7 +194,7 @@ class ExerciseLog(models.Model):
     notes = models.TextField(blank=True, null=True,verbose_name = "Notas")
 
     def __str__(self):
-        return f"Log de {self.patient.user.username} en serie {self.series.series_number}"
+        return f"Log de {self.patient.user.username} ({self.date}) en serie {self.series.series_number}"
 
     class Meta:
         verbose_name = "Log de ejercicio"

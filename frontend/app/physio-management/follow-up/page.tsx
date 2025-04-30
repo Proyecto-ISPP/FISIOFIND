@@ -45,12 +45,13 @@ interface Treatment {
 }
 
 interface Appointment {
+  patient_name: string;
   id: number;
   start_time: string;
   end_time: string;
   is_online: boolean;
   service: Record<string, unknown>;
-  patient_name: string;
+  name: string;
   physiotherapist_name: string;
   status: string;
   patient: number;
@@ -60,6 +61,7 @@ const SeguimientoPage = () => {
   const router = useRouter();
   const [treatments, setTreatments] = useState<Treatment[]>([]);
   const [filteredTreatments, setFilteredTreatments] = useState<Treatment[]>([]);
+  const [allTreatments, setAllTreatments] = useState<Treatment[]>([]); // New state to store all treatments
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<boolean | null>(null);
@@ -73,12 +75,22 @@ const SeguimientoPage = () => {
   const [patientsWithoutTreatment, setPatientsWithoutTreatment] = useState<
     {
       id: number;
-      name: string;
+      patient_name: string;
       appointmentId: number;
       appointmentDate: string;
     }[]
   >([]);
   const [creatingTreatment, setCreatingTreatment] = useState(false);
+
+  const [patientSearchTerm, setPatientSearchTerm] = useState("");
+  const [filteredPatients, setFilteredPatients] = useState<
+    {
+      id: number;
+      patient_name: string;
+      appointmentId: number;
+      appointmentDate: string;
+    }[]
+  >([]);
 
   const [showDateForm, setShowDateForm] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<{
@@ -321,45 +333,80 @@ const SeguimientoPage = () => {
 
     console.log("Processing appointments to find patients without treatments");
     console.log("Finished appointments:", finishedAppointments);
+    console.log("All treatments:", allTreatments); // Use allTreatments instead of treatments
 
-    // Get all patient IDs that already have treatments
-    const patientsWithTreatments = new Set(
-      treatments.map((treatment) => {
-        if (
-          typeof treatment.patient === "object" &&
-          treatment.patient &&
-          treatment.patient.id
-        ) {
-          return treatment.patient.id;
-        } else {
-          return Number(treatment.patient);
-        }
-      })
+    // Get all patient IDs that already have ACTIVE treatments
+    const patientsWithActiveTreatments = new Set(
+      allTreatments // Use allTreatments instead of treatments
+        .filter(treatment => treatment.is_active)
+        .map((treatment) => {
+          if (
+            typeof treatment.patient === "object" &&
+            treatment.patient &&
+            treatment.patient.id
+          ) {
+            return treatment.patient.id;
+          } else {
+            return Number(treatment.patient);
+          }
+        })
     );
 
     console.log(
-      "Patients with treatments:",
-      Array.from(patientsWithTreatments)
+      "Patients with active treatments:",
+      Array.from(patientsWithActiveTreatments)
     );
 
-    // Filter appointments to find patients without treatments
+    // Filter appointments to find patients without active treatments
     const patientsWithoutTreatmentData = finishedAppointments
       .filter(
         (appointment) =>
-          !patientsWithTreatments.has(Number(appointment.patient))
+          !patientsWithActiveTreatments.has(Number(appointment.patient))
       )
       .map((appointment) => ({
         id: Number(appointment.patient),
-        name: appointment.patient_name,
+        patient_name: appointment.patient_name?.trim() ? appointment.patient_name : `Paciente sin nombre`,
         appointmentId: appointment.id,
         appointmentDate: new Date(appointment.end_time).toLocaleDateString(
           "es-ES"
         ),
       }));
 
-    console.log("Patients without treatment:", patientsWithoutTreatmentData);
+    console.log("Patients without active treatment:", patientsWithoutTreatmentData);
     setPatientsWithoutTreatment(patientsWithoutTreatmentData);
-  }, [finishedAppointments, treatments]);
+    setFilteredPatients(patientsWithoutTreatmentData);
+  }, [finishedAppointments, allTreatments]);
+
+  useEffect(() => {
+    if (!patientSearchTerm) {
+      setFilteredPatients(patientsWithoutTreatment);
+      return;
+    }
+
+    const term = patientSearchTerm.trim();
+
+    // First, look for exact matches (prioritize these)
+    const exactMatches = patientsWithoutTreatment.filter(
+      (patient) => patient.patient_name === term
+    );
+
+    // If we have exact matches, only show those
+    if (exactMatches.length > 0) {
+      setFilteredPatients(exactMatches);
+      return;
+    }
+
+    // Otherwise, look for partial matches (case sensitive)
+    const partialMatches = patientsWithoutTreatment.filter((patient) =>
+      patient.patient_name.includes(term)
+    );
+
+    setFilteredPatients(partialMatches);
+  }, [patientSearchTerm, patientsWithoutTreatment]);
+
+  const handlePatientSearch = (term: string) => {
+    setPatientSearchTerm(term);
+  };
 
   const extractActivePatients = useCallback((treatmentsData: Treatment[]) => {
     const activePatientsMap = new Map<number, Patient>();
@@ -391,6 +438,25 @@ const SeguimientoPage = () => {
 
         // Intentamos obtener los datos del backend
         try {
+          // First, fetch ALL treatments without any filter
+          const allTreatmentsResponse = await fetch(
+            `${getApiBaseUrl()}/api/treatments/physio/`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          if (!allTreatmentsResponse.ok) {
+            throw new Error("Error al obtener todos los tratamientos");
+          }
+
+          const allTreatmentsData = await allTreatmentsResponse.json();
+          setAllTreatments(allTreatmentsData);
+
+          // Then, fetch filtered treatments if a filter is applied
           let url = `${getApiBaseUrl()}/api/treatments/physio/`;
           if (activeFilter !== null) {
             url += `?is_active=${activeFilter}`;
@@ -404,7 +470,7 @@ const SeguimientoPage = () => {
           });
 
           if (!response.ok) {
-            throw new Error("Error al obtener los tratamientos");
+            throw new Error("Error al obtener los tratamientos filtrados");
           }
 
           const data = await response.json();
@@ -488,9 +554,9 @@ const SeguimientoPage = () => {
     );
   }
 
-  if (!token) {
+  if (!token || !userRole) {
     return (
-      <RestrictedAccess message="Necesitas iniciar sesión para acceder a los tratamientos." />
+      <RestrictedAccess message="Necesitas iniciar sesión para acceder a los tratamientos" />
     );
   }
 
@@ -562,8 +628,43 @@ const SeguimientoPage = () => {
               un tratamiento para ellos.
             </p>
 
+            {/* Search bar for patients */}
+            <div className="mb-6">
+              <label
+                htmlFor="patientSearch"
+                className="block text-lg font-semibold mb-2 text-[#05668D]"
+              >
+                Buscar paciente
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  id="patientSearch"
+                  placeholder="Nombre del paciente..."
+                  value={patientSearchTerm}
+                  onChange={(e) => handlePatientSearch(e.target.value)}
+                  className="w-full p-3 pl-10 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5]"
+                />
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <svg
+                    className="h-5 w-5 text-gray-400"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {patientsWithoutTreatment.map((patient) => (
+              {filteredPatients.map((patient) => (
                 <div
                   key={`${patient.id}-${patient.appointmentId}`}
                   className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-md overflow-hidden border border-blue-100 hover:shadow-lg transition-all duration-300"
@@ -573,7 +674,7 @@ const SeguimientoPage = () => {
                   </div>
 
                   <div className="p-6">
-                    <h3 className="text-xl font-bold mb-2">{patient.name}</h3>
+                    <h3 className="text-xl font-bold mb-2">{patient.patient_name}</h3>
 
                     <div className="mb-4">
                       <div className="flex justify-between mb-1">
@@ -606,6 +707,28 @@ const SeguimientoPage = () => {
                   </div>
                 </div>
               ))}
+            </div>
+
+            {patientSearchTerm && filteredPatients.length === 0 && (
+              <div className="text-center p-4 bg-gray-50 rounded-xl mt-4">
+                <p className="text-gray-600">
+                  No se encontraron pacientes que coincidan con &quot;
+                  {patientSearchTerm}&quot;.
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Modal for viewing patient history */}
+        {showHistoryModal && selectedPatientId && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-xl w-full max-w-4xl h-[85vh] overflow-hidden">
+              <PatientHistoryViewerModal
+                patientId={selectedPatientId}
+                token={token!}
+                onClose={handleCloseHistoryModal}
+              />
             </div>
           </div>
         )}
@@ -800,8 +923,8 @@ const SeguimientoPage = () => {
                 >
                   <div
                     className={`p-1 text-center text-white ${treatment.is_active
-                      ? "bg-gradient-to-r from-green-400 to-green-600"
-                      : "bg-gradient-to-r from-gray-400 to-gray-600"
+                        ? "bg-gradient-to-r from-green-400 to-green-600"
+                        : "bg-gradient-to-r from-gray-400 to-gray-600"
                       }`}
                   >
                     {treatment.is_active ? "Activo" : "Histórico"}
