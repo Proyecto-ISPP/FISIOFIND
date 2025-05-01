@@ -39,9 +39,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       >
         <AppointmentProvider>
           <ClientWrapper>
-            <div className="flex min-h-screen">
+            <div className="flex min-h-screen" style={{ backgroundColor: "rgb(238, 251, 250)" }}>
               <SidebarDemo />
-              <main className="flex-1 transition-all duration-300 h-screen overflow-auto">
+              <main className="flex-1 transition-all duration-300 h-screen overflow-auto" style={{ backgroundColor: "rgb(238, 251, 250)" }}>
                 {children}
               </main>
             </div>
