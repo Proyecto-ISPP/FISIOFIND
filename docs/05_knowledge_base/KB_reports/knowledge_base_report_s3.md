@@ -426,7 +426,7 @@ A continuación, se muestran las contribuciones a la base de conocimiento genera
 
 ## 4.2.1. Feedback individual del grupo 6
 
-En este apartado se encuentra la información relacionada con el feedback de las semanas 6 y 7.
+En este apartado se encuentra la información relacionada con el feedback de las semanas 8 y 9.
 
 ### Semana 8
 #### Feedback relacionado con la presentación
