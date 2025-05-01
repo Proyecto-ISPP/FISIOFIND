@@ -537,9 +537,11 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
   console.log(physioData);
 
   // Si no tenemos los datos completos, mostramos lo que tenemos
-  const patientName = patientData?.user?.first_name
+  const patientName = patientData?.user?.first_name && patientData?.user?.last_name
     ? `${patientData.user.first_name} ${patientData.user.last_name}`
-    : `Paciente ID: ${treatment.patient}`;
+    : typeof treatment.patient === "object"
+      ? `Paciente sin nombre`
+      : `Paciente ID: ${treatment.patient}`;
 
   const patientEmail = patientData?.user?.email || "Email no disponible";
   const patientGender = patientData?.gender

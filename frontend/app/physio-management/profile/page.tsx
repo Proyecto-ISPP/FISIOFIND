@@ -13,6 +13,7 @@ import ConfirmModal from "@/components/ui/ConfirmModal";
 import UpdatePasswordModal from "@/components/user-update-password-modal";
 import PhysioterapistRating from "@/components/ui/PhysioterapistRating";
 import SubscriptionSlider from "@/components/ui/SubscriptionSlider";
+import { useRouter } from "next/navigation";
 
 
 const getAuthToken = () => {
@@ -128,6 +129,7 @@ const FisioProfile = () => {
     type: "info",
     message: "",
   });
+  const router = useRouter();
 
   // Función helper para mostrar alertas
   const showAlert = (
@@ -1622,7 +1624,6 @@ const FisioProfile = () => {
             Gestiona tu información profesional y servicios
           </p>
         </div>
-
         {alert.show && (
           <div className="mb-6">
             <Alert

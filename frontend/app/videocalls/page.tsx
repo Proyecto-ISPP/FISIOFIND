@@ -6,6 +6,7 @@ import { getApiBaseUrl } from "@/utils/api";
 import { IconHeart, IconHeadphones, IconVideo } from "@tabler/icons-react";
 import RestrictedAccess from "@/components/RestrictedAccess";
 import RatingForm from "@/components/ui/RatingForm";
+import { useRouter } from "next/navigation";
 
 interface RoomDetails {
   code: string;
@@ -23,6 +24,7 @@ export default function VideoCallPage() {
   const [selectedRoom, setSelectedRoom] = useState<RoomDetails | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -78,7 +80,8 @@ export default function VideoCallPage() {
       if (response.status === 200 && detail) {
         alert("🔧 Ya tienes una sala de prueba activa. Redirigiéndote...");
       }
-      window.location.href = `/videocalls/${code}`;
+      router.push(`/videocalls/${code}`);
+      
     } catch (error) {
       console.error("Error creando sala de prueba:", error);
       alert("Hubo un problema al crear la sala de prueba.");

@@ -1,13 +1,14 @@
 "use client";
 
 import { getApiBaseUrl } from "@/utils/api";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function ConfirmAppointmentPage() {
   const { token } = useParams();
   const [message, setMessage] = useState("Validando tu cita...");
   const [messageColor, setMessageColor] = useState("text-green-500");
+  const router = useRouter();
 
   useEffect(() => {
     const confirmAppointment = async () => {
@@ -34,7 +35,7 @@ export default function ConfirmAppointmentPage() {
           );
           setMessageColor("text-blue-500");
           setTimeout(() => {
-            window.location.href = "/login";
+            router.push("/login");
           }, 3000);
         } else if (!response.ok) {
           const data = await response.json();

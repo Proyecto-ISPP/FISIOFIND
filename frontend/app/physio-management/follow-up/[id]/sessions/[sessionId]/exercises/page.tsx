@@ -190,7 +190,7 @@ const ExercisesPage = ({
       );
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        console.log("Error response:", response);
       }
 
       const allExercises = await response.json();
@@ -465,6 +465,7 @@ const ExercisesPage = ({
 
       // Create series for the exercise session
       for (const serie of series) {
+        console.log("Creating series:", serie);
         const response = await fetch(
           `${getApiBaseUrl()}/api/treatments/exercise-sessions/${currentExerciseSessionId}/series/create/`,
           {
@@ -558,6 +559,9 @@ const ExercisesPage = ({
     field: keyof Series,
     value: number
   ) => {
+    if (value <= 0) {
+      value = 1;
+    }
     const updatedSeries = [...series];
     updatedSeries[index] = { ...updatedSeries[index], [field]: value };
     setSeries(updatedSeries);
@@ -952,6 +956,7 @@ const ExercisesPage = ({
                       }
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300"
                       required
+                      maxLength={50}
                     />
                   </div>
                   <div className="space-y-2">
@@ -969,6 +974,7 @@ const ExercisesPage = ({
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300"
                       rows={4}
                       required
+                      maxLength={150}
                     />
                   </div>
                   <div className="space-y-2">
@@ -1001,8 +1007,12 @@ const ExercisesPage = ({
                       <option value="KNEE">Rodilla</option>
                       <option value="CALVES">Pantorrillas</option>
                       <option value="ANKLE_FOOT">Tobillo y Pie</option>
-                      <option value="UPPER_BODY">Parte Superior del Cuerpo</option>
-                      <option value="LOWER_BODY">Parte Inferior del Cuerpo</option>
+                      <option value="UPPER_BODY">
+                        Parte Superior del Cuerpo
+                      </option>
+                      <option value="LOWER_BODY">
+                        Parte Inferior del Cuerpo
+                      </option>
                       <option value="FULL_BODY">Cuerpo Completo</option>
                     </select>
                   </div>
@@ -1028,7 +1038,9 @@ const ExercisesPage = ({
                       <option value="BALANCE">Ejercicios de Equilibrio</option>
                       <option value="PROPRIOCEPTION">Propiocepción</option>
                       <option value="COORDINATION">Coordinación</option>
-                      <option value="BREATHING">Ejercicios Respiratorios</option>
+                      <option value="BREATHING">
+                        Ejercicios Respiratorios
+                      </option>
                       <option value="RELAXATION">Relajación / Descarga</option>
                       <option value="CARDIO">Resistencia Cardiovascular</option>
                       <option value="FUNCTIONAL">Ejercicio Funcional</option>
@@ -1188,10 +1200,10 @@ const ExercisesPage = ({
               key={exerciseSessionId}
               className="bg-white p-6 rounded-2xl shadow-lg transition-all duration-300 hover:shadow-xl"
             >
-              <h3 className="text-xl font-semibold text-[#05668D] mb-3">
+              <h3 className="text-xl font-semibold break-words text-[#05668D] mb-3">
                 {exercise?.title || "Sin título"}
               </h3>
-              <p className="text-gray-600 mb-3">
+              <p className="text-gray-600 mb-3 break-words">
                 {exercise?.description || "Sin descripción"}
               </p>
               <div className="flex flex-wrap gap-2 mb-4">
@@ -1482,7 +1494,7 @@ const ExercisesPage = ({
                         </label>
                         <input
                           type="number"
-                          value={serie.repetitions}
+                          value={serie.repetitions || ""}
                           onChange={(e) =>
                             handleUpdateSeries(
                               index,
@@ -1608,11 +1620,11 @@ const ExercisesPage = ({
                   </label>
                   <input
                     type="number"
-                    value={currentSeries.repetitions}
+                    value={currentSeries.repetitions || ""}
                     onChange={(e) =>
                       setCurrentSeries({
                         ...currentSeries,
-                        repetitions: parseInt(e.target.value),
+                        repetitions: parseInt(e.target.value) === 0 ? 1 : parseInt(e.target.value),
                       })
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-xl"
