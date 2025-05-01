@@ -1,4 +1,4 @@
----
+<!-- ---
 title: "GUIA DE USO Y REVISIÓN"                           # CHANGE IF NEEDED
 subtitle: "FISIO FIND - Grupo 6 - #PPL"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]
@@ -18,7 +18,7 @@ header-right: "30/04/2025"                                # CHANGE IF NEEDED
 footer-left: "FISIO FIND"
 documentclass: scrartcl
 classoption: "table"
----
+--- -->
 
 
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
@@ -36,8 +36,24 @@ classoption: "table"
 - [1. INTRODUCCIÓN](#1-introducción)
 - [2. ACCESO A LA APLICACIÓN](#2-acceso-a-la-aplicación)
 - [3. DESCRIPCIÓN DE FUNCIONALIDADES NO TERMINADAS](#3-descripción-de-funcionalidades-no-terminadas)
-- [4. DESCRIPCIÓN Y GUÍA DE LOS CASOS DE USO ](#4-descripción-y-guía-de-los-casos-de-uso)
+- [4. DESCRIPCIÓN Y GUÍA DE LOS CASOS DE USO](#4-descripción-y-guía-de-los-casos-de-uso)
+- [**Búsqueda avanzada**](#búsqueda-avanzada)
+- [**Cuestionario de preintervención**](#cuestionario-de-preintervención)
+- [**Solicitud de una cita**](#solicitud-de-una-cita)
+- [**Gestión del calendario**](#gestión-del-calendario)
+- [**Videollamada y herramientas de la videollamada**](#videollamada-y-herramientas-de-la-videollamada)
+- [**Planes de precio**](#planes-de-precio)
+- [**Tratamientos**](#tratamientos)
+- [**Gestión de subida de archivos**](#gestión-de-subida-de-archivos)
+- [**Accesibilidad**](#accesibilidad)
+- [**Chatbot**](#chatbot)
 - [5. DESPLIEGUE LOCAL](#5-despliegue-local)
+  - [Despliegue Local](#despliegue-local)
+    - [Prerrequisitos](#prerrequisitos)
+    - [Instalación](#instalación)
+    - [Configuración de la Base de Datos](#configuración-de-la-base-de-datos)
+    - [Uso](#uso)
+    - [Ejecución de la Aplicación](#ejecución-de-la-aplicación)
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
 
 
@@ -84,9 +100,9 @@ classoption: "table"
 
 # 1. INTRODUCCIÓN
 
-FISIOFIND es una plataforma de consulta en línea diseñada para conectar fisioterapeutas y pacientes. La aplicación permite la gestión de citas, realización de consultas virtuales y procesamiento de pagos, facilitando la organización y seguimiento de sesiones terapéuticas de forma segura y eficiente. La solución se orienta a dos grandes grupos de usuarios: fisioterapeutas y pacientes.
+FISIOFIND es una plataforma de consulta en línea diseñada para conectar fisioterapeutas y pacientes. La aplicación permite la gestión de citas, realización de consultas virtuales y procesamiento de pagos, facilitando la organización y seguimiento de sesiones terapéuticas de forma segura y eficiente. La solución está orientada a dos grupos principales de usuarios: fisioterapeutas y pacientes.
 
-En este documento, se detalla una guía para el despliegue en local de la apliación además de un desglose en detalle para la realización de las prueba del S3.
+En este documento se detalla una guía para el despliegue local de la aplicación, además de un desglose detallado para la realización de las pruebas del Sprint 3.
 
 
 
@@ -107,10 +123,9 @@ Toda nuestra documentación actualizada en: https://fisiofind.vercel.app/
 
 Y, nuestro repositorio en GitHub: https://github.com/Proyecto-ISPP/FISIOFIND 
 
-Una vez en nuestra aplicación, se podrá acceder sin necesidad de iniciar sesión a nuestra página principal y realizar una primeras búsquedas de fisioterapeutas. De todas formas, para probar nuestras funcionalidades completas, facilitamos los siguientes credenciales:
+Una vez en nuestra aplicación, se podrá acceder sin necesidad de iniciar sesión a nuestra página principal y realizar una búsquedas iniciales de fisioterapeutas. De todas formas, para probar nuestras funcionalidades completas, facilitamos los siguientes credenciales:
 
-El panel de admin hemos decidido utilizar un subdominio para tenerlo. Esta práctica está recomendada desde el punto de vista de la seguridad y es una práctica extendida: https://ppl-api.fisiofind.com/admin
-. No obstante, el administrador puede iniciar sesión en el frontend para editar los documentos legales más fácilmente.
+El panel de administración se ha implementado en un subdominio por motivos de seguridad, siguiendo las mejores prácticas recomendadas: https://ppl-api.fisiofind.com/admin. No obstante, el administrador también puede iniciar sesión en el frontend para editar los documentos legales de forma más sencilla.
 
 Credenciales: 
 
@@ -172,9 +187,9 @@ Actualmente, no tenemos implementado ningún mecanismo para que finalicen las ci
 
 # 4. DESCRIPCIÓN Y GUÍA DE LOS CASOS DE USO 
 
-En esta sección se explican los casos de uso que se entregan para el PPL y una pequeña guía para seguirlos. Muchos de estos casos ya se prueban en la demo.
+En esta sección se explican los casos de uso entregados para el PPL y una guía detallada para probarlos. Muchos de estos casos ya se muestran en la demo.
 
-Para empezar, [en la pantalla del home del despliegue](https://ppl.fisiofind.com), podrá ver una navbar desplegable con distintos iconos y títulos descriptivos. Deberá de navegar por esas pestañas para probar la aplicación.
+Para comenzar, [en la pantalla principal del despliegue](https://ppl.fisiofind.com), encontrará una barra de navegación desplegable con distintos iconos y títulos descriptivos. Deberá navegar por estas pestañas para probar la aplicación.
 
 Si se quiere hacer una cuenta, deberá de dar click en la sección superior de la home en la parte que pone registrarse. Igual para iniciar sesión. **Se recomienda poner un email real ya que hay funcionalidades que requieren validación por correo o que notifican a través del correo electrónico.**
 
@@ -230,7 +245,7 @@ Caso de uso:
 4. Si el paciente acepta el cambio, la cita queda confirmada.
 
 # **Videollamada y herramientas de la videollamada**
-Actualmente esta funcionalidad tiene una sección que está mockeada en la vista de videollamada. No se ha eliminado porque se planea utilizar en el siguiente sprint.
+Actualmente esta funcionalidad tiene una sección que está *mockeada* en la vista de videollamada. No se ha eliminado porque se planea utilizar en el siguiente sprint.
 
 Caso de uso:
 1. Un fisioterapeuta abre la sección de videollamadas.
@@ -295,7 +310,7 @@ Caso de uso:
 # **Gestión de subida de archivos**
 
 Caso de uso:
-1. El fisioterapeuta entra en la sección de subida de vídeos o de archivos(son dos secciones diferentes pero son análogas) dentro del tratamiento.
+1. El fisioterapeuta entra en la sección de subida de vídeos o de archivos(son dos secciones diferentes pero funcionan de manera similar) dentro del tratamiento.
 2. Selecciona el archivo que quiere subir y rellena los datos necesarios.
 3. Cuando completa el formulario, el paciente puede ver el archivo o vídeo.
 
