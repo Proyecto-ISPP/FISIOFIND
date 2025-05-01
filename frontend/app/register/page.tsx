@@ -21,7 +21,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center py-12 px-4">
+    <div className="min-h-screen w-full flex flex-col items-center justify-center py-12 px-4" style={{ backgroundColor: "rgb(238, 251, 250)" }}>
       {/* Header */}
       <div className="text-center mb-12">
         <Image
@@ -71,14 +71,27 @@ export default function RegisterPage() {
               Soy Paciente
             </CardItem>
             <CardItem translateZ="60" className="w-full mt-4 flex justify-center">
-              <div className="h-48 w-48 rounded-full bg-blue-100 flex items-center justify-center overflow-hidden">
-                <Image
-                  src="/static/patient_icon.svg"
-                  alt="Patient Icon"
-                  width={180}
-                  height={180}
-                  className="object-cover"
-                />
+              <div className="h-48 w-48 relative group">
+                {/* 3D effect layers */}
+                <div className="absolute inset-0 bg-gradient-to-br from-[#41B8D5]/30 to-[#05668D]/20 rounded-full shadow-lg transform -rotate-6 group-hover:rotate-3 transition-all duration-500"></div>
+                <div className="absolute inset-0 bg-blue-100 rounded-full shadow-inner transform rotate-3 group-hover:-rotate-2 transition-all duration-500"></div>
+                {/* Texture overlay */}
+                <div className="absolute inset-0 rounded-full opacity-20 mix-blend-overlay" 
+                     style={{backgroundImage: "url('/static/texture-dots.png')"}}></div>
+                {/* Highlight effect */}
+                <div className="absolute top-0 left-1/4 right-1/4 h-1/5 bg-white/30 rounded-full blur-sm transform -rotate-6"></div>
+                {/* Image container with 3D hover effect */}
+                <div className="absolute inset-0 flex items-center justify-center transform group-hover:scale-110 group-hover:translate-z-10 transition-all duration-300">
+                  <div className="w-48 h-48 relative">
+                    <Image
+                      src="/static/patient_icon.png"
+                      alt="Patient Icon"
+                      fill
+                      className="object-cover drop-shadow-xl rounded-full"
+                      style={{ objectPosition: "center" }}
+                    />
+                  </div>
+                </div>
               </div>
             </CardItem>
             <CardItem as="p" translateZ="40" className="text-neutral-500 text-center my-6 dark:text-neutral-300">
@@ -90,7 +103,7 @@ export default function RegisterPage() {
               className={`w-full px-4 py-3 rounded-xl text-white font-bold transition-colors ${
                 !acceptedTerms 
                   ? "bg-gray-400 cursor-not-allowed" 
-                  : "bg-[#1E5ACD] hover:bg-[#1848A3]"
+                  : "bg-gradient-to-r from-[#41B8D5] to-[#1E5ACD] hover:shadow-lg hover:shadow-blue-500/20"
               }`}
               onClick={() => handleRoleSelection("patient")}
               disabled={!acceptedTerms}
@@ -107,14 +120,27 @@ export default function RegisterPage() {
               Soy Fisioterapeuta
             </CardItem>
             <CardItem translateZ="60" className="w-full mt-4 flex justify-center">
-              <div className="h-48 w-48 rounded-full bg-blue-100 flex items-center justify-center overflow-hidden">
-                <Image
-                  src="/static/physiotherapist_icon.svg"
-                  alt="Physiotherapist Icon"
-                  width={180}
-                  height={180}
-                  className="object-cover"
-                />
+              <div className="h-48 w-48 relative group">
+                {/* 3D effect layers */}
+                <div className="absolute inset-0 bg-gradient-to-br from-[#6BC9BE]/30 to-[#05668D]/20 rounded-full shadow-lg transform rotate-6 group-hover:-rotate-3 transition-all duration-500"></div>
+                <div className="absolute inset-0 bg-teal-50 rounded-full shadow-inner transform -rotate-3 group-hover:rotate-2 transition-all duration-500"></div>
+                {/* Texture overlay */}
+                <div className="absolute inset-0 rounded-full opacity-20 mix-blend-overlay"
+                     style={{backgroundImage: "url('/static/texture-dots.png')"}}></div>
+                {/* Highlight effect */}
+                <div className="absolute top-0 left-1/4 right-1/4 h-1/5 bg-white/30 rounded-full blur-sm transform rotate-6"></div>
+                {/* Image container with 3D hover effect */}
+                <div className="absolute inset-0 flex items-center justify-center transform group-hover:scale-110 group-hover:translate-z-10 transition-all duration-300">
+                  <div className="w-48 h-48 relative">
+                    <Image
+                      src="/static/physiotherapist_icon.png"
+                      alt="Physiotherapist Icon"
+                      fill
+                      className="object-cover drop-shadow-xl rounded-full"
+                      style={{ objectPosition: "center" }}
+                    />
+                  </div>
+                </div>
               </div>
             </CardItem>
             <CardItem as="p" translateZ="40" className="text-neutral-500 text-center my-6 dark:text-neutral-300">
@@ -126,7 +152,7 @@ export default function RegisterPage() {
               className={`w-full px-4 py-3 rounded-xl text-white font-bold transition-colors ${
                 !acceptedTerms 
                   ? "bg-gray-400 cursor-not-allowed" 
-                  : "bg-[#1E5ACD] hover:bg-[#1848A3]"
+                  : "bg-gradient-to-r from-[#6BC9BE] to-[#05668D] hover:shadow-lg hover:shadow-teal-500/20"
               }`}
               onClick={() => handleRoleSelection("physio")}
               disabled={!acceptedTerms}
