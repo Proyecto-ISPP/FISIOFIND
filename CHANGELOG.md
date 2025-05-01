@@ -1,11 +1,11 @@
-## 🚀 Changelog - 13.0.0
+## 🚀 Changelog - 14.0.0
 
 ### ✨ Features (0)
 
 ### 🐛 Fixes (0)
 
-### 📖 Documentation (0)
+### 📖 Documentation (1)
+- docs: evaluacion de rendimiento por parte del equipo de QA (@MiguelEncina)
+### 🌀 Other Changes (0)
 
-### 🌀 Other Changes (1)
-- Add files via upload (@Antonio Macías)
 ### 🔗 Pull Requests
