@@ -1,11 +1,11 @@
-## 🚀 Changelog - 21.0.0
+## 🚀 Changelog - 22.0.0
 
 ### ✨ Features (0)
 
 ### 🐛 Fixes (0)
 
-### 📖 Documentation (1)
-- docs: cambiada url de clokify de revision.md (@Delfin)
-### 🌀 Other Changes (0)
+### 📖 Documentation (0)
 
+### 🌀 Other Changes (1)
+- Add files via upload (@Antonio Macías)
 ### 🔗 Pull Requests
