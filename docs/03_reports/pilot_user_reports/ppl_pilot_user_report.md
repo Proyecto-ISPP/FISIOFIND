@@ -1,8 +1,8 @@
 <!-- ---
 title: "INFORME DE USUARIOS PILOTO"                      # CHANGE IF NEEDED
-subtitle: "FISIO FIND - Grupo 6 - #SPRINT 3"
+subtitle: "FISIO FIND - Grupo 6 - #PPL"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]
-date: "26/03/2025"                                        # CHANGE IF NEEDED
+date: "29/04/2025"                                        # CHANGE IF NEEDED
 subject: "ISPP"
 lang: "es"
 toc: true
@@ -13,8 +13,8 @@ titlepage-rule-height: 0
 colorlinks: true
 linkcolor: blue
 titlepage-background: "../../.backgrounds/background1V.pdf"  # CHANGE IF NEEDED
-header-left: "INFORME DE USUARIOS PILOTO (SPRINT 3)"                # CHANGE IF NEEDED
-header-right: "06/04/2025"                                # CHANGE IF NEEDED
+header-left: "INFORME DE USUARIOS PILOTO (#PPL)"                # CHANGE IF NEEDED
+header-right: "29/04/2025"                                # CHANGE IF NEEDED
 footer-left: "FISIO FIND"
 documentclass: scrartcl
 classoption: "table"
@@ -27,7 +27,7 @@ classoption: "table"
 </p>
 
 <h1 align="center" style="font-size: 30px; font-weight: bold;">
-  FISIO FIND  -  INFORME DE USUARIOS PILOTO (SPRINT 3)
+  FISIO FIND  -  INFORME DE USUARIOS PILOTO (#PPL)
 </h1>
 
 <br>
@@ -42,6 +42,10 @@ classoption: "table"
   - [3.1. PROBLEMAS DETECTADOS](#31-problemas-detectados)
   - [3.2. FUNCIONALIDADES VALORADAS POSITIVAMENTE](#32-funcionalidades-valoradas-positivamente)
   - [3.3. PRINCIPALES OBSERVACIONES Y SUGERENCIAS](#33-principales-observaciones-y-sugerencias)
+    - [Optimización Móvil](#optimización-móvil)
+    - [Mejoras en la Selección de Fisioterapeutas](#mejoras-en-la-selección-de-fisioterapeutas)
+    - [Accesibilidad y Documentación](#accesibilidad-y-documentación)
+    - [Proceso de Registro y Onboarding](#proceso-de-registro-y-onboarding)
 - [4. CONCLUSIONES, LECCIONES APRENDIDAS Y PROCESADO DEL FEEDBACK](#4-conclusiones-lecciones-aprendidas-y-procesado-del-feedback)
   - [4.1. AJUSTES REALIZADOS EN BASE AL FEEDBACK](#41-ajustes-realizados-en-base-al-feedback)
   - [4.2. ESTRATEGIAS DE MEJORA FUTURA](#42-estrategias-de-mejora-futura)
@@ -58,13 +62,13 @@ classoption: "table"
 
 - **Número de Grupo:** Grupo 6
 
-- **Entregable:** #SPRINT 3
+- **Entregable:** #PPL
 
 - **Miembros del grupo:** Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes.
 
-- **Contribuidores:** [Guadalupe Ridruejo Pineda](https://github.com/guaridpin) (autor), [Antonio Macías Ferrera](https://github.com/antoniommff) (autor y revisor)
+- **Contribuidores:** [Guadalupe Ridruejo Pineda](https://github.com/guaridpin) (autor), [Antonio Macías Ferrera](https://github.com/antoniommff) (autor)
 
-- **Fecha de Creación:** 06/04/2025  
+- **Fecha de Creación:** 30/04/2025  
 
 - **Versión:** v2.0
 
@@ -77,29 +81,39 @@ classoption: "table"
 
 | Fecha        | Versión  | Realizada por             | Descripción de los cambios                   |
 | ------------ | -------- | ------------------------- | -------------------------------------------- |
-| 06/04/2025   | v1.0     | Antonio Macías Ferrera    | Versión inicial del documento con el feedback para el Sprint 3. |
-| 09/04/2025   | v1.1     | Guadalupe Ridruejo Pineda    | Modificación del formato de la prueba. |
-| 10/04/2025   | v2.0    | Guadalupe Ridruejo Pineda    | Errores, comentarios y valoraciones reportadas. |
+| 06/04/2025   | v1.0     | Antonio Macías Ferrera    | Versión inicial del documento con el *feedback* para el PPL. |
+| 01/05/2025  | v2.0 |  Guadalupe Ridruejo Pineda | Añadido *feedback* obtenido. |
+
 
 <br>
 
 <!-- \newpage -->
 
+<hr>
+
 <br>
+
 
 
 # 1. INTRODUCCIÓN
 
-En este documento se recogerá el feedback recogido en la fase piloto de Fisio Find. Se analizarán las opiniones y comentarios recibidos, identificando problemas detectados, funcionalidades mejor valoradas y áreas de mejora. También se evaluarán a los usuarios piloto técnicos (estudiantes de la asignatura ISPP).
+En este documento se recogerá el *feedback* obtenido durante la fase piloto de Fisio Find. Se analizarán detalladamente las opiniones y comentarios recibidos, identificando los problemas detectados, las funcionalidades mejor valoradas y las áreas de mejora. Además, se evaluará específicamente el desempeño de los usuarios piloto técnicos (estudiantes de la asignatura ISPP).
 
-Debido a la complejidad y al volumen de datos necesarios para preparar una prueba completa dirigida a los usuarios piloto externos (fisioterapeutas y pacientes), se ha decidido posponer dicha prueba hasta el próximo 12 de abril. Para entonces, se contará con una versión completamente estable y definitiva correspondiente al Sprint 3. Los usuarios piloto externos podrán aprovechar el periodo de Semana Santa para realizar la prueba.
+Esta fase de pruebas se ha centrado en proporcionar a los usuarios piloto externos acceso completo a la plataforma, donde cada uno ha podido experimentar con todas las funcionalidades propias de su rol (fisioterapeutas y pacientes). Para los usuarios piloto técnicos, el enfoque principal ha sido la evaluación de las nuevas funciones de accesibilidad integradas, específicamente en la página principal y en el sistema de videollamadas, donde se ha implementado una transcripción en tiempo real destinada a personas con dificultades auditivas.
 
-Por otro lado, los usuarios piloto técnicos sí llevarán a cabo su prueba. Para ello, se les ha proporcionado un conjunto de credenciales que les permitirá acceder tanto como fisioterapeuta como paciente, con el objetivo de evaluar el funcionamiento de las videoconsultas.
+<br>
+
+<!-- \newpage -->
+
+<hr>
+
+<br>
+
+
 
 # 2. LISTA DE USUARIOS PILOTO
 
 Se presenta un listado de los usuarios piloto que participarán en las pruebas de FISIO FIND, detallando sus perfiles:
-
 
 ### FISIOTERAPEUTAS
 
@@ -121,8 +135,9 @@ Se presenta un listado de los usuarios piloto que participarán en las pruebas d
 | María Vallejo                   | Autónomo/a               | Traumatológica y ortopédica, Deportiva, Suelo pélvico y/o Obstétrica   | 5-10 años      |
 | Eusebia Cano Gil                | En un hospital           | Traumatológica y ortopédica, Respiratoria, Rehabilitación Cardiaca     | Más de 10 años |
 | Marina Gonzalez Sanchez         | En un hospital           | Deportiva                                                              | Más de 10 años |
-| Alejandro Pedrido Galván        |     Autónomo/a      | Traumatológica y ortopédica, Neurológica, Geriátrica                | 1-5 años |
-		
+| Alejandro Pedrido Galván        | Autónomo/a               | Traumatológica y ortopédica, Neurológica, Geriátrica                | 1-5 años   |
+
+<br>
 
 ### PACIENTES
 
@@ -147,11 +162,10 @@ Se presenta un listado de los usuarios piloto que participarán en las pruebas d
 | María Macías Barrera            | 41-60       | Sí                             | Ocasional      | Dolor de espalda                         | No                                   | Ubicación, Precio, Especialización                  |
 | Luis Manuel Martín Domínguez    | 41-60       | Sí                             | Ocasional      | Lesión deportiva                         | No                                   | Ubicación, Precio                                   |
 
-
 ### USUARIOS PILOTO TÉCNICOS
 
 | Nombre Completo              | Edad  | ¿Ha acudido al fisioterapeuta? | Frecuencia         | Motivo de consulta                  | ¿Busca fisioterapeutas por internet? | Preferencias de selección                      |
-|-----------------------------|-------|-------------------------------|--------------------|------------------------------------|-------------------------------------|------------------------------------------------|
+|-----------------------------|----------|----------------------------|--------------------|------------------------------------|-------------------------------------|------------------------------------------------|
 | Antonio Daniel Porcar Aragón | 18-25 | Sí                            | Una vez al mes     | Dolor lumbar por sedentarismo       | Sí                                 | Opiniones de otros pacientes, cercanía         |
 | Antonio Jiménez Ortega       | 18-25 | No                            | -                  | -                                  | No                                 | Precio bajo, recomendaciones de conocidos       |
 | David Guillén Fernández      | 18-25 | Sí                            | Solo cuando lo necesita | Esguince de tobillo               | Sí                                 | Especialización en deporte, disponibilidad rápida |
@@ -164,16 +178,17 @@ Se presenta un listado de los usuarios piloto que participarán en las pruebas d
 
 <!-- \newpage -->
 
-<br>
+<hr>
 
+<br>
 
 # 3. FEEDBACK OBTENIDO
 
-En este apartado se presentan las principales observaciones, problemas detectados y funcionalidades mejor valoradas en la fase de pruebas de este Sprint 3.
+En este apartado se presentan las principales observaciones, problemas detectados y funcionalidades mejor valoradas en la fase de pruebas de este Sprint 4 (correspondiente a la fase de preparación para el lanzamiento del producto - Prepare Project Launch #PPL).
 
-Para priorizar la corrección de los problemas detectados y sugerencias de mejora, se seguirá el siguiente orden de prioridad:
+Para priorizar la corrección de los problemas detectados y sugerencias de mejora, se seguirá el siguiente orden de prioridad similar a otras valoraciones de *feedback* anteriores:
 
-1. **Gestión de usuarios:** habrá que priorizar y prestar más atención a todos los errores reportados sobre la gestión de usuarios. Esto incluye problemas para registrarse e iniciar sesión, especialmente en el caso de los fisioterapeutas, quienes dependen de una correcta comprobación de su número de colegiado para acceder al sistema. También se abordarán las acciones limitadas por una mala implementación de la gestión de tokens y cookies de sesión.
+1. **Gestión de usuarios:** habrá que priorizar y prestar más atención a todos los errores reportados sobre la gestión de usuarios. Esto incluye problemas al registrarse e iniciar sesión, especialmente en el caso de los fisioterapeutas, quienes dependen de una correcta comprobación de su número de colegiado para acceder al sistema. También se abordarán los problemas derivados de una mala implementación en la gestión de tokens y cookies de sesión.
 
 2. **Rigor clínico:** se deberá prestar especial atención a los errores reportados que reflejen incoherencias entre la plataforma y el ejercicio profesional de la fisioterapia. Es fundamental garantizar que las funcionalidades y la información proporcionada sean consistentes con las prácticas clínicas y éticas de la profesión.
 
@@ -183,69 +198,109 @@ Para priorizar la corrección de los problemas detectados y sugerencias de mejor
 
 Este enfoque permitirá abordar de manera estructurada las áreas críticas de mejora, asegurando que la plataforma evolucione para satisfacer las necesidades tanto de los fisioterapeutas como de los pacientes y usuarios técnicos.
 
+
 ## 3.1. PROBLEMAS DETECTADOS
 
-Para este sprint, se solicitó a los usuarios pilotos técnicos (ISPP) que probasen la funcionalidad de las videoconsultas. A continuación, se detallan los principales problemas encontrados por los usuarios piloto durante la prueba de la plataforma, junto con su impacto y posibles soluciones.
-
-| Error                                      | Motivo                                                                                                                                                                                                                                            | Solución                                                                                                                                                                                                                                                                                                   | Prioridad | Impacto |
-|-------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------|---------|
-| Fallos en el funcionamiento del chat: algunos usuarios indicaron que, al enviar mensajes, estos no se mostraban correctamente. Además, en dispositivos móviles el chat llega a tapar contenido y es difícil de cerrar.   |   Para poder cerrar el chat hay que volver a pulsar en el icono que lo abre y, como aún no se ha trabajado en la responsividad en móvil, este componente ocupa toda la pantalla y es imposible cerrarlo.   |     Incorporar un botón visible para cerrar el chat en móviles (o la posibilidad de cerrarlo haciendo click en cualquier lugar de la pantalla) y revisar su funcionamiento general para garantizar que los mensajes se muestran correctamente tras pulsar "Enter". Se podría añadir la posibilidad de enviar imágenes relacionadas con dolencias.      |     4   |  ALTO     |
-| Varias funciones del historial clínico no responden (como “ver detalles”, “nueva entrada” o “compartir historial”) y no se muestra información completa en algunas fichas. | Son funcionalidades aún en desarrollo que aparecen *mockeadas* en la vista de las videollamadas. | Se trabajará en su desarrollo durante el PPL. | 3 | ALTO |
-| Errores en el acceso a las vistas del paciente: algunos testers no pudieron acceder por problemas con las credenciales proporcionadas, limitando la evaluación de esa parte de la plataforma. | Probablemente se deba a un error en la transcripción de las credenciales en el correo de contacto, pues se comprobó que todos los usuarios funcionaban correctamente antes de enviar las pruebas. | Revisar las credenciales en los correos para que no vuelva a suceder. | 1 | ALTO |
+| Error | Motivo | Solución | Prioridad | Impacto |
+|-------|---------|----------|-----------|----------|
+| Error en la verificación del registro, aunque el usuario ya estaba registrado | Inconsistencia en el proceso de validación durante el registro de pacientes | Revisar y optimizar la lógica de verificación del backend y mejorar los mensajes de retroalimentación al usuario | Alta (Gestión usuarios) | Alto |
+| Imposibilidad de iniciar sesión tras mensaje de registro exitoso | Error en el proceso de redirección posterior a la autenticación | Optimizar el flujo de inicio de sesión y garantizar una gestión adecuada de tokens de autenticación | Alta (Gestión usuarios) | Alto |
+| Fallo crítico en el proceso de registro inicial | Comportamiento inesperado del sistema tras un error inicial en el registro | Implementar un sistema robusto de validación de errores en el backend y habilitar reintentos seguros | Alta (Gestión usuarios) | Alto |
+| Error al eliminar la cuenta | Realmente esa lógica funciona, pero no se avisa en la vista al usuario de que debe confirmar la eliminación desde su correo electrónico. | Avisar al usuario en la vista de este requisito. | Alta (Gestión de usuarios) | Alta |
+| En accesibilidad: al resaltar enlaces no se resalta nada | La función de accesibilidad no ejecuta correctamente | Revisar funcionamiento del widget para accesibilidad visual | Media (UX) | Bajo |
+| Errores al cancelar una cita. | Fallo en la lógica de gestión de citas y mensajería. | Revisar la forma en la que se ha implementado esa funcionalidad. Probablemente la entidad se esté eliminando antes de que la información llegue al frontend para avisar al usuario. | Media (MVP) | Alta |
+| Error con el filtro de selección de horarios en la búsqueda de fisioterapeutas. | Mala gestión de la intersección entre los filtros de franjas horarias y la disponibilidad configurada por cada fisioterapeuta. Esto provoca que si el horario de un fisio no se ajusta dentro de las franjas horarias definidas en la búsqueda, no lo muestre como resultado. | Modificar la gestión de los horarios para que, si un fisioterapeuta tiene disponibilidad en alguna de sus horas dentro de la franja seleccionada, aparezca como resultado. También se reportaron otros errores menores como que los extremos quedan parcialmente cortados por las flechas de desplazamiento del carrusel. | MVP / UX (Media) | Media |   
 
 ## 3.2. FUNCIONALIDADES VALORADAS POSITIVAMENTE
 
-Los usuarios valoraron de forma muy positiva el sistema de videollamadas, el mapa de dolor interactivo y los modelos 3D, considerándolos útiles e innovadores. También destacaron la mejora de la interfaz respecto a versiones anteriores, la estética general de la plataforma y la disposición clara del menú, que facilita la navegación. En conjunto, la experiencia fue descrita como intuitiva, fluida y profesional.
+- Los usuarios destacaron especialmente la interfaz intuitiva y fácil de usar de la plataforma, señalando su excelente adaptación tanto para ordenador como para dispositivos móviles.
+
+- La estética general de la plataforma recibió valoraciones muy positivas, siendo descrita como "profesional", "agradable" y "muy conseguida". Los usuarios apreciaron particularmente la coherencia en el diseño y la paleta de colores utilizada.
+
+- La implementación de funciones de accesibilidad, especialmente la transcripción en tiempo real durante las videollamadas, fue altamente valorada por los usuarios técnicos, quienes destacaron tanto su utilidad práctica como su carácter innovador.
+
+- El formato y la estructura de la prueba piloto recibieron puntuaciones entre 4 y 5 sobre 5, indicando que la experiencia de evaluación fue clara, bien organizada y fluida para los participantes.
 
 ## 3.3. PRINCIPALES OBSERVACIONES Y SUGERENCIAS
 
-Entre las sugerencias más repetidas se encuentran:
+Las sugerencias más frecuentes y relevantes se pueden agrupar en las siguientes categorías:
 
-- Añadir iconos informativos en secciones clave para ayudar al usuario a entender mejor cada funcionalidad.
+### Optimización Móvil
+- Desarrollar una versión específica para aplicación móvil
+- Mejorar aún más la adaptabilidad del diseño responsive
+- Optimizar la experiencia de usuario en dispositivos móviles
 
-- Centrar algunos botones importantes como el de reconexión en videollamadas para mayor visibilidad.
+### Mejoras en la Selección de Fisioterapeutas
+- Implementar un sistema de comparación visual más eficiente entre perfiles
+- Añadir filtros de búsqueda más específicos
+- Mejorar la visualización de disponibilidad horaria
 
-- Simplificar etiquetas en el calendario (por ejemplo, mostrar “Abril 2025” en lugar de “Abril De 2025”).
+### Accesibilidad y Documentación
+- Implementar la función de descarga de transcripciones post-videollamada
+- Mejorar la documentación de las funciones de accesibilidad
+- Añadir más opciones de personalización para usuarios con necesidades específicas
 
-- Mejorar la accesibilidad del chat en dispositivos móviles, incluyendo la posibilidad de cerrarlo fácilmente.
+### Proceso de Registro y Onboarding
+- Optimizar el flujo post-registro para una mejor experiencia de usuario
+- Simplificar el proceso de verificación
+- Añadir más información guía durante el proceso inicial
 
-- Permitir el envío de imágenes por parte del paciente como complemento en las consultas.
 
-Estas propuestas ayudarán a afinar la experiencia de usuario en futuras iteraciones.
+<br>
 
+<!-- \newpage -->
+
+<hr>
+
+<br>
 
 # 4. CONCLUSIONES, LECCIONES APRENDIDAS Y PROCESADO DEL FEEDBACK
 
-La fase piloto ha permitido identificar fortalezas clave de la plataforma, así como diversas áreas de mejora que resultan cruciales para alcanzar un producto sólido y adaptado a las necesidades reales de fisioterapeutas y pacientes. La recopilación de feedback ha sido variada, representativa y útil para marcar prioridades de desarrollo en los siguientes sprints.
+La fase piloto ha sido especialmente útil para validar tanto las funcionalidades centrales como los aspectos de accesibilidad y usabilidad. Las valoraciones recibidas han sido, en su mayoría, muy positivas. No obstante, se han identificado áreas clave de mejora, como el proceso de registro/login, ciertos errores de accesibilidad visual y algunas propuestas de mejora en la interfaz.
 
-La mayoría de los usuarios consideraron que la plataforma es intuitiva y fácil de usar. Se valoró positivamente el diseño, los tiempos de carga y la funcionalidad de videollamadas. No obstante, se identificaron algunos errores relacionados con funcionalidades específicas como el historial clínico, la carga del chat y sugerencias para mejorar la interfaz desde el punto de vista del paciente.
+Gracias a este feedback, se pudieron priorizar tareas de cara al próximo sprint de desarrollo, garantizando un producto más sólido, accesible y ajustado a las expectativas de los usuarios reales.
 
 ## 4.1. AJUSTES REALIZADOS EN BASE AL FEEDBACK
 
 Tras la evaluación del feedback, se está trabajando en los siguientes cambios en la plataforma:
 
-- Implementación del historial clínico (previsto para el PPL).
-- Verificación del funcionamiento del chat en diferentes entornos de usuario y mejora de la responsividad del componente.
-- Validación de los tokens y sesiones para evitar fallos de inicio.
+- Corrección del flujo de registro e inicio de sesión, incluyendo validación más robusta y mensajes claros al usuario.
+
+- Se revisará el widget de accesibilidad, corrigiendo errores en la función de resaltar enlaces.
+
+- Incorporación de mejoras visuales menores en la vista móvil para facilitar la navegación.
+
+- Estudio de viabilidad técnica para añadir descarga de transcripción de las videollamadas en futuras versiones.
+
+- Corregir los errores reportados en la búsqueda de fisioterapeutas y la gestión de citas. 
+
 
 ## 4.2. ESTRATEGIAS DE MEJORA FUTURA
 
-- Realizar pruebas más específicas para cada tipo de usuario: fisioterapeutas, pacientes y técnicos.
-- Introducir un onboarding más detallado para ayudar a nuevos usuarios.
-- Añadir validaciones visuales y mensajes de error más claros cuando algo no funcione correctamente.
-- Continuar mejorando el rendimiento en dispositivos móviles.
+- Desarrollar una versión app (PWA) para optimizar el rendimiento móvil y permitir instalación directa.
+
+- Añadir filtros avanzados y visualización comparativa en el buscador de fisioterapeutas.
+
+- Continuar con testeo iterativo de accesibilidad, incluyendo nuevas funciones para usuarios con diversidad funcional.
+
+- Introducir métricas de satisfacción integradas en el sistema para recoger feedback continuo post-sesión.
+
+<br>
+
+<!-- \newpage -->
+
+<hr>
+
+<br>
+
 
 # 5. EVALUACIÓN DE LA EXPERIENCIA PILOTO
 
-| Usuario (uvus) | Fecha acceso | Feedback | Clockify | Fallos encontrados | Recomendaciones / Comentarios |
-|----------------|--------------|----------|----------|---------------------|-------------------------------|
-| Jaime Linares Barrera (**jailinbar**) | 09/04/2025 | 09/04/2025 | [jailinbar](https://app.clockify.me/shared/67f643b8158238116c386f37) | No lo veo como un error, pero com cliente si le doy al chat no me deja por así decirlo salirme del chat porque tendría que pulsar en los emojis del chat pero no me deja pulsar porque el chat ocupa la mitad de la pantalla | En principio lo veo todo muy bien e intuitivo. También es cierto que somos personas que estamos acostumbrado a usar la tecnología, quizás para una persona mayor le va a costar mucho usarlo. En este caso os recomiendo en la parte de videollamadas poner como un manual de usuario muy corto en el que se explique para que sirve cada cosa y que puede y que no puede hacer desde su rol. Por lo demás esta todo de lujo me ha gustado mucho como lo tenéis planteado. La interacción de los modelos 3D y los mapas de dolor van muy rápido, las videollamadas no van con retardo. Enhorabuena!! Muy buen trabajo. |
-| David Guillén Fernández (**davguifer**) | 09/04/2025 | 09/04/2025 | [davguifer](https://app.clockify.me/shared/67f64abca9299523b438a6a4) | - El chat no me funciona, estoy escribiendo y al darle al enter no aparece mi mensaje
-- Respecto a la vista de cliente no he podido acceder ya que las credenciales que se me han proporcionado eran incorrectas, voy a dar solo feedback de la vista de fisio
-- Si creas una pregunta con carácter invisible se lo come, vaya tampoco es un gran problema
-- En la vista de historial, en general, al darle "ver detalles" no hace nada, al igual que si le doy a nueva entrada , compartir historial, notas... intuyo que se está haciendo todavía pero lo pongo por si acaso
-| David Guillén Fernández (**davguifer**) | 09/04/2025 | 09/04/2025 | [davguifer](https://app.clockify.me/shared/67f64abca9299523b438a6a4) | Yo creo que es bastante intuitiva, aunque yo quizás pondría en algunas zonas por ejemplo en Mapa Color cuando le das a la derecha del titulito pondría un símbolo de  i (información), o algo así para que cuando pases por encima con el ratón haya una pequeña descripción | |
-|  José Manuel Miret Martín (**josmirmar2**) | 09/04/2025 | 09/04/2025 | [josmirmar2](https://app.clockify.me/shared/67f6d5ed703cb37f10882c96) | N/A | A lo mejor (No se, solo supongo) para los pacientes predeterminados que tenga un fisioterapeuta que le sea más fácil el acceder a la videollamada. Por ejemplo que en la parte del fisioterapeuta ponga con que paciente quiere hacer la videollamada |
-| Antonio Daniel Porcar Aragón (**antporara**) | 09/04/2025 | 09/04/2025 | [antporara](https://app.clockify.me/shared/67f6f77e703cb37f108872d8) | En el historial clínico del paciente no me permite ver los detalles de la ficha del paciente en una determinada ficha | No cambiaría nada, es sencillo de utilizar y muy completa. |
-| Antonio Jiménez Ortega (**antjimort**) | 10/04/2025 | 10/04/2025 | [antjimort](https://app.clockify.me/shared/67f7abbb703cb37f1089da62) | El chat tapa el resto del contenido en móvil. Además, es complicado de cerrar desde el movil, yo pondría un botón para cerrarlo en el mismo chat para que sea más accesible. | Como mucho, que se puedan enviar imágenes que el fisio deba guardar sobre alguna dolencia del paciente o algo similar. |
-| Javier Ulecia García (**javulegar**) | 10/04/2025 | 10/04/2025 | [javulegar](https://app.clockify.me/shared/67f7b515d6e4ee46994da5ad) | En el fisio, en la pestaña de historial los botones de notas y resultados no llevan a ningun lado y en el general el de ver detalles tampoco al igual que el de nueva entrada y compartir historial. Si me salgo y vuelvo a entrar no consigo reconectarme bien con el fisio estando en navegacion privada. | Yo la veo bastante bien y se entiende todo a la perfeccion |
+| Usuario (uvus) | Fecha acceso | *feedback* | Clockify | Fallos encontrados | Recomendaciones / Comentarios |
+|----------------|--------------|------------|----------|--------------------|-------------------------------|
+| Antonio Daniel Porcar Aragón (**antporara**) | 30/04/2025 | Muy clara la funcionalidad. | [antporara](https://app.clockify.me/shared/68121762cedc6708747ffcec) | En móvil, botón de inicio de sesión se solapa con el menú. | Indicar que se pueden seleccionar múltiples opciones. Mejorar visibilidad del botón de cerrar sesión en móvil. |
+| Jaime Linares Barrera (**jailinbar**) | 30/04/2025 | Gran funcionalidad de accesibilidad. | [jailinbar](https://app.clockify.me/shared/68122ffccedc67087480ba7e) | Al resaltar enlaces, algunos no se iluminan. El botón de información no hace nada visible. | Hacer más visible el botón de accesibilidad. Centrar la transcripción. Muy buena iniciativa. |
+| David Guillén Fernández (**davguifer**) | 30/04/2025 | Muy fácil de usar. Funcionalidad bien planteada. | [davguifer](https://app.clockify.me/shared/6812468512b8445b6f6e644a) | Ninguno | La app está “guapísima”. Muy buena ejecución. |
+| José Manuel Miret Martín (**josmirmar2**) | 30/04/2025 | Visualmente muy clara. Buen trabajo. | [josmirmar2](https://app.clockify.me/shared/68128463f68324299536bf1b) | Cámara no funcionó en ordenador, sí en móvil. | Añadir opción de traducir interfaz si se expande a otros países. Muy buena estética. |
+| Antonio Jiménez Ortega (**antjimort**) | 30/04/2025 | Diseño estético y sin bugs graves. | [antjimort](https://app.clockify.me/shared/681287346f3d3766021432bc) | Política de privacidad y términos no se cargan. | Mejorar sensibilidad de reconocimiento de voz. Funciona bien en general. |
+| Javier Ulecia García (**javulegar**) | 30/04/2025 | Intuitiva y bonita. | [javulegar](https://app.clockify.me/shared/681298c26f3d37660214894c) | Ctrl+U requiere dos pulsaciones para cerrar. | Ajustar comportamiento del atajo Ctrl+U. Todo muy bien. |
