@@ -374,7 +374,7 @@ La desviación estándar es **22.931**, indicando una dispersión alta, influida
 1. **Puntuaciones:** Promedio de 4.267 y desviación de 1.139 reflejan un desempeño muy bueno, con una mayoría de puntuaciones altas (5), pero con casos de puntuaciones bajas (2 y 3) que indican inconsistencias.  
 2. **Número de prompts:** Promedio de 11.8 y desviación de 10.675 muestran alta variabilidad, con un outlier (41), reflejando diferencias en la complejidad de las consultas.  
 3. **Alucinaciones:** Promedio de 17.86% y desviación de 22.931 indican una precisión variable, con casos extremos (hasta 60%) que afectan la calidad percibida.  
-4. **Relaciones:** Las alucinaciones tienen un impacto moderado en la reducción de puntuaciones (-0.359), mientras that un mayor número de prompts está ligeramente asociado con mejores puntuaciones (0.362). La relación entre prompts y alucinaciones es débil (-0.111).
+4. **Relaciones:** Las alucinaciones tienen un impacto moderado en la reducción de puntuaciones (-0.359), mientras que un mayor número de prompts está ligeramente asociado con mejores puntuaciones (0.362). La relación entre prompts y alucinaciones es débil (-0.111).
 
 ---
 
