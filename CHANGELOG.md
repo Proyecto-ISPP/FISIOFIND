@@ -1,4 +1,4 @@
-## 🚀 Changelog - 17.0.0
+## 🚀 Changelog - 18.0.0
 
 ### ✨ Features (0)
 
@@ -7,5 +7,5 @@
 ### 📖 Documentation (0)
 
 ### 🌀 Other Changes (1)
-- demo sprint 4 ppl uploaded (@Antonio Macías)
+- Delete docs/.DS_Store (@Antonio Macías)
 ### 🔗 Pull Requests
