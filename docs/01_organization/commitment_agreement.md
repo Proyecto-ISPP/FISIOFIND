@@ -1,6 +1,6 @@
 <!-- ---
 title: "COMMITMENT AGREEMENT"                             # CHANGE IF NEEDED
-subtitle: "FISIO FIND - Grupo 6 - #SPRINT 3"
+subtitle: "FISIO FIND - Grupo 6 - #PPL"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]
 date: "07/02/2025"                                        # CHANGE IF NEEDED
 subject: "ISPP"
@@ -45,6 +45,7 @@ classoption: "table"
   - [2.9 Ajuste del Porcentaje de Calificación en Evaluaciones de QA](#29-ajuste-del-porcentaje-de-calificación-en-evaluaciones-de-qa)
   - [2.10 CONDICIONES DEL ACUERDO](#210-condiciones-del-acuerdo)
   - [2.11 CASOS NO CONTEMPLADOS](#211-casos-no-contemplados)
+  - [2.12 SOBRE EL ESTADO DEL PROYECTO TRAS LA ASIGNATURA](#212-sobre-el-estado-del-proyecto-tras-la-asignatura)
 - [3. RECOMPENSAS](#3-recompensas)
   - [3.1. RECOMPENSAS Y BONIFICACIONES](#31-recompensas-y-bonificaciones)
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
@@ -59,7 +60,7 @@ classoption: "table"
 
 - **Número de Grupo:** Grupo 6
 
-- **Entregable:** #SPRINT 3
+- **Entregable:** #PPL
 
 - **Miembros del grupo:** Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes.
 
@@ -67,7 +68,7 @@ classoption: "table"
 
 - **Fecha de Creación:** 03/02/2025  
 
-- **Versión:** v1.6
+- **Versión:** v1.8
 
 <br>
 
@@ -87,8 +88,11 @@ classoption: "table"
 | 09/02/2025 | v1.5    |  Antonio Macías Ferrera | Pequeñas correcciones de formato. |
 | 08/03/2025 | v1.6    |  Daniel Alors Romero | Modificación y añadidos los apartados. |
 | 20/03/2025 | v1.7    |  Daniel Alors Romero | Recompensas y técnicas de team building. |
+| 29/04/2025 | v1.8    |  Antonio Macías Ferrera | Adición del punto "2.12 SOBRE EL ESTADO DEL PROYECTO TRAS LA ASIGNATURA" |
 
 <br>
+
+<hr>
 
 <!-- \newpage -->
 
@@ -98,6 +102,15 @@ classoption: "table"
 # 1. INTRODUCCIÓN
 
 Como miembro del equipo de desarrollo del proyecto FISIO FIND durante el curso académico 2024-25, en la asignatura de Ingeniería de Software y Práctica Profesional (ISPP), me comprometo formalmente a cumplir con los requisitos y condiciones establecidos en este documento. Este acuerdo regula el funcionamiento de nuestro equipo, compuesto por 17 integrantes.
+
+<br>
+
+<hr>
+
+<!-- \newpage -->
+
+<br>
+
 
 # 2. COMPROMISOS Y CONDICIONES
 
@@ -124,8 +137,7 @@ Se establece el siguiente horario de comunicación y trabajo:
 
 - Se establece un sistema de compensación para aquellos miembros que no cumplan con las 10 horas semanales asignadas (sólo en caso de que no hayan realizado algunas de sus tareas asignadas), con el fin de mantener un equilibrio en la carga de trabajo. Las personas que no cumplan con el tiempo asignado deberán compensar el tiempo en la semana siguiente trabajando la cantidad de horas que faltan.
 
-- Del mismo modo, en caso de que algún miembro tenga más carga de trabajo durante una semana e invierta más tiempo que el resto del equipo, el tiempo extra dedicado en esa semana podrá ser descontado de futuras semanas.
-
+- Del mismo modo, en caso de que algún miembro tenga más carga de trabajo durante una semana e invierta más tiempo que el resto del equipo, el tiempo extra dedicado en esa semana podrá ser descontado de futuras semanas. Más concretamente, durante las fases finales del #PPL y #WPL, se permitirá reducir las 10 horas mínimas semanales (4 horas de clase + 6 horas de trabajo) de forma excepcional, siempre que el miembro haya acumulado más de 10 horas en semanas previas. La reducción será de hasta 2 horas por semana y estará limitada a las horas extra previamente realizadas.
 ## 2.4 COMPROMISO Y REALIZACIÓN DE LAS TAREAS
 
 - En caso de conflicto, este será abordado primeramente a nivel de grupo y luego a nivel de proyecto, para así mantener un ambiente de trabajo eficiente.
@@ -205,14 +217,43 @@ En caso de que los miembros del equipo de QA determinen una reducción en el por
 
 - Si el equipo de QA detecta que se está dando una situación no contemplada en este acuerdo, pero que debería haberse contemplado, se hará saber a nivel de proyecto y se intentará resolver mediante reuniones y votaciones. Si no se consigue resolver, se hará saber a los profesores.
 
+## 2.12 SOBRE EL ESTADO DEL PROYECTO TRAS LA ASIGNATURA
+
+- Una vez entregado el proyecto **Fisio Find** y publicada la calificación oficial, cada miembro del grupo deberá comunicar explícitamente su intención de continuar participando en el proyecto.
+
+- Los miembros que decidan continuar en el proyecto deberán comprometerse a cumplir con los estándares mínimos de trabajo, responsabilidad e implicación establecidos por el grupo. Estos estándares incluirán, entre otros:
+  - La dedicación de un número mínimo de horas semanales.
+  - La asistencia a reuniones.
+  - La entrega puntual de las tareas asignadas.
+  - El cumplimiento de los planes de proyecto, como el [Plan de Gestión de la Configuración](docs/02_planification/configuration_management_plan.md), entre otros.
+
+- El incumplimiento de estos estándares podrá resultar en la exclusión del miembro del proyecto.
+
+- Manifestar interés por continuar con el proyecto NO es suficiente para seguir formando parte del mismo. La continuidad exige un compromiso explícito con el nivel de dedicación, trabajo y responsabilidad especificado en el Acuerdo de Compromiso.
+
+- Para adaptarse a la nueva naturaleza del proyecto tras la finalización de la asignatura, se permitirá a los miembros interesados en continuar realizar un nuevo Acuerdo de Compromiso, basado en las líneas generales establecidas en este documento.
+
+- Los miembros que decidan no continuar en el proyecto quedarán exentos de cualquier responsabilidad futura relacionada con los productos desarrollados, su mantenimiento o evolución. Asimismo:
+  - Podrán incluir sus contribuciones realizadas durante el desarrollo del proyecto en su *portfolio* profesional y se les reconocerá oficialmente su participación en el proyecto original.
+  - No tendrán derecho a participar en posibles beneficios económicos que puedan generarse a partir del proyecto.
+  - Podrán incorporarse como nuevos miembros del proyecto si así lo desearan posteriormente, comprometiéndose a cumplir con los compromisos establecidos por el resto del grupo.
+
+- Los miembros que deseen continuar en el proyecto lo harán en igualdad de condiciones, siempre que el grupo considere que han cumplido con el Acuerdo de Compromiso y las responsabilidades asignadas durante las fases previas del proyecto. 
+  - Esta evaluación será realizada de manera objetiva y basada en los registros de contribuciones y participación activa durante el desarrollo del proyecto.
+
 <br>
 
+<hr>
+
+<!-- \newpage -->
+
+<br>
 
 # 3. RECOMPENSAS
 
 ## 3.1. RECOMPENSAS Y BONIFICACIONES
 
-- Al finalizar cada Sprint se realizará una votación para elegir a los tres ***"Contributors of the week"***, siendo nombrado en las presentaciones como la persona más importante de dicha fase. Cuando el producto termine la fase de producción y para todos aquellos, dentro del equipo de desarrollo, que realicen de manera eficiente y en tiempo todas sus tareas el ***Project Management*** les invitará a una cena de empresa, para celebrar la finalización del desarrollo.
+- Al finalizar cada Sprint se realizará una votación para elegir a los tres ***"Contributors of the week"***, siendo nombrado en las presentaciones como la persona más importante de dicha fase.
 
 - También aparecerán en la presentación las tres personas mejor puntuadas en ***Make it Meme***, junto al ***meme*** mejor valorado.
 
@@ -220,20 +261,20 @@ En caso de que los miembros del equipo de QA determinen una reducción en el por
 
 Firmado,
 
-- Alberto Carmona Sicre - 07/02/2025
-- Antonio Macías Ferrera -  07/02/2025
-- Benjamín Ignacio Maureira Flores -  07/02/2025
-- Francisco Capote García -  07/02/2025
-- Daniel Alors Romero - 07/02/2025
-- Daniel Fernández Caballero -  07/02/2025
-- Daniel Ruiz López  -  07/02/2025
-- Daniel Tortorici Bartús - 07/02/2025
-- Daniel Vela Camacho - 07/02/2025
-- Delfín Santana Rubio - 07/02/2025
-- Guadalupe Ridruejo Pineda - 07/02/2025
-- Julen Redondo Pacheco -  07/02/2025
-- Miguel Encina Martínez -  07/02/2025
-- Francisco Mateos Villarejo -  07/02/2025
-- Pablo Fernández Pérez -  07/02/2025
+- Alberto Carmona Sicre - 29/04/2025
+- Antonio Macías Ferrera -  29/04/2025
+- Benjamín Ignacio Maureira Flores -  29/04/2025
+- Francisco Capote García -  29/04/2025
+- Daniel Alors Romero - 29/04/2025
+- Daniel Fernández Caballero -  29/04/2025
+- Daniel Ruiz López  -  29/04/2025
+- Daniel Tortorici Bartús - 29/04/2025
+- Daniel Vela Camacho - 29/04/2025
+- Delfín Santana Rubio - 29/04/2025
+- Guadalupe Ridruejo Pineda - 29/04/2025
+- Julen Redondo Pacheco -  29/04/2025
+- Miguel Encina Martínez -  29/04/2025
+- Francisco Mateos Villarejo -  29/04/2025
+- Pablo Fernández Pérez -  29/04/2025
 - Ramón Gavira Sánchez  -  07/02/2025
-- Rafael Pulido Cifuentes -  07/02/2025
+- Rafael Pulido Cifuentes -  29/04/2025

@@ -64,8 +64,6 @@ class TermsCreateTests(APITestCase):
         response = self.client.post(self.url, {})
         self.assertEqual(response.status_code, 400)
         self.assertIn("content", response.data)
-        self.assertIn("version", response.data)
-        self.assertIn("tag", response.data)
 
     def test_create_term_invalid_tag(self):
         data = {

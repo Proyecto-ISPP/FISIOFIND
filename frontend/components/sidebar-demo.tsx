@@ -34,6 +34,9 @@ export function SidebarDemo() {
   const [userRole, setUserRole] = useState<string | null>(null);
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
+  const openLogoutConfirmation = () => setShowLogoutConfirmation(true);
+  const closeLogoutConfirmation = () => setShowLogoutConfirmation(false);
+  const [showLogoutConfirmation, setShowLogoutConfirmation] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
@@ -121,7 +124,7 @@ export function SidebarDemo() {
     },
     {
       label: "Mis citas",
-      href: isAuthenticated ? "/my-appointments" : "/register",
+      href: "/my-appointments",
       icon: (
         <IconCalendar className="text-[#0A7487] h-5 w-5 flex-shrink-0 mx-auto" />
       ),
@@ -142,15 +145,7 @@ export function SidebarDemo() {
         <IconPhone className="text-[#1E5ACD] h-5 w-5 flex-shrink-0 mx-auto" />
       ),
     },
-/*     ...(userRole === "physiotherapist" ? [
-      {
-        label: "Cuestionarios",
-        href: "/questionnaires",
-        icon: (
-          <FontAwesomeIcon icon={faEdit} className="text-[#8C4482] h-5 w-5 flex-shrink-0 mx-auto" />
-        ),
-      }
-    ] : []), */
+
   ];
 
   const privateLinks = [
@@ -170,7 +165,36 @@ export function SidebarDemo() {
 
   return (
     <Sidebar open={open} setOpen={isPinned ? () => {} : setOpen}>
-    {/* Mobile Menu Button - Only visible on mobile when menu is closed */}
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutConfirmation && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-2xl shadow-2xl w-full max-w-md">
+            <h2 className="text-xl font-bold text-red-500 mb-4">
+              Confirmar cierre de sesión
+            </h2>
+            <p className="text-gray-600 mb-6">
+              ¿Estás seguro de que deseas cerrar sesión? Esta acción no se puede deshacer.
+            </p>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={closeLogoutConfirmation}
+                className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all duration-300"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-all duration-300"
+              >
+                Cerrar Sesión
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile Menu Button - Only visible on mobile when menu is closed */}
       <div className="md:hidden fixed top-4 left-4 z-50">
         {!isMobileMenuOpen && (
           <button 
@@ -280,7 +304,7 @@ export function SidebarDemo() {
         )}
         
         {isAuthenticated && (
-          <div className="pt-2 pb-1 mt-auto cursor-pointer" onClick={handleLogout}>
+          <div className="pt-2 pb-1 mt-auto cursor-pointer" onClick={openLogoutConfirmation}>
             <SidebarLink
               link={{
                 label: "Cerrar Sesión",
