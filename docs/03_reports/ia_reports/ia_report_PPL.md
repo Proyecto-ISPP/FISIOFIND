@@ -1,4 +1,4 @@
----
+<!-- ---
 title: "REPORTE DE IA DEL PPL (25/04/25) - (01/05/25)"
 subtitle: "FISIO FIND - Grupo 6 - #PPL"
 author: [Daniel Fernández Caballero, Daniel Ruiz López]
@@ -18,7 +18,7 @@ header-right: "01/05/2025"
 footer-left: "FISIO FIND"
 documentclass: scrartcl
 classoption: "table"
----
+--- -->
 
 <!-- Imagen del logo (comentar al exportar a PDF) -->
 <p align="center">
@@ -107,9 +107,6 @@ A continuación se presentan los distintos prompts evaluados junto con sus respe
    - Puntuación: 5  
    - Prompts: 28
    - Alucinaciones: 35.7% 
-
-
-<!--               -->
 
 9. **[Prompt 9](https://chatgpt.com/share/680a0a68-bb54-8012-8689-304014081579)**  
    - Puntuación: 3  
@@ -383,10 +380,19 @@ La desviación estándar es **22.931**, indicando una dispersión alta, influida
 
 ### Conclusión del análisis estadístico
 
-- **Puntuaciones:** Promedio de 4.267 y desviación de 1.139 reflejan un desempeño sólido en las consultas, con dos tercios de los casos alcanzando la máxima puntuación (5). Sin embargo, las puntuaciones bajas (2 y 3) sugieren que la IA enfrenta desafíos en ciertos contextos, lo que requiere una revisión de las consultas problemáticas para identificar patrones específicos.  
-- **Número de prompts:** Promedio de 11.8 y desviación de 10.675 indican que las consultas varían ampliamente en longitud, desde interacciones cortas (1 prompt) hasta extensas (41 prompts). La correlación moderada con las puntuaciones (0.362) sugiere que interacciones más largas tienden a generar mejores resultados, posiblemente debido a una mayor claridad o detalle en las consultas.  
-- **Alucinaciones:** Promedio de 17.86% y desviación de 22.931 muestran una precisión aceptable en casi la mitad de los casos (0% de alucinaciones), pero con errores significativos en otros (hasta 60%). Esto impacta moderadamente las puntuaciones (-0.359), indicando que las alucinaciones son un factor relevante en la percepción de calidad.  
-- **Relación:** Para mejorar la experiencia de consulta, los usuarios podrían enfocarse en formular prompts más detallados o estructurados, ya que un mayor número de prompts parece favorecer mejores puntuaciones. Además, identificar y reformular consultas propensas a alucinaciones (como aquellas con errores del 50% o más) podría reducir los errores y mejorar la calidad de las respuestas. La flexibilidad en la longitud de las interacciones permite adaptar las consultas según la complejidad del tema sin comprometer significativamente el desempeño.
+El análisis revela varios aspectos importantes sobre el desempeño de la IA:
+
+1. **Calidad general:** Con un promedio de puntuaciones de 4.267 y una desviación estándar de 1.139, el sistema demuestra un rendimiento consistentemente alto, aunque con margen de mejora en casos específicos.
+
+2. **Extensión de las interacciones:** La variabilidad en el número de prompts (promedio 11.8, desviación 10.675) refleja la flexibilidad del sistema para manejar tanto consultas simples como complejas. Las interacciones más extensas tienden a recibir mejores evaluaciones, posiblemente debido a la oportunidad de clarificar y refinar las respuestas.
+
+3. **Control de alucinaciones:** El promedio de 17.86% en alucinaciones, con una desviación significativa de 22.931, señala un área de mejora importante. Es notable que casi la mitad de los casos no presentan alucinaciones, pero los casos con altos porcentajes (50-60%) requieren atención especial.
+
+4. **Recomendaciones para mejora:**
+   - Implementar estrategias específicas para reducir las alucinaciones en casos complejos
+   - Fomentar interacciones más estructuradas y detalladas cuando sea necesario
+   - Desarrollar mecanismos de verificación adicionales para los casos que muestran mayor propensión a errores
+   - Investigar los patrones comunes en las consultas que generan puntuaciones más bajas
 
 
 ## Aprobado por  
