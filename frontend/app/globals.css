@@ -2071,6 +2071,6 @@ iframe.bpFab {
   right: 20px !important; 
   position: fixed !important;
   z-index: 9999 !important;
-  transform: scale(0.75);
+  transform: scale(0.65);
   transform-origin: bottom right;
 }
