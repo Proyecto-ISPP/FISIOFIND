@@ -75,7 +75,7 @@ classoption: "table"
 El presente informe tiene como objetivo mostrar los resultados de utilizar una herramienta automática de análisis de seguridad. Este análisis es fundamental para evaluar la seguridad del proyecto, detectar posibles vulnerabilidades y garantizar la privacidad, autenticidad e integridad de nuestra aplicación y de los datos que manejamos.
 
 # 2. HERRAMIENTA UTILIZADA
-La herramienta utilizada es la herramienta [ZAP](https://www.zaproxy.org/). Esta herramienta es ampliamente utilizada en el sector, y permite hacer análisis automáticos de seguridad a aplicaciones web. El análisis lo hace descubriendo las rutas de la página web (mediante scrapping y otras técnicas) y buscando de forma pasiva y activa patrones o evidencias de problemas de seguridad conocidos.
+La herramienta utilizada es la herramienta [ZAP](https://www.zaproxy.org/). Esta herramienta es ampliamente utilizada en el sector, y permite hacer análisis automáticos de seguridad a aplicaciones web. El análisis lo hace descubriendo las rutas de la página web (mediante scraping y otras técnicas) y buscando de forma pasiva y activa patrones o evidencias de problemas de seguridad conocidos.
 
 Para el análisis hemos usado la configuración por defecto de la herramienta para facilitar la reproducibilidad del análisis.
 
