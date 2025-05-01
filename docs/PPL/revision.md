@@ -46,7 +46,6 @@ classoption: "table"
 - [**Tratamientos**](#tratamientos)
 - [**Gestión de subida de archivos**](#gestión-de-subida-de-archivos)
 - [**Accesibilidad**](#accesibilidad)
-- [**Chatbot**](#chatbot)
 - [5. DESPLIEGUE LOCAL](#5-despliegue-local)
   - [Despliegue Local](#despliegue-local)
     - [Prerrequisitos](#prerrequisitos)
@@ -183,6 +182,11 @@ La aplicación implementa validación de fisioterapeutas por número de colegiad
 # 3. DESCRIPCIÓN DE FUNCIONALIDADES NO TERMINADAS
 
 Actualmente, no tenemos implementado ningún mecanismo para que finalicen las citas. Por lo que solo se pueden finalizar las citas desde el panel de admin.
+
+
+Por otro lado, tenemos implementado un chatbot, pero como tiene un número de llamadas limitadas, hemos preferido dejarlo en una pull request para evitar que se hable con él por error y se acaben las llamadas. El caso de uso del chatbot es el siguiente:
+1. Un usuario entra en fisio find.
+2. En una de las esquinas puede encontrar un icono en el que puede desplegar un chat para hablar con un chatbot para ayudarle a utilizar fisio find.
 
 
 # 4. DESCRIPCIÓN Y GUÍA DE LOS CASOS DE USO 
@@ -324,13 +328,6 @@ Caso de uso:
 Caso de uso:
 1. Un usuario con diversidad funcional entra en fisio find.
 2. En una de las esquinas puede encontrar un icono en el que puede seleccionar opciones que le hagan la experiencia fisio find más sencilla.
-
-
-# **Chatbot**
-
-Caso de uso:
-1. Un usuario entra en fisio find.
-2. En una de las esquinas puede encontrar un icono en el que puede desplegar un chat para hablar con un chatbot para ayudarle a utilizar fisio find.
 
 <br>
 
