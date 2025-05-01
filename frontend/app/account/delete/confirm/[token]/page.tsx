@@ -46,20 +46,19 @@ export default function ConfirmDeletePage({ params }: ConfirmDeletePageProps) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-gray-100">
-      <div className="bg-white p-8 rounded-2xl shadow-md max-w-md w-full">
-        <h1 className="text-2xl font-bold mb-4 text-center text-red-600">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-blue-50 to-white dark:from-neutral-900 dark:to-black">
+      <div className="bg-white dark:bg-black rounded-xl shadow-xl p-6 max-w-md w-full">
+        <h1 className="text-2xl font-bold mb-4 text-center text-[#1E5ACD]">
           Confirmar Eliminación de Cuenta
         </h1>
-        <p className="text-gray-700 mb-6 text-center">
+        <p className="text-gray-600 dark:text-gray-400 mb-6 text-center">
           Esta acción es irreversible. Una vez que elimines tu cuenta, no podrás recuperar tus datos.
           <br />
           ¿Estás seguro de que quieres continuar?
         </p>
 
-        {/* Si hay error, lo mostramos */}
         {error && (
-          <div className="bg-red-100 text-red-700 p-3 rounded-md mb-4 text-sm text-center">
+          <div className="bg-red-100 text-red-700 p-3 rounded-xl mb-4 text-sm text-center">
             {error}
           </div>
         )}
@@ -67,14 +66,14 @@ export default function ConfirmDeletePage({ params }: ConfirmDeletePageProps) {
         <div className="flex justify-center space-x-4">
           <button
             onClick={handleCancel}
-            className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition-all"
+            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 transition-all"
             disabled={loading}
           >
             Cancelar
           </button>
           <button
             onClick={handleConfirmDelete}
-            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-all"
+            className="px-4 py-2 bg-[#1E5ACD] text-white rounded-xl hover:bg-[#0A7487] transition-all"
             disabled={loading}
           >
             {loading ? "Eliminando..." : "Sí, eliminar"}

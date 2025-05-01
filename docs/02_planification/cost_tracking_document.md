@@ -1,4 +1,4 @@
----
+<!-- ---
 title: "DESGLOSE DE LOS COSTES"                           # CHANGE IF NEEDED
 subtitle: "FISIO FIND - Grupo 6 - #SPRINT 3"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]
@@ -18,7 +18,7 @@ header-right: "19/02/2025"                                # CHANGE IF NEEDED
 footer-left: "FISIO FIND"
 documentclass: scrartcl
 classoption: "table"
----
+--- -->
 
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
 <p align="center">
@@ -55,6 +55,8 @@ classoption: "table"
     - [**Análisis**](#análisis-1)
   - [**6.3. SPRINT 3**](#63-sprint-3)
     - [**Costes estimados**](#costes-estimados-2)
+    - [**Gastos reales**](#gastos-reales-2)
+    - [**Comparativa**](#comparativa-2)
 - [**7. ESTIMACIÓN DE RETORNO DE INVERSIÓN (ROI)**](#7-estimación-de-retorno-de-inversión-roi)
 - [**8. ESTIMACIONES Y EJEMPLO DE CÁLCULO**](#8-estimaciones-y-ejemplo-de-cálculo)
   - [**8.1. Escenario Optimista**](#81-escenario-optimista)

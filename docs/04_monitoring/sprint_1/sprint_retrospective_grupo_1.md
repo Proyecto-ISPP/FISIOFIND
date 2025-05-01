@@ -1,4 +1,4 @@
----
+<!-- ---
 title: "SPRINT RETROSPECTIVE #SPRINT 1 - GRUPO 1"                    # CHANGE IF NEEDED
 subtitle: "FISIO FIND - Grupo 6 - #SPRINT 1"
 author: [Alberto Carmona Sicre, Daniel Alors Romero, Daniel Fernández Caballero, Rafael Pulido Cifuentes, Daniel Ruiz López, Pablo Fernández Pérez]
@@ -18,7 +18,7 @@ header-right: "13/03/2025"                                # CHANGE IF NEEDED
 footer-left: "FISIO FIND"
 documentclass: scrartcl
 classoption: "table"
----
+--- -->
 
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
 <p align="center">

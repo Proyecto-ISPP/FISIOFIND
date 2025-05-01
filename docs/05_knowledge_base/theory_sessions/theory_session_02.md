@@ -1,4 +1,4 @@
----
+<!-- ---
 title: "ISPP - PÍLDORA TEÓRICA 2"                         # CHANGE IF NEEDED
 subtitle: "FISIO FIND - Grupo 6 - #DP"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]
@@ -18,11 +18,11 @@ header-right: "17/02/2025"                                # CHANGE IF NEEDED
 footer-left: "FISIO FIND"
 documentclass: scrartcl
 classoption: "table"
----
+--- -->
 
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
 <p align="center">
-  <img src="../.img/Logo_FisioFind_Verde_sin_fondo.webp" alt="Logo FisioFind" width="300" />
+  <img src="../../.img/Logo_FisioFind_Verde_sin_fondo.webp" alt="Logo FisioFind" width="300" />
 </p>
 
 <h1 align="center" style="font-size: 30px; font-weight: bold;">
@@ -171,17 +171,17 @@ La gestión de los riesgos siempre pasa por estas 4 fases: **IDENTIFICACIÓN / C
 
 **Definiciones de probabilidad**
 
-![Tabla de definiciones de probabilidad](../.img/probability_definition.png)
+![Tabla de definiciones de probabilidad](../../.img/probability_definition.png)
 
 
 **Definiciones de impacto**
 
-![Tabla de definiciones de impacto](../.img/impact_definition.png)
+![Tabla de definiciones de impacto](../../.img/impact_definition.png)
 
 
 **Matriz probabilidad x impacto**
 
-![Ejemplo de matriz probabilidad x impacto](../.img/probability_impact_matrix.png)
+![Ejemplo de matriz probabilidad x impacto](../../.img/probability_impact_matrix.png)
 
 
 
@@ -278,13 +278,13 @@ Herramientas para la búsqueda de competidores: [Semrush](https://es.semrush.com
 
 Muestra el ritmo al que competidores similares crecen en el mercado.
 
-![Cuadrante de crecimiento](../.img/grouth_cuadrant.png)
+![Cuadrante de crecimiento](../../.img/grouth_cuadrant.png)
 
 **Mapa de posicionamiento** 
 
 Relación entre número de palabras clave comunes vs tráfico.
 
-![Mapa de posicionamiento](../.img/positionning_map.png)
+![Mapa de posicionamiento](../../.img/positionning_map.png)
 
 
 ## **Búsqueda de competidores (4Ps)** 
@@ -326,12 +326,12 @@ Herramientas: [Metricool](https://metricool.com/es/), [SimilarWeb](https://www.s
 
 ## **Elaborar perfil de competidores**
 
-![Pizarra de perfil de un competidor](../.img/competitor_profile_study.png)
+![Pizarra de perfil de un competidor](../../.img/competitor_profile_study.png)
 
 
 ## **Matriz DAFO**
 
-![Ejemplo de matriz DAFO](../.img/dafo_example.png)
+![Ejemplo de matriz DAFO](../../.img/dafo_example.png)
 
 
 ## **Errores comunes**
@@ -389,7 +389,7 @@ Herramientas: [Metricool](https://metricool.com/es/), [SimilarWeb](https://www.s
 
 - Regla 10-20-30 
 
-![Regla 10-20-30 para las presentaciones](../.img/10_20_30_rule.png)
+![Regla 10-20-30 para las presentaciones](../../.img/10_20_30_rule.png)
 
 
 <br>

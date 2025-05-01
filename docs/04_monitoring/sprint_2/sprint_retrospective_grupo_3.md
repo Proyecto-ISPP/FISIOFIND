@@ -1,4 +1,4 @@
----
+<!-- ---
 title: "SPRINT RETROSPECTIVE #SPRINT 1 - GRUPO 3"                    # CHANGE IF NEEDED
 subtitle: "FISIO FIND - Grupo 6 - #SPRINT 1"
 author: [Miguel Encina Martínez, Francisco Capote García, Francisco Mateos Villarejo, Daniel Vela Camacho, Daniel Tortorici Bartús]
@@ -18,7 +18,7 @@ header-right: "27/03/2025"                                # CHANGE IF NEEDED
 footer-left: "FISIO FIND"
 documentclass: scrartcl
 classoption: "table"
----
+--- -->
 
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
 <p align="center">

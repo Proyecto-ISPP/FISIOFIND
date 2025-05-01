@@ -89,25 +89,24 @@ def patient_register_view(request):
 def verify_user_and_update_status(user_id):
     """
     Función para cambiar el estado del usuario a verified y devolver una Response.
+    En principio, se llama desde la verificación de correo
     """
     try:
-        user = AppUser.objects.get(id=user_id)  
+        patient = Patient.objects.get(id=user_id)
+        patient.user.account_status = 'ACTIVE'
+        patient.user.save()
+        return True
+    except Exception:
+        pass
+
+    try:
+        user = AppUser.objects.get(id=user_id)
         user.account_status = 'ACTIVE'
         user.save()
-        return Response({
-            "message": "Usuario verificado exitosamente.",
-            "status": "success"
-        }, status=status.HTTP_200_OK)
-    except Patient.DoesNotExist:
-        return Response({
-            "error": f"No se encontró el usuario con ID {user_id}.",
-            "status": "error"
-        }, status=status.HTTP_404_NOT_FOUND)
-    except Exception as e:
-        return Response({
-            "error": "Ocurrió un error al verificar el usuario.",
-            "status": "error"
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return True
+    except Exception:
+        pass
+    return False
     
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -119,8 +118,11 @@ def verify_registration(request, token):
     try:
         data = signing.loads(token, salt='registration-confirm', max_age=86400)
         user_id = data['user_id']
-        response = verify_user_and_update_status(user_id)
-        return response
+        verify_user_and_update_status(user_id)
+        return Response({
+            "message": "Tu cuenta ha sido confirmada correctamente.",
+            "status": "success"
+        }, status=status.HTTP_200_OK)
 
     except signing.SignatureExpired:
         return Response({
@@ -139,7 +141,6 @@ def verify_registration(request, token):
             "error": "Ocurrió un error al procesar tu solicitud. Inténtalo de nuevo más tarde.",
             "status": "error"
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -282,9 +283,12 @@ def verify_physio_id(request):
 def physio_register_view(request):
     serializer = PhysioRegisterSerializer(data=request.data)
     if serializer.is_valid():
-        pyshio = serializer.save()
-        user_id = pyshio.id
-        verify_user_and_update_status(user_id)
+        physio = serializer.save()
+        physio.user.account_status = 'ACTIVE'
+        physio.save()
+        # Comentado porque la funcion de verificar user solo trabaja con patient
+        # user_id = physio.id
+        # verify_user_and_update_status(user_id)
         return Response({"message": "Fisioteraputa registrado correctamente"}, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

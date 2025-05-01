@@ -1,4 +1,4 @@
----
+<!-- ---
 title: "INFORME DE USUARIOS PILOTO"                      # CHANGE IF NEEDED
 subtitle: "FISIO FIND - Grupo 6 - #SPRINT 3"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]
@@ -18,7 +18,7 @@ header-right: "06/04/2025"                                # CHANGE IF NEEDED
 footer-left: "FISIO FIND"
 documentclass: scrartcl
 classoption: "table"
----
+--- -->
 
 
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
@@ -66,7 +66,7 @@ classoption: "table"
 
 - **Fecha de Creación:** 06/04/2025  
 
-- **Versión:** v1.0
+- **Versión:** v2.0
 
 <br>
 

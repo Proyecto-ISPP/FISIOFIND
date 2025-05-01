@@ -1,0 +1,22 @@
+name: Deploy Frontend PPL
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Connect & Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ejecutar script en el servidor por SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.FRONTEND_SERVER_IP }}
+          username: ${{ secrets.FRONTEND_SSH_USER }}
+          key: ${{ secrets.FRONTEND_SSH_PRIVATE_KEY }}
+          script: |
+            cd /root
+            ./deploy.sh

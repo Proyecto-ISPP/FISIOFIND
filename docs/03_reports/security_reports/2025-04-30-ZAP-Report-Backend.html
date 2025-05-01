@@ -1,0 +1,3566 @@
+<!DOCTYPE html>
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Fisio Find Análisis de Seguridad Backend PPL</title>
+<link href="2025-03-27-ZAP-Report-/common.css"
+	rel="stylesheet" type="text/css">
+<link href="2025-03-27-ZAP-Report-/corporate.css" rel="stylesheet" type="text/css">
+<script src="2025-03-27-ZAP-Report-/chart.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+    function showHide(id) {
+        showHideElement(id + "reqh");
+        showHideElement(id + "reqb");
+        showHideElement(id + "resph");
+        showHideElement(id + "respb");
+    }
+    function showHideElement(id) {
+        var x = document.getElementById(id);
+        if (x.style.display === "none") {
+            x.style.display = "block";
+        } else {
+            x.style.display = "none";
+        }
+    }
+</script>
+<link rel="stylesheet" href="2025-03-27-ZAP-Report-/chart.min.css">
+</head>
+<body>
+
+	
+		<div class="hero"></div>
+	
+
+	<header id="header">
+		<div class="wrap">
+			<div class="inner">
+				<h1>
+					<!-- The ZAP Logo -->
+					<img src="2025-03-27-ZAP-Report-/zap32x32.png" alt="ZAP" />
+					Fisio Find Análisis de Seguridad Backend PPL
+				</h1>
+			</div>
+		</div>
+	</header>
+
+	<section id="segment-01" class="container">
+		<div class="wrap">
+			<div class="inner pt3">
+
+				
+
+				<h3>
+					Generated on Wed, 30 Apr 2025 16:48:13
+				</h3>
+
+				<h3>
+					ZAP Version: 2.16.1
+				</h3>
+
+				<h4>
+					ZAP by <a href="https://checkmarx.com/">Checkmarx</a>
+				</h4>
+
+				
+					<!--  Hidden divs just to allow us to get hold of the right CSS colors -->
+					<div class="risk-3-chart" style="display: none;"></div>
+					<div class="risk-2-chart" style="display: none;"></div>
+					<div class="risk-1-chart" style="display: none;"></div>
+					<div class="risk-0-chart" style="display: none;"></div>
+					<div class="chart-text-color" style="display: none;"></div>
+
+					<div class="summaryChartWrapper">
+						<canvas id="summaryChart" width="550" height="300"></canvas>
+						<script type="text/javascript">
+                            /*<![CDATA[*/
+                            var title = "Alert Chart";
+                            var labels = [
+                            "High",
+                            "Medium",
+                            "Low",
+                            "Informational"];
+                            var data = [
+                            null,
+                            1,
+                            2,
+                            3];
+                            /*]]>*/
+
+                            const fontColor = getComputedStyle(document
+                                    .querySelector('.chart-text-color')).color;
+
+                            var options = {
+                                responsive : true,
+                                legend : {
+                                    position : 'bottom',
+                                    labels : {
+                                        fontColor : fontColor,
+                                        padding : 30
+                                    }
+                                }
+                            }
+
+                            const chartHigh = getComputedStyle(document
+                                    .querySelector('.risk-3-chart')).backgroundColor;
+                            const chartMed = getComputedStyle(document
+                                    .querySelector('.risk-2-chart')).backgroundColor;
+                            const chartLow = getComputedStyle(document
+                                    .querySelector('.risk-1-chart')).backgroundColor;
+                            const chartInfo = getComputedStyle(document
+                                    .querySelector('.risk-0-chart')).backgroundColor;
+
+                            new Chart(document.getElementById("summaryChart"),
+                                    {
+                                        type : "doughnut",
+                                        data : {
+                                            labels : labels,
+                                            datasets : [ {
+                                                label : title,
+                                                data : data,
+                                                fill : false,
+                                                backgroundColor : [ chartHigh,
+                                                        chartMed, chartLow,
+                                                        chartInfo ],
+                                                borderWidth : 0
+                                            } ]
+                                        },
+                                        options : options
+                                    });
+                        </script>
+					</div>
+				
+
+				
+					<h3 class="left-header">Summary of Alerts</h3>
+					<div class="tableWrapper">
+						<table class="summary" cellspacing="0" cellpadding="0">
+							<tr>
+								<th width="45%"
+									height="24">Risk Level</th>
+								<th width="55%"
+									align="center">Number of Alerts</th>
+							</tr>
+							<tr>
+								<td class="risk-3">
+									<div>High</div>
+								</td>
+								<td align="center">
+									<div>0</div>
+								</td>
+							</tr>
+							<tr>
+								<td class="risk-2">
+									<div>Medium</div>
+								</td>
+								<td align="center">
+									<div>1</div>
+								</td>
+							</tr>
+							<tr>
+								<td class="risk-1">
+									<div>Low</div>
+								</td>
+								<td align="center">
+									<div>2</div>
+								</td>
+							</tr>
+							<tr>
+								<td class="risk-0">
+									<div>Informational</div>
+								</td>
+								<td align="center">
+									<div>3</div>
+								</td>
+							</tr>
+							
+						</table>
+					</div>
+					<div class="spacer-lg"></div>
+				
+
+			</div>
+		</div>
+	</section>
+
+	
+	
+	
+		<div></div>
+	
+
+	<section id="segment-02" class="container">
+		<div class="wrap">
+			<div class="inner">
+
+				
+					<h3>Alerts</h3>
+					<div class="tableWrapper">
+						<table class="alerts" cellspacing="0" cellpadding="0">
+							<tr>
+								<th width="60%" height="24">Name</th>
+								<th width="20%"
+									align="center">Risk Level</th>
+								<th width="20%"
+									align="center">Number of Instances</th>
+							</tr>
+							<tr>
+								<td><a href="#plugin-10038">Content Security Policy (CSP) Header Not Set</a></td>
+								<td align="center" class="risk-2">Medium</td>
+								<td align="center">3</td>
+							</tr>
+							<tr>
+								<td><a href="#plugin-10036">Server Leaks Version Information via &quot;Server&quot; HTTP Response Header Field</a></td>
+								<td align="center" class="risk-1">Low</td>
+								<td align="center">3</td>
+							</tr>
+							<tr>
+								<td><a href="#plugin-10035">Strict-Transport-Security Header Not Set</a></td>
+								<td align="center" class="risk-1">Low</td>
+								<td align="center">3</td>
+							</tr>
+							<tr>
+								<td><a href="#plugin-10015">Re-examine Cache-control Directives</a></td>
+								<td align="center" class="risk-0">Informational</td>
+								<td align="center">1</td>
+							</tr>
+							<tr>
+								<td><a href="#plugin-10004">Tech Detected - Nginx</a></td>
+								<td align="center" class="risk-0">Informational</td>
+								<td align="center">1</td>
+							</tr>
+							<tr>
+								<td><a href="#plugin-10004">Tech Detected - Ubuntu</a></td>
+								<td align="center" class="risk-0">Informational</td>
+								<td align="center">1</td>
+							</tr>
+						</table>
+					</div>
+				
+
+			</div>
+		</div>
+	</section>
+
+	<section id="segment-03" class="container">
+		<div class="wrap">
+			<div class="inner">
+
+				
+					<h3>Passing Rules</h3>
+					<div class="tableWrapper">
+						<table class="alerts" cellspacing="0" cellpadding="0">
+							<tr>
+								<th width="55%" height="24">Name</th>
+								<th width="15%"
+									align="center">Rule Type</th>
+								<th width="15%"
+									align="center">Threshold</th>
+								<th width="15%"
+									align="center">Strength</th>
+							</tr>
+							
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/0/">Directory Browsing</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/40003/">CRLF Injection</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/6/">Path Traversal</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/7/">Remote File Inclusion</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/40008/">Parameter Tampering</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/40009/">Server Side Include</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10058/">GET for POST</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/40012/">Cross Site Scripting (Reflected)</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/40014/">Cross Site Scripting (Persistent)</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/50000/">Script Active Scan Rules</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/40016/">Cross Site Scripting (Persistent) - Prime</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/40017/">Cross Site Scripting (Persistent) - Spider</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/40018/">SQL Injection</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/40019/">SQL Injection - MySQL</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/40020/">SQL Injection - Hypersonic SQL</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/40021/">SQL Injection - Oracle</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/40022/">SQL Injection - PostgreSQL</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/40024/">SQL Injection - SQLite</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/40026/">Cross Site Scripting (DOM Based)</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/40027/">SQL Injection - MsSQL</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/40028/">ELMAH Information Leak</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/40029/">Trace.axd Information Leak</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/90017/">XSLT Injection</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/40032/">.htaccess Information Leak</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/40034/">.env Information Leak</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/90019/">Server Side Code Injection</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/40035/">Hidden File Finder</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/90021/">XPath Injection</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/90020/">Remote OS Command Injection</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/90023/">XML External Entity Attack</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/90024/">Generic Padding Oracle</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/40042/">Spring Actuator Information Leak</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/90026/">SOAP Action Spoofing</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/40043/">Log4Shell</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/90029/">SOAP XML Injection</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/40045/">Spring4Shell</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/20015/">Heartbleed OpenSSL Vulnerability</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/30001/">Buffer Overflow</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/20017/">Source Code Disclosure - CVE-2012-1823</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/30002/">Format String Error</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/90035/">Server Side Template Injection</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/20018/">Remote Code Execution - CVE-2012-1823</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/90034/">Cloud Metadata Potentially Exposed</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/20019/">External Redirect</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/90036/">Server Side Template Injection (Blind)</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10104/">User Agent Fuzzer</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10045/">Source Code Disclosure - /WEB-INF Folder</a></td>
+										<td align="center">Active</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">MEDIUM</td>
+									</tr>
+								
+							
+							
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10112/">Session Management Response Identified</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10113/">Verification Request Identified</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/2/">Private IP Disclosure</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/3/">Session ID in URL Rewrite</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10115/">Script Served From Malicious Domain (polyfill)</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/90001/">Insecure JSF ViewState</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10003/">Vulnerable JS Library (Powered by Retire.js)</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/90011/">Charset Mismatch</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10010/">Cookie No HttpOnly Flag</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10011/">Cookie Without Secure Flag</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10017/">Cross-Domain JavaScript Source File Inclusion</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10019/">Content-Type Header Missing</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10020/">Anti-clickjacking Header</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10021/">X-Content-Type-Options Header Missing</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/90022/">Application Error Disclosure</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10023/">Information Disclosure - Debug Error Messages</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10024/">Information Disclosure - Sensitive Information in URL</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10025/">Information Disclosure - Sensitive Information in HTTP Referrer Header</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10027/">Information Disclosure - Suspicious Comments</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10028/">Open Redirect</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10029/">Cookie Poisoning</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10030/">User Controllable Charset</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10031/">User Controllable HTML Element Attribute (Potential XSS)</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/90030/">WSDL File Detection</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/90033/">Loosely Scoped Cookie</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10032/">Viewstate</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10033/">Directory Browsing</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10034/">Heartbleed OpenSSL Vulnerability (Indicative)</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									
+								
+									
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10037/">Server Leaks Information via &quot;X-Powered-By&quot; HTTP Response Header Field(s)</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10039/">X-Backend-Server Header Information Leak</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10040/">Secure Pages Include Mixed Content</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10041/">HTTP to HTTPS Insecure Transition in Form Post</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10042/">HTTPS to HTTP Insecure Transition in Form Post</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10043/">User Controllable JavaScript Event (XSS)</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10044/">Big Redirect Detected (Potential Sensitive Information Leak)</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10050/">Retrieved from Cache</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10052/">X-ChromeLogger-Data (XCOLD) Header Information Leak</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10054/">Cookie without SameSite Attribute</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10055/">CSP</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10056/">X-Debug-Token Information Leak</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10057/">Username Hash Found</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10061/">X-AspNet-Version Response Header</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10062/">PII Disclosure</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/50001/">Script Passive Scan Rules</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/50003/">Stats Passive Scan Rule</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10202/">Absence of Anti-CSRF Tokens</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10096/">Timestamp Disclosure</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10097/">Hash Disclosure</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10098/">Cross-Domain Misconfiguration</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10105/">Weak Authentication Method</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10108/">Reverse Tabnabbing</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10109/">Modern Web Application</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+									<tr>
+										<td><a
+											href="https://www.zaproxy.org/docs/alerts/10111/">Authentication Request Identified</a></td>
+										<td align="center">Passive</td>
+										<td align="center">MEDIUM</td>
+										<td align="center">-</td>
+									</tr>
+								
+							
+						</table>
+					</div>
+				
+
+			</div>
+		</div>
+	</section>
+
+	<section id="segment-04" class="container">
+		<div class="wrap">
+			<div class="inner">
+
+				<h2>Sites</h2>
+				
+					<h3>https://ppl-api.fisiofind.com</h3>
+					
+						<div class="tableWrapper">
+							<table class="summary" cellspacing="0" cellpadding="0">
+								<tr>
+									<th width="45%" height="24">HTTP Response Code</th>
+									<th width="55%" align="center">Number of Responses</th>
+								</tr>
+
+								
+									<tr>
+										<td><a
+											href="https://developer.mozilla.org/docs/Web/HTTP/Status/403">403 Forbidden</a>
+										</td>
+										<td align="center">
+											<div>3</div>
+										</td>
+									</tr>
+									
+								
+									<tr>
+										<td><a
+											href="https://developer.mozilla.org/docs/Web/HTTP/Status/404">404 Not Found</a>
+										</td>
+										<td align="center">
+											<div>98</div>
+										</td>
+									</tr>
+									
+								
+									<tr>
+										<td><a
+											href="https://developer.mozilla.org/docs/Web/HTTP/Status/200">200 OK</a>
+										</td>
+										<td align="center">
+											<div>17</div>
+										</td>
+									</tr>
+									
+								
+									<tr>
+										<td><a
+											href="https://developer.mozilla.org/docs/Web/HTTP/Status/400">400 Bad Request</a>
+										</td>
+										<td align="center">
+											<div>11</div>
+										</td>
+									</tr>
+									
+								
+							</table>
+						</div>
+
+						<h4>No Authentication Statistics Found</h4>
+						<div class="tableWrapper">
+							
+						</div>
+					
+					
+						<div class="tableWrapper">
+							<table class="summary" cellspacing="0" cellpadding="0">
+								<tr>
+									<th>Technology</th>
+									<th>Version</th>
+									<th>Categories</th>
+									<th>Implies</th>
+								</tr>
+
+								
+									<tr>
+										<td>
+											<div>Nginx</div>
+										</td>
+										<td>
+											<div>1.26.0</div>
+										</td>
+										<td>
+												<div>Web servers</div>
+											
+												<div>Reverse proxies</div>
+											</td>
+										<td></td>
+									</tr>
+								
+									<tr>
+										<td>
+											<div>Ubuntu</div>
+										</td>
+										<td>
+											<div></div>
+										</td>
+										<td>
+												<div>Operating systems</div>
+											</td>
+										<td></td>
+									</tr>
+								
+							</table>
+						</div>
+					
+					
+						<div class="tableWrapper">
+							<table class="summary" cellspacing="0" cellpadding="0">
+								<tr>
+									<th>Parameter Name</th>
+									<th>Type</th>
+									<th>Flags</th>
+									<th>Times Used</th>
+									<th># Values</th>
+								</tr>
+								
+
+							</table>
+						</div>
+					
+				
+
+				
+					<h3>Alert Detail</h3>
+					
+						<div class="tableWrapper">
+							<table class="results" cellspacing="0" cellpadding="0">
+								<tr height="24">
+									<th width="20%" class="risk-2"><a
+										id="plugin-10038"></a>
+										<div>Medium</div></th>
+									<th class="risk-2">Content Security Policy (CSP) Header Not Set</th>
+								</tr>
+								<tr>
+									<td width="20%">Description</td>
+									<td width="80%">
+											<div>Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a set of standard HTTP headers that allow website owners to declare approved sources of content that browsers should be allowed to load on that page — covered types are JavaScript, CSS, HTML frames, fonts, images and embeddable objects such as Java applets, ActiveX, audio and video files.</div>
+											
+										</td>
+								</tr>
+								<TR vAlign="top">
+									<TD colspan="2"></TD>
+								</TR>
+								
+									<tr>
+										<td width="20%"
+											class="indent1">URL</td>
+										<td width="80%"><a href="https://ppl-api.fisiofind.com">https://ppl-api.fisiofind.com</a></td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Method</td>
+										<td width="80%">GET</td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Parameter</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Attack</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Evidence</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">
+											<div id="alert-5">
+												<a
+													onclick="showHide(&#39;alert-5&#39;);"
+													href="#5">Show / hide Request and Response</a>
+											</div>
+										</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Request Header
+											- size: 243 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-5reqh"
+												style="display: none;">
+												
+													GET https://ppl-api.fisiofind.com HTTP/1.1
+													<br />
+												
+													host: ppl-api.fisiofind.com
+													<br />
+												
+													user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
+													<br />
+												
+													pragma: no-cache
+													<br />
+												
+													cache-control: no-cache
+													<br />
+												
+													
+													
+												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Request Body
+											- size: 0 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-5reqb"
+												style="display: none;">
+												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Response Header
+											- size: 320 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-5resph"
+												style="display: none;">
+												
+													HTTP/1.1 200 OK
+													<br />
+												
+													Server: nginx/1.26.0 (Ubuntu)
+													<br />
+												
+													Date: Wed, 30 Apr 2025 14:43:33 GMT
+													<br />
+												
+													Content-Type: text/html; charset=utf-8
+													<br />
+												
+													Content-Length: 25
+													<br />
+												
+													Connection: keep-alive
+													<br />
+												
+													X-Frame-Options: DENY
+													<br />
+												
+													Vary: Cookie, origin
+													<br />
+												
+													X-Content-Type-Options: nosniff
+													<br />
+												
+													Referrer-Policy: same-origin
+													<br />
+												
+													Cross-Origin-Opener-Policy: same-origin
+													<br />
+												
+													
+													
+												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Response Body
+											- size: 25 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-5respb"
+												style="display: none;">
+												
+													¡Bienvenido a FisioFind!
+													
+												
+											</div>
+										</td>
+									</tr>
+								
+									<tr>
+										<td width="20%"
+											class="indent1">URL</td>
+										<td width="80%"><a href="https://ppl-api.fisiofind.com/robots.txt">https://ppl-api.fisiofind.com/robots.txt</a></td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Method</td>
+										<td width="80%">GET</td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Parameter</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Attack</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Evidence</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">
+											<div id="alert-0">
+												<a
+													onclick="showHide(&#39;alert-0&#39;);"
+													href="#0">Show / hide Request and Response</a>
+											</div>
+										</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Request Header
+											- size: 254 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-0reqh"
+												style="display: none;">
+												
+													GET https://ppl-api.fisiofind.com/robots.txt HTTP/1.1
+													<br />
+												
+													host: ppl-api.fisiofind.com
+													<br />
+												
+													user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
+													<br />
+												
+													pragma: no-cache
+													<br />
+												
+													cache-control: no-cache
+													<br />
+												
+													
+													
+												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Request Body
+											- size: 0 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-0reqb"
+												style="display: none;">
+												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Response Header
+											- size: 328 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-0resph"
+												style="display: none;">
+												
+													HTTP/1.1 404 Not Found
+													<br />
+												
+													Server: nginx/1.26.0 (Ubuntu)
+													<br />
+												
+													Date: Wed, 30 Apr 2025 14:43:33 GMT
+													<br />
+												
+													Content-Type: text/html; charset=utf-8
+													<br />
+												
+													Content-Length: 179
+													<br />
+												
+													Connection: keep-alive
+													<br />
+												
+													X-Frame-Options: DENY
+													<br />
+												
+													Vary: Cookie, origin
+													<br />
+												
+													X-Content-Type-Options: nosniff
+													<br />
+												
+													Referrer-Policy: same-origin
+													<br />
+												
+													Cross-Origin-Opener-Policy: same-origin
+													<br />
+												
+													
+													
+												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Response Body
+											- size: 179 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-0respb"
+												style="display: none;">
+												
+													&lt;!doctype html&gt;
+													<br />
+												
+													&lt;html lang=&quot;en&quot;&gt;
+													<br />
+												
+													&lt;head&gt;
+													<br />
+												
+													  &lt;title&gt;Not Found&lt;/title&gt;
+													<br />
+												
+													&lt;/head&gt;
+													<br />
+												
+													&lt;body&gt;
+													<br />
+												
+													  &lt;h1&gt;Not Found&lt;/h1&gt;&lt;p&gt;The requested resource was not found on this server.&lt;/p&gt;
+													<br />
+												
+													&lt;/body&gt;
+													<br />
+												
+													&lt;/html&gt;
+													
+												
+											</div>
+										</td>
+									</tr>
+								
+									<tr>
+										<td width="20%"
+											class="indent1">URL</td>
+										<td width="80%"><a href="https://ppl-api.fisiofind.com/sitemap.xml">https://ppl-api.fisiofind.com/sitemap.xml</a></td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Method</td>
+										<td width="80%">GET</td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Parameter</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Attack</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Evidence</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">
+											<div id="alert-1">
+												<a
+													onclick="showHide(&#39;alert-1&#39;);"
+													href="#1">Show / hide Request and Response</a>
+											</div>
+										</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Request Header
+											- size: 255 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-1reqh"
+												style="display: none;">
+												
+													GET https://ppl-api.fisiofind.com/sitemap.xml HTTP/1.1
+													<br />
+												
+													host: ppl-api.fisiofind.com
+													<br />
+												
+													user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
+													<br />
+												
+													pragma: no-cache
+													<br />
+												
+													cache-control: no-cache
+													<br />
+												
+													
+													
+												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Request Body
+											- size: 0 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-1reqb"
+												style="display: none;">
+												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Response Header
+											- size: 328 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-1resph"
+												style="display: none;">
+												
+													HTTP/1.1 404 Not Found
+													<br />
+												
+													Server: nginx/1.26.0 (Ubuntu)
+													<br />
+												
+													Date: Wed, 30 Apr 2025 14:43:33 GMT
+													<br />
+												
+													Content-Type: text/html; charset=utf-8
+													<br />
+												
+													Content-Length: 179
+													<br />
+												
+													Connection: keep-alive
+													<br />
+												
+													X-Frame-Options: DENY
+													<br />
+												
+													Vary: Cookie, origin
+													<br />
+												
+													X-Content-Type-Options: nosniff
+													<br />
+												
+													Referrer-Policy: same-origin
+													<br />
+												
+													Cross-Origin-Opener-Policy: same-origin
+													<br />
+												
+													
+													
+												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Response Body
+											- size: 179 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-1respb"
+												style="display: none;">
+												
+													&lt;!doctype html&gt;
+													<br />
+												
+													&lt;html lang=&quot;en&quot;&gt;
+													<br />
+												
+													&lt;head&gt;
+													<br />
+												
+													  &lt;title&gt;Not Found&lt;/title&gt;
+													<br />
+												
+													&lt;/head&gt;
+													<br />
+												
+													&lt;body&gt;
+													<br />
+												
+													  &lt;h1&gt;Not Found&lt;/h1&gt;&lt;p&gt;The requested resource was not found on this server.&lt;/p&gt;
+													<br />
+												
+													&lt;/body&gt;
+													<br />
+												
+													&lt;/html&gt;
+													
+												
+											</div>
+										</td>
+									</tr>
+								
+								<tr>
+									<td width="20%">Instances</td>
+									<td width="80%">3</td>
+								</tr>
+								<tr>
+									<td width="20%">Solution</td>
+									<td width="80%">
+											<div>Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.</div>
+											
+										</td>
+								</tr>
+								<tr>
+									<td width="20%">Reference</td>
+									<td width="80%">
+											<a href="https://developer.mozilla.org/en-US/docs/Web/Security/CSP/Introducing_Content_Security_Policy">https://developer.mozilla.org/en-US/docs/Web/Security/CSP/Introducing_Content_Security_Policy</a>
+											<br />
+										
+											<a href="https://cheatsheetseries.owasp.org/cheatsheets/Content_Security_Policy_Cheat_Sheet.html">https://cheatsheetseries.owasp.org/cheatsheets/Content_Security_Policy_Cheat_Sheet.html</a>
+											<br />
+										
+											<a href="https://www.w3.org/TR/CSP/">https://www.w3.org/TR/CSP/</a>
+											<br />
+										
+											<a href="https://w3c.github.io/webappsec-csp/">https://w3c.github.io/webappsec-csp/</a>
+											<br />
+										
+											<a href="https://web.dev/articles/csp">https://web.dev/articles/csp</a>
+											<br />
+										
+											<a href="https://caniuse.com/#feat=contentsecuritypolicy">https://caniuse.com/#feat=contentsecuritypolicy</a>
+											<br />
+										
+											<a href="https://content-security-policy.com/">https://content-security-policy.com/</a>
+											
+										</td>
+								</tr>
+								<tr>
+									<td width="20%">Tags</td>
+									<td width="80%">
+
+											
+												<a href="https://cwe.mitre.org/data/definitions/693.html">CWE-693</a>
+											
+											
+											<br />
+										
+
+											
+												<a href="https://owasp.org/Top10/A05_2021-Security_Misconfiguration/">OWASP_2021_A05</a>
+											
+											
+											<br />
+										
+
+											
+												<a href="https://owasp.org/www-project-top-ten/2017/A6_2017-Security_Misconfiguration.html">OWASP_2017_A06</a>
+											
+											
+											
+										</td>
+								</tr>
+								<tr>
+									<td width="20%">CWE Id</td>
+									<td width="80%"><a
+										href="https://cwe.mitre.org/data/definitions/693.html">693</a></td>
+								</tr>
+								<tr>
+									<td width="20%">WASC Id</td>
+									<td width="80%">15</td>
+								</tr>
+								<tr>
+									<td width="20%">Plugin Id</td>
+									<td width="80%"><a
+										href="https://www.zaproxy.org/docs/alerts/10038/">10038</a></td>
+								</tr>
+							</table>
+						</div>
+						<div class="spacer"></div>
+					
+						<div class="tableWrapper">
+							<table class="results" cellspacing="0" cellpadding="0">
+								<tr height="24">
+									<th width="20%" class="risk-1"><a
+										id="plugin-10036"></a>
+										<div>Low</div></th>
+									<th class="risk-1">Server Leaks Version Information via &quot;Server&quot; HTTP Response Header Field</th>
+								</tr>
+								<tr>
+									<td width="20%">Description</td>
+									<td width="80%">
+											<div>The web/application server is leaking version information via the &quot;Server&quot; HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to.</div>
+											
+										</td>
+								</tr>
+								<TR vAlign="top">
+									<TD colspan="2"></TD>
+								</TR>
+								
+									<tr>
+										<td width="20%"
+											class="indent1">URL</td>
+										<td width="80%"><a href="https://ppl-api.fisiofind.com">https://ppl-api.fisiofind.com</a></td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Method</td>
+										<td width="80%">GET</td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Parameter</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Attack</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Evidence</td>
+										<td width="80%">nginx/1.26.0 (Ubuntu)</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">
+											<div id="alert-10">
+												<a
+													onclick="showHide(&#39;alert-10&#39;);"
+													href="#10">Show / hide Request and Response</a>
+											</div>
+										</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Request Header
+											- size: 243 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-10reqh"
+												style="display: none;">
+												
+													GET https://ppl-api.fisiofind.com HTTP/1.1
+													<br />
+												
+													host: ppl-api.fisiofind.com
+													<br />
+												
+													user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
+													<br />
+												
+													pragma: no-cache
+													<br />
+												
+													cache-control: no-cache
+													<br />
+												
+													
+													
+												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Request Body
+											- size: 0 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-10reqb"
+												style="display: none;">
+												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Response Header
+											- size: 320 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-10resph"
+												style="display: none;">
+												
+													HTTP/1.1 200 OK
+													<br />
+												
+													Server: nginx/1.26.0 (Ubuntu)
+													<br />
+												
+													Date: Wed, 30 Apr 2025 14:43:33 GMT
+													<br />
+												
+													Content-Type: text/html; charset=utf-8
+													<br />
+												
+													Content-Length: 25
+													<br />
+												
+													Connection: keep-alive
+													<br />
+												
+													X-Frame-Options: DENY
+													<br />
+												
+													Vary: Cookie, origin
+													<br />
+												
+													X-Content-Type-Options: nosniff
+													<br />
+												
+													Referrer-Policy: same-origin
+													<br />
+												
+													Cross-Origin-Opener-Policy: same-origin
+													<br />
+												
+													
+													
+												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Response Body
+											- size: 25 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-10respb"
+												style="display: none;">
+												
+													¡Bienvenido a FisioFind!
+													
+												
+											</div>
+										</td>
+									</tr>
+								
+									<tr>
+										<td width="20%"
+											class="indent1">URL</td>
+										<td width="80%"><a href="https://ppl-api.fisiofind.com/robots.txt">https://ppl-api.fisiofind.com/robots.txt</a></td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Method</td>
+										<td width="80%">GET</td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Parameter</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Attack</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Evidence</td>
+										<td width="80%">nginx/1.26.0 (Ubuntu)</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">
+											<div id="alert-6">
+												<a
+													onclick="showHide(&#39;alert-6&#39;);"
+													href="#6">Show / hide Request and Response</a>
+											</div>
+										</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Request Header
+											- size: 254 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-6reqh"
+												style="display: none;">
+												
+													GET https://ppl-api.fisiofind.com/robots.txt HTTP/1.1
+													<br />
+												
+													host: ppl-api.fisiofind.com
+													<br />
+												
+													user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
+													<br />
+												
+													pragma: no-cache
+													<br />
+												
+													cache-control: no-cache
+													<br />
+												
+													
+													
+												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Request Body
+											- size: 0 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-6reqb"
+												style="display: none;">
+												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Response Header
+											- size: 328 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-6resph"
+												style="display: none;">
+												
+													HTTP/1.1 404 Not Found
+													<br />
+												
+													Server: nginx/1.26.0 (Ubuntu)
+													<br />
+												
+													Date: Wed, 30 Apr 2025 14:43:33 GMT
+													<br />
+												
+													Content-Type: text/html; charset=utf-8
+													<br />
+												
+													Content-Length: 179
+													<br />
+												
+													Connection: keep-alive
+													<br />
+												
+													X-Frame-Options: DENY
+													<br />
+												
+													Vary: Cookie, origin
+													<br />
+												
+													X-Content-Type-Options: nosniff
+													<br />
+												
+													Referrer-Policy: same-origin
+													<br />
+												
+													Cross-Origin-Opener-Policy: same-origin
+													<br />
+												
+													
+													
+												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Response Body
+											- size: 179 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-6respb"
+												style="display: none;">
+												
+													&lt;!doctype html&gt;
+													<br />
+												
+													&lt;html lang=&quot;en&quot;&gt;
+													<br />
+												
+													&lt;head&gt;
+													<br />
+												
+													  &lt;title&gt;Not Found&lt;/title&gt;
+													<br />
+												
+													&lt;/head&gt;
+													<br />
+												
+													&lt;body&gt;
+													<br />
+												
+													  &lt;h1&gt;Not Found&lt;/h1&gt;&lt;p&gt;The requested resource was not found on this server.&lt;/p&gt;
+													<br />
+												
+													&lt;/body&gt;
+													<br />
+												
+													&lt;/html&gt;
+													
+												
+											</div>
+										</td>
+									</tr>
+								
+									<tr>
+										<td width="20%"
+											class="indent1">URL</td>
+										<td width="80%"><a href="https://ppl-api.fisiofind.com/sitemap.xml">https://ppl-api.fisiofind.com/sitemap.xml</a></td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Method</td>
+										<td width="80%">GET</td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Parameter</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Attack</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Evidence</td>
+										<td width="80%">nginx/1.26.0 (Ubuntu)</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">
+											<div id="alert-4">
+												<a
+													onclick="showHide(&#39;alert-4&#39;);"
+													href="#4">Show / hide Request and Response</a>
+											</div>
+										</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Request Header
+											- size: 255 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-4reqh"
+												style="display: none;">
+												
+													GET https://ppl-api.fisiofind.com/sitemap.xml HTTP/1.1
+													<br />
+												
+													host: ppl-api.fisiofind.com
+													<br />
+												
+													user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
+													<br />
+												
+													pragma: no-cache
+													<br />
+												
+													cache-control: no-cache
+													<br />
+												
+													
+													
+												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Request Body
+											- size: 0 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-4reqb"
+												style="display: none;">
+												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Response Header
+											- size: 328 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-4resph"
+												style="display: none;">
+												
+													HTTP/1.1 404 Not Found
+													<br />
+												
+													Server: nginx/1.26.0 (Ubuntu)
+													<br />
+												
+													Date: Wed, 30 Apr 2025 14:43:33 GMT
+													<br />
+												
+													Content-Type: text/html; charset=utf-8
+													<br />
+												
+													Content-Length: 179
+													<br />
+												
+													Connection: keep-alive
+													<br />
+												
+													X-Frame-Options: DENY
+													<br />
+												
+													Vary: Cookie, origin
+													<br />
+												
+													X-Content-Type-Options: nosniff
+													<br />
+												
+													Referrer-Policy: same-origin
+													<br />
+												
+													Cross-Origin-Opener-Policy: same-origin
+													<br />
+												
+													
+													
+												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Response Body
+											- size: 179 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-4respb"
+												style="display: none;">
+												
+													&lt;!doctype html&gt;
+													<br />
+												
+													&lt;html lang=&quot;en&quot;&gt;
+													<br />
+												
+													&lt;head&gt;
+													<br />
+												
+													  &lt;title&gt;Not Found&lt;/title&gt;
+													<br />
+												
+													&lt;/head&gt;
+													<br />
+												
+													&lt;body&gt;
+													<br />
+												
+													  &lt;h1&gt;Not Found&lt;/h1&gt;&lt;p&gt;The requested resource was not found on this server.&lt;/p&gt;
+													<br />
+												
+													&lt;/body&gt;
+													<br />
+												
+													&lt;/html&gt;
+													
+												
+											</div>
+										</td>
+									</tr>
+								
+								<tr>
+									<td width="20%">Instances</td>
+									<td width="80%">3</td>
+								</tr>
+								<tr>
+									<td width="20%">Solution</td>
+									<td width="80%">
+											<div>Ensure that your web server, application server, load balancer, etc. is configured to suppress the &quot;Server&quot; header or provide generic details.</div>
+											
+										</td>
+								</tr>
+								<tr>
+									<td width="20%">Reference</td>
+									<td width="80%">
+											<a href="https://httpd.apache.org/docs/current/mod/core.html#servertokens">https://httpd.apache.org/docs/current/mod/core.html#servertokens</a>
+											<br />
+										
+											<a href="https://learn.microsoft.com/en-us/previous-versions/msp-n-p/ff648552(v=pandp.10)">https://learn.microsoft.com/en-us/previous-versions/msp-n-p/ff648552(v=pandp.10)</a>
+											<br />
+										
+											<a href="https://www.troyhunt.com/shhh-dont-let-your-response-headers/">https://www.troyhunt.com/shhh-dont-let-your-response-headers/</a>
+											
+										</td>
+								</tr>
+								<tr>
+									<td width="20%">Tags</td>
+									<td width="80%">
+
+											
+												<a href="https://owasp.org/Top10/A05_2021-Security_Misconfiguration/">OWASP_2021_A05</a>
+											
+											
+											<br />
+										
+
+											
+												<a href="https://owasp.org/www-project-top-ten/2017/A6_2017-Security_Misconfiguration.html">OWASP_2017_A06</a>
+											
+											
+											<br />
+										
+
+											
+												<a href="https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/01-Information_Gathering/02-Fingerprint_Web_Server">WSTG-v42-INFO-02</a>
+											
+											
+											<br />
+										
+
+											
+												<a href="https://cwe.mitre.org/data/definitions/497.html">CWE-497</a>
+											
+											
+											
+										</td>
+								</tr>
+								<tr>
+									<td width="20%">CWE Id</td>
+									<td width="80%"><a
+										href="https://cwe.mitre.org/data/definitions/497.html">497</a></td>
+								</tr>
+								<tr>
+									<td width="20%">WASC Id</td>
+									<td width="80%">13</td>
+								</tr>
+								<tr>
+									<td width="20%">Plugin Id</td>
+									<td width="80%"><a
+										href="https://www.zaproxy.org/docs/alerts/10036/">10036</a></td>
+								</tr>
+							</table>
+						</div>
+						<div class="spacer"></div>
+					
+						<div class="tableWrapper">
+							<table class="results" cellspacing="0" cellpadding="0">
+								<tr height="24">
+									<th width="20%" class="risk-1"><a
+										id="plugin-10035"></a>
+										<div>Low</div></th>
+									<th class="risk-1">Strict-Transport-Security Header Not Set</th>
+								</tr>
+								<tr>
+									<td width="20%">Description</td>
+									<td width="80%">
+											<div>HTTP Strict Transport Security (HSTS) is a web security policy mechanism whereby a web server declares that complying user agents (such as a web browser) are to interact with it using only secure HTTPS connections (i.e. HTTP layered over TLS/SSL). HSTS is an IETF standards track protocol and is specified in RFC 6797.</div>
+											
+										</td>
+								</tr>
+								<TR vAlign="top">
+									<TD colspan="2"></TD>
+								</TR>
+								
+									<tr>
+										<td width="20%"
+											class="indent1">URL</td>
+										<td width="80%"><a href="https://ppl-api.fisiofind.com">https://ppl-api.fisiofind.com</a></td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Method</td>
+										<td width="80%">GET</td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Parameter</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Attack</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Evidence</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">
+											<div id="alert-12">
+												<a
+													onclick="showHide(&#39;alert-12&#39;);"
+													href="#12">Show / hide Request and Response</a>
+											</div>
+										</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Request Header
+											- size: 243 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-12reqh"
+												style="display: none;">
+												
+													GET https://ppl-api.fisiofind.com HTTP/1.1
+													<br />
+												
+													host: ppl-api.fisiofind.com
+													<br />
+												
+													user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
+													<br />
+												
+													pragma: no-cache
+													<br />
+												
+													cache-control: no-cache
+													<br />
+												
+													
+													
+												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Request Body
+											- size: 0 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-12reqb"
+												style="display: none;">
+												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Response Header
+											- size: 320 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-12resph"
+												style="display: none;">
+												
+													HTTP/1.1 200 OK
+													<br />
+												
+													Server: nginx/1.26.0 (Ubuntu)
+													<br />
+												
+													Date: Wed, 30 Apr 2025 14:43:33 GMT
+													<br />
+												
+													Content-Type: text/html; charset=utf-8
+													<br />
+												
+													Content-Length: 25
+													<br />
+												
+													Connection: keep-alive
+													<br />
+												
+													X-Frame-Options: DENY
+													<br />
+												
+													Vary: Cookie, origin
+													<br />
+												
+													X-Content-Type-Options: nosniff
+													<br />
+												
+													Referrer-Policy: same-origin
+													<br />
+												
+													Cross-Origin-Opener-Policy: same-origin
+													<br />
+												
+													
+													
+												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Response Body
+											- size: 25 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-12respb"
+												style="display: none;">
+												
+													¡Bienvenido a FisioFind!
+													
+												
+											</div>
+										</td>
+									</tr>
+								
+									<tr>
+										<td width="20%"
+											class="indent1">URL</td>
+										<td width="80%"><a href="https://ppl-api.fisiofind.com/robots.txt">https://ppl-api.fisiofind.com/robots.txt</a></td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Method</td>
+										<td width="80%">GET</td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Parameter</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Attack</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Evidence</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">
+											<div id="alert-8">
+												<a
+													onclick="showHide(&#39;alert-8&#39;);"
+													href="#8">Show / hide Request and Response</a>
+											</div>
+										</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Request Header
+											- size: 254 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-8reqh"
+												style="display: none;">
+												
+													GET https://ppl-api.fisiofind.com/robots.txt HTTP/1.1
+													<br />
+												
+													host: ppl-api.fisiofind.com
+													<br />
+												
+													user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
+													<br />
+												
+													pragma: no-cache
+													<br />
+												
+													cache-control: no-cache
+													<br />
+												
+													
+													
+												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Request Body
+											- size: 0 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-8reqb"
+												style="display: none;">
+												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Response Header
+											- size: 328 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-8resph"
+												style="display: none;">
+												
+													HTTP/1.1 404 Not Found
+													<br />
+												
+													Server: nginx/1.26.0 (Ubuntu)
+													<br />
+												
+													Date: Wed, 30 Apr 2025 14:43:33 GMT
+													<br />
+												
+													Content-Type: text/html; charset=utf-8
+													<br />
+												
+													Content-Length: 179
+													<br />
+												
+													Connection: keep-alive
+													<br />
+												
+													X-Frame-Options: DENY
+													<br />
+												
+													Vary: Cookie, origin
+													<br />
+												
+													X-Content-Type-Options: nosniff
+													<br />
+												
+													Referrer-Policy: same-origin
+													<br />
+												
+													Cross-Origin-Opener-Policy: same-origin
+													<br />
+												
+													
+													
+												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Response Body
+											- size: 179 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-8respb"
+												style="display: none;">
+												
+													&lt;!doctype html&gt;
+													<br />
+												
+													&lt;html lang=&quot;en&quot;&gt;
+													<br />
+												
+													&lt;head&gt;
+													<br />
+												
+													  &lt;title&gt;Not Found&lt;/title&gt;
+													<br />
+												
+													&lt;/head&gt;
+													<br />
+												
+													&lt;body&gt;
+													<br />
+												
+													  &lt;h1&gt;Not Found&lt;/h1&gt;&lt;p&gt;The requested resource was not found on this server.&lt;/p&gt;
+													<br />
+												
+													&lt;/body&gt;
+													<br />
+												
+													&lt;/html&gt;
+													
+												
+											</div>
+										</td>
+									</tr>
+								
+									<tr>
+										<td width="20%"
+											class="indent1">URL</td>
+										<td width="80%"><a href="https://ppl-api.fisiofind.com/sitemap.xml">https://ppl-api.fisiofind.com/sitemap.xml</a></td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Method</td>
+										<td width="80%">GET</td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Parameter</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Attack</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Evidence</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">
+											<div id="alert-9">
+												<a
+													onclick="showHide(&#39;alert-9&#39;);"
+													href="#9">Show / hide Request and Response</a>
+											</div>
+										</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Request Header
+											- size: 255 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-9reqh"
+												style="display: none;">
+												
+													GET https://ppl-api.fisiofind.com/sitemap.xml HTTP/1.1
+													<br />
+												
+													host: ppl-api.fisiofind.com
+													<br />
+												
+													user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
+													<br />
+												
+													pragma: no-cache
+													<br />
+												
+													cache-control: no-cache
+													<br />
+												
+													
+													
+												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Request Body
+											- size: 0 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-9reqb"
+												style="display: none;">
+												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Response Header
+											- size: 328 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-9resph"
+												style="display: none;">
+												
+													HTTP/1.1 404 Not Found
+													<br />
+												
+													Server: nginx/1.26.0 (Ubuntu)
+													<br />
+												
+													Date: Wed, 30 Apr 2025 14:43:33 GMT
+													<br />
+												
+													Content-Type: text/html; charset=utf-8
+													<br />
+												
+													Content-Length: 179
+													<br />
+												
+													Connection: keep-alive
+													<br />
+												
+													X-Frame-Options: DENY
+													<br />
+												
+													Vary: Cookie, origin
+													<br />
+												
+													X-Content-Type-Options: nosniff
+													<br />
+												
+													Referrer-Policy: same-origin
+													<br />
+												
+													Cross-Origin-Opener-Policy: same-origin
+													<br />
+												
+													
+													
+												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Response Body
+											- size: 179 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-9respb"
+												style="display: none;">
+												
+													&lt;!doctype html&gt;
+													<br />
+												
+													&lt;html lang=&quot;en&quot;&gt;
+													<br />
+												
+													&lt;head&gt;
+													<br />
+												
+													  &lt;title&gt;Not Found&lt;/title&gt;
+													<br />
+												
+													&lt;/head&gt;
+													<br />
+												
+													&lt;body&gt;
+													<br />
+												
+													  &lt;h1&gt;Not Found&lt;/h1&gt;&lt;p&gt;The requested resource was not found on this server.&lt;/p&gt;
+													<br />
+												
+													&lt;/body&gt;
+													<br />
+												
+													&lt;/html&gt;
+													
+												
+											</div>
+										</td>
+									</tr>
+								
+								<tr>
+									<td width="20%">Instances</td>
+									<td width="80%">3</td>
+								</tr>
+								<tr>
+									<td width="20%">Solution</td>
+									<td width="80%">
+											<div>Ensure that your web server, application server, load balancer, etc. is configured to enforce Strict-Transport-Security.</div>
+											
+										</td>
+								</tr>
+								<tr>
+									<td width="20%">Reference</td>
+									<td width="80%">
+											<a href="https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Strict_Transport_Security_Cheat_Sheet.html">https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Strict_Transport_Security_Cheat_Sheet.html</a>
+											<br />
+										
+											<a href="https://owasp.org/www-community/Security_Headers">https://owasp.org/www-community/Security_Headers</a>
+											<br />
+										
+											<a href="https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security">https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security</a>
+											<br />
+										
+											<a href="https://caniuse.com/stricttransportsecurity">https://caniuse.com/stricttransportsecurity</a>
+											<br />
+										
+											<a href="https://datatracker.ietf.org/doc/html/rfc6797">https://datatracker.ietf.org/doc/html/rfc6797</a>
+											
+										</td>
+								</tr>
+								<tr>
+									<td width="20%">Tags</td>
+									<td width="80%">
+
+											
+												<a href="https://owasp.org/Top10/A05_2021-Security_Misconfiguration/">OWASP_2021_A05</a>
+											
+											
+											<br />
+										
+
+											
+												<a href="https://owasp.org/www-project-top-ten/2017/A6_2017-Security_Misconfiguration.html">OWASP_2017_A06</a>
+											
+											
+											<br />
+										
+
+											
+												<a href="https://cwe.mitre.org/data/definitions/319.html">CWE-319</a>
+											
+											
+											
+										</td>
+								</tr>
+								<tr>
+									<td width="20%">CWE Id</td>
+									<td width="80%"><a
+										href="https://cwe.mitre.org/data/definitions/319.html">319</a></td>
+								</tr>
+								<tr>
+									<td width="20%">WASC Id</td>
+									<td width="80%">15</td>
+								</tr>
+								<tr>
+									<td width="20%">Plugin Id</td>
+									<td width="80%"><a
+										href="https://www.zaproxy.org/docs/alerts/10035/">10035</a></td>
+								</tr>
+							</table>
+						</div>
+						<div class="spacer"></div>
+					
+						<div class="tableWrapper">
+							<table class="results" cellspacing="0" cellpadding="0">
+								<tr height="24">
+									<th width="20%" class="risk-0"><a
+										id="plugin-10015"></a>
+										<div>Informational</div></th>
+									<th class="risk-0">Re-examine Cache-control Directives</th>
+								</tr>
+								<tr>
+									<td width="20%">Description</td>
+									<td width="80%">
+											<div>The cache-control header has not been set properly or is missing, allowing the browser and proxies to cache content. For static assets like css, js, or image files this might be intended, however, the resources should be reviewed to ensure that no sensitive content will be cached.</div>
+											
+										</td>
+								</tr>
+								<TR vAlign="top">
+									<TD colspan="2"></TD>
+								</TR>
+								
+									<tr>
+										<td width="20%"
+											class="indent1">URL</td>
+										<td width="80%"><a href="https://ppl-api.fisiofind.com">https://ppl-api.fisiofind.com</a></td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Method</td>
+										<td width="80%">GET</td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Parameter</td>
+										<td width="80%">cache-control</td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Attack</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Evidence</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">
+											<div id="alert-2">
+												<a
+													onclick="showHide(&#39;alert-2&#39;);"
+													href="#2">Show / hide Request and Response</a>
+											</div>
+										</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Request Header
+											- size: 243 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-2reqh"
+												style="display: none;">
+												
+													GET https://ppl-api.fisiofind.com HTTP/1.1
+													<br />
+												
+													host: ppl-api.fisiofind.com
+													<br />
+												
+													user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
+													<br />
+												
+													pragma: no-cache
+													<br />
+												
+													cache-control: no-cache
+													<br />
+												
+													
+													
+												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Request Body
+											- size: 0 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-2reqb"
+												style="display: none;">
+												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Response Header
+											- size: 320 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-2resph"
+												style="display: none;">
+												
+													HTTP/1.1 200 OK
+													<br />
+												
+													Server: nginx/1.26.0 (Ubuntu)
+													<br />
+												
+													Date: Wed, 30 Apr 2025 14:43:33 GMT
+													<br />
+												
+													Content-Type: text/html; charset=utf-8
+													<br />
+												
+													Content-Length: 25
+													<br />
+												
+													Connection: keep-alive
+													<br />
+												
+													X-Frame-Options: DENY
+													<br />
+												
+													Vary: Cookie, origin
+													<br />
+												
+													X-Content-Type-Options: nosniff
+													<br />
+												
+													Referrer-Policy: same-origin
+													<br />
+												
+													Cross-Origin-Opener-Policy: same-origin
+													<br />
+												
+													
+													
+												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Response Body
+											- size: 25 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-2respb"
+												style="display: none;">
+												
+													¡Bienvenido a FisioFind!
+													
+												
+											</div>
+										</td>
+									</tr>
+								
+								<tr>
+									<td width="20%">Instances</td>
+									<td width="80%">1</td>
+								</tr>
+								<tr>
+									<td width="20%">Solution</td>
+									<td width="80%">
+											<div>For secure content, ensure the cache-control HTTP header is set with &quot;no-cache, no-store, must-revalidate&quot;. If an asset should be cached consider setting the directives &quot;public, max-age, immutable&quot;.</div>
+											
+										</td>
+								</tr>
+								<tr>
+									<td width="20%">Reference</td>
+									<td width="80%">
+											<a href="https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html#web-content-caching">https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html#web-content-caching</a>
+											<br />
+										
+											<a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control">https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control</a>
+											<br />
+										
+											<a href="https://grayduck.mn/2021/09/13/cache-control-recommendations/">https://grayduck.mn/2021/09/13/cache-control-recommendations/</a>
+											
+										</td>
+								</tr>
+								<tr>
+									<td width="20%">Tags</td>
+									<td width="80%">
+
+											
+												<a href="https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/04-Authentication_Testing/06-Testing_for_Browser_Cache_Weaknesses">WSTG-v42-ATHN-06</a>
+											
+											
+											<br />
+										
+
+											
+												<a href="https://cwe.mitre.org/data/definitions/525.html">CWE-525</a>
+											
+											
+											
+										</td>
+								</tr>
+								<tr>
+									<td width="20%">CWE Id</td>
+									<td width="80%"><a
+										href="https://cwe.mitre.org/data/definitions/525.html">525</a></td>
+								</tr>
+								<tr>
+									<td width="20%">WASC Id</td>
+									<td width="80%">13</td>
+								</tr>
+								<tr>
+									<td width="20%">Plugin Id</td>
+									<td width="80%"><a
+										href="https://www.zaproxy.org/docs/alerts/10015/">10015</a></td>
+								</tr>
+							</table>
+						</div>
+						<div class="spacer"></div>
+					
+						<div class="tableWrapper">
+							<table class="results" cellspacing="0" cellpadding="0">
+								<tr height="24">
+									<th width="20%" class="risk-0"><a
+										id="plugin-10004"></a>
+										<div>Informational</div></th>
+									<th class="risk-0">Tech Detected - Nginx</th>
+								</tr>
+								<tr>
+									<td width="20%">Description</td>
+									<td width="80%">
+											<div>The following &quot;Web servers, Reverse proxies&quot; technology was identified: Nginx.</div>
+											<br />
+										
+											<div>Described as:</div>
+											<br />
+										
+											<div>Nginx is a web server that can also be used as a reverse proxy, load balancer, mail proxy and HTTP cache.</div>
+											
+										</td>
+								</tr>
+								<TR vAlign="top">
+									<TD colspan="2"></TD>
+								</TR>
+								
+									<tr>
+										<td width="20%"
+											class="indent1">URL</td>
+										<td width="80%"><a href="https://ppl-api.fisiofind.com">https://ppl-api.fisiofind.com</a></td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Method</td>
+										<td width="80%">GET</td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Parameter</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Attack</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Evidence</td>
+										<td width="80%">nginx/1.26.0</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">
+											<div id="alert-14">
+												<a
+													onclick="showHide(&#39;alert-14&#39;);"
+													href="#14">Show / hide Request and Response</a>
+											</div>
+										</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Request Header
+											- size: 243 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-14reqh"
+												style="display: none;">
+												
+													GET https://ppl-api.fisiofind.com HTTP/1.1
+													<br />
+												
+													host: ppl-api.fisiofind.com
+													<br />
+												
+													user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
+													<br />
+												
+													pragma: no-cache
+													<br />
+												
+													cache-control: no-cache
+													<br />
+												
+													
+													
+												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Request Body
+											- size: 0 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-14reqb"
+												style="display: none;">
+												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Response Header
+											- size: 320 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-14resph"
+												style="display: none;">
+												
+													HTTP/1.1 200 OK
+													<br />
+												
+													Server: nginx/1.26.0 (Ubuntu)
+													<br />
+												
+													Date: Wed, 30 Apr 2025 14:43:33 GMT
+													<br />
+												
+													Content-Type: text/html; charset=utf-8
+													<br />
+												
+													Content-Length: 25
+													<br />
+												
+													Connection: keep-alive
+													<br />
+												
+													X-Frame-Options: DENY
+													<br />
+												
+													Vary: Cookie, origin
+													<br />
+												
+													X-Content-Type-Options: nosniff
+													<br />
+												
+													Referrer-Policy: same-origin
+													<br />
+												
+													Cross-Origin-Opener-Policy: same-origin
+													<br />
+												
+													
+													
+												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Response Body
+											- size: 25 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-14respb"
+												style="display: none;">
+												
+													¡Bienvenido a FisioFind!
+													
+												
+											</div>
+										</td>
+									</tr>
+								
+								<tr>
+									<td width="20%">Instances</td>
+									<td width="80%">1</td>
+								</tr>
+								<tr>
+									<td width="20%">Solution</td>
+									<td width="80%"></td>
+								</tr>
+								<tr>
+									<td width="20%">Reference</td>
+									<td width="80%">
+											<a href="https://nginx.org/en">https://nginx.org/en</a>
+											
+										</td>
+								</tr>
+								<tr>
+									<td width="20%">Tags</td>
+									<td width="80%"></td>
+								</tr>
+								<tr>
+									<td width="20%">CWE Id</td>
+									<td width="80%"></td>
+								</tr>
+								<tr>
+									<td width="20%">WASC Id</td>
+									<td width="80%">13</td>
+								</tr>
+								<tr>
+									<td width="20%">Plugin Id</td>
+									<td width="80%"><a
+										href="https://www.zaproxy.org/docs/alerts/10004/">10004</a></td>
+								</tr>
+							</table>
+						</div>
+						<div class="spacer"></div>
+					
+						<div class="tableWrapper">
+							<table class="results" cellspacing="0" cellpadding="0">
+								<tr height="24">
+									<th width="20%" class="risk-0"><a
+										id="plugin-10004"></a>
+										<div>Informational</div></th>
+									<th class="risk-0">Tech Detected - Ubuntu</th>
+								</tr>
+								<tr>
+									<td width="20%">Description</td>
+									<td width="80%">
+											<div>The following &quot;Operating systems&quot; technology was identified: Ubuntu.</div>
+											<br />
+										
+											<div>Described as:</div>
+											<br />
+										
+											<div>Ubuntu is a free and open-source operating system on Linux for the enterprise server, desktop, cloud, and IoT.</div>
+											
+										</td>
+								</tr>
+								<TR vAlign="top">
+									<TD colspan="2"></TD>
+								</TR>
+								
+									<tr>
+										<td width="20%"
+											class="indent1">URL</td>
+										<td width="80%"><a href="https://ppl-api.fisiofind.com/robots.txt">https://ppl-api.fisiofind.com/robots.txt</a></td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Method</td>
+										<td width="80%">GET</td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Parameter</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Attack</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%"
+											class="indent2">Evidence</td>
+										<td width="80%">Ubuntu</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">
+											<div id="alert-15">
+												<a
+													onclick="showHide(&#39;alert-15&#39;);"
+													href="#15">Show / hide Request and Response</a>
+											</div>
+										</td>
+										<td width="80%"></td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Request Header
+											- size: 254 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-15reqh"
+												style="display: none;">
+												
+													GET https://ppl-api.fisiofind.com/robots.txt HTTP/1.1
+													<br />
+												
+													host: ppl-api.fisiofind.com
+													<br />
+												
+													user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
+													<br />
+												
+													pragma: no-cache
+													<br />
+												
+													cache-control: no-cache
+													<br />
+												
+													
+													
+												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Request Body
+											- size: 0 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-15reqb"
+												style="display: none;">
+												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Response Header
+											- size: 328 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-15resph"
+												style="display: none;">
+												
+													HTTP/1.1 404 Not Found
+													<br />
+												
+													Server: nginx/1.26.0 (Ubuntu)
+													<br />
+												
+													Date: Wed, 30 Apr 2025 14:43:33 GMT
+													<br />
+												
+													Content-Type: text/html; charset=utf-8
+													<br />
+												
+													Content-Length: 179
+													<br />
+												
+													Connection: keep-alive
+													<br />
+												
+													X-Frame-Options: DENY
+													<br />
+												
+													Vary: Cookie, origin
+													<br />
+												
+													X-Content-Type-Options: nosniff
+													<br />
+												
+													Referrer-Policy: same-origin
+													<br />
+												
+													Cross-Origin-Opener-Policy: same-origin
+													<br />
+												
+													
+													
+												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td width="20%" class="indent2">Response Body
+											- size: 179 bytes.
+										</td>
+										<td width="80%">
+											<div
+												id="alert-15respb"
+												style="display: none;">
+												
+													&lt;!doctype html&gt;
+													<br />
+												
+													&lt;html lang=&quot;en&quot;&gt;
+													<br />
+												
+													&lt;head&gt;
+													<br />
+												
+													  &lt;title&gt;Not Found&lt;/title&gt;
+													<br />
+												
+													&lt;/head&gt;
+													<br />
+												
+													&lt;body&gt;
+													<br />
+												
+													  &lt;h1&gt;Not Found&lt;/h1&gt;&lt;p&gt;The requested resource was not found on this server.&lt;/p&gt;
+													<br />
+												
+													&lt;/body&gt;
+													<br />
+												
+													&lt;/html&gt;
+													
+												
+											</div>
+										</td>
+									</tr>
+								
+								<tr>
+									<td width="20%">Instances</td>
+									<td width="80%">1</td>
+								</tr>
+								<tr>
+									<td width="20%">Solution</td>
+									<td width="80%"></td>
+								</tr>
+								<tr>
+									<td width="20%">Reference</td>
+									<td width="80%">
+											<a href="https://www.ubuntu.com/server">https://www.ubuntu.com/server</a>
+											
+										</td>
+								</tr>
+								<tr>
+									<td width="20%">Tags</td>
+									<td width="80%"></td>
+								</tr>
+								<tr>
+									<td width="20%">CWE Id</td>
+									<td width="80%"></td>
+								</tr>
+								<tr>
+									<td width="20%">WASC Id</td>
+									<td width="80%">13</td>
+								</tr>
+								<tr>
+									<td width="20%">Plugin Id</td>
+									<td width="80%"><a
+										href="https://www.zaproxy.org/docs/alerts/10004/">10004</a></td>
+								</tr>
+							</table>
+						</div>
+						<div class="spacer"></div>
+					
+				
+
+				<footer>
+					Report by 
+					<a href="https://www.zaproxy.org/" target="_blank">ZAP</a>
+					
+				</footer>
+
+			</div>
+		</div>
+	</section>
+
+</body>
+</html>
