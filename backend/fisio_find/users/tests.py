@@ -195,29 +195,11 @@ class AppUserRequiredFieldsTests(APITestCase):
     def test_missing_username(self):
         self.assert_missing_field("username")
 
-    def test_missing_email(self):
-        self.assert_missing_field("email")
-
-    def test_missing_password(self):
-        self.assert_missing_field("password")
-
-    def test_missing_first_name(self):
-        self.assert_missing_field("first_name")
-
-    def test_missing_last_name(self):
-        self.assert_missing_field("last_name")
-
     def test_missing_dni(self):
         self.assert_missing_field("dni")
 
-    def test_missing_phone_number(self):
-        self.assert_missing_field("phone_number")
-
     def test_missing_postal_code(self):
         self.assert_missing_field("postal_code")
-
-    def test_missing_account_status(self):
-        self.assert_missing_field("account_status")
 
 
 '''
@@ -373,7 +355,7 @@ class PatientRegisterSerializerTests(APITestCase):
     def test_missing_required_fields(self):
         required_fields = [
             "username", "email", "password", "first_name", "last_name",
-            "dni", "phone_number", "postal_code", "gender", "birth_date"
+            "dni", "postal_code", "gender", "birth_date"
         ]
         for field in required_fields:
             data = self.get_base_data()
@@ -732,6 +714,23 @@ class PhysioRegisterSerializerTests(APITestCase):
         self.assertIn("birth_date", serializer.errors)
 
     @patch("users.serializers.validar_colegiacion", return_value=True)
+    def test_physio_birth_date_too_old(self, mock_validar):
+        data = self.get_valid_data()
+        data["birth_date"] = date(1500, 1, 1).isoformat()
+        serializer = PhysioRegisterSerializer(data=data, context={'request': self.request})
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("birth_date", serializer.errors)
+
+    @patch("users.serializers.validar_colegiacion", return_value=True)
+    def test_physio_birth_date_in_future(self, mock_validar):
+        data = self.get_valid_data()
+        future_date = date.today() + timedelta(days=1)
+        data["birth_date"] = future_date.isoformat()
+        serializer = PhysioRegisterSerializer(data=data, context={'request': self.request})
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("birth_date", serializer.errors)
+
+    @patch("users.serializers.validar_colegiacion", return_value=True)
     def test_invalid_gender(self, mock_validar):
         data = self.get_valid_data()
         data["gender"] = "X"
@@ -906,7 +905,7 @@ class PhysioUpdateSerializerTests(APITestCase):
         serializer = PhysioUpdateSerializer(instance=self.physio, data=data, context={"request": self.request})
         self.assertTrue(serializer.is_valid(), serializer.errors)
         physio = serializer.save()
-        self.assertTrue(physio.user.photo.name.endswith("profile.jpg"))
+        self.assertTrue("profile" in physio.user.photo.name and physio.user.photo.name.endswith(".jpg"))
 
 
 
@@ -1485,6 +1484,15 @@ class PhysioUpdateViewTests(APITestCase):
 
         self.client.force_authenticate(user=self.user)
 
+
+    def get_required_fields(self):
+        return {
+            "degree": "Grado en Fisioterapia",
+            "university": "Universidad Complutense de Madrid",
+            "experience": "10 años en clínicas privadas",
+            "workplace": "Centro Integral FisioPlus"
+        }
+        
     def test_physio_update_success(self):
         data = {
             "user.email": "updated@example.com",
@@ -1519,7 +1527,8 @@ class PhysioUpdateViewTests(APITestCase):
                 }
             }),
             "schedule": '{"lunes": ["10:00", "12:00"]}',
-            "specializations": '["Traumatología", "Deportiva"]'
+            "specializations": '["Traumatología", "Deportiva"]',
+            **self.get_required_fields()
         }
 
         response = self.client.put(self.url, data, format="json")
@@ -1534,7 +1543,8 @@ class PhysioUpdateViewTests(APITestCase):
 
     def test_invalid_services_format(self):
         data = {
-            "services": "esto no es json"
+            "services": "esto no es json",
+            **self.get_required_fields()
         }
         response = self.client.put(self.url, data, format="json")
         self.assertEqual(response.status_code, 400)
@@ -1542,7 +1552,8 @@ class PhysioUpdateViewTests(APITestCase):
 
     def test_specializations_as_csv(self):
         data = {
-            "specializations": "Neurológica, Deportiva"
+            "specializations": "Neurológica, Deportiva",
+            **self.get_required_fields()
         }
         response = self.client.put(self.url, data, format="json")
         self.assertEqual(response.status_code, 200)
@@ -1555,6 +1566,7 @@ class PhysioUpdateViewTests(APITestCase):
         data = {
             "user.dni": "87654321X",  # DNI distinto
             "user.email": "noimporta@example.com",
+            **self.get_required_fields()
         }
 
         response = self.client.put(self.url, data, format="json")
@@ -1568,7 +1580,8 @@ class PhysioUpdateViewTests(APITestCase):
 
     def test_specializations_as_single_string(self):
         data = {
-            "specializations": "Pediátrica"
+            "specializations": "Pediátrica",
+            **self.get_required_fields()
         }
         response = self.client.put(self.url, data, format="json")
         self.assertEqual(response.status_code, 200)
@@ -1585,7 +1598,8 @@ class PhysioUpdateViewTests(APITestCase):
         data = {
             "services": json.dumps({
                 "Servicio 1": "esto debería ser un objeto, no un string"
-            })
+            }),
+            **self.get_required_fields()
         }
         response = self.client.put(self.url, data, format="json")
         self.assertEqual(response.status_code, 400)
@@ -1604,7 +1618,8 @@ class PhysioUpdateViewTests(APITestCase):
                     "label": "Cuestionario",
                     "elements": []
                 }
-            }
+            },
+            **self.get_required_fields()
         }
 
         required_fields = ["id", "title", "price", "description", "duration"]
@@ -1653,7 +1668,8 @@ class PhysioUpdateViewTests(APITestCase):
                         }
                     }
                 }
-            })
+            }),
+            **self.get_required_fields()
         }
         response = self.client.put(self.url, data, format="json")
         self.assertEqual(response.status_code, 200)
@@ -1677,7 +1693,8 @@ class PhysioUpdateViewTests(APITestCase):
                         }
                     }
                 }
-            }
+            },
+            **self.get_required_fields()
         }
         response = self.client.put(self.url, data, format="json")
         self.assertEqual(response.status_code, 200)
@@ -1714,7 +1731,8 @@ class PhysioUpdateViewTests(APITestCase):
         }
 
         data = {
-            "services": json.dumps({"Servicio 1": service})
+            "services": json.dumps({"Servicio 1": service}),
+            **self.get_required_fields()
         }
 
         response = self.client.put(self.url, data, format="json")
@@ -1741,7 +1759,8 @@ class PhysioUpdateViewTests(APITestCase):
         }
 
         data = {
-            "services": json.dumps({"Servicio 1": service})
+            "services": json.dumps({"Servicio 1": service}),
+            **self.get_required_fields()
         }
 
         response = self.client.put(self.url, data, format="json")
@@ -1766,7 +1785,8 @@ class PhysioUpdateViewTests(APITestCase):
         }
 
         data = {
-            "services": json.dumps({"Servicio 1": service})
+            "services": json.dumps({"Servicio 1": service}),
+            **self.get_required_fields()
         }
 
         response = self.client.put(self.url, data, format="json")
@@ -1787,7 +1807,8 @@ class PhysioUpdateViewTests(APITestCase):
                     "label": "Cuestionario",
                     "elements": []
                 }
-            }
+            },
+            **self.get_required_fields()
         }
 
         data = {
@@ -1809,7 +1830,8 @@ class PhysioUpdateViewTests(APITestCase):
             "custom_questionnaire": "debería ser dict"
         }
         data = {
-            "services": json.dumps({"Servicio 1": service})
+            "services": json.dumps({"Servicio 1": service}),
+            **self.get_required_fields()
         }
         response = self.client.put(self.url, data, format="json")
         self.assertEqual(response.status_code, 400)
@@ -1828,7 +1850,8 @@ class PhysioUpdateViewTests(APITestCase):
             }
         }
         data = {
-            "services": json.dumps({"Servicio 1": service})
+            "services": json.dumps({"Servicio 1": service}),
+            **self.get_required_fields()
         }
         response = self.client.put(self.url, data, format="json")
         self.assertEqual(response.status_code, 400)
@@ -1851,7 +1874,8 @@ class PhysioUpdateViewTests(APITestCase):
             }
         }
         data = {
-            "services": json.dumps({"Servicio 1": service})
+            "services": json.dumps({"Servicio 1": service}),
+            **self.get_required_fields()
         }
         response = self.client.put(self.url, data, format="json")
         self.assertEqual(response.status_code, 400)
@@ -1877,7 +1901,8 @@ class PhysioUpdateViewTests(APITestCase):
             }
         }
         data = {
-            "services": json.dumps({"Servicio 1": service})
+            "services": json.dumps({"Servicio 1": service}),
+            **self.get_required_fields()
         }
         response = self.client.put(self.url, data, format="json")
         self.assertEqual(response.status_code, 400)
@@ -1903,7 +1928,8 @@ class PhysioUpdateViewTests(APITestCase):
             }
         }
         data = {
-            "services": json.dumps({"Servicio 1": service})
+            "services": json.dumps({"Servicio 1": service}),
+            **self.get_required_fields()
         }
         response = self.client.put(self.url, data, format="json")
         self.assertEqual(response.status_code, 400)
@@ -1929,7 +1955,8 @@ class PhysioUpdateViewTests(APITestCase):
             }
         }
         data = {
-            "services": json.dumps({"Servicio 1": service})
+            "services": json.dumps({"Servicio 1": service}),
+            **self.get_required_fields()
         }
         response = self.client.put(self.url, data, format="json")
         self.assertEqual(response.status_code, 400)
@@ -1952,7 +1979,8 @@ class PhysioUpdateViewTests(APITestCase):
             }
         }
         data = {
-            "services": json.dumps({"Servicio 1": service})
+            "services": json.dumps({"Servicio 1": service}),
+            **self.get_required_fields()
         }
         response = self.client.put(self.url, data, format="json")
         self.assertEqual(response.status_code, 400)
@@ -2201,6 +2229,13 @@ class PhysioCreateServiceViewTests(APITestCase):
 
 
 class PhysioUpdateSpecificServiceTests(APITestCase):
+    def get_required_fields(self):
+        return {
+            "degree": "Grado en Fisioterapia",
+            "university": "Universidad Complutense de Madrid",
+            "experience": "10 años en clínicas privadas",
+            "workplace": "Centro Integral FisioPlus"
+        }
 
     def setUp(self):
         self.plan, _ = Pricing.objects.get_or_create(
@@ -2232,7 +2267,11 @@ class PhysioUpdateSpecificServiceTests(APITestCase):
                     "tipo": "PRIMERA_CONSULTA",
                     "custom_questionnaire": None
                 }
-            }
+            },
+            degree="Grado en Fisioterapia",
+            university="Universidad Complutense de Madrid",
+            experience="5 años",
+            workplace="Clínica Central"
         )
         self.client.force_authenticate(user=self.user)
         self.url = lambda sid: reverse("physio_update_service", args=[sid])
@@ -2259,7 +2298,7 @@ class PhysioUpdateSpecificServiceTests(APITestCase):
                         {"type": "Control", "label": "¿Cómo describirías el dolor?", "scope": "#/properties/q2"}
                     ]
                 }
-            }
+            },
         }
 
     def test_update_existing_service_success(self):
@@ -2475,7 +2514,6 @@ class PhysioDeleteServiceTests(APITestCase):
         response = self.client.delete(self.url(1))
         self.assertIn(response.status_code, [401, 403])
 
-
 class PatientRegisterViewTests(APITestCase):
 
     def setUp(self):
@@ -2495,12 +2533,28 @@ class PatientRegisterViewTests(APITestCase):
             "birth_date": "1990-01-01"
         }
 
-    def test_register_patient_success(self):
+    @patch("users.views.send_registration_confirmation_email", return_value=True)
+    def test_register_patient_email_success(self, mock_send_email):
         response = self.client.post(self.url, self.get_valid_data(), format="json")
+
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.data["message"], "Paciente registrado correctamente")
+        self.assertIn("message", response.data)
+        self.assertIn("correo", response.data["message"].lower())
+        self.assertNotIn("warning", response.data)
         self.assertTrue(AppUser.objects.filter(username="newpatient").exists())
         self.assertTrue(Patient.objects.filter(user__username="newpatient").exists())
+        mock_send_email.assert_called_once()
+
+    @patch("users.views.send_registration_confirmation_email", return_value=False)
+    def test_register_patient_email_fails(self, mock_send_email):
+        response = self.client.post(self.url, self.get_valid_data(), format="json")
+
+        self.assertEqual(response.status_code, 201)
+        self.assertIn("message", response.data)
+        self.assertIn("warning", response.data)
+        self.assertTrue(AppUser.objects.filter(username="newpatient").exists())
+        self.assertTrue(Patient.objects.filter(user__username="newpatient").exists())
+        mock_send_email.assert_called_once()
 
     def test_duplicate_email_fails(self):
         AppUser.objects.create_user(

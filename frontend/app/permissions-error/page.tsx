@@ -1,11 +1,14 @@
 "use client";
 
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 const ErrorPermissions = () => {
+  const router = useRouter();
+  
   useEffect(() => {
     setTimeout(() => {
-      window.location.href = "/";
+      router.push("/");	
     }, 3000);
   }, []);
 
