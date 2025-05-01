@@ -1,6 +1,6 @@
 <!-- ---
 title: "REPORTE ANÁLISIS CUANTITATIVO DE LA CALIDAD SEMANAS 1 Y 2 #SPRINT 1" # CHANGE IF NEEDED
-subtitle: "FISIO FIND - Grupo 6 - #SPRINT 1"
+subtitle: "FISIO FIND - Grupo 6 - #PPL"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]                                                # CHANGE IF NEEDED
 date: "06/03/2025"
 subject: "ISPP"
@@ -14,7 +14,7 @@ colorlinks: true
 linkcolor: blue
 titlepage-background: "../../.backgrounds/background4V.pdf"  # CHANGE IF NEEDED
 header-left: "QUALITY REPORT"                                  # CHANGE IF NEEDED
-header-right: "04/03/2025"                                # CHANGE IF NEEDED
+header-right: "01/05/2025"                                # CHANGE IF NEEDED
 footer-left: "FISIO FIND"
 documentclass: scrartcl
 classoption: "table"
@@ -26,7 +26,7 @@ classoption: "table"
 </p>
 
 <h1 align="center" style="font-size: 30px; font-weight: bold;">
-  REPORTE ANÁLISIS CUANTITATIVO DE LA CALIDAD #SPRINT 3 (21/02/25) - (06/03/25)
+  REPORTE ANÁLISIS CUANTITATIVO DE LA CALIDAD #PPL (18/04/25) - (01/05/25)
 </h1>
 
 **ÍNDICE**
@@ -55,13 +55,13 @@ classoption: "table"
 
 - **Número de Grupo:** Grupo 6
 
-- **Entregable:** #SPRINT 3
+- **Entregable:** #PPL
 
 - **Miembros del grupo:** Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes.
 
-- **Contribuidores:** [Daniel Alors Romero](https://github.com/DanielAlors) (autor), [Benjamín Ignacio Maureira Flores](https://github.com/benjimrfl) (autor), [Miguel Encina Martínez](https://github.com/MiguelEncina) (revisor), [Francisco Mateos Villarejo](https://github.com/pacomateos10) (autor)
+- **Contribuidores:** [Daniel Alors Romero](https://github.com/DanielAlors) (autor), [Miguel Encina Martínez](https://github.com/MiguelEncina) (revisor), [Francisco Mateos Villarejo](https://github.com/pacomateos10) (autor)
 
-- **Fecha de Creación:** 04/03/2025  
+- **Fecha de Creación:** 01/05/2025  
 
 - **Versión:** v2.0
 
@@ -74,7 +74,7 @@ classoption: "table"
 | Fecha      | Versión | Realizada por   | Descripción de los cambios                       |
 | ---------- | ------- | --------------- | ------------------------------------------------ |
 | 04/03/2025 | v1.0    | Francisco Mateos Villarejo, Daniel Alors Romero | Elaboración de la estructura del documento para su posterior realización. |
-| 10/04/2025 | v2.0    | Francisco Mateos Villarejo, Daniel Alors Romero, Miguel Encina Martínez, Benjamín Ignacio Maureira Flores | Compleción del documento |
+| 01/05/2025 | v2.0    | Francisco Mateos Villarejo, Daniel Alors Romero, Miguel Encina Martínez, Benjamín Ignacio Maureira Flores | Compleción del documento |
 
 
 
@@ -85,9 +85,9 @@ classoption: "table"
 <br>
 
 # 1. INTRODUCCIÓN
-El presente informe tiene como objetivo analizar de manera cuantitativa la calidad del trabajo realizado durante las primeras dos semanas del Sprint 3, proporcionando métricas clave que reflejan el desempeño del equipo de desarrollo. Este análisis es fundamental para evaluar la eficiencia del equipo, detectar posibles áreas de mejora y garantizar el cumplimiento de los objetivos establecidos en esta fase del proyecto.
+El presente informe tiene como objetivo analizar de manera cuantitativa la calidad del trabajo realizado durante las primeras dos semanas del PPL, proporcionando métricas clave que reflejan el desempeño del equipo de desarrollo. Este análisis es fundamental para evaluar la eficiencia del equipo, detectar posibles áreas de mejora y garantizar el cumplimiento de los objetivos establecidos en esta fase del proyecto.
 
-A lo largo del documento, se presentan estadísticas relacionadas con la actividad en el repositorio, incluyendo el número de commits y pull requests generados. Asimismo, se examina el uso del tiempo por parte del equipo, considerando datos proporcionados por el equipo de control de tiempo, y se realiza un estudio sobre el progreso de las tareas en función de los reportes de GitHub Project y las gráficas Burn Down.
+A lo largo del documento, se presentan estadísticas relacionadas con la actividad en el repositorio, incluyendo el número de commits y pull requests generados. Asimismo, se examina el uso del tiempo por parte del equipo, considerando datos proporcionados por el equipo de control de tiempo, y se realiza un estudio sobre el progreso de las tareas en función de los reportes de GitHub Project y las gráficas Burn Up.
 
 Otro aspecto clave del análisis es el estudio de la comunicación dentro del equipo, con el fin de evaluar el respeto a los horarios establecidos, el uso adecuado de los distintos canales y la efectividad en la interacción entre los miembros del equipo. Finalmente, se revisa el uso de herramientas de inteligencia artificial en el desarrollo, con el fin de medir su impacto en la productividad y en la calidad del trabajo realizado.
 
@@ -102,32 +102,32 @@ A continuación, se presentan los datos recopilados durante este período.
 
 ## 2.1. NÚMERO DE COMMITS
 El número de commits que se van a evaluar son los mergeados a la rama de Develop, sabiendo que no son los únicos realizados durante la semana, se contabilizará el número total de commits y su comparativa con los realizados en la anterior semana.
-Commits totales: 1.323
-Commits Semanales: 483
+Commits totales: 1.999
+Commits Semanales: 676
 
 ### 2.1.1. NÚMERO DE COMMITS POR PERSONA
-Alberto Carmona Sicre: 45
-Antonio Macías Ferrera: 169
-Benjamín Ignacio Maureira Flores: 49
-Francisco Capote García: 46
-Daniel Alors Romero: 39
-Daniel Fernández Caballero: 46
-Daniel Ruiz López: 43
+Alberto Carmona Sicre: 58
+Antonio Macías Ferrera: 205
+Benjamín Ignacio Maureira Flores: 60
+Francisco Capote García: 48
+Daniel Alors Romero: 40
+Daniel Fernández Caballero: 53
+Daniel Ruiz López: 56
 Daniel Tortorici Bartús: 44
 Daniel Vela Camacho: 50
-Delfín Santana Rubio: 238
-Guadalupe Ridruejo Pineda: 109 
-Julen Redondo Pacheco: 78
-Miguel Encina Martínez: 90
-Francisco Mateos Villarejo: 38 
+Delfín Santana Rubio: 274
+Guadalupe Ridruejo Pineda: 122 
+Julen Redondo Pacheco: 81
+Miguel Encina Martínez: 94
+Francisco Mateos Villarejo: 44 
 Pablo Fernández Pérez: 29
-Ramón Gavira Sánchez: 49
-Rafael Pulido Cifuentes: 87
+Ramón Gavira Sánchez: 56
+Rafael Pulido Cifuentes: 106
 
 ## 2.2. NÚMERO DE PULL REQUESTS
 El número de Pull Requests que se van a evaluar son las mergeadas a la rama de Develop, sabiendo que no son los únicas realizadas durante la semana, se contabilizará el número total de Pull Requests realizadas en el proyecto y su comparativa con las realizadas en la anterior semana.
-Pull Requests totales: 258
-Pull Requests Semanales: 77
+Pull Requests totales: 288
+Pull Requests Semanales: 30
 
 # 3. INFORME DE TIEMPO
 El análisis del tiempo de trabajo es un factor clave en la evaluación de la productividad y eficiencia del equipo. En esta sección, se presentan datos recopilados por el equipo de control de tiempo, los cuales permiten medir el desempeño en función de las horas trabajadas, el cumplimiento de los planes establecidos y las posibles desviaciones respecto a la planificación inicial.
@@ -139,7 +139,7 @@ El análisis de las tareas realizadas es fundamental para evaluar el avance del 
 
 Este estudio permite identificar posibles bloqueos en el desarrollo, evaluar la distribución del trabajo entre los miembros del equipo y detectar tendencias que puedan afectar la entrega del producto. Asimismo, proporciona información clave para mejorar la planificación en futuras iteraciones, optimizando la asignación de recursos y estableciendo estrategias más efectivas de gestión del flujo de trabajo.
 
-Fuente: GitHub Project, gráficas Burn Down.
+Fuente: GitHub Project, gráficas Burn Up.
 
 ## 4.1. GRÁFICA BURN UP
 ![Burn Up Chart](../../.img/burnup_chart_Sprint3.png)
@@ -167,6 +167,6 @@ El uso de herramientas de inteligencia artificial en el desarrollo de software h
 
 Este análisis busca evaluar cómo la inteligencia artificial ha influido en la productividad del equipo, si ha permitido reducir tiempos de desarrollo y si ha presentado algún desafío en su implementación. También se revisa el cumplimiento de buenas prácticas en su uso, garantizando que la IA se utilice como un complemento eficaz dentro del flujo de trabajo del equipo.
 
-Fuente: Datos proporcionados por el equipo de control de uso de IA en los documento "ia_report_week_9" e "ia_report_week_10" en la carpeta "03_reports/ia_reports".
+Fuente: Datos proporcionados por el equipo de control de uso de IA en los documento "ia_report_week_11" e "ia_report_week_12" en la carpeta "03_reports/ia_reports".
 
 ---
