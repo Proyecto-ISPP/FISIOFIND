@@ -142,7 +142,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
       // Manejo de la respuesta
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData?.error || "Error al guardar la valoración");
+        console.log(errorData?.error || "Error al guardar la valoración");
       }
 
       const data = await response.json();
@@ -266,7 +266,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
           )
           .then((response) => {
             const status = response.status;
-            if (status == 204) {
+            if (status == 200 || status == 204) {
               alert("La cita fue cancelada correctamente.");
               setSelectedEvent(null);
               window.location.reload();
