@@ -184,7 +184,7 @@ La aplicación implementa validación de fisioterapeutas por número de colegiad
 Actualmente, no tenemos implementado ningún mecanismo para que finalicen las citas. Por lo que solo se pueden finalizar las citas desde el panel de admin.
 
 
-Por otro lado, tenemos implementado un chatbot, pero como tiene un número de llamadas limitadas, hemos preferido dejarlo en una pull request para evitar que se hable con él por error y se acaben las llamadas. El caso de uso del chatbot es el siguiente:
+Por otro lado, tenemos implementado un chatbot, pero como tiene un número de llamadas limitadas, hemos preferido dejarlo en una pull request para evitar que se hable con él por error y se acaben las llamadas. El link a la pull request es: [https://github.com/Proyecto-ISPP/FISIOFIND/pull/567](https://github.com/Proyecto-ISPP/FISIOFIND/pull/567). El caso de uso del chatbot es el siguiente:
 1. Un usuario entra en fisio find.
 2. En una de las esquinas puede encontrar un icono en el que puede desplegar un chat para hablar con un chatbot para ayudarle a utilizar fisio find.
 
