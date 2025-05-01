@@ -54,7 +54,7 @@ classoption: "table"
 
 - **Miembros del grupo:** Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes.
 
-- **Autores:** [Delfín Santana Rubio](https://github.com/DelfinSR) (autor) y [Guadalupe Ridruejo Pineda](https://github.com/guaridpin) (revisora)
+- **Autores:** [Delfín Santana Rubio](https://github.com/DelfinSR) (autor)
 
 - **Fecha de Creación:** 30/04/2025  
 
@@ -137,7 +137,7 @@ Credenciales:
 
 Vídeo demo: [https://github.com/Proyecto-ISPP/FISIOFIND/blob/main/docs/demo_4.webp](https://github.com/Proyecto-ISPP/FISIOFIND/blob/main/docs/demo_4.webm)
 
-URL Clokify: 
+URL Clokify: [Tiempo PPL](https://app.clockify.me/shared/6813307ff68324299538c988)
 
 La aplicación implementa validación de fisioterapeutas por número de colegiado. Si se quiere crear un nuevo fisioterapeuta se recomienda coger datos de estas urls que tienen datos de colegiados:
 - Aragón: https://ventanilla.colfisioaragon.org/buscador-colegiados
