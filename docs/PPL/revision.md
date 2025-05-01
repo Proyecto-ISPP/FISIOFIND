@@ -101,7 +101,7 @@ classoption: "table"
 
 FISIOFIND es una plataforma de consulta en línea diseñada para conectar fisioterapeutas y pacientes. La aplicación permite la gestión de citas, realización de consultas virtuales y procesamiento de pagos, facilitando la organización y seguimiento de sesiones terapéuticas de forma segura y eficiente. La solución está orientada a dos grupos principales de usuarios: fisioterapeutas y pacientes.
 
-En este documento se detalla una guía para el despliegue local de la aplicación, además de un desglose detallado para la realización de las pruebas del Sprint 3.
+En este documento se detalla una guía para el despliegue local de la aplicación, además de un desglose detallado para la realización de las pruebas del PPL.
 
 
 
