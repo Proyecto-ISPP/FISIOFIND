@@ -400,7 +400,7 @@ const PatientRegistrationForm = () => {
           }
         } catch (loginError) {
             showAlert("error", `Registro completado, pero hubo un error al iniciar sesión automáticamente. Por favor, inicia sesión manualmente.`);
-            console.error("Login error after registration:", loginError);
+            console.log("Login error after registration:", loginError);
 
             setShowModal(false);
         }
@@ -409,7 +409,7 @@ const PatientRegistrationForm = () => {
   
     } catch (error: any) {
         if (axios.isAxiosError(error) && error.response) {
-            console.error("Registration error data:", error.response.data);
+            console.log("Registration error data:", error.response.data);
             const serverErrors = error.response.data;
             const newErrors: { [key: string]: string } = {};
             let generalErrorMessage = "Error en el registro. Verifica los campos.";
@@ -428,7 +428,7 @@ const PatientRegistrationForm = () => {
   
         } else {
           showAlert("error", "Ocurrió un error inesperado. Inténtalo de nuevo más tarde.");
-          console.error("Unexpected registration error:", error);
+          console.log("Unexpected registration error:", error);
         }
   
         setShowModal(false);
