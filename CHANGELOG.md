@@ -1,15 +1,13 @@
-## 🚀 Changelog - 15.0.0
+## 🚀 Changelog - 16.0.0
 
 ### ✨ Features (0)
 
-### 🐛 Fixes (0)
+### 🐛 Fixes (3)
+- Merge pull request #576 from Proyecto-ISPP/hotfix/modal-registro-paciente (@Delfin)
+- fix: register patient cambiados console.error por log para evitar error cuando los datos enviados son erroneos (@DelfinSR)
+- fix: modal de registro (@franciiscocg)
+### 📖 Documentation (0)
 
-### 📖 Documentation (2)
-- docs: Reporte de ia PPL (@DaniFdezCab)
-- docs: Reporte de ia PPL (@DaniFdezCab)
-### 🌀 Other Changes (4)
-- Merge pull request #575 from Proyecto-ISPP/feat/doc-ia-report-ppl (@Antonio Macías)
-- Update docs/PPL/AIusage.md (@Antonio Macías)
-- doc: añadido reporte de IA y presentaciones a la carpeta PPL (@Antonio Macías)
-- Merge remote-tracking branch 'origin/main' into feat/doc-ia-report-ppl (@Antonio Macías)
+### 🌀 Other Changes (0)
+
 ### 🔗 Pull Requests
