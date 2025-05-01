@@ -143,6 +143,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
       if (!response.ok) {
         const errorData = await response.json();
         console.log(errorData?.error || "Error al guardar la valoración");
+        return
       }
 
       const data = await response.json();
