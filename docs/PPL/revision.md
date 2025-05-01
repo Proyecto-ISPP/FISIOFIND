@@ -152,7 +152,7 @@ Credenciales:
 
 Vídeo demo: [https://github.com/Proyecto-ISPP/FISIOFIND/blob/main/docs/demo_4.webp](https://github.com/Proyecto-ISPP/FISIOFIND/blob/main/docs/demo_4.webm)
 
-URL Clokify: [Tiempo PPL](https://app.clockify.me/shared/6813307ff68324299538c988)
+URL Clokify: [Tiempo PPL](https://app.clockify.me/shared/6813af29cedc6708748725cd)
 
 La aplicación implementa validación de fisioterapeutas por número de colegiado. Si se quiere crear un nuevo fisioterapeuta se recomienda coger datos de estas urls que tienen datos de colegiados:
 - Aragón: https://ventanilla.colfisioaragon.org/buscador-colegiados
