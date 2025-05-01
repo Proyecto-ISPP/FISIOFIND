@@ -67,8 +67,8 @@ function SubscriptionSlider() {
             }`}
           >
             {isSubscribed ? "suscrito" : "no suscrito"}
-          </span>{" "}
-          a las notificaciones.
+          </span>
+          .
         </p>
 
         <div className="flex items-center gap-2">

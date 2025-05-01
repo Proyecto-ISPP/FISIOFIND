@@ -1,0 +1,3 @@
+Mover el test de locust que se quiere probar al nombre locust.py y correr locust. Se recomienda quitar el internet para evitar que se manden correos por ejemplo.
+
+Es importante quitar el wifi para que la app no mande correos.

@@ -30,6 +30,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
 import { getApiBaseUrl } from '@/utils/api';
 
+import { useRouter } from 'next/navigation';
+
 const Room = ({ roomCode }) => {
   const [userRole, setUserRole] = useState(null);
   const [token, setToken] = useState(null);
@@ -88,6 +90,7 @@ const Room = ({ roomCode }) => {
     sendWebSocketMessage: webSocket.sendWebSocketMessage,
     addChatMessage: chat.addChatMessage,
   });
+  const router = useRouter();
 
   // Cargar token y rol desde backend
   useEffect(() => {
@@ -125,52 +128,42 @@ const Room = ({ roomCode }) => {
   useEffect(() => {
     const validateAccess = async () => {
       try {
-        const response = await axios.get(
-          `${getApiBaseUrl()}/api/videocall/join-room/${roomCode}/`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        console.log('✅ Acceso validado con backend:', response.data);
+        const response = await axios.get(`${getApiBaseUrl()}/api/videocall/join-room/${roomCode}/`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        console.log("✅ Acceso validado con backend:", response.data);
       } catch (error) {
-        console.log(
-          ' Acceso denegado por backend:',
-          error.response?.data || error.message
-        );
-        alert('No tienes permiso para acceder a esta sala.');
-        window.location.href = '/videocalls';
+        console.log(" Acceso denegado por backend:", error.response?.data || error.message);
+        alert("No tienes permiso para acceder a esta sala.");
+        router.push('/videocalls');
         return;
       }
-
+  
       try {
         console.log(`Inicializando sala ${roomCode} como ${userRole}`);
         await mediaControls.initLocalMedia();
-        chat.addChatMessage(
-          'Sistema',
-          'Cámara y micrófono inicializados correctamente'
-        );
+        chat.addChatMessage('Sistema', 'Cámara y micrófono inicializados correctamente');
         webSocket.connectWebSocket();
       } catch (err) {
+        //console.error('Error durante la inicialización:', err);
+        //webRTC.setErrorMessage(`Error de inicialización: ${err.message}`);
         if (err.name === 'NotAllowedError') {
-          webRTC.setErrorMessage(
-            'Permiso denegado para cámara o micrófono. Habilita los permisos en tu navegador.'
-          );
+          webRTC.setErrorMessage('Permiso denegado para cámara o micrófono. Habilita los permisos en tu navegador.');
         } else if (err.name === 'NotFoundError') {
-          webRTC.setErrorMessage(
-            'No se encontró cámara o micrófono. Verifica la conexión de tus dispositivos.'
-          );
+          console.log("Aqui estoy")
+          webRTC.setErrorMessage('No se encontró cámara o micrófono. Verifica la conexión de tus dispositivos.');
         } else {
           webRTC.setErrorMessage(`Error: ${err.message}`);
         }
       }
     };
-
+  
     if (!loading && userRole && token) {
       validateAccess();
     }
-
+  
     return () => {
       webRTC.closeConnection();
       webSocket.closeWebSocket();
@@ -305,7 +298,7 @@ const Room = ({ roomCode }) => {
             🔒 Necesitas iniciar sesión para acceder a las videollamadas.
           </p>
           <button
-            onClick={() => (window.location.href = '/login')}
+            onClick={() => (router.push('/login'))}
             className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
           >
             Iniciar Sesión
@@ -329,7 +322,7 @@ const Room = ({ roomCode }) => {
         userRole={userRole}
         onConfirm={roomManagement.confirmDeleteRoom}
         onCancel={roomManagement.cancelDelete}
-        onClose={() => (window.location.href = '/videocalls/')}
+        onClose={() => (router.push('/videocalls'))}
       />
 
       <VideoGrid

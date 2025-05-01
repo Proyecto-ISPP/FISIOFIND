@@ -67,13 +67,43 @@ const FormField = ({
       >
         {label} {required && <span className="text-red-500">*</span>}
         {info && (
-          <span
-            title={info}
-            className="ml-1 mt-0 text-gray-400 hover:text-gray-600 cursor-pointer"
-            style={{ display: 'inline-block', verticalAlign: 'middle' }}
-          >
-            <Info size={16} />
-          </span>
+          <div className="relative inline-block group">
+            <div className="cursor-help inline-flex align-middle ml-1">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-4 h-4"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="#1C274C"
+                  strokeWidth="1.5"
+                />
+                <path
+                  d="M12 17V11"
+                  stroke="#1C274C"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+                <circle
+                  cx="1"
+                  cy="1"
+                  r="1"
+                  transform="matrix(1 0 0 -1 11 9)"
+                  fill="#1C274C"
+                />
+              </svg>
+            </div>
+            <div className="absolute bottom-full left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-[100] mb-2">
+              <div className="bg-gray-700 text-white text-xs rounded py-2 px-3 w-60 shadow-lg">
+                {info}
+              </div>
+              <div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-gray-700 absolute top-full left-2 transform"></div>
+            </div>
+          </div>
         )}
       </label>
 
@@ -370,55 +400,60 @@ const PatientRegistrationForm = () => {
           onClose={() => setAlert({ ...alert, show: false })}
         />
       )}
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white dark:from-neutral-900 dark:to-black py-8">
-      <div className="max-w-5xl mx-auto px-4">
-        <div className="text-center mb-8">
-          <Image
-            src="/static/fisio_find_logo.webp"
-            alt="Fisio Find Logo"
-            width={120}
-            height={120}
-            className="mx-auto mb-4"
-          />
-          <h1 className="text-3xl font-bold text-[#1E5ACD]">
-            Registro de Paciente
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">
-            Completa el formulario para encontrar fisioterapeutas cerca de ti
-          </p>
-        </div>
-        <div className="bg-white dark:bg-black rounded-xl shadow-xl overflow-hidden">
-          {/* Progress Steps */}
-          <div className="px-6 pt-6">
-            <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center w-full">
-                <div
-                  className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 1
-                      ? "bg-[#1E5ACD] text-white"
-                      : "bg-gray-200 text-gray-600"
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white dark:from-neutral-900 dark:to-black py-8">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="text-center mb-8">
+            <Image
+              src="/static/fisio_find_logo.webp"
+              alt="Fisio Find Logo"
+              width={120}
+              height={120}
+              className="mx-auto mb-4"
+            />
+            <h1 className="text-3xl font-bold text-[#1E5ACD]">
+              Registro de Paciente
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-2">
+              Completa el formulario para encontrar fisioterapeutas cerca de ti
+            </p>
+          </div>
+          <div className="bg-white dark:bg-black rounded-xl shadow-xl overflow-hidden">
+            {/* Progress Steps */}
+            <div className="px-6 pt-6">
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center w-full">
+                  <div
+                    className={`flex items-center justify-center w-10 h-10 rounded-full ${
+                      currentStep >= 1
+                        ? "bg-[#1E5ACD] text-white"
+                        : "bg-gray-200 text-gray-600"
                     }`}
-                >
-                  1
-                </div>
-                <div
-                  className={`h-1 flex-1 mx-2 ${currentStep >= 2 ? "bg-[#1E5ACD]" : "bg-gray-200"
+                  >
+                    1
+                  </div>
+                  <div
+                    className={`h-1 flex-1 mx-2 ${
+                      currentStep >= 2 ? "bg-[#1E5ACD]" : "bg-gray-200"
                     }`}
-                ></div>
-                <div
-                  className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 2
-                      ? "bg-[#1E5ACD] text-white"
-                      : "bg-gray-200 text-gray-600"
+                  ></div>
+                  <div
+                    className={`flex items-center justify-center w-10 h-10 rounded-full ${
+                      currentStep >= 2
+                        ? "bg-[#1E5ACD] text-white"
+                        : "bg-gray-200 text-gray-600"
                     }`}
-                >
-                  2
+                  >
+                    2
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
             <form onSubmit={handleSubmit} className="p-6">
               {currentStep === 1 && (
                 <div className="space-y-4">
-                  <h2 className="text-xl font-semibold mb-4">Información de Cuenta</h2>
+                  <h2 className="text-xl font-semibold mb-4">
+                    Información de Cuenta
+                  </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="md:col-span-2">
                       <FormField
@@ -458,8 +493,19 @@ const PatientRegistrationForm = () => {
                       </div>
                       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex flex-col justify-center h-full">
                         <h3 className="text-sm font-medium text-blue-800 mb-2 flex items-center">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5 mr-2"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
                           </svg>
                           Requisitos de contraseña
                         </h3>
@@ -474,70 +520,70 @@ const PatientRegistrationForm = () => {
                   </div>
                 </div>
               )}
-            {currentStep === 2 && (
-              <div className="space-y-4">
-                <h2 className="text-xl font-semibold mb-4">
-                  Información Personal
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <FormField
-                    name="first_name"
-                    label="Nombre"
-                    value={formData.first_name}
-                    onChange={handleChange}
-                    error={errors.first_name}
-                  />
-                  <FormField
-                    name="last_name"
-                    label="Apellidos"
-                    value={formData.last_name}
-                    onChange={handleChange}
-                    error={errors.last_name}
-                  />
-                  <FormField
-                    name="dni"
-                    label="DNI"
-                    value={formData.dni}
-                    onChange={handleChange}
-                    error={errors.dni}
-                    info="Necesitamos tu DNI para verificar tu identidad." 
-                  />
-                  <FormField
-                    name="phone_number"
-                    label="Número de teléfono"
-                    type="tel"
-                    required={false}
-                    value={formData.phone_number || ""}
-                    onChange={handleChange}
-                    error={errors.phone_number}
-                  />
-                  <FormField
-                    name="birth_date"
-                    label="Fecha de nacimiento"
-                    type="date"
-                    value={formData.birth_date}
-                    onChange={handleChange}
-                    error={errors.birth_date}
-                  />
-                  <FormField
-                    name="gender"
-                    label="Género"
-                    type="select"
-                    options={GENDER_OPTIONS}
-                    value={formData.gender}
-                    onChange={handleChange}
-                    error={errors.gender}
-                  />
-                  <FormField
-                    name="postal_code"
-                    label="Código Postal"
-                    value={formData.postal_code}
-                    onChange={handleChange}
-                    error={errors.postal_code}
-                  />
+              {currentStep === 2 && (
+                <div className="space-y-4">
+                  <h2 className="text-xl font-semibold mb-4">
+                    Información Personal
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FormField
+                      name="first_name"
+                      label="Nombre"
+                      value={formData.first_name}
+                      onChange={handleChange}
+                      error={errors.first_name}
+                    />
+                    <FormField
+                      name="last_name"
+                      label="Apellidos"
+                      value={formData.last_name}
+                      onChange={handleChange}
+                      error={errors.last_name}
+                    />
+                    <FormField
+                      name="dni"
+                      label="DNI"
+                      value={formData.dni}
+                      onChange={handleChange}
+                      error={errors.dni}
+                      info="Necesitamos su DNI para verificar su identidad y garantizar la seguridad de su cuenta. Esta información se maneja de forma segura según nuestra política de privacidad."
+                    />
+                    <FormField
+                      name="phone_number"
+                      label="Número de teléfono"
+                      type="tel"
+                      required={false}
+                      value={formData.phone_number || ""}
+                      onChange={handleChange}
+                      error={errors.phone_number}
+                    />
+                    <FormField
+                      name="birth_date"
+                      label="Fecha de nacimiento"
+                      type="date"
+                      value={formData.birth_date}
+                      onChange={handleChange}
+                      error={errors.birth_date}
+                    />
+                    <FormField
+                      name="gender"
+                      label="Género"
+                      type="select"
+                      options={GENDER_OPTIONS}
+                      value={formData.gender}
+                      onChange={handleChange}
+                      error={errors.gender}
+                    />
+                    <FormField
+                      name="postal_code"
+                      label="Código Postal"
+                      value={formData.postal_code}
+                      onChange={handleChange}
+                      error={errors.postal_code}
+                    />
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
               <div className="flex justify-between mt-8">
                 {currentStep > 1 && (
                   <button

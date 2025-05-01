@@ -25,13 +25,13 @@ class PhysioSearchTests(APITestCase):
                 "appointments": [
                     {"status": "booked", "end_time": "2025-05-08T08:00:00+0200", "start_time": "2025-05-08T07:00:00+0200"}], 
                 "weekly_schedule": {
-                    "friday": [[{"id": "ws-1743588431925-196", "end": "11:30", "start": "06:00"}]], 
-                    "monday": [[{"id": "ws-1743588426078-297", "end": "11:30", "start": "06:00"}]], 
-                    "sunday": [[{"id": "ws-1743588437221-514", "end": "11:30", "start": "06:00"}]], 
-                    "tuesday": [[{"id": "ws-1743588427821-114", "end": "11:30", "start": "06:00"}]], 
-                    "saturday": [[{"id": "ws-1743588435485-212", "end": "11:30", "start": "06:00"}]], 
-                    "thursday": [[{"id": "ws-1743588430590-854", "end": "11:30", "start": "06:00"}]], 
-                    "wednesday": [[{"id": "ws-1743588429230-980", "end": "11:30", "start": "06:00"}]]}},  # puedes dejar el tuyo completo aquí
+                    "friday": [{"id": "ws-1743588431925-196", "end": "11:30", "start": "06:00"}], 
+                    "monday": [{"id": "ws-1743588426078-297", "end": "11:30", "start": "06:00"}], 
+                    "sunday": [{"id": "ws-1743588437221-514", "end": "11:30", "start": "06:00"}], 
+                    "tuesday": [{"id": "ws-1743588427821-114", "end": "11:30", "start": "06:00"}], 
+                    "saturday": [{"id": "ws-1743588435485-212", "end": "11:30", "start": "06:00"}], 
+                    "thursday": [{"id": "ws-1743588430590-854", "end": "11:30", "start": "06:00"}], 
+                    "wednesday": [{"id": "ws-1743588429230-980", "end": "11:30", "start": "06:00"}]}},  # puedes dejar el tuyo completo aquí
             services={"1": {"price": 30, "title": "Primera consulta", "duration": 60}},
             gender='F',
             autonomic_community='MADRID'

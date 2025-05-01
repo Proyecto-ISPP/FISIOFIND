@@ -154,7 +154,7 @@ def validar_colegiacion(nombre: str, numero: str, comunidad: str) -> bool:
             case "andalucia":
                 url = "https://colfisio.org/registro-censo-fisioterapeutas"
                 try:
-                    soup = scraper.obtener_colegiado(nombre, url, '//*[@id="input-458"]')
+                    soup = scraper.obtener_colegiado(nombre, url, '//*[@id="input-462"]')
                     resultado = soup.find("div", class_="title-of-the-card")
                     if resultado:
                         datos = quitar_tildes(resultado.text.replace("\n", "").strip())
