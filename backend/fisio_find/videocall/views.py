@@ -126,4 +126,36 @@ class TestRoomCreateView(APIView):
             is_test_room=True
         )
         return Response(RoomSerializer(room).data, status=status.HTTP_201_CREATED)
+    
+
+class RoomDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, code):
+        print(code)
+        try:
+            room = Room.objects.get(code=code)
+        except Room.DoesNotExist:
+            return Response({'detail': 'Sala no encontrada'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Validar acceso
+        user = request.user
+        if hasattr(user, 'physio') and room.physiotherapist != user.physio:
+            return Response({'detail': 'No autorizado'}, status=status.HTTP_403_FORBIDDEN)
+        if hasattr(user, 'patient') and room.patient != user.patient:
+            return Response({'detail': 'No autorizado'}, status=status.HTTP_403_FORBIDDEN)
+
+        return Response({
+            'room_code': room.code,
+            'physiotherapist': {
+                'id': room.physiotherapist.id,
+                'name': room.physiotherapist.user.get_full_name()
+            } if room.physiotherapist else None,
+            'patient': {
+                'id': room.patient.id,
+                'name': room.patient.user.get_full_name()
+            } if room.patient else None,
+            'is_test_room': room.is_test_room
+        }, status=status.HTTP_200_OK)
+
 
