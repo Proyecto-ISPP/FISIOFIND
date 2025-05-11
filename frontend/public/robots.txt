@@ -1,0 +1,15 @@
+User-agent: *
+
+Disallow: /account/
+Disallow: /confirm-alternative/
+Disallow: /confirm-appointment/
+Disallow: /permissions-error/
+Disallow: /patient-management/
+Disallow: /physio-management/
+Disallow: /questionnaires/
+Disallow: /unsubscribe/
+Disallow: /videocalls/
+Disallow: /modelo/
+Disallow: /my-appointments/
+
+Allow: /
