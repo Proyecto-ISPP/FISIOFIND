@@ -1,0 +1,158 @@
+AppointmentCalendar.css
+.my-calendar .fc .fc-toolbar {
+  background-color: #F9FAFB;
+  border-bottom: 1px solid #E5E7EB;
+  padding: 12px;
+  border-radius: 8px 8px 0 0;
+}
+
+.my-calendar .fc .fc-toolbar-title {
+  font-size: 1.25rem;
+  color: #111827;
+  font-weight: 600;
+}
+
+/* Buttons */
+.my-calendar .fc .fc-button {
+  background-color: #FFFFFF;
+  border: 1px solid #D1D5DB;
+  border-radius: 9999px;
+  color: #374151;
+  padding: 0.5rem 1rem;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.my-calendar .fc .fc-button:hover {
+  background-color: #05AC9C;
+  border-color: #05AC9C;
+  color: white;
+  transform: scale(1.05);
+}
+
+.my-calendar .fc .fc-button:active,
+.my-calendar .fc .fc-button-active {
+  background-color: #DBEAFE;
+  border-color: #DBEAFE;
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.my-calendar .fc .fc-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px #B2E8D6;
+}
+
+/* Day grid */
+.my-calendar .fc .fc-daygrid-day {
+  border-color: #E5E7EB;
+  background-color: #FFFFFF;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.my-calendar .fc .fc-daygrid-day:hover {
+  background-color: #F3F4F6;
+}
+
+.my-calendar .fc .fc-daygrid-day-frame {
+  padding: 4px;
+  min-height: 50px;
+}
+
+/* Day numbers */
+.my-calendar .fc .fc-daygrid-day-top {
+  justify-content: center;
+  padding-top: 4px;
+}
+
+.my-calendar .fc .fc-daygrid-day-number {
+  font-size: 0.875rem;
+  color: #4B5563;
+  text-decoration: none;
+}
+
+/* Today highlight */
+.my-calendar .fc .fc-day-today {
+  background-color: #B2E8D6 !important;
+  box-shadow: inset 0 0 0 2px #05AC9C;
+  position: relative;
+  z-index: 1;
+}
+
+.my-calendar .fc .fc-day-today .fc-daygrid-day-number {
+  color: #05AC9C;
+  font-weight: 700;
+  background-color: #DBF6E9;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+/* Other month days */
+.my-calendar .fc .fc-day-other {
+  background-color: #F9FAFB;
+  opacity: 0.5;
+}
+
+.my-calendar .fc .fc-day-other .fc-daygrid-day-number {
+  color: #9CA3AF;
+  font-weight: 300;
+}
+
+/* Header cells */
+.my-calendar .fc .fc-col-header-cell {
+  background-color: #F3F4F6;
+  padding: 10px 0;
+}
+
+.my-calendar .fc .fc-col-header-cell-cushion {
+  color: #6B7280;
+  font-weight: 600;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+/* Calendar card container */
+.my-calendar {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+/* Remove "+n more" grouping */
+.my-calendar .fc .fc-more-link {
+  display: none;
+}
+
+/* Background events */
+.my-calendar .fc .fc-bg-event {
+  opacity: 1;
+  transition: background-color 0.3s ease;
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .my-calendar .fc .fc-toolbar {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .my-calendar .fc .fc-toolbar-title {
+    font-size: 1rem;
+    margin-bottom: 8px;
+  }
+
+  .my-calendar .fc .fc-daygrid-day-frame {
+    min-height: 40px;
+  }
+}
