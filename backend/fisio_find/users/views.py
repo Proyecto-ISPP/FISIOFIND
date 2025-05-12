@@ -735,5 +735,4 @@ def get_patient_history(request, patient_id):
 
         return Response({"appointments": appointments_data}, status=status.HTTP_200_OK)
     except Exception as e:
-        logging.error("An error occurred while fetching patient history.", exc_info=True)
-        return Response({"error": "An internal error occurred."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"error": "An internal error occurred."}, status=status.HTTP_400_BAD_REQUEST)
