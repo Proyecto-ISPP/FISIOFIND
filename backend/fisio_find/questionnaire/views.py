@@ -166,8 +166,6 @@ def store_responses(request, questionnaire_id):
     # Obtener los datos enviados desde el frontend
     responses = request.data.get('responses')
 
-    print("HOLA ESTOY AQUÍ")
-
     if not responses:
         return Response({'detail': 'Faltan respuestas'}, status=400)
 
