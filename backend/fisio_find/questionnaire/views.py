@@ -286,7 +286,7 @@ def add_notes2questionnaire_responses(request, questionnaire_id):
 
     except QuestionnaireResponses.DoesNotExist:
         return Response(
-            {'detail': 'No se ha encontrado la respuesta del cuestionario'},
+            {'detail': 'No se ha encontrado la respuesta al cuestionario'},
             status=status.HTTP_404_NOT_FOUND
         )
 

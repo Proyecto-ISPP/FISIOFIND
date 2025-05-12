@@ -743,3 +743,233 @@ class CreateQuestionnaireResponseTests(APITestCase):
         response = self.client.post(f"/api/questionnaires/{self.questionnaire2.id}/responses/create/", data, format="json")
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data["error"], "No se puede responder un cuestionario para una cita no activa.")
+
+class AddNotes2QuestionnaireResponseTest(APITestCase):
+    def setUp(self):
+        self.tz = pytz.timezone("Europe/Madrid")
+        now = datetime.now(self.tz)
+        self.future_date = now + timedelta(days=7)
+        self.spain_tz = pytz.timezone("Europe/Madrid")
+        now_spain = datetime.now(self.spain_tz)
+        self.future_date = now_spain + timedelta(weeks=1)
+        self.future_date = self.future_date.astimezone(self.spain_tz)
+        future_date_str = self.future_date.strftime("%Y-%m-%d")
+
+        self.start_time = f"{future_date_str}T10:00:00{self.future_date.strftime('%z')}"
+        self.end_time = f"{future_date_str}T11:00:00{self.future_date.strftime('%z')}"
+
+        # Usuario y fisioterapeuta
+        self.physio_user = AppUser.objects.create_user(
+            username="fisio_test",
+            email="fisio@test.com",
+            password="Usuar1o_1",
+            dni="11111111A",
+            phone_number="600000000",
+            postal_code="41000",
+            account_status="ACTIVE",
+            first_name="Fisio",
+            last_name="Test"
+        )
+        self.physio = Physiotherapist.objects.create(
+            user=self.physio_user,
+            birth_date="1985-01-01",
+            collegiate_number="FISIO123",
+            autonomic_community="ANDALUCIA",
+            gender="M",
+            schedule={},
+            services={
+                "1": {
+                    "id": 1,
+                    "title": "Sesión estándar",
+                    "tipo": "SESION",
+                    "price": 40,
+                    "description": "Sesión de fisioterapia de 1 hora",
+                    "duration": 60,
+                    "custom_questionnaire": None
+                }
+            }
+        )
+
+        # Usuario y paciente
+        self.patient_user = AppUser.objects.create_user(
+            username="paciente_test",
+            email="paciente@test.com",
+            password="Usuar1o_1",
+            dni="22222222B",
+            phone_number="600000001",
+            postal_code="41001",
+            account_status="ACTIVE",
+            first_name="Paciente",
+            last_name="Test"
+        )
+        self.patient = Patient.objects.create(
+            user=self.patient_user,
+            gender="F",
+            birth_date="1990-01-01"
+        )
+
+        # Cita
+        self.appointment = Appointment.objects.create(
+            start_time=self.start_time,
+            end_time=self.end_time,
+            is_online=False,
+            service=self.physio.services["1"],
+            patient=self.patient,
+            physiotherapist=self.physio,
+            status='confirmed',
+            alternatives='',
+        )
+
+        self.room = Room.objects.create(
+            appointment=self.appointment,
+            code="ROOM123",
+            physiotherapist = self.physio,
+            patient = self.patient,
+            is_test_room=False,
+            created_at=datetime.now(pytz.utc),
+        )
+
+        self.questionnaire = Questionnaire.objects.create(
+            title="Cuestionario test",
+            physiotherapist=self.physio,
+            json_schema={"type": "object", "properties": {"q1": {"type": "string"}}},
+            ui_schema={"type": "Control", "label": "¿Cómo estás?", "scope": "#/properties/q1"},
+            questions=[{"type": "string", "label": "¿Cómo estás?", "options": []}]
+        )
+
+        self.response = QuestionnaireResponses.objects.create(
+            questionnaire=self.questionnaire,
+            appointment=self.appointment,
+            responses={"q1": {"question": "¿Cómo estás?", "response": "Bien"}},
+            notes=""
+        )
+
+        self.url = f"/api/questionnaires/{self.questionnaire.id}/responses/add-notes/"
+        self.valid_payload = {
+            "room_code": self.room.code,
+            "notes": "Paciente con buena actitud"
+        }
+
+    def test_physio_can_add_notes_successfully(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'fisio_test',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        response = self.client.put(self.url, self.valid_payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['notes'], self.valid_payload['notes'])
+
+    def test_cannot_add_notes_if_not_authenticated(self):
+        response = self.client.put(self.url, self.valid_payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_other_physio_cannot_add_notes(self):
+        # Usuario y fisioterapeuta
+        other_physio_user = AppUser.objects.create_user(
+            username="other_fisio_test",
+            email="fisio@test.com",
+            password="Usuar1o_1",
+            dni="11111111A",
+            phone_number="600000000",
+            postal_code="41000",
+            account_status="ACTIVE",
+            first_name="Fisio",
+            last_name="Test"
+        )
+        other_physio = Physiotherapist.objects.create(
+            user=other_physio_user,
+            birth_date="1985-01-01",
+            collegiate_number="FISIO123",
+            autonomic_community="ANDALUCIA",
+            gender="M",
+            schedule={},
+            services={
+                "1": {
+                    "id": 1,
+                    "title": "Sesión estándar",
+                    "tipo": "SESION",
+                    "price": 40,
+                    "description": "Sesión de fisioterapia de 1 hora",
+                    "duration": 60,
+                    "custom_questionnaire": None
+                }
+            }
+        )
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'other_fisio_test',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        response = self.client.put(self.url, self.valid_payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_note_too_long_returns_400(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'fisio_test',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        long_note = "a" * 256
+        response = self.client.put(self.url, {**self.valid_payload, "notes": long_note}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("detail", response.data)
+        self.assertEqual(response.data["detail"], "Las notas no pueden exceder los 255 caracteres")
+
+    def test_questionnaire_response_not_found(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'fisio_test',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        # Cita
+        self.appointment = Appointment.objects.create(
+            start_time=self.start_time,
+            end_time=self.end_time,
+            is_online=False,
+            service=self.physio.services["1"],
+            patient=self.patient,
+            physiotherapist=self.physio,
+            status='confirmed',
+            alternatives='',
+        )
+
+        self.room = Room.objects.create(
+            appointment=self.appointment,
+            code="ROOM321",
+            physiotherapist = self.physio,
+            patient = self.patient,
+            is_test_room=False,
+            created_at=datetime.now(pytz.utc),
+        )
+
+        response = self.client.put(
+            self.url,
+            {
+                "room_code": "ROOM321",
+                "notes": "Notas de prueba"
+            },
+            format='json'
+        )
+        print(response.data)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.data["detail"], "No se ha encontrado la respuesta al cuestionario.")
+
+    def test_add_notes_as_patient(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'paciente_test',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        response = self.client.put(self.url, self.valid_payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
