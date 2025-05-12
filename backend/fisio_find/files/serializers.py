@@ -6,6 +6,8 @@ from rest_framework import serializers
 from .models import PatientFile, Video
 import logging
 from mimetypes import guess_type
+from django.core.exceptions import ValidationError
+
 
 class PatientFileSerializer(serializers.ModelSerializer):
     files = serializers.ListField(
@@ -21,6 +23,18 @@ class PatientFileSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             "file_key": {"read_only": True},  # La clave del archivo es solo de lectura
         }
+
+    def validate_title(self, value):
+        """Valida que el título no esté vacío y tenga un tamaño máximo."""
+        if len(value) > 100:
+            raise serializers.ValidationError("El título no puede exceder los 100 caracteres.")
+        return value
+
+    def validate_description(self, value):
+        """Valida que la descripción no exceda el tamaño máximo."""
+        if len(value) > 255:
+            raise serializers.ValidationError("La descripción no puede exceder los 255 caracteres.")
+        return value
 
     def get_file_types(self, obj):
         """Devuelve los tipos MIME de cada archivo basado en la extensión."""
@@ -44,6 +58,16 @@ class PatientFileSerializer(serializers.ModelSerializer):
             if not file.name.lower().endswith(allowed_extensions):
                 raise serializers.ValidationError(f"Solo se permiten archivos con extensiones {', '.join(allowed_extensions)}.")
         return files
+    
+    def validate_upload_limit(self, treatment):
+        physio = treatment.physiotherapist
+        plan = physio.plan
+        limit = plan.video_limit
+        uploaded_videos = Video.objects.filter(treatment__physiotherapist=physio).count()
+        uploaded_files = PatientFile.objects.filter(treatment__physiotherapist=physio).count()
+        total_uploaded = uploaded_videos + uploaded_files
+        if total_uploaded >= limit:
+            raise ValidationError(f"Límite de archivos alcanzado para el plan '{plan.name}' ({limit}).")
 
     def create(self, validated_data):
         request = self.context["request"]
@@ -140,13 +164,35 @@ class VideoSerializer(serializers.ModelSerializer):
             "file_key": {"read_only": True},  # El usuario no debe enviar esto
         }
 
+    def validate_title(self, value):
+        """Valida que el título no esté vacío y tenga un tamaño máximo."""
+        if len(value) > 100:
+            raise serializers.ValidationError("El título no puede exceder los 100 caracteres.")
+        return value
+
+    def validate_description(self, value):
+        """Valida que la descripción no exceda el tamaño máximo."""
+        if len(value) > 255:
+            raise serializers.ValidationError("La descripción no puede exceder los 255 caracteres.")
+        return value
+
     def validate_file(self, file):
         """Valida que el archivo sea un video permitido."""
         allowed_extensions = (".mp4", ".avi", ".mov", ".mkv", ".webm")
         if not file.name.lower().endswith(allowed_extensions):
             raise serializers.ValidationError(f"Solo se permiten archivos con extensiones {', '.join(allowed_extensions)}.")
         return file
-
+    
+    def validate_upload_limit(self, treatment):
+        physio = treatment.physiotherapist
+        plan = physio.plan
+        limit = plan.video_limit
+        uploaded_videos = Video.objects.filter(treatment__physiotherapist=physio).count()
+        uploaded_files = PatientFile.objects.filter(treatment__physiotherapist=physio).count()
+        total_uploaded = uploaded_videos + uploaded_files
+        if total_uploaded >= limit:
+            raise ValidationError(f"Límite de archivos alcanzado para el plan '{plan.name}' ({limit}).")
+ 
     def create(self, validated_data):
         """Sube el archivo a DigitalOcean Spaces y guarda el Video en la BD."""
         request = self.context["request"]
@@ -159,6 +205,7 @@ class VideoSerializer(serializers.ModelSerializer):
         except Treatment.DoesNotExist:
             raise serializers.ValidationError("El tratamiento especificado no existe.")
 
+        self.validate_upload_limit(treatment_instance)
         # Generar un nombre único para evitar sobrescribir archivos
         file_extension = file.name.split(".")[-1]
         file_key = f"videos/{treatment_physio}/{uuid.uuid4()}.{file_extension}"
