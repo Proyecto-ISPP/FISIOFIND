@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.shortcuts import get_object_or_404
 from .models import Questionnaire, QuestionnaireResponses
 from videocall.models import Room
 from .serializers import QuestionnaireSerializer, QuestionnaireDetailsView, QuestionnaireResponseSerializer
@@ -182,19 +183,69 @@ def store_responses(request, questionnaire_id):
         return Response({'detail': 'Cuestionario no encontrado'}, status=404)
     
 @api_view(['POST'])
-@permission_classes([IsAuthenticated, IsPatient])  # Verificamos que el usuario esté autenticado y sea paciente
+@permission_classes([IsAuthenticated, IsPatient])
 def create_questionnaire_response(request, questionnaire_id):
     """
-    Endpoint para almacenar las respuestas de un paciente a un cuestionario específico.
+    Endpoint para almacenar las respuestas de un paciente a un cuestionario específico,
+    con validaciones de correspondencia y tipos de datos.
     """
-    # Obtener el paciente desde el token (usando request.user.patient.id)
     patient = request.user.patient
-
     data = request.data.copy()
-    appointment_id = Room.objects.get(code=data["room_code"]).appointment.id  # Obtener el ID de la cita desde el cuestionario
-    data['questionnaire'] = questionnaire_id  # Asignar el ID del cuestionario al campo correspondiente
-    data['appointment'] = appointment_id  # Asignar el ID de la cita al campo correspondiente
-    print(data)
+
+    # Obtener la cita y el cuestionario
+    try:
+        room = Room.objects.get(code=data["room_code"])
+        appointment = room.appointment
+    except Room.DoesNotExist:
+        return Response({"error": "Código de sala no válido."}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Validar que el cuestionario pertenece al fisioterapeuta de la cita
+    questionnaire = get_object_or_404(Questionnaire, id=questionnaire_id)
+    if questionnaire.physiotherapist != appointment.physiotherapist:
+        return Response({"error": "Este cuestionario no está asignado al fisioterapeuta de la cita."},
+                        status=status.HTTP_400_BAD_REQUEST)
+    
+    # Validar que el paciente es el mismo que el de la cita
+    if appointment.patient != patient:
+        return Response({"error": "Este cuestionario no está asignado al paciente de la cita."},
+                        status=status.HTTP_400_BAD_REQUEST)
+    
+    # Validar que la cita está activa
+    if appointment.status != "confirmed":
+        return Response({"error": "No se puede responder un cuestionario para una cita no activa."}, status=400)
+
+    # Obtener el esquema de tipos
+    expected_schema = questionnaire.json_schema.get("properties", {})
+    responses = data.get("responses", {})
+
+    # Validación de correspondencia y tipos
+    for key, expected in expected_schema.items():
+        if key not in responses:
+            return Response({"error": f"Falta la respuesta a la pregunta '{key}'."},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        actual = responses[key]
+        response_value = actual.get("response", None)
+
+        if expected["type"] == "string":
+            if not isinstance(response_value, str):
+                return Response({"error": f"La respuesta a '{key}' debe ser una cadena de texto."},
+                                status=status.HTTP_400_BAD_REQUEST)
+        elif expected["type"] == "number":
+            if not isinstance(response_value, (int, float)):
+                return Response({"error": f"La respuesta a '{key}' debe ser un número."},
+                                status=status.HTTP_400_BAD_REQUEST)
+        # Aquí puedes añadir más tipos según el esquema: boolean, array, etc.
+
+    # Validar que no haya claves de más
+    extra_keys = set(responses.keys()) - set(expected_schema.keys())
+    if extra_keys:
+        return Response({"error": f"Respuestas inesperadas: {', '.join(extra_keys)}."},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    # Continuar con el guardado
+    data['questionnaire'] = questionnaire_id
+    data['appointment'] = appointment.id
     serializer = QuestionnaireResponseSerializer(data=data)
     if serializer.is_valid():
         questionnaire_response = serializer.save()

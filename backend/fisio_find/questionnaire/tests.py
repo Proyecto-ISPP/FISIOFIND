@@ -1,8 +1,12 @@
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APIRequestFactory, APIClient
 from rest_framework import status
 from django.urls import reverse
 from users.models import AppUser, Physiotherapist, Pricing, Patient
-from questionnaire.models import Questionnaire
+from questionnaire.models import Questionnaire, QuestionnaireResponses
+from appointment.models import Appointment
+from videocall.models import Room
+from datetime import datetime, timedelta
+import pytz
 
 """
 Se prueban: 
@@ -289,3 +293,453 @@ class QuestionnaireViewTests(APITestCase):
         response = self.client.post(url, data=data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("non_field_errors", response.data)
+
+class CreateQuestionnaireResponseTests(APITestCase):
+    def setUp(self):
+        self.factory = APIRequestFactory()
+        self.client = APIClient()
+        self.spain_tz = pytz.timezone("Europe/Madrid")
+        now_spain = datetime.now(self.spain_tz)
+        self.future_date = now_spain + timedelta(weeks=1)
+        self.future_date = self.future_date.astimezone(self.spain_tz)
+        future_date_str = self.future_date.strftime("%Y-%m-%d")
+
+        self.start_time = f"{future_date_str}T10:00:00{self.future_date.strftime('%z')}"
+        self.end_time = f"{future_date_str}T11:00:00{self.future_date.strftime('%z')}"
+
+        # Usuario y fisioterapeuta
+        self.physio_user = AppUser.objects.create_user(
+            username="fisio_test",
+            email="fisio@test.com",
+            password="Usuar1o_1",
+            dni="11111111A",
+            phone_number="600000000",
+            postal_code="41000",
+            account_status="ACTIVE",
+            first_name="Fisio",
+            last_name="Test"
+        )
+        self.physio = Physiotherapist.objects.create(
+            user=self.physio_user,
+            birth_date="1985-01-01",
+            collegiate_number="FISIO123",
+            autonomic_community="ANDALUCIA",
+            gender="M",
+            schedule={},
+            services={
+                "1": {
+                    "id": 1,
+                    "title": "Sesión estándar",
+                    "tipo": "SESION",
+                    "price": 40,
+                    "description": "Sesión de fisioterapia de 1 hora",
+                    "duration": 60,
+                    "custom_questionnaire": None
+                }
+            }
+        )
+
+        # Cuestionario realista para pruebas
+        self.questionnaire1 = Questionnaire.objects.create(
+            title="Cuestionario básico",
+            physiotherapist=self.physio,
+            json_schema={
+                "type": "object",
+                "properties": {
+                    "q1": {"type": "string"},
+                    "q2": {"type": "string"},
+                    "q3": {"type": "number"}
+                }
+            },
+            ui_schema={
+                "type": "Group",
+                "label": "Cuestionario básico",
+                "elements": [
+                    {"type": "Control", "label": "¿Dónde sientes molestias?", "scope": "#/properties/q1"},
+                    {"type": "Control", "label": "¿Desde cuándo?", "scope": "#/properties/q2"},
+                    {"type": "Control", "label": "Nivel de dolor (1-10)", "scope": "#/properties/q3"}
+                ]
+            },
+            questions=[
+                {"type": "string", "label": "¿Dónde sientes molestias?", "options": []},
+                {"type": "string", "label": "¿Desde cuándo?", "options": []},
+                {"type": "number", "label": "Nivel de dolor (1-10)", "options": []}
+            ]
+        )
+
+        # Cuestionario realista para pruebas
+        self.questionnaire2 = Questionnaire.objects.create(
+            title="Cuestionario básico",
+            physiotherapist=self.physio,
+            json_schema={
+                "type": "object",
+                "properties": {
+                    "q1": {"type": "string"},
+                    "q2": {"type": "string"},
+                    "q3": {"type": "number"}
+                }
+            },
+            ui_schema={
+                "type": "Group",
+                "label": "Cuestionario básico",
+                "elements": [
+                    {"type": "Control", "label": "¿Dónde sientes molestias?", "scope": "#/properties/q1"},
+                    {"type": "Control", "label": "¿Desde cuándo?", "scope": "#/properties/q2"},
+                    {"type": "Control", "label": "Nivel de dolor (1-10)", "scope": "#/properties/q3"}
+                ]
+            },
+            questions=[
+                {"type": "string", "label": "¿Dónde sientes molestias?", "options": []},
+                {"type": "string", "label": "¿Desde cuándo?", "options": []},
+                {"type": "number", "label": "Nivel de dolor (1-10)", "options": []}
+            ]
+        )
+
+        # Usuario y paciente
+        self.patient_user = AppUser.objects.create_user(
+            username="paciente_test",
+            email="paciente@test.com",
+            password="Usuar1o_1",
+            dni="22222222B",
+            phone_number="600000001",
+            postal_code="41001",
+            account_status="ACTIVE",
+            first_name="Paciente",
+            last_name="Test"
+        )
+        self.patient = Patient.objects.create(
+            user=self.patient_user,
+            gender="F",
+            birth_date="1990-01-01"
+        )
+
+        # Cita
+        self.appointment = Appointment.objects.create(
+            start_time=self.start_time,
+            end_time=self.end_time,
+            is_online=False,
+            service=self.physio.services["1"],
+            patient=self.patient,
+            physiotherapist=self.physio,
+            status='confirmed',
+            alternatives='',
+        )
+
+        self.room = Room.objects.create(
+            appointment=self.appointment,
+            code="ROOM123",
+            physiotherapist = self.physio,
+            patient = self.patient,
+            is_test_room=False,
+            created_at=datetime.now(pytz.utc),
+        )
+
+        # Respuestas al cuestionario
+        self.questionnaire_response = QuestionnaireResponses.objects.create(
+            responses={
+                "q1": {"question": "¿Dónde sientes molestias?", "response": "Espalda baja"},
+                "q2": {"question": "¿Desde cuándo?", "response": "Hace 2 semanas"},
+                "q3": {"question": "Nivel de dolor (1-10)", "response": 6}
+            },
+            notes="Paciente refiere dolor agudo",
+            appointment=self.appointment,
+            questionnaire=self.questionnaire1
+        )
+
+    def test_create_questionnaire_response_success(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'paciente_test',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        data = {
+            "room_code": "ROOM123",
+            "responses": {
+                "q1": {"question": "¿Dónde sientes molestias?", "response": "Cuello"},
+                "q2": {"question": "¿Desde cuándo?", "response": "3 días"},
+                "q3": {"question": "Nivel de dolor (1-10)", "response": 7}
+            },
+            "notes": ""
+        }
+
+        response = self.client.post(f"/api/questionnaires/{self.questionnaire2.id}/responses/create/", data, format="json")
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data["responses"]["q1"]["response"], "Cuello")
+
+    def test_create_questionnaire_response_missing_fields(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'paciente_test',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        data = {
+            "room_code": "ROOM123",
+            "responses": {
+                "q1": {"question": "¿Dónde sientes molestias?", "response": "Hombro"}
+                # Falta q2 y q3
+            },
+            "notes": ""
+        }
+
+        response = self.client.post(f"/api/questionnaires/{self.questionnaire2.id}/responses/create/", data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data["error"], "Falta la respuesta a la pregunta 'q2'.")
+
+    def test_create_questionnaire_response_invalid_room_code(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'paciente_test',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        data = {
+            "room_code": "BADROOMCODE",
+            "responses": {
+                "q1": {"question": "¿Dónde sientes molestias?", "response": "Brazo"},
+                "q2": {"question": "¿Desde cuándo?", "response": "1 semana"},
+                "q3": {"question": "Nivel de dolor (1-10)", "response": 4}
+            },
+            "notes": ""
+        }
+
+        response = self.client.post(f"/api/questionnaires/{self.questionnaire2.id}/responses/create/", data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data["error"], "Código de sala no válido.")
+
+    def test_create_questionnaire_response_unrelated_questionnaire(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'paciente_test',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        # Crear un cuestionario de otro fisio
+        another_physio_user = AppUser.objects.create_user(
+            username="otro_fisio", email="otro@test.com", password="Password123"
+        )
+        another_physio = Physiotherapist.objects.create(
+            user=another_physio_user,
+            birth_date="1985-01-01",
+            collegiate_number="FISIO123",
+            autonomic_community="ANDALUCIA",
+            gender="M",
+            schedule={},
+            services={
+                "1": {
+                    "id": 1,
+                    "title": "Sesión estándar",
+                    "tipo": "SESION",
+                    "price": 40,
+                    "description": "Sesión de fisioterapia de 1 hora",
+                    "duration": 60,
+                    "custom_questionnaire": None
+                }
+            }
+        )
+        unrelated_questionnaire = Questionnaire.objects.create(
+            title="Otro cuestionario",
+            physiotherapist=another_physio,
+            json_schema=self.questionnaire1.json_schema,
+            ui_schema=self.questionnaire1.ui_schema,
+            questions=self.questionnaire1.questions
+        )
+
+        data = {
+            "room_code": "ROOM123",
+            "responses": {
+                "q1": {"question": "¿Dónde sientes molestias?", "response": "Tobillo"},
+                "q2": {"question": "¿Desde cuándo?", "response": "4 días"},
+                "q3": {"question": "Nivel de dolor (1-10)", "response": 5}
+            },
+            "notes": ""
+        }
+
+        response = self.client.post(f"/api/questionnaires/{unrelated_questionnaire.id}/responses/create/", data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data["error"], "Este cuestionario no está asignado al fisioterapeuta de la cita.")
+
+    def test_create_questionnaire_response_already_exists(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'paciente_test',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        data = {
+            "room_code": "ROOM123",
+            "responses": {
+                "q1": {"question": "¿Dónde sientes molestias?", "response": "Espalda"},
+                "q2": {"question": "¿Desde cuándo?", "response": "1 mes"},
+                "q3": {"question": "Nivel de dolor (1-10)", "response":7}
+            },
+            "notes": ""
+        }
+
+        response = self.client.post(f"/api/questionnaires/{self.questionnaire1.id}/responses/create/", data, format="json")
+        self.assertEqual(response.status_code, 400)
+
+    def test_extra_response(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'paciente_test',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        data = {
+            "room_code": "ROOM123",
+            "responses": {
+                "q1": {"question": "¿Dónde sientes molestias?", "response": "Cuello"},
+                "q2": {"question": "¿Desde cuándo?", "response": "3 días"},
+                "q3": {"question": "Nivel de dolor (1-10)", "response": 7},
+                "q4": {"question": "Pregunta extra", "response": "Respuesta extra"}  # Respuesta inesperada
+            },
+            "notes": ""
+        }
+
+        response = self.client.post(f"/api/questionnaires/{self.questionnaire2.id}/responses/create/", data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("Respuestas inesperadas", response.data["error"])
+
+    def test_wrong_type_string(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'paciente_test',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        data = {
+            "room_code": "ROOM123",
+            "responses": {
+                "q1": {"question": "¿Dónde sientes molestias?", "response": 678},  # Debe ser cadena de texto
+                "q2": {"question": "¿Desde cuándo?", "response": "3 días"},
+                "q3": {"question": "Nivel de dolor (1-10)", "response": 7},
+            },
+            "notes": ""
+        }
+        response = self.client.post(f"/api/questionnaires/{self.questionnaire2.id}/responses/create/", data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data["error"], "La respuesta a 'q1' debe ser una cadena de texto.")
+
+    def test_wrong_type_number(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'paciente_test',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        data = {
+            "room_code": "ROOM123",
+            "responses": {
+                "q1": {"question": "¿Dónde sientes molestias?", "response": "Espalda"},  # Debe ser cadena de texto
+                "q2": {"question": "¿Desde cuándo?", "response": "3 días"},
+                "q3": {"question": "Nivel de dolor (1-10)", "response": "NaN"},
+            },
+            "notes": ""
+        }
+        response = self.client.post(f"/api/questionnaires/{self.questionnaire2.id}/responses/create/", data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data["error"], "La respuesta a 'q3' debe ser un número.")
+
+    def test_unauthenticated_user(self):
+        data = {
+            "room_code": "ROOM123",
+            "responses": {
+                "q1": {"question": "¿Dónde sientes molestias?", "response": "Espalda"},  # Debe ser cadena de texto
+                "q2": {"question": "¿Desde cuándo?", "response": "3 días"},
+                "q3": {"question": "Nivel de dolor (1-10)", "response": 6},
+            },
+            "notes": ""
+        }
+        response = self.client.post(f"/api/questionnaires/{self.questionnaire2.id}/responses/create/", data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_create_questionnaire_response_invalid_patient(self):
+        another_patient_user = AppUser.objects.create_user(
+            username="otro_paciente",
+            email="paciente@test.com",
+            password="Usuar1o_1",
+            dni="22222222B",
+            phone_number="600000001",
+            postal_code="41001",
+            account_status="ACTIVE",
+            first_name="Paciente",
+            last_name="Test"
+        )
+        another_patient = Patient.objects.create(
+            user=another_patient_user,
+            gender="F",
+            birth_date="1990-01-01"
+        )
+
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'otro_paciente',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        data = {
+            "room_code": "ROOM123",
+            "responses": {
+                "q1": {"question": "¿Dónde sientes molestias?", "response": "Tobillo"},
+                "q2": {"question": "¿Desde cuándo?", "response": "4 días"},
+                "q3": {"question": "Nivel de dolor (1-10)", "response": 5}
+            },
+            "notes": ""
+        }
+
+        response = self.client.post(f"/api/questionnaires/{self.questionnaire2.id}/responses/create/", data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data["error"], "Este cuestionario no está asignado al paciente de la cita.")
+
+    def test_create_questionnaire_response_invalid_appointment_status(self):
+        login_response = self.client.post('/api/app_user/login/', {
+            'username': 'paciente_test',
+            'password': 'Usuar1o_1'
+        })
+        token = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        another_appointment = Appointment.objects.create(
+            start_time=self.start_time,
+            end_time=self.end_time,
+            is_online=False,
+            service=self.physio.services["1"],
+            patient=self.patient,
+            physiotherapist=self.physio,
+            status='canceled',
+            alternatives='',
+        )
+
+        another_room = Room.objects.create(
+            appointment=another_appointment,
+            code="ROOM321",
+            physiotherapist = self.physio,
+            patient = self.patient,
+            is_test_room=False,
+            created_at=datetime.now(pytz.utc),
+        )
+
+        data = {
+            "room_code": "ROOM321",
+            "responses": {
+                "q1": {"question": "¿Dónde sientes molestias?", "response": "Tobillo"},
+                "q2": {"question": "¿Desde cuándo?", "response": "4 días"},
+                "q3": {"question": "Nivel de dolor (1-10)", "response": 5}
+            },
+            "notes": ""
+        }
+
+        response = self.client.post(f"/api/questionnaires/{self.questionnaire2.id}/responses/create/", data, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data["error"], "No se puede responder un cuestionario para una cita no activa.")
