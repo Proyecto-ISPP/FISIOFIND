@@ -681,28 +681,32 @@ const FisioProfile = () => {
         else if (value.length > 10) error = "Máximo 10 caracteres.";
         break;
       case "bio":
-        // Only validate max length if bio has content
         if (value && value.length > 500) error = "Máximo 500 caracteres.";
+        else if(/[`+´ç,<.,©℃®§]/.test(value)) error = "No se permiten los caracteres especiales: `+´ç,<.,©℃®§";
         break;
       case "degree":
         if (!value) error = "La titulación es obligatoria.";
         else if (value.length < 10) error = "Se requiere un mínimo de 10 caracteres.";
         else if (value.length > 100) error = "Máximo 100 caracteres.";
+        else if(/[`+´ç,<.,©℃®§]/.test(value)) error = "No se permiten los caracteres especiales: `+´ç,<.,©℃®§";
         break;
       case "university":
         if (!value) error = "La universidad es obligatoria.";
         else if (value.length < 10) error = "Se requiere un mínimo de 10 caracteres.";
         else if (value.length > 100) error = "Máximo 100 caracteres.";
+        else if(/[`+´ç,<.,©℃®§]/.test(value)) error = "No se permiten los caracteres especiales: `+´ç,<.,©℃®§";
         break;
       case "experience":
         if (!value) error = "La experiencia es obligatoria.";
         else if (value.length < 10) error = "Se requiere un mínimo de 10 caracteres.";
         else if (value.length > 100) error = "Máximo 100 caracteres.";
+        else if(/[`+´ç,<.,©℃®§]/.test(value)) error = "No se permiten los caracteres especiales: `+´ç,<.,©℃®§";
         break;
       case "workplace":
         if (!value) error = "El lugar de trabajo es obligatorio.";
         else if (value.length < 10) error = "Se requiere un mínimo de 10 caracteres.";
         else if (value.length > 100) error = "Máximo 100 caracteres.";
+        else if(/[`+´ç,<.,©℃®§]/.test(value)) error = "No se permiten los caracteres especiales: `+´ç,<.,©℃®§";
         break;
     }
 
@@ -733,19 +737,21 @@ const FisioProfile = () => {
         }
     };
 
+  const userFields = ["email", "phone_number", "postal_code"];
+  const profileFields = ["bio", "degree", "university", "experience", "workplace"];
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validar todos los campos antes de enviar
-    const isValid = ["email", "phone_number", "postal_code", "bio"].every(
-      (field) =>
-        validateField(
-          field,
-          (field === "bio" ? profile.bio : profile.user[field]) || ""
-        )
+    const isUserValid = userFields.every(field => 
+      validateField(field, profile.user[field] || "")
+    );
+    
+    const isProfileValid = profileFields.every(field =>
+      validateField(field, profile[field] || "")
     );
 
-    if (!isValid) {
+    if (!isUserValid || !isProfileValid) {
       showAlert("error", "Por favor, corrige los errores antes de enviar.");
       return;
     }
@@ -1157,10 +1163,21 @@ const FisioProfile = () => {
       if (!titulo.trim()) {
         showAlert("warning", "El título es obligatorio");
         return;
+      } else if(/[`+´ç,<.,©℃®§]/.test(titulo)) {
+        showAlert("warning", "No se permiten los caracteres especiales: `+´ç,<.,©℃®§");
+        return;
+      }
+
+      if (/[`+´ç,<.,©℃®§]/.test(descripcion)) {
+        showAlert("warning", "No se permiten los caracteres especiales: `+´ç,<.,©℃®§");
+        return;
       }
 
       if (!precio.trim()) {
         showAlert("warning", "El precio es obligatorio");
+        return;
+      } else if (parseInt(precio) <= 0) {
+        showAlert("warning", "El precio debe ser positivo");
         return;
       }
 

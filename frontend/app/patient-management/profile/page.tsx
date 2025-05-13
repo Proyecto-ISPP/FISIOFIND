@@ -174,7 +174,7 @@ const PatientProfile = () => {
         break;
       case "postal_code":
         if (!value) error = "El código postal es obligatorio.";
-        else if (value.length !== 5) error = "El código postal debe tener 5 dígitos.";
+        else if (!/^\d{5}$/.test(value)) error = "El código postal debe tener 5 dígitos.";
         break;
       case "gender":
         if (!value) error = "El género es obligatorio.";
