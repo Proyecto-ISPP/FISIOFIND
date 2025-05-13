@@ -9,12 +9,18 @@ def home(request):
     return HttpResponse("¡Bienvenido a FisioFind!")
 
 
+def robots_txt(request):
+    content = "User-agent: *\nDisallow: /"
+    return HttpResponse(content, content_type="text/plain")
+
+
 admin.site.index_title = "Panel de administración"
 admin.site.site_title = "Fisio Find"
 admin.site.site_header = "Fisio Find"
 
 urlpatterns = [
     path('', home, name='home'),
+    path('robots.txt', robots_txt, name='robots_txt'),
     path('admin/', admin.site.urls),
     path('api/app_user/', include('users.urls')),
     path('api/appointment/', include('appointment.urls')),
