@@ -392,6 +392,12 @@ const PhysioSignUpForm = () => {
       if (!formData.username.trim()) {
         newErrors.username = "El nombre de usuario es obligatorio";
         isValid = false;
+      } else if(formData.username.length > 150) {
+        newErrors.username = "El nombre de usuario debe tener 150 caracteres o menos";
+        isValid = false;
+      } else if(/[`+´ç,<.,©℃®§]/.test(formData.username)) {
+        newErrors.username = "El nombre de usuario no puede contener los siguientes caracteres especiales: `+´ç,<.,©℃®§";
+        isValid = false;
       }
       if (!formData.email.trim()) {
         newErrors.email = "El email es obligatorio";
@@ -437,9 +443,9 @@ const PhysioSignUpForm = () => {
         newErrors.phone_number = "El teléfono es obligatorio";
         isValid = false;
       } else if (!/^\d{9}$/.test(formData.phone_number)) {
-        newErrors.phone_number = "Número de teléfono no válido";
+        newErrors.phone_number = "El número de teléfono debe tener 9 dígitos";
         isValid = false;
-      }
+      } 
       if (!formData.birth_date.trim()) {
         newErrors.birth_date = "La fecha de nacimiento es obligatoria";
         isValid = false;
@@ -449,7 +455,13 @@ const PhysioSignUpForm = () => {
         isValid = false;
       }
     } else if (step === 3) {
-      // Validar, por ejemplo, el número colegiado
+      if(!formData.postal_code.trim()) {
+        newErrors.postal_code = "El Código Postal es obligatorio";
+        isValid = false;
+      } else if (!/^\d{5}$/.test(formData.postal_code)) {
+        newErrors.postal_code = "El Código Postal debe tener 5 dígitos";
+        isValid = false;
+      }
     } else if (step === 4) {
       if (!formData.plan) {
         newErrors.plan = "Selecciona un plan para continuar";

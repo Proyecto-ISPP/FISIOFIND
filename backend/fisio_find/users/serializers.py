@@ -14,7 +14,7 @@ from .models import (
 from datetime import date, datetime
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
-from users.util import validate_dni_match_letter, codigo_postal_no_mide_5, telefono_no_mide_9, validate_dni_structure
+from users.util import validate_dni_match_letter, codigo_postal_no_mide_5, telefono_no_mide_9, validate_dni_structure, telefono_no_tiene_solo_digitos_numericos, codigo_postal_no_tiene_solo_digitos_numericos
 
 
 class AppUserSerializer(serializers.ModelSerializer):
@@ -354,10 +354,16 @@ class PhysioRegisterSerializer(serializers.ModelSerializer):
         elif validate_unique_DNI(data['dni']):
             validation_errors["dni"] = "Ya existe un usuario con este DNI registrado."
 
-        if 'phone_number' in data and data['phone_number'] and telefono_no_mide_9(data['phone_number']):
-            validation_errors["phone_number"] = "El número de teléfono debe tener 9 caracteres."
-        if codigo_postal_no_mide_5(data['postal_code']):
-            validation_errors["postal_code"] = "El código postal debe tener 5 caracteres."
+        if 'phone_number' in data and data['phone_number']:
+            if telefono_no_tiene_solo_digitos_numericos(data['phone_number']):
+                validation_errors["phone_number"] = "El teléfono solo puede contener dígitos numéricos."
+            elif telefono_no_mide_9(data['phone_number']):
+                validation_errors["phone_number"] = "El teléfono debe tener exactamente 9 dígitos."
+
+        if codigo_postal_no_tiene_solo_digitos_numericos(data['postal_code']):
+            validation_errors["postal_code"] = "El código postal solo puede contener números."
+        elif codigo_postal_no_mide_5(data['postal_code']):
+            validation_errors["postal_code"] = "El código postal debe tener exactamente 5 dígitos."
 
         if data['birth_date'] > date.today():
             validation_errors["birth_date"] = "La fecha de nacimiento no puede ser posterior a la fecha actual."
