@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { useAppointment } from "@/context/appointmentContext";
-import { CookieConsent } from "@/components/CookieConsent";
 import TopRatings from "@/components/ratings";
 import { HeroHighlight, Highlight } from "@/components/ui/hero-highlight";
 import { GradientButton } from "@/components/ui/gradient-button";
@@ -78,7 +77,6 @@ const Home = () => {
       className="min-h-screen w-full z=90"
       style={{ backgroundColor: "rgb(238, 251, 250)" }}
     >
-      <CookieConsent />
       <UserWayWidget />
 
       {!isAuthenticated && (
