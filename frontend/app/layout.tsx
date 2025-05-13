@@ -6,6 +6,7 @@ import Script from 'next/script';
 import {SidebarDemo} from '@/components/sidebar-demo';
 import {ClientWrapper} from '@/components/ClientWrapper';
 import { AppointmentProvider } from "@/context/appointmentContext";
+import { CookieConsent } from '@/components/CookieConsent';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -33,6 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       >
         <AppointmentProvider>
           <ClientWrapper>
+            <CookieConsent />
             <div className="flex min-h-screen" style={{ backgroundColor: "rgb(238, 251, 250)" }}>
               <SidebarDemo />
               <main className="flex-1 transition-all duration-300 h-screen overflow-auto" style={{ backgroundColor: "rgb(238, 251, 250)" }}>

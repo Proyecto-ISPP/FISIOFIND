@@ -4,11 +4,12 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Modal from './ui/Modal';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 
 export function CookieConsent() {
   const [showConsent, setShowConsent] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     const cookieChoice = localStorage.getItem('cookie-consent');
@@ -36,6 +37,7 @@ export function CookieConsent() {
     }, 100);
   };
 
+  if (pathname === '/login' || pathname === '/register/physio' || pathname === '/register/patient' || pathname === '/terms') return null;
   if (!showConsent) return null;
 
   return (
