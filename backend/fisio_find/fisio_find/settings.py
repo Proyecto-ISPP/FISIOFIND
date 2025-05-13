@@ -44,7 +44,7 @@ ALLOWED_HOSTS = [
     'turn.fisiofind.com',
     'ppl.fisiofind.com',
     'ppl-api.fisiofind.com',
-    'api.fisiofind.com,
+    'api.fisiofind.com',
     'fisiofind.com'
 ]
 
