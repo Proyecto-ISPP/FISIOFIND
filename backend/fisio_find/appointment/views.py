@@ -719,7 +719,7 @@ def delete_appointment(request, appointment_id):
     # Eliminar la cita
     appointment.delete()
     update_schedule(appointment)
-    return Response({"message": "Cita eliminada correctamente"}, status=status.HTTP_200_OK)
+    return Response({"message": "Cita eliminada correctamente"}, status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(['GET'])
