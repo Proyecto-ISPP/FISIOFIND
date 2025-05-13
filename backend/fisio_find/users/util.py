@@ -20,7 +20,6 @@ def validate_dni_match_letter(data_dni):
     except ValueError:
         return False
 
-
 def codigo_postal_no_mide_5(postal_code):
     return len(postal_code) != 5
 

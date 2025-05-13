@@ -494,6 +494,11 @@ class PhysioUpdateSerializer(serializers.ModelSerializer):
         fields = ['email', 'phone_number', 'postal_code', 'bio', 'photo', 'services',
                   'specializations', 'schedule', 'plan', 'degree',
                   'university', 'experience', 'workplace']
+        
+    def validate_email_duplicated(self, value):
+        """Verifica si el email ya está en uso por otro usuario"""
+        user = self.context['request'].user
+        return AppUser.objects.filter(email=value).exclude(id=user.id).exists() == True
 
     def validate(self, data):
         """Validaciones solo para los campos proporcionados."""
@@ -519,12 +524,14 @@ class PhysioUpdateSerializer(serializers.ModelSerializer):
             if validate_unique_DNI(data['dni']):
                 validation_errors["dni"] = "Ya existe un usuario con este DNI registrado."
 
-
         if 'phone_number' in data and telefono_no_mide_9(data['phone_number']):
             validation_errors["phone_number"] = "El número de teléfono debe tener 9 caracteres."
 
         if 'postal_code' in data and codigo_postal_no_mide_5(data['postal_code']):
             validation_errors["postal_code"] = "El código postal debe tener 5 caracteres."
+        
+        if 'email' in data and self.validate_email_duplicated(data['email']):
+            validation_errors['email'] = "El email ya está siendo usado por otro usuario."
 
         if validation_errors or len(validation_errors) > 1:
             raise serializers.ValidationError(validation_errors)
