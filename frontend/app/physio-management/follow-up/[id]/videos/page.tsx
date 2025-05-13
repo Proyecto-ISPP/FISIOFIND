@@ -125,12 +125,20 @@ const PhysioVideo = () => {
       showAlert("error", "El título no puede exceder los 100 caracteres.");
       return;
     }
+    if (/[`+´ç,<.,©℃®§]/.test(title)) {
+      showAlert("error", "El título no puede contener los siguientes caracteres especiales: ` + ´ ç , < . , © ℃ ® §");
+      return;
+    }
     if (!description.trim()) {
       showAlert("error", "La descripción es obligatoria.");
       return;
     }
     if (description.length > 255) {
       showAlert("error", "La descripción no puede exceder los 255 caracteres.");
+      return;
+    }
+    if (/[`+´ç,<.,©℃®§]/.test(description)) {
+      showAlert("error", "La descripción no puede contener los siguientes caracteres especiales: ` + ´ ç , < . , © ℃ ® §");
       return;
     }
     if (!file && editingVideo === null) {
@@ -368,7 +376,6 @@ const PhysioVideo = () => {
                 placeholder="Título"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                maxLength={100}
                 className="w-full py-3 px-4 text-sm border-2 border-gray-200 rounded-xl focus:border-blue-600 focus:shadow"
               />
               <div className="text-right text-xs text-gray-500 mt-1">{title.length}/100 caracteres</div>
@@ -379,8 +386,7 @@ const PhysioVideo = () => {
                 placeholder="Descripción"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                maxLength={255}
-                rows={2}
+                rows={4}
                 className="w-full py-3 px-4 text-sm border-2 border-gray-200 rounded-xl focus:border-blue-600 focus:shadow"
               />
               <div className="text-right text-xs text-gray-500 mt-1">{description.length}/255 caracteres</div>
