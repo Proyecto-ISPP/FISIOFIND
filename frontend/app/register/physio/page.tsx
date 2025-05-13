@@ -339,6 +339,7 @@ const PhysioSignUpForm = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isValidating, setIsValidating] = useState<boolean>(false);
   const [isClient, setIsClient] = useState<boolean>(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   const [alert, setAlert] = useState<{
     show: boolean;
@@ -874,6 +875,27 @@ const PhysioSignUpForm = () => {
                         onChange={handleChange}
                         error={errors.postal_code}
                       />
+                      {/* Checkbox de Términos y Condiciones */}
+                      <div className="mb-4 relative flex items-center justify-center">
+                        <input
+                          type="checkbox"
+                          id="terms"
+                          checked={acceptedTerms}
+                          onChange={(e) => setAcceptedTerms(e.target.checked)}
+                          className="w-5 h-5 accent-[#1E5ACD] cursor-pointer mb-0"
+                        />
+                        <label htmlFor="terms" className="text-sm text-gray-600 mb-0 ml-3">
+                          Acepto los{" "}
+                          <a
+                            href="/terms"
+                            className="text-[#1E5ACD] hover:underline font-medium"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            términos y condiciones
+                          </a>
+                        </label>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -1027,16 +1049,30 @@ const PhysioSignUpForm = () => {
                     <button
                       type="button"
                       onClick={handlePrevStep}
-                      className="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
+                      className="px-6 py-2 bg-[#05AC9C] text-white font-medium rounded-xl transition-colors hover:bg-[#048F83] flex items-center gap-2"
                     >
                       Anterior
                     </button>
                   )}
-                  {currentStep < 4 && (
+                  {currentStep == 3 && (
                     <button
                       type="button"
                       onClick={handleNextStep}
-                      className="ml-auto px-6 py-2 bg-[#1E5ACD] hover:bg-[#1848A3] text-white font-medium rounded-md transition-colors"
+                      disabled={!acceptedTerms}
+                      className={`"ml-auto px-6 py-2 text-white font-medium rounded-xl ${
+                        !acceptedTerms
+                          ? "bg-gray-400 cursor-not-allowed hover:bg-gray-400"
+                          : "bg-gradient-to-r from-[#05668D] to-[#0A7487] hover:from-[#0A7487] hover:to-[#05918F] transition-colors disabled:from-blue-300 disabled:to-blue-400"
+                      }`}
+                    >
+                      Siguiente
+                    </button>
+                  )}
+                  {currentStep < 4 && currentStep !== 3 && (
+                    <button
+                      type="button"
+                      onClick={handleNextStep}
+                      className="ml-auto px-6 py-2 bg-gradient-to-r from-[#05668D] to-[#0A7487] hover:from-[#0A7487] hover:to-[#05918F] text-white font-medium rounded-xl transition-colors"
                     >
                       Siguiente
                     </button>
@@ -1045,7 +1081,7 @@ const PhysioSignUpForm = () => {
                     <button
                       type="button"
                       onClick={handleProceedToVerification}
-                      className="ml-auto px-6 py-2 bg-[#1E5ACD] hover:bg-[#1848A3] text-white font-medium rounded-md transition-colors"
+                      className="ml-auto px-6 py-2 bg-gradient-to-r from-[#05668D] to-[#0A7487] hover:from-[#0A7487] hover:to-[#05918F] text-white font-medium rounded-xl transition-colors"
                     >
                       Continuar a Verificación
                     </button>
