@@ -43,7 +43,9 @@ ALLOWED_HOSTS = [
     's3-api.fisiofind.com',
     'turn.fisiofind.com',
     'ppl.fisiofind.com',
-    'ppl-api.fisiofind.com'
+    'ppl-api.fisiofind.com',
+    'api.fisiofind.com,
+    'fisiofind.com'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
@@ -57,7 +59,9 @@ CSRF_TRUSTED_ORIGINS = [
     "https://s3.fisiofind.com",
     "https://s3-api.fisiofind.com",
     "https://ppl.fisiofind.com",
-    "https://ppl-api.fisiofind.com"
+    "https://ppl-api.fisiofind.com",
+    "https://api.fisiofind.com",
+    "https://fisiofind.com"
   
 ]
 
@@ -177,6 +181,9 @@ CORS_ALLOWED_ORIGINS = [
     "https://ppl.fisiofind.com",
     "https://ppl-api.fisiofind.com",
     "wss://ppl-api.fisiofind.com",
+    "wss://api.fisiofind.com",
+    "https://api.fisiofind.com",
+    "https://fisiofind.com"
     
 ]
 
