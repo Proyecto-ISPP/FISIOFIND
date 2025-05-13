@@ -19,7 +19,7 @@ class PatientFileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PatientFile
-        fields = ["id", "title", "description", "uploaded_at", "file_key", "file_urls", "files", "file_types"]
+        fields = ["id", "title", "description", "uploaded_at", "file_key", "file_urls", "files", "file_types", "uploaded_by"]
         extra_kwargs = {
             "file_key": {"read_only": True},  # La clave del archivo es solo de lectura
         }
@@ -61,18 +61,25 @@ class PatientFileSerializer(serializers.ModelSerializer):
     
     def validate_upload_limit(self, treatment):
         physio = treatment.physiotherapist
+        patient = treatment.patient
+
+        # 1. Validación por plan del fisioterapeuta
         plan = physio.plan
-        limit = plan.video_limit
-        uploaded_videos = Video.objects.filter(treatment__physiotherapist=physio).count()
-        uploaded_files = PatientFile.objects.filter(treatment__physiotherapist=physio).count()
-        total_uploaded = uploaded_videos + uploaded_files
-        if total_uploaded >= limit:
-            raise ValidationError(f"Límite de archivos alcanzado para el plan '{plan.name}' ({limit}).")
+        total_uploaded_by_physio = (
+            Video.objects.filter(treatment__physiotherapist=physio).count() +
+            PatientFile.objects.filter(treatment__physiotherapist=physio).count()
+        )
+        if total_uploaded_by_physio >= plan.video_limit:
+            raise ValidationError(f"El fisioterapeuta ha alcanzado el límite de archivos para el plan '{plan.name}' ({plan.video_limit}).")
+
+        # 2. Validación de archivos subidos por paciente para este tratamiento
+        uploads_by_patient_in_treatment = PatientFile.objects.filter(treatment=treatment, treatment__patient=patient).count()
+        if uploads_by_patient_in_treatment >= 5:
+            raise ValidationError("Has alcanzado el límite de 5 archivos por tratamiento.")
 
     def create(self, validated_data):
         request = self.context["request"]
 
-        # Obtener campos del formulario
         treatment = request.data.get('treatment')
         title = request.data.get('title')
         description = request.data.get('description')
@@ -110,7 +117,17 @@ class PatientFileSerializer(serializers.ModelSerializer):
                 treatment_id=treatment,
                 title=title,
                 description=description,
+                uploaded_by=request.user,
             )
+
+        if hasattr(request.user, 'patient'):
+            existing_patient_uploads = PatientFile.objects.filter(
+                treatment_id=treatment,
+                uploaded_by=request.user
+            ).count()
+
+            if existing_patient_uploads >= 5:
+                raise ValidationError("Has alcanzado el límite de 5 archivos para este tratamiento.")
 
         # Subir archivos a S3
         for file in files:
@@ -136,7 +153,7 @@ class PatientFileSerializer(serializers.ModelSerializer):
 
         # Guardar el archivo actualizado
         treatment_file.file_key = ",".join(file_keys)
-        treatment_file.save(user=request.user)
+        treatment_file.save()
 
         return treatment_file
 

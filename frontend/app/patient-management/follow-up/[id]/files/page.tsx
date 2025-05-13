@@ -185,14 +185,39 @@ const TreatmentFilesPage = () => {
         }
       );
 
-      if (!res.ok) throw new Error("Error al guardar el archivo");
+      // Verificar si la respuesta no es exitosa (status no 200)
+      if (!res.ok) {
+        const errorData = await res.json();  // Obtener el cuerpo de la respuesta de error
+        const errorDetail = errorData?.detail;
+
+        console.log("Error detail:", errorDetail);
+
+        // Verificar si el error es por el límite de archivos alcanzado
+        if (
+          errorData?.status === 400 &&
+          typeof errorDetail === "string" &&
+          errorDetail.toLowerCase().includes("límite de archivos alcanzado")
+        ) {
+          showAlert(
+            "error",
+            "Has alcanzado el límite de archivos permitidos para este tratamiento. Elimina algunos archivos o contacta con el soporte."
+          );
+        } else {
+          // Para otros errores generales
+          showAlert("error", errorDetail || "Hubo un error al guardar el archivo.");
+        }
+
+        setLoading(false); // Detener carga
+        return; // Detener ejecución
+      }
 
       const data = await res.json();
       showAlert(
         "success",
         editingFile ? "Archivo actualizado correctamente." : "Archivo subido correctamente."
       );
-      setLoading(false);
+
+      setLoading(false); // Detener carga
       setFiles((prev) =>
         editingFile ? prev.map((f) => (f.id === data.file.id ? data.file : f)) : [...prev, data.file]
       );
@@ -201,14 +226,18 @@ const TreatmentFilesPage = () => {
       setDescription("");
       setFile(null);
       setFilePreview(null);
+
       if (fileInputRef.current) {
-        fileInputRef.current.value = "";
+      fileInputRef.current.value = "";
       }
-    } catch (err) {
-      const errorDetail = err.response?.data?.detail;
-      console.log("Error detail:", errorDetail);
-      showAlert("error", "Hubo un error al guardar el archivo.");
-    }
+    } catch (err: any) {
+      // Manejo de cualquier otro error inesperado
+      console.error("Error inesperado:", err);
+      showAlert("error", "Hubo un error inesperado al guardar el archivo.");
+      setLoading(false); // Detener carga
+    } finally {
+      setLoading(false); // Asegurarse de detener el loading aunque falle
+  }
   };
 
   const handleEdit = (file: PatientFile) => {

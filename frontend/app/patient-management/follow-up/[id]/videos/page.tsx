@@ -12,6 +12,7 @@ const getAuthToken = () => {
 };
 
 const Pacientes = () => {
+  const { id: treatmentId } = useParams();
   const params = useParams();
   const id = params?.id as string;
   const router = useRouter();
@@ -98,7 +99,7 @@ const Pacientes = () => {
       }
 
       try {
-        const response = await axios.get(`${getApiBaseUrl()}/api/cloud/videos/list-videos/`, {
+        const response = await axios.get(`${getApiBaseUrl()}/api/cloud/videos/list-videos/${id}`, {
           headers: {
             Authorization: `Bearer ${storedToken}`,
           },

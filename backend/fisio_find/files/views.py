@@ -15,7 +15,7 @@ from django.core.exceptions import ValidationError
 @permission_classes([IsPhysioOrPatient])
 def create_file(request):
     treatment_id = request.data.get('treatment')
-
+    
     if not treatment_id:
         return Response(
             {"message": "El ID del tratamiento es requerido"},
@@ -24,6 +24,7 @@ def create_file(request):
 
     try:
         treatment = Treatment.objects.get(id=treatment_id)
+        print(treatment.physiotherapist.user)
     except Treatment.DoesNotExist:
         return Response(
             {"message": "Tratamiento no encontrado"},
@@ -52,7 +53,7 @@ def create_file(request):
 
     if serializer.is_valid():
         try:
-            file = serializer.save(user=request.user)
+            file = serializer.save()
             return Response(
                 {
                     "message": "Archivo creado correctamente",
