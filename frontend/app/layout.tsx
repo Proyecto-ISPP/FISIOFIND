@@ -14,14 +14,33 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: 'FisioFind',
-  description: 'Find your physiotherapist',
+  title: 'Fisio Find | Tu fisioterapeuta online en España',
+  description: 'Conecta con fisioterapeutas especializados en rehabilitación, lesiones musculares y fisioterapia para mayores. Sesiones presenciales y online en toda España.',
+  openGraph: {
+    title: 'Fisio Find | Tu fisioterapeuta online en España',
+    description: 'Encuentra tu fisioterapeuta ideal para lesiones, movilidad, y salud física. 100% online o presencial.',
+    url: 'https://fisiofind.com',
+    siteName: 'Fisio Find',
+    images: [
+      {
+        url: '/static/og-cover.jpg',
+        width: 1024,
+        height: 1024,
+        alt: 'Fisio Find fisioterapeutas online',
+      },
+    ],
+    locale: 'es_ES',
+    type: 'website',
+  },
 };
+
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="es">
       <head>
+        <meta name="google-site-verification" content="Bpr044aEZj4eM5dgE2A8474JvW_iED_Akm2cZSD5c2M" />
+        <meta name="keywords" content="fisioterapeuta, fisioterapeuta online, fisioterapia, salud, telemedicina, rehabilitación de lesiones, fisioterapia para mayores, ejercicio físico" />
         <Script
           src="https://animatedicons.co/scripts/embed-animated-icons.js"
           strategy="afterInteractive"
