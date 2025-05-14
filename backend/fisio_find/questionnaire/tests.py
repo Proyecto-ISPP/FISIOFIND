@@ -919,8 +919,7 @@ class AddNotes2QuestionnaireResponseTest(APITestCase):
         long_note = "a" * 256
         response = self.client.put(self.url, {**self.valid_payload, "notes": long_note}, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn("detail", response.data)
-        self.assertEqual(response.data["detail"], "Las notas no pueden exceder los 255 caracteres")
+        self.assertEqual(response.data["error"], "Las notas no pueden exceder los 255 caracteres")
 
     def test_questionnaire_response_not_found(self):
         login_response = self.client.post('/api/app_user/login/', {
@@ -961,7 +960,7 @@ class AddNotes2QuestionnaireResponseTest(APITestCase):
         )
         print(response.data)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(response.data["detail"], "No se ha encontrado la respuesta al cuestionario.")
+        self.assertEqual(response.data["error"], "No se ha encontrado la respuesta al cuestionario.")
 
     def test_add_notes_as_patient(self):
         login_response = self.client.post('/api/app_user/login/', {

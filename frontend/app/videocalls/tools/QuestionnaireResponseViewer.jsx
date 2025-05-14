@@ -102,7 +102,7 @@ const QuestionnaireResponseViewer = ({ responseData, onClose, questionnaire, roo
       console.error('Error guardando nota:', error);
       setAlert({
         type: 'error',
-        message: 'Error al guardar la nota. Intente nuevamente.',
+        message: error.response?.data?.error || 'Error guardando la nota',
         onClose: () => setAlert(null)
       });
     }
@@ -186,7 +186,7 @@ const QuestionnaireResponseViewer = ({ responseData, onClose, questionnaire, roo
                   value={noteText}
                   onChange={handleNoteChange}
                   placeholder="Escribe tus notas o diagnóstico aquí..."
-                  className="w-full p-3 border border-blue-300 rounded-md min-h-32 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-3 border border-blue-300 rounded-md min-h-32 focus:outline-none focus:ring-2 focus:ring-blue-500 whitespace-pre-wrap"
                 />
                 <div className="flex justify-end mt-3 space-x-3">
                   <button
@@ -209,7 +209,7 @@ const QuestionnaireResponseViewer = ({ responseData, onClose, questionnaire, roo
             {savedNote && !showNotes && (
               <div className="mt-4 p-5 bg-blue-50 border-l-4 border-blue-500 rounded-md">
                 <h4 className="font-semibold text-blue-800 mb-2">Nota del fisioterapeuta:</h4>
-                <p className="text-gray-800 mb-3">{savedNote}</p>
+                <p className="text-gray-800 mb-3 break-words">{savedNote}</p>
                 <button
                   onClick={toggleNotes}
                   className="text-blue-600 hover:text-blue-800 flex items-center transition-colors"

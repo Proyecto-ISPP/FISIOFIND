@@ -263,7 +263,7 @@ def add_notes2questionnaire_responses(request, questionnaire_id):
         # Verificar que el usuario sea el fisioterapeuta dueño
         if questionnaire_response.questionnaire.physiotherapist.user != request.user:
             return Response(
-                {'detail': 'Solo el fisioterapeuta propietario del cuestionario puede añadir notas a las respuestas de este cuestionario'},
+                {'error': 'Solo el fisioterapeuta propietario del cuestionario puede añadir notas a las respuestas de este cuestionario'},
                 status=status.HTTP_403_FORBIDDEN
             )
 
@@ -272,7 +272,7 @@ def add_notes2questionnaire_responses(request, questionnaire_id):
         # Validación de longitud de notas
         if 'notes' in data and len(data['notes']) > 255:
             return Response(
-                {'detail': 'Las notas no pueden exceder los 255 caracteres'},
+                {'error': 'Las notas no pueden exceder los 255 caracteres'},
                 status=status.HTTP_400_BAD_REQUEST
             )
         
@@ -284,7 +284,7 @@ def add_notes2questionnaire_responses(request, questionnaire_id):
 
     except QuestionnaireResponses.DoesNotExist:
         return Response(
-            {'detail': 'No se ha encontrado la respuesta al cuestionario.'},
+            {'error': 'No se ha encontrado la respuesta al cuestionario.'},
             status=status.HTTP_404_NOT_FOUND
         )
 

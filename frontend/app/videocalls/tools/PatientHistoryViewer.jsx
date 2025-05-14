@@ -145,7 +145,7 @@ const PatientHistoryViewer = ({ patientId, token, onClose }) => {
                           {qr.notes && (
                             <div className="mb-3 bg-[#f0f9fa] p-3 rounded-md">
                               <div className="text-sm text-gray-600 mb-1">Notas</div>
-                              <div className="text-[#253240]">{qr.notes}</div>
+                              <div className="text-[#253240] break-words">{qr.notes}</div>
                             </div>
                           )}
                           

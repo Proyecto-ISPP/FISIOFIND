@@ -9,8 +9,8 @@ import axios from 'axios';  // Importamos axios
 import Alert from '@/components/ui/Alert';
 import { getApiBaseUrl } from '@/utils/api';
 
-const PatientQuestionnaire = ({ 
-  questionnaire, 
+const PatientQuestionnaire = ({
+  questionnaire,
   sendWebSocketMessage,
   onClose,
   roomCode
@@ -73,21 +73,17 @@ const PatientQuestionnaire = ({
         }
       );
 
-      if (response.status === 201) {
-        // Si todo sale bien
-        setAlert({
-          type: 'success',
-          message: 'Respuestas guardadas correctamente',
-          show: true,
-        });
-      } else {
-        throw new Error('Error al guardar las respuestas');
-      }
+      setAlert({
+        type: 'success',
+        message: 'Respuestas guardadas correctamente',
+        show: true,
+      });
+
     } catch (error) {
       console.error(error);
       setAlert({
         type: 'error',
-        message: 'Hubo un problema al guardar las respuestas',
+        message: error.response?.data?.error || 'Error guardando las respuestas',
         show: true,
       });
     }
@@ -100,7 +96,7 @@ const PatientQuestionnaire = ({
     <div className={styles.questionnaireModal}>
       {/* Mostrar alert si está activo */}
       {alert.show && (
-        <Alert 
+        <Alert
           type={alert.type}
           message={alert.message}
           onClose={() => setAlert({ ...alert, show: false })}  // Cerrar el alert
