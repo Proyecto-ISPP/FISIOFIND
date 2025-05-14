@@ -30,6 +30,8 @@ urlpatterns = [
     path('subscription/update/', update_subscription, name='update_subscription'),
     path('unsubscribe/', unsubscribe_via_token, name='unsubscribe'),
 
+    path('patient/<int:patient_id>/history/', get_patient_history, name='get_patient_history'),
+
 
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
