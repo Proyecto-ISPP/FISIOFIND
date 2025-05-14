@@ -80,7 +80,7 @@ const PatientQuestionnaire = ({
       });
 
     } catch (error) {
-      console.error(error);
+      console.log(error);
       setAlert({
         type: 'error',
         message: error.response?.data?.error || 'Error guardando las respuestas',
