@@ -24,7 +24,7 @@ django-multiselectfield==0.1.13
 email-validator==2.1.1
 environ==1.0
 gunicorn==23.0.0
-h11==0.14.0
+h11==0.16.0
 hyperlink==21.0.0
 idna==3.10
 incremental==24.7.2
