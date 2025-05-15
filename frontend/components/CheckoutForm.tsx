@@ -326,7 +326,7 @@ const CheckoutForm = ({ request, token }: CheckoutFormProps) => {
             <p>Si el fisioterapeuta la acepta, se cobrará el importe</p>
             <p>de la cita 48 horas antes de su comienzo.</p>
             <button
-              style={modalButton}
+              className="inline-flex items-center justify-center px-5 py-3 mt-8 mr-3 text-white font-medium rounded-xl bg-gradient-to-r from-[#05AC9C] to-[#0A7487] hover:from-[#049589] hover:to-[#086273] hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg"
               onClick={async () => {
                 try {
                   const response = await fetch(
@@ -363,12 +363,40 @@ const CheckoutForm = ({ request, token }: CheckoutFormProps) => {
                 }
               }}
             >
-              Descargar Factura
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
+              </svg>
+              Descargar Recibo
             </button>
             <button
-              style={modalButton}
+              className="inline-flex items-center justify-center px-5 py-3 mt-8 text-white font-medium rounded-xl bg-gradient-to-r from-[#1E5ACD] to-[#41B8D5] hover:from-[#1A4EB8] hover:to-[#3AA9C6] hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg"
               onClick={() => (window.location.href = "/my-appointments")}
             >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
               Ir al Calendario
             </button>
           </div>
@@ -385,15 +413,13 @@ const CheckoutForm = ({ request, token }: CheckoutFormProps) => {
             <div className="flex flex-col gap-3">
               <button
                 onClick={() => handleDraftSaveAndRedirect("/login")}
-                style={{ backgroundColor: "#0A7487" }}
-                className="px-4 py-2 text-white rounded hover:opacity-90"
+                className="px-4 py-2 text-white rounded-xl bg-gradient-to-r from-[#05AC9C] to-[#0A7487] hover:from-[#049589] hover:to-[#086273] hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg"
               >
                 Iniciar Sesión
               </button>
               <button
                 onClick={() => handleDraftSaveAndRedirect("/register")}
-                style={{ backgroundColor: "#1E5ACD" }}
-                className="px-4 py-2 text-white rounded hover:opacity-90"
+                className="px-4 py-2 text-white rounded-xl bg-gradient-to-r from-[#1E5ACD] to-[#41B8D5] hover:from-[#1A4EB8] hover:to-[#3AA9C6] hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg"
               >
                 Crear Cuenta
               </button>
@@ -403,8 +429,22 @@ const CheckoutForm = ({ request, token }: CheckoutFormProps) => {
                   sessionStorage.removeItem("appointmentDraft");
                   router.push("/");
                 }}
-                className="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400"
+                className="px-4 py-3 mt-2 bg-white text-gray-700 font-medium rounded-xl border border-gray-300 hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-sm hover:shadow-md"
               >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 mr-2 inline"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
                 Cancelar
               </button>
             </div>
