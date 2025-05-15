@@ -606,7 +606,7 @@ const SearchPage = () => {
 
                                         <CardItem translateZ="40" className="mt-2">
                                         { physio.rating &&
-                                          renderStars(3.5)
+                                          renderStars(physio.rating)
                                         }
 
                                         { !physio.rating &&
