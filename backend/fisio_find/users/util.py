@@ -24,6 +24,11 @@ def validate_dni_match_letter(data_dni):
 def codigo_postal_no_mide_5(postal_code):
     return len(postal_code) != 5
 
+def codigo_postal_no_tiene_solo_digitos_numericos(postal_code):
+    return not postal_code.isdigit()
+
+def telefono_no_tiene_solo_digitos_numericos(phone_number):
+    return not phone_number.isdigit()
 
 def telefono_no_mide_9(phone_number):
     return len(phone_number) != 9
