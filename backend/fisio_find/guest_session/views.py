@@ -119,6 +119,19 @@ def advanced_search(request):
     # Obtener los fisioterapeutas con los filtros básicos
     physiotherapists = Physiotherapist.objects.filter(filters).distinct()
 
+    # Filtrar solo los que realmente tienen al menos un servicio válido (no solo string no vacío, sino que el JSON tenga al menos un servicio)
+    def has_at_least_one_service(services):
+        if not services:
+            return False
+        if isinstance(services, str):
+            try:
+                services = json.loads(services)
+            except Exception:
+                return False
+        return bool(services) and len(services) > 0
+
+    physiotherapists = [p for p in physiotherapists if has_at_least_one_service(p.services)]
+
     # Función auxiliar para calcular el precio medio (solo para serialización)
     def get_average_price(services):
         if not services:
