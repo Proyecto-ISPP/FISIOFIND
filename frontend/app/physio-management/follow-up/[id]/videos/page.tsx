@@ -1,10 +1,23 @@
 "use client";
 
-import React, { useState, useEffect, ChangeEvent, FormEvent, useRef } from "react";
+import React, {
+  useState,
+  useEffect,
+  ChangeEvent,
+  FormEvent,
+  useRef,
+} from "react";
 import { useParams, useRouter } from "next/navigation";
 import { getApiBaseUrl } from "@/utils/api";
 import axios from "axios";
-import { ArrowLeft, UploadCloud, Edit2, Trash, Play, X, Loader2 } from "lucide-react";
+import {
+  ArrowLeft,
+  UploadCloud,
+  Play,
+  X,
+  Loader2,
+  AlertCircle,
+} from "lucide-react";
 import Alert from "@/components/ui/Alert";
 
 const PhysioVideo = () => {
@@ -26,13 +39,16 @@ const PhysioVideo = () => {
   const [alert, setAlert] = useState({
     show: false,
     type: "info" as "success" | "error" | "info" | "warning",
-    message: ""
+    message: "",
   });
 
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [isVideoLoading, setIsVideoLoading] = useState<boolean>(false);
 
-  const showAlert = (type: "success" | "error" | "info" | "warning", message: string) => {
+  const showAlert = (
+    type: "success" | "error" | "info" | "warning",
+    message: string
+  ) => {
     setAlert({ show: true, type, message });
   };
 
@@ -52,16 +68,21 @@ const PhysioVideo = () => {
       }
 
       try {
-        const response = await axios.get(`${getApiBaseUrl()}/api/app_user/check-role/`, {
-          headers: {
-            Authorization: `Bearer ${storedToken}`,
-          },
-        });
+        const response = await axios.get(
+          `${getApiBaseUrl()}/api/app_user/check-role/`,
+          {
+            headers: {
+              Authorization: `Bearer ${storedToken}`,
+            },
+          }
+        );
 
         if (response.data && response.data.user_role === "physiotherapist") {
           setIsAuthenticated(true);
         } else {
-          console.log("User is not a physiotherapist, redirecting to not-found");
+          console.log(
+            "User is not a physiotherapist, redirecting to not-found"
+          );
           window.location.href = "/not-found";
         }
       } catch (error) {
@@ -91,12 +112,15 @@ const PhysioVideo = () => {
         return;
       }
       try {
-        const response = await axios.get(`${getApiBaseUrl()}/api/cloud/videos/list-videos/`, {
-          headers: { Authorization: `Bearer ${token}` },
-          params: { treatment_id: id } // Ensure the correct parameter name is used
-        });
+        const response = await axios.get(
+          `${getApiBaseUrl()}/api/cloud/videos/list-videos/`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+            params: { treatment_id: id }, // Ensure the correct parameter name is used
+          }
+        );
         setVideos(Array.isArray(response.data) ? response.data : []);
-      } catch (error) {
+      } catch (error: any) {
         setVideos([]);
       } finally {
         setLoadingVideos(false);
@@ -157,12 +181,16 @@ const PhysioVideo = () => {
         formData.append("file", file!);
         formData.append("treatment", id);
 
-        await axios.post(`${getApiBaseUrl()}/api/cloud/videos/create-video/`, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        await axios.post(
+          `${getApiBaseUrl()}/api/cloud/videos/create-video/`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         showAlert("success", "Video subido correctamente.");
       }
 
@@ -173,31 +201,28 @@ const PhysioVideo = () => {
       setEditingVideo(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
 
-      const response = await axios.get(`${getApiBaseUrl()}/api/cloud/videos/list-videos/`, {
-        headers: { Authorization: `Bearer ${token}` },
-        params: { treatment: id },
-      });
+      const response = await axios.get(
+        `${getApiBaseUrl()}/api/cloud/videos/list-videos/`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          params: { treatment: id },
+        }
+      );
       setVideos(response.data);
     } catch (error) {
-      showAlert("error", error.response?.data?.message || "Error al procesar el video.");
+      showAlert(
+        "error",
+        error.response?.data?.message || "Error al procesar el video."
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  const handleEdit = (video) => {
-    setEditingVideo(video.id);
-    setTitle(video.title);
-    setDescription(video.description);
-    setFileKey(null);
-    if (fileInputRef.current) fileInputRef.current.value = "";
-  };
-
-  const [deleteConfirmation, setDeleteConfirmation] = useState({ show: false, videoId: null });
-
-  const confirmDelete = (videoId: number) => {
-    setDeleteConfirmation({ show: true, videoId });
-  };
+  const [deleteConfirmation, setDeleteConfirmation] = useState({
+    show: false,
+    videoId: null,
+  });
 
   const cancelDelete = () => {
     setDeleteConfirmation({ show: false, videoId: null });
@@ -207,13 +232,19 @@ const PhysioVideo = () => {
     const token = getAuthToken();
     setDeleteConfirmation({ show: false, videoId: null });
     try {
-      await axios.delete(`${getApiBaseUrl()}/api/cloud/videos/delete-video/${videoId}/`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await axios.delete(
+        `${getApiBaseUrl()}/api/cloud/videos/delete-video/${videoId}/`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       showAlert("success", "Video eliminado correctamente.");
       setVideos(videos.filter((v) => v.id !== videoId));
     } catch (error) {
-      showAlert("error", error.response?.data?.detail || "Error al eliminar el video.");
+      showAlert(
+        "error",
+        error.response?.data?.detail || "Error al eliminar el video."
+      );
     }
   };
 
@@ -227,13 +258,19 @@ const PhysioVideo = () => {
     setIsVideoLoading(true);
 
     try {
-      const response = await axios.get(`${getApiBaseUrl()}/api/cloud/videos/stream-video/${videoId}/`, {
-        headers: { Authorization: `Bearer ${token}` },
-        responseType: "blob",
-      });
+      const response = await axios.get(
+        `${getApiBaseUrl()}/api/cloud/videos/stream-video/${videoId}/`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          responseType: "blob",
+        }
+      );
 
       if (response.status === 403) {
-        showAlert("error", "No tienes permiso para acceder a este video. Verifica que tienes los permisos necesarios.");
+        showAlert(
+          "error",
+          "No tienes permiso para acceder a este video. Verifica que tienes los permisos necesarios."
+        );
         return;
       }
 
@@ -241,11 +278,20 @@ const PhysioVideo = () => {
       setVideoUrl(videoUrl);
     } catch (error) {
       if (error.response?.status === 403) {
-        showAlert("error", "No tienes permiso para acceder a este video. Verifica que tienes los permisos necesarios.");
+        showAlert(
+          "error",
+          "No tienes permiso para acceder a este video. Verifica que tienes los permisos necesarios."
+        );
       } else if (error.response?.status === 404) {
-        showAlert("error", "El video no fue encontrado. Verifica que el ID del video es correcto.");
+        showAlert(
+          "error",
+          "El video no fue encontrado. Verifica que el ID del video es correcto."
+        );
       } else {
-        showAlert("error", "Error al obtener el video. Intenta nuevamente más tarde.");
+        showAlert(
+          "error",
+          "Error al obtener el video. Intenta nuevamente más tarde."
+        );
       }
     } finally {
       setIsVideoLoading(false);
@@ -253,19 +299,38 @@ const PhysioVideo = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-5" style={{ background: "rgb(238, 251, 250)" }}>
+    <div
+      className="min-h-screen flex items-center justify-center p-5"
+      style={{ background: "rgb(238, 251, 250)" }}
+    >
       {alert.show && (
-        <Alert type={alert.type} message={alert.message} onClose={() => setAlert({ ...alert, show: false })} />
+        <Alert
+          type={alert.type}
+          message={alert.message}
+          onClose={() => setAlert({ ...alert, show: false })}
+        />
       )}
 
       {deleteConfirmation.show && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl">
             <h3 className="text-xl font-bold mb-4">Confirmar eliminación</h3>
-            <p className="mb-6">¿Estás seguro de que deseas eliminar este video?</p>
+            <p className="mb-6">
+              ¿Estás seguro de que deseas eliminar este video?
+            </p>
             <div className="flex justify-end space-x-3">
-              <button onClick={cancelDelete} className="px-4 py-2 border rounded-xl">Cancelar</button>
-              <button onClick={() => handleDelete(deleteConfirmation.videoId!)} className="px-4 py-2 bg-red-500 text-white rounded-xl">Eliminar</button>
+              <button
+                onClick={cancelDelete}
+                className="px-4 py-2 border rounded-xl"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={() => handleDelete(deleteConfirmation.videoId!)}
+                className="px-4 py-2 bg-red-500 text-white rounded-xl"
+              >
+                Eliminar
+              </button>
             </div>
           </div>
         </div>
@@ -277,8 +342,13 @@ const PhysioVideo = () => {
             className="bg-white p-8 rounded-3xl shadow-xl max-w-sm w-full transition-all duration-300"
             style={{ boxShadow: "0 20px 60px rgba(0, 0, 0, 0.15)" }}
           >
-            <Loader2 className="animate-spin mx-auto mb-4 text-blue-600" size={48} />
-            <p className="text-center text-gray-700">Estamos cargando tu video, espera un momentito...</p>
+            <Loader2
+              className="animate-spin mx-auto mb-4 text-blue-600"
+              size={48}
+            />
+            <p className="text-center text-gray-700">
+              Estamos cargando tu video, espera un momentito...
+            </p>
           </div>
         </div>
       )}
@@ -296,68 +366,107 @@ const PhysioVideo = () => {
             >
               <X size={24} />
             </button>
-            <video controls autoPlay className="w-full rounded-xl shadow-2xl" src={videoUrl}>
+            <video
+              controls
+              autoPlay
+              className="w-full rounded-xl shadow-2xl"
+              src={videoUrl}
+            >
               Tu navegador no soporta la etiqueta de video.
             </video>
           </div>
         </div>
       )}
 
-      <div className="bg-white w-full max-w-3xl rounded-3xl shadow-xl p-10">
-        <button onClick={() => router.push(`/physio-management/follow-up/${id}`)} className="mb-6 flex items-center text-blue-600 hover:text-blue-800">
-          <ArrowLeft className="mr-2" size={20} /> Volver al tratamiento
+      <div
+        className="bg-white w-full max-w-4xl rounded-3xl shadow-xl p-10 transition-all duration-300"
+        style={{ boxShadow: "0 20px 60px rgba(0, 0, 0, 0.08)" }}
+      >
+        <button
+          onClick={() => router.push(`/physio-management/follow-up/${id}`)}
+          className="mb-6 flex items-center text-blue-600 hover:text-blue-800"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5 mr-1"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+          Volver al tratamiento
         </button>
 
         <div className="text-center mb-9">
-          <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-[#1E5ACD] to-[#3a6fd8] bg-clip-text text-transparent">Videos del Tratamiento</h1>
-          <p className="text-gray-600">Administra los videos para tus pacientes</p>
+          <h1
+            className="text-3xl font-bold mb-2"
+            style={{
+              background: "linear-gradient(90deg, #1E5ACD, #3a6fd8)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+            }}
+          >
+            Videos del Tratamiento
+          </h1>
+          <p className="text-gray-600">
+            Administra los videos para tus pacientes
+          </p>
         </div>
 
-        <div className="mb-8">
-          <h2 className="text-xl font-bold mb-4">Videos Disponibles</h2>
-          {loadingVideos ? (
-            <p className="text-center">Cargando videos...</p>
-          ) : videos.length ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {videos.map((video) => (
-                <div
-                  key={video.id}
-                  className="bg-gray-50 border-2 border-gray-200 rounded-2xl p-4 transition-all duration-200 hover:shadow-md"
-                >
-                  <div>
-                    <h3 className="font-semibold text-lg text-gray-800 mb-2 truncate">{video.title}</h3>
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-3">{video.description}</p>
-                    <div className="flex items-center space-x-2">
-                      <button
-                        onClick={() => handleVideoClick(video.id)}
-                        className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-2 px-4 rounded-xl transition-all duration-200 flex items-center justify-center"
-                      >
-                        <Play className="mr-2" size={20} />
-                        Ver Video
-                      </button>
-                      <button
-                        onClick={() => handleEdit(video)}
-                        className="w-10 h-10 bg-yellow-500 hover:bg-yellow-600 text-white rounded-full flex items-center justify-center transition-all duration-200"
-                      >
-                        <Edit2 size={16} />
-                      </button>
-                      <button
-                        onClick={() => confirmDelete(video.id)}
-                        className="w-10 h-10 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition-all duration-200"
-                      >
-                        <Trash size={16} />
-                      </button>
-                    </div>
-                  </div>
+        {loadingVideos && (
+          <div className="flex justify-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#1E5ACD]"></div>
+          </div>
+        )}
+
+        {message && (
+          <div className="mt-4 p-4 rounded-xl text-center bg-red-50 text-red-600 border border-red-100 flex items-center justify-center">
+            <AlertCircle className="mr-2" size={20} />
+            <span>{message}</span>
+          </div>
+        )}
+
+        {videos.length === 0 && !loadingVideos && (
+          <div className="text-center py-8 bg-gray-50 rounded-2xl border-2 border-gray-200">
+            <p className="text-gray-500">No tienes videos disponibles.</p>
+          </div>
+        )}
+
+        {videos.length > 0 && !loadingVideos && (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {videos.map((video) => (
+              <div
+                key={video.id}
+                className="bg-gray-50 border-2 border-gray-200 rounded-2xl p-4 transition-all duration-200 hover:shadow-md"
+              >
+                <div>
+                  <h3 className="font-semibold text-lg text-gray-800 mb-2 truncate">
+                    {video.title}
+                  </h3>
+                  <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                    {video.description}
+                  </p>
+                  <button
+                    onClick={() => handleVideoClick(video.id)}
+                    className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 flex items-center justify-center"
+                  >
+                    <Play className="mr-2" size={20} />
+                    Ver Video
+                  </button>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-center">No hay videos disponibles para este tratamiento.</p>
-          )}
-        </div>
+              </div>
+            ))}
+          </div>
+        )}
 
-        <div className="border-t pt-6">
+        {/* Formulario de subida/edición de video (solo para physio) */}
+        <div className="border-t pt-6 mt-8">
           <h2 className="text-xl font-bold mb-4">
             {editingVideo ? "Editar Video" : "Subir Nuevo Video"}
           </h2>
@@ -369,9 +478,11 @@ const PhysioVideo = () => {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 maxLength={100}
-                className="w-full py-3 px-4 text-sm border-2 border-gray-200 rounded-xl focus:border-blue-600 focus:shadow"
+                className="w-full py-3 px-4 text-sm border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
               />
-              <div className="text-right text-xs text-gray-500 mt-1">{title.length}/100 caracteres</div>
+              <div className="text-right text-xs text-gray-500 mt-1">
+                {title.length}/100 caracteres
+              </div>
             </div>
 
             <div>
@@ -381,9 +492,11 @@ const PhysioVideo = () => {
                 onChange={(e) => setDescription(e.target.value)}
                 maxLength={255}
                 rows={2}
-                className="w-full py-3 px-4 text-sm border-2 border-gray-200 rounded-xl focus:border-blue-600 focus:shadow"
+                className="w-full py-3 px-4 text-sm border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
               />
-              <div className="text-right text-xs text-gray-500 mt-1">{description.length}/255 caracteres</div>
+              <div className="text-right text-xs text-gray-500 mt-1">
+                {description.length}/255 caracteres
+              </div>
             </div>
 
             {!editingVideo && (
@@ -392,7 +505,7 @@ const PhysioVideo = () => {
                 accept="video/*"
                 onChange={handleFileChange}
                 ref={fileInputRef}
-                className="w-full py-2 px-4 text-sm border-2 border-gray-200 rounded-xl"
+                className="w-full py-2 px-4 text-sm border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
               />
             )}
 
@@ -407,7 +520,7 @@ const PhysioVideo = () => {
                     setFileKey(null);
                     if (fileInputRef.current) fileInputRef.current.value = "";
                   }}
-                  className="w-1/2 border border-gray-300 text-gray-700 py-2 rounded-xl hover:bg-gray-100"
+                  className="w-1/2 border border-gray-300 text-gray-700 py-2 rounded-xl hover:bg-gray-100 transition-all duration-200"
                 >
                   Cancelar
                 </button>
@@ -415,15 +528,63 @@ const PhysioVideo = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold py-2 rounded-xl flex items-center justify-center"
+                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-2 rounded-xl flex items-center justify-center transition-all duration-200"
               >
                 <UploadCloud className="mr-2" size={18} />
-                {loading ? "Procesando..." : editingVideo ? "Actualizar Video" : "Subir Video"}
+                {loading
+                  ? "Procesando..."
+                  : editingVideo
+                  ? "Actualizar Video"
+                  : "Subir Video"}
               </button>
             </div>
           </form>
         </div>
       </div>
+
+      {/* Video Loading Modal */}
+      {isVideoLoading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 backdrop-blur-sm">
+          <div
+            className="bg-white p-8 rounded-3xl shadow-xl max-w-sm w-full transition-all duration-300"
+            style={{ boxShadow: "0 20px 60px rgba(0, 0, 0, 0.15)" }}
+          >
+            <Loader2
+              className="animate-spin mx-auto mb-4 text-blue-600"
+              size={48}
+            />
+            <p className="text-center text-gray-700">
+              Estamos cargando tu video, espera un momentito...
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Video Player */}
+      {videoUrl && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-75 flex items-center justify-center backdrop-blur-sm pointer-events-auto">
+          <div className="relative max-w-4xl w-full p-4">
+            <button
+              onClick={() => setVideoUrl(null)}
+              className="absolute top-4 right-4 bg-gray-900 text-white hover:bg-gray-800 transition-all duration-200 flex items-center rounded-full p-3 shadow-lg z-50 border border-white"
+              style={{
+                zIndex: 1000,
+                backgroundColor: "rgba(0, 0, 0, 0.7)",
+              }}
+            >
+              <X size={24} />
+            </button>
+            <video
+              controls
+              autoPlay
+              className="w-full rounded-xl shadow-2xl"
+              src={videoUrl}
+            >
+              Tu navegador no soporta la etiqueta de video.
+            </video>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
