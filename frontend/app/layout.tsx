@@ -16,22 +16,6 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: 'Fisio Find | Tu fisioterapeuta online en España',
   description: 'Conecta con fisioterapeutas especializados en rehabilitación, lesiones musculares y fisioterapia para mayores. Sesiones presenciales y online en toda España.',
-  openGraph: {
-    title: 'Fisio Find | Tu fisioterapeuta online en España',
-    description: 'Encuentra tu fisioterapeuta ideal para lesiones, movilidad, y salud física. 100% online o presencial.',
-    url: 'https://fisiofind.com',
-    siteName: 'Fisio Find',
-    images: [
-      {
-        url: '/static/og-cover.jpg',
-        width: 1024,
-        height: 1024,
-        alt: 'Fisio Find fisioterapeutas online',
-      },
-    ],
-    locale: 'es_ES',
-    type: 'website',
-  },
 };
 
 
