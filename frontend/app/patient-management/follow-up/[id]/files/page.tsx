@@ -17,6 +17,8 @@ interface PatientFile {
 
 const TreatmentFilesPage = () => {
   const { id: treatmentId } = useParams();
+  const params = useParams();
+  const id = params?.id as string;
   const router = useRouter();
   const [files, setFiles] = useState<PatientFile[]>([]);
   const [title, setTitle] = useState("");
@@ -28,6 +30,7 @@ const TreatmentFilesPage = () => {
   const [isClient, setIsClient] = useState(false);
   const [editingFile, setEditingFile] = useState<PatientFile | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);
+  const [previewFile, setPreviewFile] = useState<string | null>(null);
   const [fileType, setFileType] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isAuthChecking, setIsAuthChecking] = useState<boolean>(true);
@@ -112,7 +115,7 @@ const TreatmentFilesPage = () => {
           return;
         }
 
-        const fileRes = await fetch(`${getApiBaseUrl()}/api/cloud/files/list-files/`, {
+        const fileRes = await fetch(`${getApiBaseUrl()}/api/cloud/files/list-files/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -182,14 +185,39 @@ const TreatmentFilesPage = () => {
         }
       );
 
-      if (!res.ok) throw new Error("Error al guardar el archivo");
+      // Verificar si la respuesta no es exitosa (status no 200)
+      if (!res.ok) {
+        const errorData = await res.json();  // Obtener el cuerpo de la respuesta de error
+        const errorDetail = errorData?.detail;
+
+        console.log("Error detail:", errorDetail);
+
+        // Verificar si el error es por el límite de archivos alcanzado
+        if (
+          errorData?.status === 400 &&
+          typeof errorDetail === "string" &&
+          errorDetail.toLowerCase().includes("límite de archivos alcanzado")
+        ) {
+          showAlert(
+            "error",
+            "Has alcanzado el límite de archivos permitidos para este tratamiento. Elimina algunos archivos o contacta con el soporte."
+          );
+        } else {
+          // Para otros errores generales
+          showAlert("error", errorDetail || "Hubo un error al guardar el archivo.");
+        }
+
+        setLoading(false); // Detener carga
+        return; // Detener ejecución
+      }
 
       const data = await res.json();
       showAlert(
         "success",
         editingFile ? "Archivo actualizado correctamente." : "Archivo subido correctamente."
       );
-      setLoading(false);
+
+      setLoading(false); // Detener carga
       setFiles((prev) =>
         editingFile ? prev.map((f) => (f.id === data.file.id ? data.file : f)) : [...prev, data.file]
       );
@@ -198,12 +226,18 @@ const TreatmentFilesPage = () => {
       setDescription("");
       setFile(null);
       setFilePreview(null);
+
       if (fileInputRef.current) {
-        fileInputRef.current.value = "";
+      fileInputRef.current.value = "";
       }
-    } catch (err) {
-      showAlert("error", "Hubo un error al guardar el archivo.");
-    }
+    } catch (err: any) {
+      // Manejo de cualquier otro error inesperado
+      console.error("Error inesperado:", err);
+      showAlert("error", "Hubo un error inesperado al guardar el archivo.");
+      setLoading(false); // Detener carga
+    } finally {
+      setLoading(false); // Asegurarse de detener el loading aunque falle
+  }
   };
 
   const handleEdit = (file: PatientFile) => {
@@ -309,26 +343,19 @@ const TreatmentFilesPage = () => {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setFile(file);
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile) {
+      setFile(selectedFile);
 
-      const fileUrl = URL.createObjectURL(file);
+      const fileType = selectedFile.type.split('/')[0];
+      const fileExtension = selectedFile.name.split('.').pop()?.toLowerCase();
 
-      // Validate file type and set preview only for safe types
-      const fileType = file.type.split("/")[0]; // 'image', 'application', etc.
-      const fileExtension = file.name.split(".").pop()?.toLowerCase();
-
-      if (fileType === "image" && ["jpg", "jpeg", "png", "gif"].includes(fileExtension || "")) {
-        // Preview for image files
-        setFilePreview(fileUrl);
-      } else if (fileExtension === "pdf") {
-        // Preview for PDF files
-        setFilePreview(fileUrl);
+      if (fileType === 'image' || fileExtension === 'pdf') {
+        const fileUrl = URL.createObjectURL(selectedFile);
+        setPreviewFile(fileUrl);
       } else {
-        // Unsupported file type: clear preview
-        setFilePreview(null);
-        console.warn("Unsupported file type:", file.type);
+        setPreviewFile(null);
+        showAlert("error", "Tipo de archivo no soportado. Por favor, sube una imagen o un PDF.");
       }
     }
   };
@@ -349,6 +376,13 @@ const TreatmentFilesPage = () => {
           Volver al tratamiento
         </button>
         <div className="text-center mb-9">
+          {alert.show && (
+                      <Alert
+                        type={alert.type}
+                        message={alert.message}
+                        onClose={() => setAlert({ ...alert, show: false })}
+                      />
+                    )}
           <h1
             className="text-3xl font-bold mb-2"
             style={{
@@ -448,11 +482,11 @@ const TreatmentFilesPage = () => {
                 className="w-full py-2 px-4 text-sm border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
                 required={!editingFile}
               />
-              {filePreview ? (
+              {previewFile ? (
                 file?.type.includes("image") ? (
-                  <img src={filePreview} alt="Vista previa" className="mt-2 max-h-60" />
+                  <img src={previewFile} alt="Vista previa" className="mt-2 max-h-60" />
                 ) : file?.type === "application/pdf" ? (
-                  <embed src={filePreview} type="application/pdf" width="100%" height="400px" />
+                  <embed src={previewFile} type="application/pdf" width="100%" height="400px" />
                 ) : null
               ) : (
                 <p className="mt-2 text-sm text-gray-500">No preview available for this file type.</p>
@@ -494,32 +528,30 @@ const TreatmentFilesPage = () => {
       )}
 
       {filePreview && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 backdrop-blur-sm">
-          <div className="relative max-w-4xl w-full p-4">
-            <button
-              onClick={() => setFilePreview(null)}
-              className="absolute top-6 right-6 bg-gray-800 text-white hover:bg-gray-700 transition-all duration-200 flex items-center rounded-full p-2 shadow-lg"
-            >
-              <X size={24} />
-            </button>
-            {fileType === "image" && <img src={filePreview} alt="Vista previa" className="max-w-full max-h-[80vh] mx-auto object-contain" />}
-            {fileType === "pdf" && (
-              <iframe
-                src={filePreview}
-                width="100%"
-                height="600px"
-                title="PDF Viewer"
-                className="bg-white rounded-lg"
-              />
-            )}
-            {fileType === "other" && (
-              <div className="text-white text-center">
-                <p>No se puede mostrar vista previa de este tipo de archivo.</p>
+              <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 backdrop-blur-sm">
+                  <div className="relative max-w-4xl w-full p-4">
+                  <button onClick={() => setFilePreview(null)} className="absolute top-6 right-6 bg-gray-800 text-white hover:bg-gray-700 transition-all duration-200 flex items-center rounded-full p-2 shadow-lg">
+                    <X size={24} />
+                  </button>
+      
+                  {fileType === 'image' && <img src={filePreview} alt="Vista previa" className="max-w-full max-h-[80vh] mx-auto object-contain" />}
+                  {fileType === 'pdf' && (
+                    <iframe 
+                      src={filePreview}
+                      width="100%" 
+                      height="600vh" 
+                      title="PDF Viewer"
+                      className="bg-white rounded-lg"
+                    />
+                  )}
+                  {fileType === 'other' && (
+                    <div className="text-white text-center">
+                      <p>No se puede mostrar vista previa de este tipo de archivo.</p>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
-          </div>
-        </div>
-      )}
     </div>
   );
 };
