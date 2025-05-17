@@ -7,6 +7,8 @@ from rest_framework import status
 from django.db.models import Q
 from users.models import Physiotherapist
 from users.models import Specialization
+from appointment_rating.models import AppointmentRating
+from django.db.models import Avg, Count
 from rest_framework.decorators import api_view, permission_classes
 import random
 from django.conf import settings
@@ -249,6 +251,21 @@ def advanced_search(request):
                 else:
                     # Datos binarios crudos (menos común)
                     image_url = None
+                
+            rating = physio.rating_avg
+            try:
+                aggregate_data = AppointmentRating.objects.filter(
+                    physiotherapist=physio
+                ).aggregate(average=Avg("score"), count=Count("id"))
+                avg_score = aggregate_data["average"]
+                ratings_count = aggregate_data["count"]
+
+                # Si existen valoraciones, redondeamos el promedio a dos decimales.
+                if ratings_count > 0 and avg_score is not None:
+                    rating = round(avg_score, 2)
+
+            except Exception as e:
+                rating = physio.rating_avg
 
             results.append({
                 'id': physio.id,
@@ -256,7 +273,7 @@ def advanced_search(request):
                 'specializations': ', '.join(specialization_names),
                 'gender': physio.gender,
                 'postalCode': physio.user.postal_code,
-                'rating': physio.rating_avg,
+                'rating': rating,
                 'price': avg_price,
                 'image': image_url,  # Ahora siempre es una URL completa o None
             })

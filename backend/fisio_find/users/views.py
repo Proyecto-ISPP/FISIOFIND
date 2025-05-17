@@ -8,6 +8,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from .serializers import PatientRegisterSerializer, PhysioUpdateSerializer, PhysioRegisterSerializer
 from .serializers import PhysioSerializer, PatientSerializer, AppUserSerializer
 from .models import AppUser, Physiotherapist, Patient, Specialization
+from appointment.models import Appointment
+from questionnaire.models import QuestionnaireResponses
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.password_validation import validate_password
@@ -687,3 +689,50 @@ def confirm_account_deletion(request, token):
             "error": "Ocurrió un error al procesar tu solicitud.",
             "status": "error"
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsPhysiotherapist])
+def get_patient_history(request, patient_id):
+    """
+    Endpoint para obtener el historial de un paciente específico.
+    """
+    try:
+        physio = request.user.physio
+        patient = get_object_or_404(Patient, id=patient_id)
+        appointments = Appointment.objects.filter(patient=patient, physiotherapist=physio)
+        appointments_data = []
+        for appointment in appointments:
+            questionnaire_responses = QuestionnaireResponses.objects.filter(appointment=appointment)
+            appointment_data = {
+                "id": appointment.id,
+                "start_time": appointment.start_time,
+                "end_time": appointment.end_time,
+                "is_online": appointment.is_online,
+                "service": appointment.service,
+                "status": appointment.status,
+                "physiotherapist": appointment.physiotherapist.id,
+                "patient": appointment.patient.id,
+                "alternatives": appointment.alternatives,
+            }
+            
+            # Procesar respuestas de cuestionarios incluyendo el título
+            if questionnaire_responses.exists():
+                responses_data = []
+                for response in questionnaire_responses:
+                    response_data = response.__dict__.copy()
+                    if '_state' in response_data:
+                        del response_data['_state']
+                    
+                    # Añadir el título del cuestionario
+                    response_data['questionnaire_title'] = response.questionnaire.title
+                    
+                    responses_data.append(response_data)
+                appointment_data["questionnaire_responses"] = responses_data
+            else:
+                appointment_data["questionnaire_responses"] = None
+                
+            appointments_data.append(appointment_data)
+
+        return Response({"appointments": appointments_data}, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"error": "An internal error occurred."}, status=status.HTTP_400_BAD_REQUEST)

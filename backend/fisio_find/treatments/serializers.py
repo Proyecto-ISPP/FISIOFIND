@@ -13,28 +13,24 @@ class TreatmentSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'created_at', 'updated_at']
     
     def validate(self, data):
-        if 'start_time' in data and 'end_time' in data:
-            if data['start_time'] >= data['end_time']:
-                raise serializers.ValidationError(
-                    {"end_time": "La fecha de finalización debe ser posterior a la fecha de inicio."}
-                )
-        elif 'start_time' in data and 'end_time' not in data and self.instance:
-            if data['start_time'] >= self.instance.end_time:
-                raise serializers.ValidationError(
-                    {"start_time": "La fecha de inicio debe ser anterior a la fecha de finalización."}
-                )
-        elif 'end_time' in data and 'start_time' not in data and self.instance:
-            if self.instance.start_time >= data['end_time']:
-                raise serializers.ValidationError(
-                    {"end_time": "La fecha de finalización debe ser posterior a la fecha de inicio."}
-                )
-        if 'start_time' in data:
-            current_time = timezone.now()
-            if data['start_time'] < current_time:
-                raise serializers.ValidationError(
-                    {"start_time": "La fecha de inicio no puede ser anterior a la fecha actual."}
-                )
+        start_time = data.get('start_time')
+        end_time = data.get('end_time') or (self.instance.end_time if self.instance else None)
+
+        if start_time and end_time and start_time >= end_time:
+            raise serializers.ValidationError({
+                "end_time": "La fecha de finalización debe ser posterior a la fecha de inicio."
+            })
+
+        appointment_end = self.context.get("appointment_end")
+        if start_time and appointment_end:
+
+            if start_time.date() < appointment_end.date():
+                raise serializers.ValidationError({
+                    "start_time": "El tratamiento no puede comenzar antes de que termine la cita."
+                })
+
         return data
+
         
 class TreatmentDetailSerializer(serializers.ModelSerializer):
     physiotherapist = PhysioSerializer(read_only=True)

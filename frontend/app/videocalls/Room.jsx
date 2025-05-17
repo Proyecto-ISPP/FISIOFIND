@@ -59,6 +59,8 @@ const Room = ({ roomCode }) => {
   const [questionnaireResponse, setQuestionnaireResponse] = useState(null);
   const [responseQuestionnaire, setResponseQuestionnaire] = useState(null);
 
+  const [selectedPatientId, setSelectedPatientId] = useState(null);
+
   // Inicializamos los hooks SIEMPRE
   const webSocket = useWebSocket(roomCode, userRole, () => { });
   const chat = useChat({ userRole, sendWebSocketMessage: webSocket.sendWebSocketMessage });
@@ -92,6 +94,8 @@ const Room = ({ roomCode }) => {
   });
   const router = useRouter();
 
+  console.log(roomCode)
+
   // Cargar token y rol desde backend
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
@@ -123,6 +127,26 @@ const Room = ({ roomCode }) => {
       setLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    const fetchRoomParticipants = async () => {
+      if (userRole === 'physio' && token) {
+        try {
+          const res = await axios.get(`${getApiBaseUrl()}/api/videocall/room-info/${roomCode}/`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (res.data.patient && res.data.patient.id) {
+            setSelectedPatientId(res.data.patient.id);
+          }
+        } catch (error) {
+          console.error('No se pudo obtener la información de la sala:', error);
+        }
+      }
+    };
+
+    fetchRoomParticipants();
+  }, [userRole, token, roomCode]);
+
 
   // Esperar a tener el rol antes de inicializar lógica pesada
   useEffect(() => {
@@ -211,20 +235,20 @@ const Room = ({ roomCode }) => {
                 `El paciente ha respondido al cuestionario: "${data.message.questionnaireTitle}"`
               );
 
-              const matchingQuestionnaire = questionnaires.find(
-                (q) => q.id === data.message.questionnaireId
-              );
+              // Buscar el cuestionario completo para mostrar las preguntas correctamente
+              const matchingQuestionnaire = questionnaires.find(q => q.id === data.message.questionnaireId);
 
               if (matchingQuestionnaire) {
                 setResponseQuestionnaire(matchingQuestionnaire);
-                setQuestionnaireResponse(data.message.responses);
+                setQuestionnaireResponse(data.message);
               } else {
+                // Si no encontramos el cuestionario, usamos la información básica disponible
                 setResponseQuestionnaire({
                   id: data.message.questionnaireId,
                   title: data.message.questionnaireTitle,
-                  questions: [],
+                  questions: []
                 });
-                setQuestionnaireResponse(data.message.responses);
+                setQuestionnaireResponse(data.message);
               }
             }
             break;
@@ -424,6 +448,7 @@ const Room = ({ roomCode }) => {
             questionnaire={activeQuestionnaire}
             sendWebSocketMessage={webSocket.sendWebSocketMessage}
             onClose={() => setActiveQuestionnaire(null)}
+            roomCode={roomCode}
           />
         </>
       )}
@@ -449,6 +474,7 @@ const Room = ({ roomCode }) => {
               questionnaires={questionnaires}
               addChatMessage={chat.addChatMessage}
               onCloseTool={() => setSelectedTool(null)}
+              selectedPatientId={selectedPatientId}
               token={token}
             />
           )}
@@ -479,6 +505,7 @@ const Room = ({ roomCode }) => {
               setQuestionnaireResponse(null);
               setResponseQuestionnaire(null);
             }}
+            roomCode={roomCode}
           />
         </div>
       )}

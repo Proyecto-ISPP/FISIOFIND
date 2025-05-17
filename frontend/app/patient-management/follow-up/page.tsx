@@ -324,7 +324,8 @@ const PatientFollowUpPage = () => {
 
               <div className="p-6">
                 <h3 className="text-xl font-bold text-teal-600 mb-4">
-                  {getPhysiotherapistName(treatment)}
+                  {getPhysiotherapistName(treatment)}{" "}
+                  <span className="text-gray-500 font-normal">(Fisioterapeuta)</span>
                 </h3>
 
                 <div className="space-y-3">
