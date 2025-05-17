@@ -160,26 +160,29 @@ const FormField = ({
   );
 };
 
-// Modal Component
 const ConfirmationModal = ({ isOpen, onClose, email, onConfirm }: { isOpen: boolean, onClose: () => void, email: string, onConfirm: () => void }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-black p-6 rounded-lg shadow-xl max-w-md w-full">
-        <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">Confirma tu correo</h2>
-        <p className="mb-4 text-gray-700 dark:text-gray-300">
-          Te hemos enviado un correo de confirmación a <strong>{email}</strong>. Por favor, verifica tu buzón y sigue las instrucciones para activar tu cuenta.
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300 ease-in-out">
+      <div className="bg-white dark:bg-neutral-900 p-6 rounded-lg shadow-xl max-w-md w-full transform transition-all duration-300 ease-in-out scale-100">
+        <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">Confirma tu correo electrónico</h2>
+        <p className="mb-6 text-gray-700 dark:text-gray-300">
+          ¡Registro casi completo! Te hemos enviado un correo de confirmación a <strong>{email}</strong>.
+          <br /><br />
+          Por favor, revisa tu bandeja de entrada (y la carpeta de spam, por si acaso) y sigue las instrucciones para activar tu cuenta.
         </p>
-        <button
-          onClick={() => {
-            onClose();
-            onConfirm();
-          }}
-          className="px-4 py-2 bg-[#1E5ACD] text-white font-medium rounded-lg hover:bg-[#1747A0] transition-colors"
-        >
-          Entendido
-        </button>
+        <div className="flex justify-end">
+           <button
+             onClick={() => {
+               onClose(); // Cierra el modal
+               onConfirm(); // Ejecuta la acción de confirmación (redirección)
+             }}
+             className="px-5 py-2 bg-[#1E5ACD] text-white font-semibold rounded-lg hover:bg-[#1747A0] focus:outline-none focus:ring-2 focus:ring-[#1E5ACD] focus:ring-opacity-50 transition-colors"
+           >
+             Entendido
+           </button>
+        </div>
       </div>
     </div>
   );
@@ -344,53 +347,96 @@ const PatientRegistrationForm = () => {
     }
   };
 
+  const handleModalConfirm = () => {
+    setShowModal(false);
+    router.push('/');
+  };
+
   const handlePrevStep = () => {
     setCurrentStep((prev) => prev - 1);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    // Create a new object with only the fields the server expects
-    const requestData = { ...formData };
-    // Remove phone_number if it's empty
-    if (!requestData.phone_number.trim()) {
+  
+    if (!validateStep(currentStep)) {
+       showAlert("warning", "Por favor, corrige los errores en el formulario.");
+       return; 
+    }
+    setShowModal(true);
+    setIsSubmitting(true); 
+    setErrors({}); 
+  
+    const requestData: Partial<FormData> = { ...formData };
+    if (!requestData.phone_number?.trim()) {
       delete requestData.phone_number;
     }
-    // Remove confirm_password since the server doesn't expect it
     delete requestData.confirm_password;
-
+  
     try {
+  
       const response = await axios.post(
         `${getApiBaseUrl()}/api/app_user/patient/register/`,
         requestData,
         { headers: { "Content-Type": "application/json" } }
       );
-
+  
       if (response.status === 201) {
-        showAlert("success", "¡Registro exitoso! Iniciando sesión...");
-        
-        // Auto login after registration
-        const loginResponse = await axios.post(
-          `${getApiBaseUrl()}/api/app_user/login/`,
-          { username: formData.username, password: formData.password },
-          { headers: { "Content-Type": "application/json" } }
-        );
+        try {
+          const loginResponse = await axios.post(
+            `${getApiBaseUrl()}/api/app_user/login/`,
+            { username: formData.username, password: formData.password },
+            { headers: { "Content-Type": "application/json" } }
+          );
+  
+          if (loginResponse.status === 200) {
+            localStorage.setItem("token", loginResponse.data.access);
+            localStorage.setItem("refresh_token", loginResponse.data.refresh);
+            setIsLoggedIn(true);
+  
+          } else {
+             showAlert("error", `Registro completado, pero hubo un error al iniciar sesión automáticamente. Por favor, inicia sesión manualmente.`);
+             setShowModal(false);
+          }
+        } catch (loginError) {
+            showAlert("error", `Registro completado, pero hubo un error al iniciar sesión automáticamente. Por favor, inicia sesión manualmente.`);
+            console.log("Login error after registration:", loginError);
 
-        if (loginResponse.status === 200) {
-          localStorage.setItem("token", loginResponse.data.access);
-          setIsLoggedIn(true); // Marcar que el usuario está logueado
+            setShowModal(false);
         }
+  
       }
+  
     } catch (error: any) {
-      if (axios.isAxiosError(error) && error.response) {
-        showAlert("error", "Error en el registro. Por favor, verifica tus datos.");
-        setErrors(error.response.data);
-      }
+        if (axios.isAxiosError(error) && error.response) {
+            console.log("Registration error data:", error.response.data);
+            const serverErrors = error.response.data;
+            const newErrors: { [key: string]: string } = {};
+            let generalErrorMessage = "Error en el registro. Verifica los campos.";
+            for (const key in serverErrors) {
+                if (Array.isArray(serverErrors[key])) {
+                    newErrors[key] = serverErrors[key].join(' ');
+                    if (['username', 'email', 'password'].includes(key) && currentStep === 2) {
+                        setCurrentStep(1);
+                    }
+                } else if (key === 'detail' || typeof serverErrors[key] === 'string') {
+                    generalErrorMessage = serverErrors[key];
+                }
+            }
+            setErrors(newErrors);
+            showAlert("error", generalErrorMessage);
+  
+        } else {
+          showAlert("error", "Ocurrió un error inesperado. Inténtalo de nuevo más tarde.");
+          console.log("Unexpected registration error:", error);
+        }
+  
+        setShowModal(false);
     } finally {
       setIsSubmitting(false);
     }
   };
+  
   return (
     <div>
       {alert.show && (
@@ -646,7 +692,14 @@ const PatientRegistrationForm = () => {
           </div>
         </div>
       </div>
+      <ConfirmationModal
+        isOpen={showModal}
+        onClose={handleModalConfirm}
+        email={formData.email}
+        onConfirm={handleModalConfirm}
+      />
     </div>
+    
   );
 };
 

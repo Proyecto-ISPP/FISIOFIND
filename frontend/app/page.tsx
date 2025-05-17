@@ -12,18 +12,6 @@ import { GradientButton } from "@/components/ui/gradient-button";
 import { PhysioCallToAction } from "@/components/ui/physio-cta";
 import { DemoWindow } from "@/components/demo-window";
 
-function UserWayWidget() {
-    useEffect(() => {
-    const d = document;
-    const s = d.createElement("script");
-    s.setAttribute("data-account", "436w0GnIfK");
-    s.src = "https://cdn.userway.org/widget.js";
-    s.async = true;
-    (d.head || d.body).appendChild(s);
-  }, []);
-  return null;
-}
-
 
 const Home = () => {
   const router = useRouter();
@@ -79,7 +67,6 @@ const Home = () => {
       style={{ backgroundColor: "rgb(238, 251, 250)" }}
     >
       <CookieConsent />
-      <UserWayWidget />
 
       {!isAuthenticated && (
         <header className="bg-[rgb(238, 251, 250)] shadow-md py-4">

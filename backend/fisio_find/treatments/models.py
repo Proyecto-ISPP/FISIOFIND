@@ -1,3 +1,4 @@
+from django.utils import timezone
 from multiselectfield import MultiSelectField
 from django.db import models
 from django.core.exceptions import ValidationError
@@ -185,7 +186,7 @@ class ExerciseLog(models.Model):
     """ Registro del progreso del paciente en las series """
     series = models.ForeignKey(Series, on_delete=models.CASCADE, related_name='exercise_logs', verbose_name = "Series")
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='exercise_logs' , verbose_name = "Paciente")
-    date = models.DateField(auto_now_add=True, verbose_name = "Fecha")
+    date = models.DateField(default=timezone.now, verbose_name = "Fecha")
 
     repetitions_done = models.PositiveIntegerField(default=0, verbose_name = "Repeticiones hechas")
     weight_done = models.FloatField(blank=True, null=True, verbose_name = "Peso hecho")

@@ -24,8 +24,8 @@ import Alert from "@/components/ui/Alert";
 import UpdatePasswordModal from "@/components/user-update-password-modal";
 import SubscriptionSlider from "@/components/ui/SubscriptionSlider";
 import ConfirmModal from "@/components/ui/ConfirmModal";
+import { getApiBaseUrl } from "@/utils/api";
 
-const getApiBaseUrl = () => process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 const BASE_URL = `${getApiBaseUrl()}`;
 
 const getAuthToken = () => localStorage.getItem("token");
@@ -92,6 +92,7 @@ const PatientProfile = () => {
         .then((response) => {
           const role = response.data.user_role;
           if (role !== "patient") {
+            console.log("razon 1")
             location.href = "/permissions-error/";
           } else {
             fetchPatientProfile();
@@ -99,6 +100,7 @@ const PatientProfile = () => {
         })
         .catch((error) => {
           console.error("Error al obtener el rol del usuario:", error);
+          console.log("razon 2")
           location.href = "/permissions-error/";
         });
     }

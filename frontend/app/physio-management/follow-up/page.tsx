@@ -93,10 +93,7 @@ const SeguimientoPage = () => {
   >([]);
 
   const [showDateForm, setShowDateForm] = useState(false);
-  const [selectedPatient, setSelectedPatient] = useState<{
-    id: number;
-    appointmentId: number;
-  } | null>(null);
+  const [selectedPatient, setSelectedPatient] = useState<{id: number, appointmentId: number, appointmentEndTime?: string;} | null>(null);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [dateError, setDateError] = useState<string | null>(null);
@@ -106,11 +103,8 @@ const SeguimientoPage = () => {
   );
 
   // Function to handle the initial click on "Crear tratamiento"
-  const handleInitiateTreatmentCreation = (
-    appointmentId: number,
-    patientId: number
-  ) => {
-    setSelectedPatient({ id: patientId, appointmentId });
+  const handleInitiateTreatmentCreation = (appointmentId: number, patientId: number, appointmentEndTime: string) => {
+    setSelectedPatient({id: patientId, appointmentId, appointmentEndTime});
     setShowDateForm(true);
 
     // Set default dates (today for start, 30 days later for end)
@@ -186,9 +180,17 @@ const SeguimientoPage = () => {
       }
 
       // Format dates for API
-      const formattedStartDate = new Date(
-        startDate + "T12:00:00"
-      ).toISOString();
+      let startDateTime: Date;
+
+      if (selectedPatient?.appointmentEndTime) {
+      // Usar 1 minuto después de la hora de fin de la cita
+      startDateTime = new Date(new Date(selectedPatient.appointmentEndTime).getTime() + 60000);
+      } else {
+      // Fallback si no se ha pasado appointmentEndTime
+      startDateTime = new Date(startDate + "T12:00:00");
+      }
+
+      const formattedStartDate = startDateTime.toISOString();
       const formattedEndDate = new Date(endDate + "T12:00:00").toISOString();
 
       console.log(

@@ -1,4 +1,4 @@
----
+<!-- ---
 title: "ACUERDO CON EL USUARIO"
 subtitle: "FISIO FIND - Grupo 6 - #SPRINT 2"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]
@@ -18,10 +18,10 @@ header-right: "17/03/2025"
 footer-left: "FISIO FIND"
 documentclass: scrartcl
 classoption: "table"
----
+--- -->
 
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
-<!-- <p align="center">
+<p align="center">
   <img src="../.img/Logo_FisioFind_Verde_sin_fondo.webp" alt="Logo FisioFind" width="300" />
 </p>
 
@@ -48,13 +48,24 @@ classoption: "table"
   - [6.3. Sus derechos sobre sus datos](#63-sus-derechos-sobre-sus-datos)
   - [6.4. Conservación de datos](#64-conservación-de-datos)
   - [6.5. Compartición de datos](#65-compartición-de-datos)
-  - [6.6. Localización y Seguridad](#66-localizacion-y-seguridad)
+  - [6.6. Localización y Seguridad](#66-localización-y-seguridad)
   - [6.7. Contacto para asuntos de privacidad](#67-contacto-para-asuntos-de-privacidad)
-- [7. MODIFICACIONES AL ACUERDO](#7-modificaciones-al-acuerdo)
-- [8. CONTACTO Y SOPORTE](#8-contacto-y-soporte)
-- [9. DISPOSICIONES FINALES](#9-disposiciones-finales)
+- [7. LICENCIAS](#7-licencias)
+  - [7.1. MIT (495)](#71-mit-495)
+  - [7.2. Apache-2.0 (27)](#72-apache-20-27)
+  - [7.3. ISC (24)](#73-isc-24)
+  - [7.4. BSD-2-Clause y BSD-3-Clause (13)](#74-bsd-2-clause-y-bsd-3-clause-13)
+  - [7.5. BlueOak-1.0.0 (3)](#75-blueoak-100-3)
+  - [7.6. CC-BY-4.0 (2)](#76-cc-by-40-2)
+  - [7.7. LGPL-3.0-or-later (1)](#77-lgpl-30-or-later-1)
+  - [7.8. Python-2.0 (1)](#78-python-20-1)
+  - [7.9. CC0-1.0 (1)](#79-cc0-10-1)
+  - [7.10. 0BSD (1)](#710-0bsd-1)
+- [8. MODIFICACIONES AL ACUERDO](#8-modificaciones-al-acuerdo)
+- [9. CONTACTO Y SOPORTE](#9-contacto-y-soporte)
+- [10. DISPOSICIONES FINALES](#10-disposiciones-finales)
 
-<br> -->
+<br>
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
 
 
@@ -94,7 +105,7 @@ classoption: "table"
 
 <br>
 
-\newpage
+<!-- \newpage -->
 
 <br>
 
@@ -122,7 +133,7 @@ Para mayor transparencia, el código fuente y documentación técnica del proyec
 
 <br>
 
-\newpage
+<!-- \newpage -->
 
 <hr>
 
@@ -155,7 +166,7 @@ A continuación, se da un listado de las cookies que utilizamos. Todas son técn
 |sb_csrftoken| Cookie utilizada por la herramienta de modelos 3D que utilizamos de [sketchfab.com](sketchfab.com) destinada a la seguridad de la conexión con la herramienta de modelos 3D. | Aproximadamente 1 año o hasta que el usuario deja de utilizar el modelo 3D. |
 <br>
 
-\newpage
+<!-- \newpage -->
 
 <hr>
 
@@ -235,7 +246,7 @@ A continuación se detallan las funcionalidades que **Fisio Find** se compromete
 
 <br>
 
-\newpage
+<!-- \newpage -->
 
 <hr>
 
@@ -359,7 +370,7 @@ El servicio de correo electrónico que utiliza Fisio Find es [https://www.ionos.
 
 <br>
 
-\newpage
+<!-- \newpage -->
 
 <hr>
 
@@ -496,7 +507,7 @@ La licencia **Zero-Clause BSD (0BSD)** es una licencia extremadamente permisiva,
 
 <br>
 
-<!-- \newpage -->
+<!-- <!-- \newpage --> -->
 
 <hr>
 

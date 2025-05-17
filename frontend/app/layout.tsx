@@ -39,10 +39,35 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="es">
       <head>
-        <meta name="google-site-verification" content="Bpr044aEZj4eM5dgE2A8474JvW_iED_Akm2cZSD5c2M" />
-        <meta name="keywords" content="fisioterapeuta, fisioterapeuta online, fisioterapia, salud, telemedicina, rehabilitación de lesiones, fisioterapia para mayores, ejercicio físico" />
+        <meta
+          name="google-site-verification"
+          content="Bpr044aEZj4eM5dgE2A8474JvW_iED_Akm2cZSD5c2M"
+        />
+        <meta
+          name="keywords"
+          content="fisioterapeuta, fisioterapeuta online, fisioterapia, salud, telemedicina, rehabilitación de lesiones, fisioterapia para mayores, ejercicio físico"
+        />
+
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-WNVDSD7MBJ"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-WNVDSD7MBJ');
+          `}
+        </Script>
         <Script
           src="https://animatedicons.co/scripts/embed-animated-icons.js"
+          strategy="afterInteractive"
+        />
+        <Script
+          id="userway-widget"
+          src="https://cdn.userway.org/widget.js"
+          data-account="436w0GnIfK"
           strategy="afterInteractive"
         />
       </head>

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { getApiBaseUrl } from "@/utils/api";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import ConfirmModal from "@/components/ui/ConfirmModal";
 
 // Define interfaces for our data
 interface Exercise {
@@ -82,37 +83,37 @@ const exerciseTypeImages: Record<string, string> = {
 
 // Map for body region display names
 const bodyRegionNames: Record<string, string> = {
-  "NECK": "Cuello",
-  "SHOULDER": "Hombros",
-  "ARM": "Brazos (Bíceps, Tríceps)",
-  "ELBOW": "Codo",
-  "WRIST_HAND": "Muñeca y Mano",
-  "CHEST": "Pecho",
-  "UPPER_BACK": "Espalda Alta",
-  "LOWER_BACK": "Zona Lumbar",
-  "CORE": "Zona Media / Core",
-  "QUADRICEPS": "Cuádriceps",
-  "HAMSTRINGS": "Isquiotibiales",
-  "KNEE": "Rodilla",
-  "CALVES": "Pantorrillas",
-  "ANKLE_FOOT": "Tobillo y Pie",
-  "UPPER_BODY": "Parte Superior del Cuerpo",
-  "LOWER_BODY": "Parte Inferior del Cuerpo",
-  "FULL_BODY": "Cuerpo Completo",
+  NECK: "Cuello",
+  SHOULDER: "Hombros",
+  ARM: "Brazos (Bíceps, Tríceps)",
+  ELBOW: "Codo",
+  WRIST_HAND: "Muñeca y Mano",
+  CHEST: "Pecho",
+  UPPER_BACK: "Espalda Alta",
+  LOWER_BACK: "Zona Lumbar",
+  CORE: "Zona Media / Core",
+  QUADRICEPS: "Cuádriceps",
+  HAMSTRINGS: "Isquiotibiales",
+  KNEE: "Rodilla",
+  CALVES: "Pantorrillas",
+  ANKLE_FOOT: "Tobillo y Pie",
+  UPPER_BODY: "Parte Superior del Cuerpo",
+  LOWER_BODY: "Parte Inferior del Cuerpo",
+  FULL_BODY: "Cuerpo Completo",
 };
 
 // Map for exercise type display names
 const exerciseTypeNames: Record<string, string> = {
-  "STRENGTH": "Fortalecimiento Muscular",
-  "MOBILITY": "Movilidad Articular",
-  "STRETCHING": "Estiramientos",
-  "BALANCE": "Ejercicios de Equilibrio",
-  "PROPRIOCEPTION": "Propiocepción",
-  "COORDINATION": "Coordinación",
-  "BREATHING": "Ejercicios Respiratorios",
-  "RELAXATION": "Relajación / Descarga",
-  "CARDIO": "Resistencia Cardiovascular",
-  "FUNCTIONAL": "Ejercicio Funcional",
+  STRENGTH: "Fortalecimiento Muscular",
+  MOBILITY: "Movilidad Articular",
+  STRETCHING: "Estiramientos",
+  BALANCE: "Ejercicios de Equilibrio",
+  PROPRIOCEPTION: "Propiocepción",
+  COORDINATION: "Coordinación",
+  BREATHING: "Ejercicios Respiratorios",
+  RELAXATION: "Relajación / Descarga",
+  CARDIO: "Resistencia Cardiovascular",
+  FUNCTIONAL: "Ejercicio Funcional",
 };
 
 const ExercisesPage = () => {
@@ -121,8 +122,12 @@ const ExercisesPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
-  const [selectedBodyRegion, setSelectedBodyRegion] = useState<string | null>(null);
-  const [selectedExerciseType, setSelectedExerciseType] = useState<string | null>(null);
+  const [selectedBodyRegion, setSelectedBodyRegion] = useState<string | null>(
+    null
+  );
+  const [selectedExerciseType, setSelectedExerciseType] = useState<
+    string | null
+  >(null);
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(
     null
   );
@@ -139,6 +144,54 @@ const ExercisesPage = () => {
   });
   const [isCreating, setIsCreating] = useState(false);
   const [createSuccess, setCreateSuccess] = useState(false);
+  const [editingExerciseId, setEditingExerciseId] = useState<number | null>(
+    null
+  );
+  const [editedExerciseData, setEditedExerciseData] = useState<
+    Partial<Exercise>
+  >({});
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [exerciseToDelete, setExerciseToDelete] = useState<Exercise | null>(
+    null
+  );
+
+  const handleSaveEdit = async (exerciseId: number) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setError("No se ha encontrado el token de autenticación");
+        return;
+      }
+
+      const response = await fetch(
+        `${getApiBaseUrl()}/api/treatments/exercises/${exerciseId}/`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(editedExerciseData),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Error HTTP: ${response.status}`);
+      }
+
+      const updated = await response.json();
+
+      // Actualiza la lista de ejercicios localmente
+      setExercises((prev) =>
+        prev.map((ex) => (ex.id === updated.id ? updated : ex))
+      );
+      setEditingExerciseId(null);
+      setEditedExerciseData({});
+    } catch (error) {
+      console.error("Error al guardar ejercicio:", error);
+      setError("No se pudo guardar el ejercicio.");
+    }
+  };
 
   const fetchExerciseUsage = async (exerciseId: number) => {
     try {
@@ -189,6 +242,53 @@ const ExercisesPage = () => {
     }
   };
 
+  const handleEditClick = (exercise: Exercise) => {
+    setEditingExerciseId(exercise.id);
+    setEditedExerciseData(exercise);
+  };
+
+  const handleEditChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    setEditedExerciseData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleDeleteExercise = (exercise: Exercise) => {
+    setExerciseToDelete(exercise);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDeleteExercise = async () => {
+    if (!exerciseToDelete) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `${getApiBaseUrl()}/api/treatments/exercises/${exerciseToDelete.id}/`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) throw new Error("Error al eliminar el ejercicio");
+
+      setExercises((prev) =>
+        prev.filter((ex) => ex.id !== exerciseToDelete.id)
+      );
+      setExerciseToDelete(null);
+      setShowDeleteModal(false);
+    } catch (error) {
+      console.error("Error eliminando ejercicio:", error);
+      setError("No se pudo eliminar el ejercicio.");
+    }
+  };
+
   const formatDayOfWeek = (days: string[]) => {
     const dayMap: Record<string, string> = {
       Monday: "Lunes",
@@ -225,12 +325,15 @@ const ExercisesPage = () => {
         return;
       }
 
-      const response = await fetch(`${getApiBaseUrl()}/api/treatments/exercises/`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        `${getApiBaseUrl()}/api/treatments/exercises/`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -240,7 +343,9 @@ const ExercisesPage = () => {
       setExercises(data);
     } catch (error) {
       console.error("Error fetching exercises:", error);
-      setError("Error al cargar los ejercicios. Por favor, inténtalo de nuevo.");
+      setError(
+        "Error al cargar los ejercicios. Por favor, inténtalo de nuevo."
+      );
     } finally {
       setLoading(false);
     }
@@ -371,8 +476,11 @@ const ExercisesPage = () => {
   // Filter exercises by body region and exercise type
   const getFilteredExercises = () => {
     return exercises.filter((exercise) => {
-      const matchesBodyRegion = !selectedBodyRegion || exercise.body_region === selectedBodyRegion;
-      const matchesExerciseType = !selectedExerciseType || exercise.exercise_type === selectedExerciseType;
+      const matchesBodyRegion =
+        !selectedBodyRegion || exercise.body_region === selectedBodyRegion;
+      const matchesExerciseType =
+        !selectedExerciseType ||
+        exercise.exercise_type === selectedExerciseType;
       return matchesBodyRegion && matchesExerciseType;
     });
   };
@@ -390,26 +498,36 @@ const ExercisesPage = () => {
     fetchExercises();
   }, []);
 
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        setError(null);
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
+
   const filteredExercises = getFilteredExercises();
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="relative mb-8">
-      {/* Botón de volver a la izquierda */}
-      <div className="absolute left-0 top-1/2 transform -translate-y-1/2">
-        <button
-          onClick={() => router.push(`/physio-management/profile`)}
-          className="bg-white hover:bg-gray-100 text-[#05668D] font-semibold py-2 px-4 rounded-xl inline-flex items-center shadow-md transition-all duration-300"
-        >
-          ← Volver
-        </button>
-      </div>
+        {/* Botón de volver a la izquierda */}
+        <div className="absolute left-0 top-1/2 transform -translate-y-1/2">
+          <button
+            onClick={() => router.push(`/physio-management/profile`)}
+            className="bg-white hover:bg-gray-100 text-[#05668D] font-semibold py-2 px-4 rounded-xl inline-flex items-center shadow-md transition-all duration-300"
+          >
+            ← Volver
+          </button>
+        </div>
 
-      {/* Título centrado */}
-      <h1 className="text-4xl font-bold text-[#05668D] text-center">
-        Biblioteca de Ejercicios
-      </h1>
-    </div>
+        {/* Título centrado */}
+        <h1 className="text-4xl font-bold text-[#05668D] text-center">
+          Biblioteca de Ejercicios
+        </h1>
+      </div>
 
       {/* Search and Filter Section */}
       <div className="bg-white rounded-xl shadow-md p-6 mb-6">
@@ -802,11 +920,71 @@ const ExercisesPage = () => {
                     </button>
                   </div>
                 </div>
+              ) : editingExerciseId === exercise.id ? (
+                // Vista de edición
+                <div className="p-4 flex flex-col gap-3 h-full">
+                  <input
+                    type="text"
+                    name="title"
+                    value={editedExerciseData.title || ""}
+                    onChange={handleEditChange}
+                    className="w-full border border-gray-300 rounded-xl p-2 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    placeholder="Introduce un título para el ejercicio"
+                  />
+
+                  <textarea
+                    name="description"
+                    value={editedExerciseData.description || ""}
+                    onChange={handleEditChange}
+                    className="w-full border border-gray-300 rounded-xl p-2 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    placeholder="Escribe una descripción clara del ejercicio"
+                  />
+
+                  <select
+                    name="body_region"
+                    value={editedExerciseData.body_region || ""}
+                    onChange={handleEditChange}
+                    className="w-full border border-gray-300 rounded-xl p-2"
+                  >
+                    {Object.entries(bodyRegionNames).map(([key, label]) => (
+                      <option key={key} value={key}>
+                        {label}
+                      </option>
+                    ))}
+                  </select>
+                  <select
+                    name="exercise_type"
+                    value={editedExerciseData.exercise_type || ""}
+                    onChange={handleEditChange}
+                    className="w-full border border-gray-300 rounded-xl p-2"
+                  >
+                    {Object.entries(exerciseTypeNames).map(([key, label]) => (
+                      <option key={key} value={key}>
+                        {label}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="flex gap-2 mt-auto">
+                    <button
+                      onClick={() => handleSaveEdit(exercise.id)}
+                      className="flex-1 bg-green-500 text-white px-4 py-2 rounded-xl hover:bg-green-600"
+                    >
+                      Guardar
+                    </button>
+                    <button
+                      onClick={() => setEditingExerciseId(null)}
+                      className="flex-1 bg-gray-300 text-gray-800 px-4 py-2 rounded-xl hover:bg-gray-400"
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+                </div>
               ) : (
-                // Default view - same card size as detailed view
+                // Vista resumen por defecto
                 <div className="flex flex-col h-full">
-                  {/* Images Section */}
                   <div className="grid grid-cols-2 gap-2 p-4">
+                    {/* Imágenes */}
+                    {/* Imagen región corporal */}
                     <div className="relative h-40 bg-gray-100 rounded-xl overflow-hidden">
                       <Image
                         src={
@@ -827,7 +1005,7 @@ const ExercisesPage = () => {
                         </p>
                       </div>
                     </div>
-
+                    {/* Imagen tipo de ejercicio */}
                     <div className="relative h-40 bg-gray-100 rounded-xl overflow-hidden">
                       <Image
                         src={
@@ -849,13 +1027,10 @@ const ExercisesPage = () => {
                       </div>
                     </div>
                   </div>
-
                   <div className="p-4 flex-grow">
                     <h2 className="text-xl font-semibold mb-2 break-words">
                       {exercise.title}
                     </h2>
-
-                    {/* Exercise Details */}
                     <div className="mb-4 overflow-y-auto max-h-24">
                       {exercise.description && (
                         <p className="text-gray-600 text-sm">
@@ -864,14 +1039,37 @@ const ExercisesPage = () => {
                       )}
                     </div>
                   </div>
-
-                  {/* Action Buttons */}
-                  <div className="bg-gray-50 px-4 py-3 border-t border-gray-100 mt-auto">
+                  <div className="bg-gray-50 px-4 py-3 border-t border-gray-100 mt-auto flex gap-2">
                     <button
                       onClick={() => handleViewDetails(exercise)}
-                      className="w-full py-2 bg-[#6bc9be] text-white rounded-xl hover:bg-[#5ab9ae] transition-colors"
+                      className="flex-1 py-2 bg-[#6bc9be] text-white rounded-xl hover:bg-[#5ab9ae]"
                     >
                       Ver detalles
+                    </button>
+                    <button
+                      onClick={() => handleEditClick(exercise)}
+                      className="flex-1 py-2 bg-blue-100 text-blue-800 rounded-xl hover:bg-blue-200 transition-colors"
+                    >
+                      Editar
+                    </button>
+                    <button
+                      onClick={() => handleDeleteExercise(exercise)}
+                      className="p-2 bg-red-100 text-red-600 rounded-xl hover:bg-red-200 transition-colors"
+                      title="Eliminar ejercicio"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M6 8a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm2 4a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"
+                          clipRule="evenodd"
+                        />
+                        <path d="M5 4a1 1 0 00-1 1v1h12V5a1 1 0 00-1-1H5zM3 8v8a2 2 0 002 2h10a2 2 0 002-2V8H3z" />
+                      </svg>
                     </button>
                   </div>
                 </div>
@@ -880,6 +1078,15 @@ const ExercisesPage = () => {
           ))}
         </div>
       )}
+      <ConfirmModal
+        isOpen={showDeleteModal}
+        message={`¿Estás seguro de que deseas eliminar el ejercicio "${exerciseToDelete?.title}"?`}
+        onConfirm={confirmDeleteExercise}
+        onCancel={() => {
+          setShowDeleteModal(false);
+          setExerciseToDelete(null);
+        }}
+      />
     </div>
   );
 };
