@@ -142,7 +142,7 @@ class PatientTreatmentListView(APIView):
                 )
         
         # Serializar y devolver los tratamientos
-        serializer = TreatmentSerializer(treatments, many=True)
+        serializer = TreatmentDetailSerializer(treatments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
