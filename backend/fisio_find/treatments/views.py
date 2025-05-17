@@ -70,7 +70,7 @@ class TreatmentCreateView(APIView):
         data['physiotherapist'] = physiotherapist.id
         data['patient'] = patient.id
 
-        serializer = TreatmentSerializer(data=data)
+        serializer = TreatmentSerializer(data=data, context={"appointment_end": appointment.end_time})
         if serializer.is_valid():
             treatment = serializer.save(physiotherapist=physiotherapist, patient=patient)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
