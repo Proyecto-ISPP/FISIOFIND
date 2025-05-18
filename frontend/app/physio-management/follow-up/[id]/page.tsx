@@ -1,20 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import { Line } from "react-chartjs-2";
-import Alert from "@/components/ui/Alert";
-import {
-  Film,
-  ArrowLeft,
-  File,
-  Calendar,
-  Clock,
-  Bell,
-  User,
-  CheckCircle,
-} from "lucide-react";
+import { Film, File, User } from "lucide-react";
+import { getApiBaseUrl } from "@/utils/api";
 
+// Registrar los componentes necesarios de Chart.js
 import {
   Chart,
   LineElement,
@@ -24,12 +16,6 @@ import {
   Legend,
   Tooltip,
 } from "chart.js";
-import { getApiBaseUrl } from "@/utils/api";
-import { use } from "react";
-import PatientHistoryViewerModal from "@/app/physio-management/follow-up/components/PatientHistoryViewerModal"
-
-
-// Registrar los componentes necesarios de Chart.js
 Chart.register(
   LineElement,
   PointElement,
@@ -103,21 +89,12 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
   );
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
-  const [alertMessage, setAlertMessage] = useState<string | null>(null);
-  const [alertType, setAlertType] = useState<
-    "success" | "error" | "info" | "warning"
-  >("success");
-
   const [evolutionData, setEvolutionData] = useState<ExerciseEvolutionData[]>(
     []
   );
   const [evolutionLoading, setEvolutionLoading] = useState(false);
   const [evolutionError, setEvolutionError] = useState<string | null>(null);
   const [activeExerciseIndex, setActiveExerciseIndex] = useState(0);
-  const [currentPatientId, setCurrentPatientId] = useState<number | null>(
-    null
-  );
-  const [showPatientHistory, setShowPatientHistory] = useState(false);
 
   const fetchEvolutionData = async () => {
     try {
@@ -249,7 +226,6 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
         throw new Error("Error al obtener el tratamiento");
       }
 
-
       const data = await response.json();
       setTreatment(data);
       setEditedTreatment({
@@ -260,8 +236,7 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
       });
     } catch (err) {
       console.error("Error general:", err);
-      setAlertType("error");
-      setAlertMessage(
+      setSaveError(
         "No se pudieron cargar los detalles del tratamiento. Por favor, inténtalo de nuevo."
       );
     } finally {
@@ -270,14 +245,11 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
   };
 
   useEffect(() => {
-    const fetchTreatmentDetails = async () => {
+    const fetchTreatmentDetailsWrapper = async () => {
       try {
         setLoading(true);
-
-        // Intentamos obtener los datos del backend
         try {
           const token = localStorage.getItem("token") || "";
-
           const response = await fetch(
             `${getApiBaseUrl()}/api/treatments/${id}/`,
             {
@@ -287,41 +259,33 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
               },
             }
           );
-
           if (!response.ok) {
             throw new Error("Error al obtener el tratamiento");
           }
-
           const data = await response.json();
-          console.log("Datos del tratamiento:", data);
           setTreatment(data);
-          setCurrentPatientId(data.patient.id)
-          // Inicializar el formulario de edición con los datos actuales
           setEditedTreatment({
             start_time: data.start_time,
             end_time: data.end_time,
             homework: data.homework,
             is_active: data.is_active,
           });
-
           fetchEvolutionData();
-          console.log("Datos de evolución procesados:", evolutionData);
         } catch (fetchError) {
           console.error("Error al obtener datos del backend:", fetchError);
           // Si falla, usamos datos mock
         }
       } catch (err) {
         console.error("Error general:", err);
-        setAlertType("error");
-        setAlertMessage(
+        setSaveError(
           "No se pudieron cargar los detalles del tratamiento. Por favor, inténtalo de nuevo."
         );
       } finally {
         setLoading(false);
       }
     };
-
-    fetchTreatmentDetails();
+    fetchTreatmentDetailsWrapper();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   // Obtener datos del paciente y helpers
@@ -337,7 +301,9 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
   const patientGender = patientData?.gender
     ? patientData.gender === "M"
       ? "Masculino"
-      : "Femenino"
+      : patientData.gender === "F"
+      ? "Femenino"
+      : "No especificado"
     : "No especificado";
   const calculateAge = (birthDate?: string) => {
     if (!birthDate) return "No disponible";
@@ -479,12 +445,10 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
       setIsEditing(false);
 
       // Mostrar mensaje de éxito (opcional)
-      setAlertType("success");
-      setAlertMessage("Tratamiento actualizado correctamente");
+      setSaveError("Tratamiento actualizado correctamente");
     } catch (error) {
       console.error("Error al guardar los cambios:", error);
-      setAlertType("error");
-      setAlertMessage(
+      setSaveError(
         "No se pudieron guardar los cambios. Por favor, inténtalo de nuevo."
       );
     } finally {
@@ -511,7 +475,8 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
 
       if (!response.ok) {
         throw new Error(
-          `Error al marcar el tratamiento como ${newStatus ? "activo" : "inactivo"
+          `Error al marcar el tratamiento como ${
+            newStatus ? "activo" : "inactivo"
           }`
         );
       }
@@ -527,16 +492,14 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
         is_active: newStatus,
       });
 
-      setAlertType("success");
-      // Mostrar mensaje de éxito
-      setAlertMessage(
-        `Tratamiento marcado como ${newStatus ? "activo" : "inactivo"
+      setSaveError(
+        `Tratamiento marcado como ${
+          newStatus ? "activo" : "inactivo"
         } correctamente`
       );
     } catch (error) {
       console.error("Error al cambiar estado:", error);
-      setAlertType("error");
-      setAlertMessage("No se pudo cambiar el estado del tratamiento.");
+      setSaveError("No se pudo cambiar el estado del tratamiento.");
     }
   };
 
@@ -548,6 +511,7 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
       <button
         onClick={handleGoBack}
         className="mb-6 flex items-center text-blue-600 hover:text-blue-800"
+        type="button"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -581,503 +545,453 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
       )}
 
       {treatment && (
-        <div className="bg-white rounded-2xl shadow-md overflow-hidden border border-cyan-100">
-          <div
-            className={`p-3 text-center text-white text-lg font-medium ${
-              treatment.is_active
-                ? "bg-gradient-to-r from-teal-400 to-teal-500"
-                : "bg-gradient-to-r from-gray-400 to-gray-500"
-            }`}
-          >
-            {treatment.is_active
-              ? "Tratamiento Activo"
-              : "Tratamiento Histórico"}
-          </div>
-
-          <div className="p-8">
-            <h1 className="text-3xl font-bold mb-8 bg-gradient-to-r from-teal-500 to-blue-600 text-transparent bg-clip-text">
-              Tratamiento con{" "}
-              {/* Mostrar nombre del paciente o fisioterapeuta según contexto */}
-              {(() => {
-                if (
-                  typeof treatment.patient === "object" &&
-                  treatment.patient.user
-                ) {
-                  return `${treatment.patient.user.first_name} ${treatment.patient.user.last_name}`;
-                }
-                if (
-                  typeof treatment.physiotherapist === "object" &&
-                  treatment.physiotherapist.user
-                ) {
-                  return `${treatment.physiotherapist.user.first_name} ${treatment.physiotherapist.user.last_name}`;
-                }
-                return "Paciente/Fisioterapeuta";
-              })()}
-            </h1>
-
-            {/* Información General y edición */}
-            <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* Información del tratamiento */}
-              <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-md p-6">
-                <h2 className="text-xl font-semibold mb-4 text-teal-600 flex items-center">
-                  <User className="mr-2" size={20} />
-                  Información del tratamiento
-                </h2>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center border-b border-gray-100 pb-2">
-                    <span className="font-medium text-gray-600">Inicio:</span>
-                    <span className="text-teal-600">
-                      {new Date(treatment.start_time).toLocaleDateString(
-                        "es-ES"
-                      )}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center border-b border-gray-100 pb-2">
-                    <span className="font-medium text-gray-600">Fin:</span>
-                    <span className="text-teal-600">
-                      {new Date(treatment.end_time).toLocaleDateString("es-ES")}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="font-medium text-gray-600">Estado:</span>
-                    <span
-                      className={
-                        treatment.is_active
-                          ? "text-green-600 font-medium"
-                          : "text-gray-500 font-medium"
-                      }
-                    >
-                      {treatment.is_active ? "Activo" : "Inactivo"}
-                    </span>
-                  </div>
-                </div>
-              </div>
-              {/* Información del paciente */}
-              <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-md p-6">
-                <h2 className="text-xl font-semibold mb-4 text-teal-600 flex items-center">
-                  <User className="mr-2" size={20} />
-                  Información del paciente
-                </h2>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center border-b border-gray-100 pb-2">
-                    <span className="font-medium text-gray-600">Nombre:</span>
-                    <span className="text-teal-600">{patientName}</span>
-                  </div>
-                  <div className="flex justify-between items-center border-b border-gray-100 pb-2">
-                    <span className="font-medium text-gray-600">Email:</span>
-                    <span className="text-teal-600">{patientEmail}</span>
-                  </div>
-                  <div className="flex justify-between items-center border-b border-gray-100 pb-2">
-                    <span className="font-medium text-gray-600">Género:</span>
-                    <span className="text-teal-600">{patientGender}</span>
-                  </div>
-                  <div className="flex justify-between items-center border-b border-gray-100 pb-2">
-                    <span className="font-medium text-gray-600">Edad:</span>
-                    <span className="text-teal-600">
-                      {calculateAge(patientData?.birth_date)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="font-medium text-gray-600">
-                      Última cita:
-                    </span>
-                    <span className="text-teal-600">
-                      {formatLastAppointment()}
-                    </span>
-                  </div>
-                </div>
-              </div>
+        <>
+          <div className="bg-white rounded-2xl shadow-md overflow-hidden border border-cyan-100">
+            <div
+              className={`p-3 text-center text-white text-lg font-medium ${
+                treatment.is_active
+                  ? "bg-gradient-to-r from-teal-400 to-teal-500"
+                  : "bg-gradient-to-r from-gray-400 to-gray-500"
+              }`}
+            >
+              {treatment.is_active
+                ? "Tratamiento Activo"
+                : "Tratamiento Histórico"}
             </div>
 
-            {/* Botones de navegación */}
-            <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-4">
-              <button
-                onClick={() =>
-                  router.push(`/physio-management/follow-up/${id}/sessions`)
-                }
-                className="px-6 py-4 bg-gradient-to-r from-teal-500 to-blue-600 text-white rounded-xl hover:shadow-lg transition flex items-center justify-center font-medium"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 mr-2"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-                Gestionar Sesiones
-              </button>
-              <button
-                onClick={() =>
-                  router.push(`/physio-management/follow-up/${id}/videos`)
-                }
-                className="px-6 py-4 bg-gradient-to-r from-teal-400 to-teal-500 text-white rounded-xl hover:shadow-lg transition flex items-center justify-center font-medium"
-              >
-                <Film className="mr-2" size={20} />
-                Videos subidos
-              </button>
-              <button
-                onClick={() =>
-                  router.push(`/physio-management/follow-up/${id}/files`)
-                }
-                className="px-6 py-4 bg-gradient-to-r from-teal-400 to-teal-500 text-white rounded-xl hover:shadow-lg transition flex items-center justify-center font-medium"
-              >
-                <File className="mr-2" size={20} />
-                Archivos subidos
-              </button>
-            </div>
+            <div className="p-8">
+              <h1 className="text-3xl font-bold mb-8 bg-gradient-to-r from-teal-500 to-blue-600 text-transparent bg-clip-text">
+                Tratamiento con{" "}
+                {/* Mostrar nombre del paciente o fisioterapeuta según contexto */}
+                {(() => {
+                  if (
+                    typeof treatment.patient === "object" &&
+                    treatment.patient.user
+                  ) {
+                    return `${treatment.patient.user.first_name} ${treatment.patient.user.last_name}`;
+                  }
+                  if (
+                    typeof treatment.physiotherapist === "object" &&
+                    treatment.physiotherapist.user
+                  ) {
+                    return `${treatment.physiotherapist.user.first_name} ${treatment.physiotherapist.user.last_name}`;
+                  }
+                  return "Paciente/Fisioterapeuta";
+                })()}
+              </h1>
 
-            {/* Sección de edición y estado del tratamiento */}
-            <div className="mt-10 mb-8">
-              {isEditing ? (
-                <div className="bg-blue-50 p-6 rounded-xl shadow-sm border border-blue-100 mb-6">
+              {/* Información General y edición */}
+              <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Información del tratamiento */}
+                <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-md p-6">
                   <h2 className="text-xl font-semibold mb-4 text-teal-600 flex items-center">
                     <User className="mr-2" size={20} />
-                    Editar tratamiento
+                    Información del tratamiento
                   </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Fecha de inicio
-                      </label>
-                      <input
-                        type="date"
-                        name="start_time"
-                        value={
-                          editedTreatment.start_time
-                            ? new Date(editedTreatment.start_time)
-                                .toISOString()
-                                .split("T")[0]
-                            : new Date(treatment.start_time)
-                                .toISOString()
-                                .split("T")[0]
-                        }
-                        onChange={handleDateChange}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-300"
-                      />
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center border-b border-gray-100 pb-2">
+                      <span className="font-medium text-gray-600">Inicio:</span>
+                      <span className="text-teal-600">
+                        {new Date(treatment.start_time).toLocaleDateString(
+                          "es-ES"
+                        )}
+                      </span>
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Fecha de fin
-                      </label>
-                      <input
-                        type="date"
-                        name="end_time"
-                        value={
-                          editedTreatment.end_time
-                            ? new Date(editedTreatment.end_time)
-                                .toISOString()
-                                .split("T")[0]
-                            : new Date(treatment.end_time)
-                                .toISOString()
-                                .split("T")[0]
+                    <div className="flex justify-between items-center border-b border-gray-100 pb-2">
+                      <span className="font-medium text-gray-600">Fin:</span>
+                      <span className="text-teal-600">
+                        {new Date(treatment.end_time).toLocaleDateString(
+                          "es-ES"
+                        )}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="font-medium text-gray-600">Estado:</span>
+                      <span
+                        className={
+                          treatment.is_active
+                            ? "text-green-600 font-medium"
+                            : "text-gray-500 font-medium"
                         }
-                        onChange={handleDateChange}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-300"
-                      />
+                      >
+                        {treatment.is_active ? "Activo" : "Inactivo"}
+                      </span>
                     </div>
                   </div>
-                  <div className="flex items-center mt-4">
-                    <input
-                      type="checkbox"
-                      id="is_active"
-                      name="is_active"
-                      checked={
-                        editedTreatment.is_active !== undefined
-                          ? editedTreatment.is_active
-                          : treatment.is_active
-                      }
-                      onChange={(e) =>
-                        setEditedTreatment({
-                          ...editedTreatment,
-                          is_active: e.target.checked,
-                        })
-                      }
-                      className="h-5 w-5 text-teal-600 focus:ring-blue-200 border-gray-300 rounded"
-                    />
-                    <label
-                      htmlFor="is_active"
-                      className="ml-2 block text-sm text-gray-900"
-                    >
-                      Tratamiento activo
-                    </label>
-                  </div>
-                  {saveError && (
-                    <div className="text-red-600 text-sm mt-2">{saveError}</div>
-                  )}
-                  <div className="flex justify-end mt-4">
-                    <button
-                      onClick={handleSaveChanges}
-                      disabled={isSaving}
-                      className="px-4 py-2 bg-gradient-to-r from-teal-500 to-blue-600 text-white rounded-xl hover:opacity-90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {isSaving ? "Guardando..." : "Guardar cambios"}
-                    </button>
-                    <button
-                      onClick={handleEditToggle}
-                      className="ml-4 px-4 py-2 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 transition-all duration-300"
-                    >
-                      Cancelar
-                    </button>
+                </div>
+                {/* Información del paciente */}
+                <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-md p-6">
+                  <h2 className="text-xl font-semibold mb-4 text-teal-600 flex items-center">
+                    <User className="mr-2" size={20} />
+                    Información del paciente
+                  </h2>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center border-b border-gray-100 pb-2">
+                      <span className="font-medium text-gray-600">Nombre:</span>
+                      <span className="text-teal-600">{patientName}</span>
+                    </div>
+                    <div className="flex justify-between items-center border-b border-gray-100 pb-2">
+                      <span className="font-medium text-gray-600">Email:</span>
+                      <span className="text-teal-600">{patientEmail}</span>
+                    </div>
+                    <div className="flex justify-between items-center border-b border-gray-100 pb-2">
+                      <span className="font-medium text-gray-600">Género:</span>
+                      <span className="text-teal-600">{patientGender}</span>
+                    </div>
+                    <div className="flex justify-between items-center border-b border-gray-100 pb-2">
+                      <span className="font-medium text-gray-600">Edad:</span>
+                      <span className="text-teal-600">
+                        {calculateAge(patientData?.birth_date)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="font-medium text-gray-600">
+                        Última cita:
+                      </span>
+                      <span className="text-teal-600">
+                        {formatLastAppointment()}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              ) : (
-                <div className="flex justify-end space-x-4 mb-8">
-                  <button
-                    onClick={handleEditToggle}
-                    className="px-6 py-3 bg-gradient-to-r from-gray-100 to-gray-300 text-gray-700 font-medium rounded-xl hover:opacity-90 transition-all duration-300 shadow-md flex items-center space-x-2"
-                  >
-                    Editar tratamiento
-                  </button>
-                  {treatment.is_active ? (
-                    <button
-                      className="px-6 py-3 bg-gradient-to-r from-red-400 to-red-600 text-white font-medium rounded-xl hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-red-300 focus:ring-offset-2 transition-all duration-300 shadow-md flex items-center space-x-2"
-                      onClick={() => handleStatusChange(false)}
-                    >
-                      Marcar como Inactivo
-                    </button>
-                  ) : (
-                    <button
-                      className="px-6 py-3 bg-gradient-to-r from-teal-500 to-blue-600 text-white font-medium rounded-xl hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:ring-offset-2 transition-all duration-300 shadow-md flex items-center space-x-2"
-                      onClick={() => handleStatusChange(true)}
-                    >
-                      Reactivar Tratamiento
-                    </button>
-                  )}
-                </div>
-              )}
-            </div>
+              </div>
 
-            <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-md p-6">
-              <h2 className="text-xl font-semibold mb-4 text-[#05668D]">
-                Información del paciente
-              </h2>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center border-b border-gray-100 pb-2">
-                  <span className="font-medium text-gray-600">Nombre:</span>
-                  <span className="text-[#05668D]">{patientName}</span>
-                </div>
-                <div className="flex justify-between items-center border-b border-gray-100 pb-2">
-                  <span className="font-medium text-gray-600">Email:</span>
-                  <span className="text-[#05668D]">{patientEmail}</span>
-                </div>
-                <div className="flex justify-between items-center border-b border-gray-100 pb-2">
-                  <span className="font-medium text-gray-600">Género:</span>
-                  <span className="text-[#05668D]">{patientGender}</span>
-                </div>
-                <div className="flex justify-between items-center border-b border-gray-100 pb-2">
-                  <span className="font-medium text-gray-600">Edad:</span>
-                  <span className="text-[#05668D]">
-                    {calculateAge(patientData?.birth_date)}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="font-medium text-gray-600">
-                    Última cita:
-                  </span>
-                  <span className="text-[#05668D]">
-                    {formatLastAppointment()}
-                  </span>
-                </div>
-                              <div className="flex justify-center mt-4">
+              {/* Botones de navegación */}
+              <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-4">
                 <button
-                  onClick={() => setShowPatientHistory(true)}
-                  className="px-4 py-2 bg-gradient-to-r from-[#05668D] to-[#6BC9BE] text-white rounded-xl hover:opacity-90 transition-all duration-300"
+                  onClick={() =>
+                    router.push(`/physio-management/follow-up/${id}/sessions`)
+                  }
+                  className="px-6 py-4 bg-gradient-to-r from-teal-500 to-blue-600 text-white rounded-xl hover:shadow-lg transition flex items-center justify-center font-medium"
                 >
-                  Ver historial del paciente
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 mr-2"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                  Gestionar Sesiones
+                </button>
+                <button
+                  onClick={() =>
+                    router.push(`/physio-management/follow-up/${id}/videos`)
+                  }
+                  className="px-6 py-4 bg-gradient-to-r from-teal-400 to-teal-500 text-white rounded-xl hover:shadow-lg transition flex items-center justify-center font-medium"
+                >
+                  <Film className="mr-2" size={20} />
+                  Videos subidos
+                </button>
+                <button
+                  onClick={() =>
+                    router.push(`/physio-management/follow-up/${id}/files`)
+                  }
+                  className="px-6 py-4 bg-gradient-to-r from-teal-400 to-teal-500 text-white rounded-xl hover:shadow-lg transition flex items-center justify-center font-medium"
+                >
+                  <File className="mr-2" size={20} />
+                  Archivos subidos
                 </button>
               </div>
 
+              {/* Sección de edición y estado del tratamiento */}
+              <div className="mt-10 mb-8">
+                {isEditing ? (
+                  <div className="bg-blue-50 p-6 rounded-xl shadow-sm border border-blue-100 mb-6">
+                    <h2 className="text-xl font-semibold mb-4 text-teal-600 flex items-center">
+                      <User className="mr-2" size={20} />
+                      Editar tratamiento
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Fecha de inicio
+                        </label>
+                        <input
+                          type="date"
+                          name="start_time"
+                          value={
+                            editedTreatment.start_time
+                              ? new Date(editedTreatment.start_time)
+                                  .toISOString()
+                                  .split("T")[0]
+                              : new Date(treatment.start_time)
+                                  .toISOString()
+                                  .split("T")[0]
+                          }
+                          onChange={handleDateChange}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-300"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Fecha de fin
+                        </label>
+                        <input
+                          type="date"
+                          name="end_time"
+                          value={
+                            editedTreatment.end_time
+                              ? new Date(editedTreatment.end_time)
+                                  .toISOString()
+                                  .split("T")[0]
+                              : new Date(treatment.end_time)
+                                  .toISOString()
+                                  .split("T")[0]
+                          }
+                          onChange={handleDateChange}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-300"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex items-center mt-4">
+                      <input
+                        type="checkbox"
+                        id="is_active"
+                        name="is_active"
+                        checked={
+                          editedTreatment.is_active !== undefined
+                            ? editedTreatment.is_active
+                            : treatment.is_active
+                        }
+                        onChange={(e) =>
+                          setEditedTreatment({
+                            ...editedTreatment,
+                            is_active: e.target.checked,
+                          })
+                        }
+                        className="h-5 w-5 text-teal-600 focus:ring-blue-200 border-gray-300 rounded"
+                      />
+                      <label
+                        htmlFor="is_active"
+                        className="ml-2 block text-sm text-gray-900"
+                      >
+                        Tratamiento activo
+                      </label>
+                    </div>
+                    {saveError && (
+                      <div className="text-red-600 text-sm mt-2">
+                        {saveError}
+                      </div>
+                    )}
+                    <div className="flex justify-end mt-4">
+                      <button
+                        onClick={handleSaveChanges}
+                        disabled={isSaving}
+                        className="px-4 py-2 bg-gradient-to-r from-teal-500 to-blue-600 text-white rounded-xl hover:opacity-90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isSaving ? "Guardando..." : "Guardar cambios"}
+                      </button>
+                      <button
+                        onClick={handleEditToggle}
+                        className="ml-4 px-4 py-2 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 transition-all duration-300"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex justify-end space-x-4 mb-8">
+                    <button
+                      onClick={handleEditToggle}
+                      className="px-6 py-3 bg-gradient-to-r from-gray-100 to-gray-300 text-gray-700 font-medium rounded-xl hover:opacity-90 transition-all duration-300 shadow-md flex items-center space-x-2"
+                    >
+                      Editar tratamiento
+                    </button>
+                    {treatment.is_active ? (
+                      <button
+                        className="px-6 py-3 bg-gradient-to-r from-red-400 to-red-600 text-white font-medium rounded-xl hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-red-300 focus:ring-offset-2 transition-all duration-300 shadow-md flex items-center space-x-2"
+                        onClick={() => handleStatusChange(false)}
+                        type="button"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5 mr-2"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                        Marcar como Inactivo
+                      </button>
+                    ) : (
+                      <button
+                        className="px-6 py-3 bg-gradient-to-r from-[#6BC9BE] to-[#05668D] text-white font-medium rounded-xl hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#6BC9BE] focus:ring-offset-2 transition-all duration-300 shadow-md flex items-center space-x-2"
+                        onClick={() => handleStatusChange(true)}
+                        type="button"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5 mr-2"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                        Reactivar Tratamiento
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-6 mb-8">
+              <div className="p-6">
+                <h2 className="text-2xl font-semibold mb-6 text-[#05668D]">
+                  Evolución del Paciente
+                </h2>
+
+                {evolutionLoading ? (
+                  <div className="flex justify-center items-center h-64">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#41B8D5]"></div>
+                  </div>
+                ) : evolutionError ? (
+                  <div className="text-center text-red-500 py-8 bg-red-50 rounded-xl">
+                    {evolutionError}
+                  </div>
+                ) : evolutionData.length === 0 ? (
+                  <div className="text-center text-gray-500 py-12 bg-gray-50 rounded-xl">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-16 w-16 mx-auto text-gray-400 mb-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1.5}
+                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                      />
+                    </svg>
+                    <p className="text-lg">
+                      No hay datos de evolución disponibles para este
+                      tratamiento.
+                    </p>
+                  </div>
+                ) : (
+                  <div>
+                    {/* Exercise navigation */}
+                    <div className="bg-gradient-to-br from-[#f8fdfc] to-[#edf8f7] rounded-xl shadow-md p-4 mb-6">
+                      <div className="flex justify-between items-center">
+                        <button
+                          onClick={prevExercise}
+                          disabled={activeExerciseIndex === 0}
+                          className="px-4 py-2 bg-white rounded-xl shadow-sm hover:bg-gray-50 transition-all duration-300 border border-transparent hover:border-[#6BC9BE] disabled:border-gray-200 disabled:hover:border-gray-200 disabled:opacity-50 disabled:hover:bg-white"
+                        >
+                          ← Ejercicio anterior
+                        </button>
+
+                        <h4 className="text-lg font-medium text-[#05668D]">
+                          {evolutionData[activeExerciseIndex]?.exercise_name ||
+                            "Ejercicio"}{" "}
+                          ({activeExerciseIndex + 1} de {evolutionData.length})
+                          {" - "}
+                          {getMetricLabel(
+                            evolutionData[activeExerciseIndex]?.metric_type ||
+                              ""
+                          )}
+                        </h4>
+
+                        <button
+                          onClick={nextExercise}
+                          disabled={
+                            activeExerciseIndex >= evolutionData.length - 1
+                          }
+                          className="px-4 py-2 bg-white rounded-xl shadow-sm disabled:opacity-50 hover:bg-gray-50 transition-all duration-300"
+                        >
+                          Siguiente ejercicio →
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Chart */}
+                    <div className="bg-white rounded-xl shadow-md p-6 h-80">
+                      <Line
+                        data={chartData}
+                        options={{
+                          responsive: true,
+                          maintainAspectRatio: false,
+                          scales: {
+                            y: {
+                              beginAtZero: true,
+                              title: {
+                                display: true,
+                                text: getMetricLabel(
+                                  evolutionData[activeExerciseIndex]
+                                    ?.metric_type || ""
+                                ),
+                                font: {
+                                  weight: "bold",
+                                },
+                              },
+                              grid: {
+                                color: "rgba(0, 0, 0, 0.05)",
+                              },
+                            },
+                            x: {
+                              title: {
+                                display: true,
+                                text: "Fecha",
+                                font: {
+                                  weight: "bold",
+                                },
+                              },
+                              grid: {
+                                color: "rgba(0, 0, 0, 0.05)",
+                              },
+                            },
+                          },
+                          plugins: {
+                            legend: {
+                              labels: {
+                                font: {
+                                  size: 14,
+                                },
+                              },
+                            },
+                            tooltip: {
+                              backgroundColor: "rgba(0, 0, 0, 0.7)",
+                              padding: 10,
+                              cornerRadius: 6,
+                              titleFont: {
+                                size: 14,
+                              },
+                              bodyFont: {
+                                size: 14,
+                              },
+                            },
+                          },
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
-        </div>
-
-        <div className="grid grid-cols-1 gap-6 mb-8">
-          <div className="bg-white rounded-2xl shadow-lg p-6">
-            <h2 className="text-2xl font-semibold mb-6 text-[#05668D]">
-              Evolución del Paciente
-            </h2>
-
-            {evolutionLoading ? (
-              <div className="flex justify-center items-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#41B8D5]"></div>
-              </div>
-            ) : evolutionError ? (
-              <div className="text-center text-red-500 py-8 bg-red-50 rounded-xl">
-                {evolutionError}
-              </div>
-            ) : evolutionData.length === 0 ? (
-              <div className="text-center text-gray-500 py-12 bg-gray-50 rounded-xl">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-16 w-16 mx-auto text-gray-400 mb-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                  />
-                </svg>
-                <p className="text-lg">
-                  No hay datos de evolución disponibles para este tratamiento.
-                </p>
-              </div>
-            ) : (
-              <div>
-                {/* Exercise navigation */}
-                <div className="bg-gradient-to-br from-[#f8fdfc] to-[#edf8f7] rounded-xl shadow-md p-4 mb-6">
-                  <div className="flex justify-between items-center">
-                    <button
-                      onClick={prevExercise}
-                      disabled={activeExerciseIndex === 0}
-                      className="px-4 py-2 bg-white rounded-xl shadow-sm hover:bg-gray-50 transition-all duration-300 border border-transparent hover:border-[#6BC9BE] disabled:border-gray-200 disabled:hover:border-gray-200 disabled:opacity-50 disabled:hover:bg-white"
-                    >
-                      ← Ejercicio anterior
-                    </button>
-
-                    <h4 className="text-lg font-medium text-[#05668D]">
-                      {evolutionData[activeExerciseIndex]?.exercise_name ||
-                        "Ejercicio"}{" "}
-                      ({activeExerciseIndex + 1} de {evolutionData.length})
-                      {" - "}
-                      {getMetricLabel(
-                        evolutionData[activeExerciseIndex]?.metric_type || ""
-                      )}
-                    </h4>
-
-                    <button
-                      onClick={nextExercise}
-                      disabled={activeExerciseIndex >= evolutionData.length - 1}
-                      className="px-4 py-2 bg-white rounded-xl shadow-sm disabled:opacity-50 hover:bg-gray-50 transition-all duration-300"
-                    >
-                      Siguiente ejercicio →
-                    </button>
-                  </div>
-                </div>
-
-                {/* Chart */}
-                <div className="bg-white rounded-xl shadow-md p-6 h-80">
-                  <Line
-                    data={chartData}
-                    options={{
-                      responsive: true,
-                      maintainAspectRatio: false,
-                      scales: {
-                        y: {
-                          beginAtZero: true,
-                          title: {
-                            display: true,
-                            text: getMetricLabel(
-                              evolutionData[activeExerciseIndex]?.metric_type ||
-                                ""
-                            ),
-                            font: {
-                              weight: "bold",
-                            },
-                          },
-                          grid: {
-                            color: "rgba(0, 0, 0, 0.05)",
-                          },
-                        },
-                        x: {
-                          title: {
-                            display: true,
-                            text: "Fecha",
-                            font: {
-                              weight: "bold",
-                            },
-                          },
-                          grid: {
-                            color: "rgba(0, 0, 0, 0.05)",
-                          },
-                        },
-                      },
-                      plugins: {
-                        legend: {
-                          labels: {
-                            font: {
-                              size: 14,
-                            },
-                          },
-                        },
-                        tooltip: {
-                          backgroundColor: "rgba(0, 0, 0, 0.7)",
-                          padding: 10,
-                          cornerRadius: 6,
-                          titleFont: {
-                            size: 14,
-                          },
-                          bodyFont: {
-                            size: 14,
-                          },
-                        },
-                      },
-                    }}
-                  />
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {!isEditing && (
-          <div className="flex justify-end space-x-4 mb-8">
-            {treatment.is_active ? (
-              <button
-                className="px-6 py-3 bg-gradient-to-r from-red-400 to-red-600 text-white font-medium rounded-xl hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-red-300 focus:ring-offset-2 transition-all duration-300 shadow-md flex items-center space-x-2"
-                onClick={() => handleStatusChange(false)}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 mr-2"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                Marcar como Inactivo
-              </button>
-            ) : (
-              <button
-                className="px-6 py-3 bg-gradient-to-r from-[#6BC9BE] to-[#05668D] text-white font-medium rounded-xl hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#6BC9BE] focus:ring-offset-2 transition-all duration-300 shadow-md flex items-center space-x-2"
-                onClick={() => handleStatusChange(true)}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 mr-2"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                Reactivar Tratamiento
-              </button>
-            )}
-          </div>
-        )}
+        </>
+      )}
     </div>
   );
 };
