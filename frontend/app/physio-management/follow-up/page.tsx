@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import RestrictedAccess from "@/components/RestrictedAccess";
 import { getApiBaseUrl } from "@/utils/api";
 import axios from "axios";
+import PatientHistoryViewerModal from "@/app/physio-management/follow-up/components/PatientHistoryViewerModal";
 
 // Definir las interfaces para los datos
 interface User {
@@ -92,53 +93,75 @@ const SeguimientoPage = () => {
   >([]);
 
   const [showDateForm, setShowDateForm] = useState(false);
-  const [selectedPatient, setSelectedPatient] = useState<{id: number, appointmentId: number} | null>(null);
+  const [selectedPatient, setSelectedPatient] = useState<{
+    id: number;
+    appointmentId: number;
+  } | null>(null);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [dateError, setDateError] = useState<string | null>(null);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [selectedPatientId, setSelectedPatientId] = useState<number | null>(
+    null
+  );
 
   // Function to handle the initial click on "Crear tratamiento"
-  const handleInitiateTreatmentCreation = (appointmentId: number, patientId: number) => {
-    setSelectedPatient({id: patientId, appointmentId});
+  const handleInitiateTreatmentCreation = (
+    appointmentId: number,
+    patientId: number
+  ) => {
+    setSelectedPatient({ id: patientId, appointmentId });
     setShowDateForm(true);
-    
+
     // Set default dates (today for start, 30 days later for end)
     const today = new Date();
     const thirtyDaysLater = new Date(today);
     thirtyDaysLater.setDate(today.getDate() + 30);
-    
-    setStartDate(today.toISOString().split('T')[0]);
-    setEndDate(thirtyDaysLater.toISOString().split('T')[0]);
+
+    setStartDate(today.toISOString().split("T")[0]);
+    setEndDate(thirtyDaysLater.toISOString().split("T")[0]);
     setDateError(null);
   };
 
+  // Function to handle the click on "Historial Clínico"
+  const handleViewHistory = (patientId: number) => {
+    setSelectedPatientId(patientId);
+    setShowHistoryModal(true);
+  };
+
+  const handleCloseHistoryModal = () => {
+    setShowHistoryModal(false);
+    setSelectedPatientId(null);
+  };
   // Function to validate dates
   const validateDates = () => {
     const start = new Date(startDate);
     const end = new Date(endDate);
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Reset time to beginning of day for comparison
-    
+
     if (start < today) {
-      setDateError("La fecha de inicio no puede ser anterior a la fecha actual.");
+      setDateError(
+        "La fecha de inicio no puede ser anterior a la fecha actual."
+      );
       return false;
     }
-    
+
     if (end <= start) {
       setDateError("La fecha de fin debe ser posterior a la fecha de inicio.");
       return false;
     }
-    
+
     return true;
   };
 
   // Function to handle form submission
   const handleDateFormSubmit = async () => {
     if (!validateDates() || !selectedPatient) return;
-    
+
     setCreatingTreatment(true);
     setDateError(null);
-    
+
     try {
       // First, get the current physiotherapist ID using the correct endpoint
       const physioResponse = await fetch(
@@ -157,16 +180,22 @@ const SeguimientoPage = () => {
 
       const physioData = await physioResponse.json();
       const physiotherapistId = physioData.physio?.id;
-      
+
       if (!physiotherapistId) {
         throw new Error("No se pudo obtener el ID del fisioterapeuta");
       }
 
       // Format dates for API
-      const formattedStartDate = new Date(startDate + "T12:00:00").toISOString();
+      const formattedStartDate = new Date(
+        startDate + "T12:00:00"
+      ).toISOString();
       const formattedEndDate = new Date(endDate + "T12:00:00").toISOString();
 
-      console.log("Creating treatment with dates:", formattedStartDate, formattedEndDate);
+      console.log(
+        "Creating treatment with dates:",
+        formattedStartDate,
+        formattedEndDate
+      );
 
       // Create the treatment with user-selected dates
       const response = await fetch(
@@ -192,14 +221,14 @@ const SeguimientoPage = () => {
       if (!response.ok) {
         const errorData = await response.json();
         console.error("Treatment creation error:", errorData);
-        
+
         // Handle specific validation errors from backend
         if (errorData.start_time) {
           setDateError(errorData.start_time[0]);
           setCreatingTreatment(false);
           return;
         }
-        
+
         throw new Error(
           `Error al crear el tratamiento: ${JSON.stringify(errorData)}`
         );
@@ -403,7 +432,7 @@ const SeguimientoPage = () => {
         setLoading(false);
         return;
       }
-      
+
       try {
         setLoading(true);
 
@@ -411,7 +440,7 @@ const SeguimientoPage = () => {
         try {
           // First, fetch ALL treatments without any filter
           const allTreatmentsResponse = await fetch(
-            `${getApiBaseUrl()}/api/treatments/physio/`, 
+            `${getApiBaseUrl()}/api/treatments/physio/`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -630,10 +659,18 @@ const SeguimientoPage = () => {
                       <span className="text-blue-600 font-medium">{patient.appointmentDate}</span>
                     </div>
                   </div>
-                  <div className="mt-4">
+                  <div className="mt-4 flex space-x-4">
                     <button onClick={() => handleInitiateTreatmentCreation(patient.appointmentId, patient.id)} className="w-full py-2 bg-gradient-to-r from-teal-400 to-blue-500 text-white rounded-xl hover:opacity-90 transition-all duration-300">
                       Crear tratamiento
                     </button>
+
+                      {/* Botón para abrir el historial clínico */}
+                      <button
+                        onClick={() => handleViewHistory(patient.id)} // Llama la función para mostrar el modal
+                        className="w-full py-2 bg-gradient-to-r from-[#F5A623] to-[#D77F17] text-white rounded-xl hover:opacity-90 transition-all duration-300"
+                      >
+                        Historial Clínico
+                      </button>
                   </div>
                 </div>
               </div>
@@ -648,6 +685,32 @@ const SeguimientoPage = () => {
           )}
         </div>
       )}
+
+        {/* Modal for viewing patient history */}
+        {showHistoryModal && selectedPatientId && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-xl w-full max-w-4xl h-[85vh] overflow-hidden">
+              <PatientHistoryViewerModal
+                patientId={selectedPatientId}
+                token={token!}
+                onClose={handleCloseHistoryModal}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Modal for viewing patient history */}
+        {showHistoryModal && selectedPatientId && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-xl w-full max-w-4xl h-[85vh] overflow-hidden">
+              <PatientHistoryViewerModal
+                patientId={selectedPatientId}
+                token={token!}
+                onClose={handleCloseHistoryModal}
+              />
+            </div>
+          </div>
+        )}
 
       {/* Existing treatments section */}
       <div className="bg-white rounded-2xl shadow-md p-6 mb-8 bg-opacity-80 backdrop-blur-sm border border-cyan-100">
@@ -751,5 +814,3 @@ const SeguimientoPage = () => {
 };
 
 export default SeguimientoPage;
-
-

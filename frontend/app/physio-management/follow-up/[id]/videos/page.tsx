@@ -25,6 +25,7 @@ const PhysioVideo = () => {
   const params = useParams();
   const id = params?.id as string;
 
+  const [isDragging, setIsDragging] = useState<boolean>(false);
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [file, setFileKey] = useState<File | null>(null);
@@ -113,7 +114,7 @@ const PhysioVideo = () => {
       }
       try {
         const response = await axios.get(
-          `${getApiBaseUrl()}/api/cloud/videos/list-videos/`,
+          `${getApiBaseUrl()}/api/cloud/videos/list-videos/${id}`,
           {
             headers: { Authorization: `Bearer ${token}` },
             params: { treatment_id: id }, // Ensure the correct parameter name is used
@@ -149,12 +150,20 @@ const PhysioVideo = () => {
       showAlert("error", "El título no puede exceder los 100 caracteres.");
       return;
     }
+    if (/[`+´ç,<.,©℃®§]/.test(title)) {
+      showAlert("error", "El título no puede contener los siguientes caracteres especiales: ` + ´ ç , < . , © ℃ ® §");
+      return;
+    }
     if (!description.trim()) {
       showAlert("error", "La descripción es obligatoria.");
       return;
     }
     if (description.length > 255) {
       showAlert("error", "La descripción no puede exceder los 255 caracteres.");
+      return;
+    }
+    if (/[`+´ç,<.,©℃®§]/.test(description)) {
+      showAlert("error", "La descripción no puede contener los siguientes caracteres especiales: ` + ´ ç , < . , © ℃ ® §");
       return;
     }
     if (!file && editingVideo === null) {
@@ -201,22 +210,28 @@ const PhysioVideo = () => {
       setEditingVideo(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
 
-      const response = await axios.get(
-        `${getApiBaseUrl()}/api/cloud/videos/list-videos/`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          params: { treatment: id },
-        }
-      );
+      const response = await axios.get(`${getApiBaseUrl()}/api/cloud/videos/list-videos/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+        params: { treatment: id },
+      });
       setVideos(response.data);
-    } catch (error) {
-      showAlert(
-        "error",
-        error.response?.data?.message || "Error al procesar el video."
-      );
-    } finally {
-      setLoading(false);
+    } catch (err: any) {
+    const errorDetail = err.response?.data?.detail;
+    console.log("Error detail:", errorDetail);
+  
+    if (
+      err.response?.status === 400 &&
+      typeof errorDetail === "string" &&
+      errorDetail.toLowerCase().includes("límite de archivos alcanzado")
+    ) {
+      showAlert("error", "Has alcanzado el límite de archivos y vídeos permitidos. Elimina algunos o mejora tu plan de precio.");
+    } else {
+      showAlert("error", "Hubo un error al guardar el archivo.");
     }
+  
+  } finally {
+    setLoading(false);
+  }
   };
 
   const [deleteConfirmation, setDeleteConfirmation] = useState({
@@ -493,6 +508,8 @@ const PhysioVideo = () => {
                 maxLength={255}
                 rows={2}
                 className="w-full py-3 px-4 text-sm border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
+                rows={4}
+                className="w-full py-3 px-4 text-sm border-2 border-gray-200 rounded-xl focus:border-blue-600 focus:shadow"
               />
               <div className="text-right text-xs text-gray-500 mt-1">
                 {description.length}/255 caracteres
@@ -500,13 +517,78 @@ const PhysioVideo = () => {
             </div>
 
             {!editingVideo && (
-              <input
-                type="file"
-                accept="video/*"
-                onChange={handleFileChange}
-                ref={fileInputRef}
-                className="w-full py-2 px-4 text-sm border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-[#1E5ACD] focus:shadow-[0_0_0_4px_rgba(30,90,205,0.1)]"
-              />
+              <div
+                className={`relative group border-2 border-dashed rounded-xl p-8 transition-all duration-300 ${
+                  isDragging
+                    ? "border-blue-500 bg-blue-50"
+                    : "border-gray-300 hover:border-blue-400 hover:bg-gray-50"
+                }`}
+                onDragEnter={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setIsDragging(true);
+                }}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setIsDragging(true);
+                }}
+                onDragLeave={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setIsDragging(false);
+                }}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setIsDragging(false);
+                  const droppedFiles = e.dataTransfer.files;
+                  if (droppedFiles?.length) {
+                    setFileKey(droppedFiles[0]);
+                  }
+                }}
+              >
+                <input
+                  type="file"
+                  accept="video/*"
+                  onChange={handleFileChange}
+                  ref={fileInputRef}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                />
+                <div className="text-center">
+                  <div className="relative inline-flex items-center justify-center w-16 h-16 mb-4 rounded-full bg-blue-50 group-hover:bg-blue-100 transition-all duration-300">
+                    <UploadCloud
+                      className={`absolute transform transition-all duration-300 ${
+                        isDragging ? "text-blue-600 scale-110" : "text-blue-500 group-hover:scale-110"
+                      }`}
+                      size={32}
+                    />
+                  </div>
+                  <p className="text-lg font-semibold text-gray-700 mb-2">
+                    {file ? file.name : "Arrastra y suelta tu video aquí"}
+                  </p>
+                  <p className="text-sm text-gray-500 mb-2">
+                    o
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-all duration-300"
+                  >
+                    Seleccionar archivo
+                  </button>
+                  {file && (
+                    <div className="mt-4 flex items-center justify-center space-x-2 text-sm text-gray-500">
+                      <span className="flex items-center">
+                        <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                        Archivo seleccionado
+                      </span>
+                      <span>•</span>
+                      <span>{(file.size / (1024 * 1024)).toFixed(2)} MB</span>
+                    </div>
+                  )}
+                </div>
+              </div>
             )}
 
             <div className="flex space-x-3">

@@ -762,7 +762,15 @@ const SearchPage = () => {
                                           translateZ="40"
                                           className="mt-2"
                                         >
-                                          {renderStars(physio.rating || 4.5)}
+                                        { physio.rating &&
+                                          renderStars(physio.rating)
+                                        }
+
+                                        { !physio.rating &&
+                                          <p className="text-gray-500 text-sm mb-[0.1rem]">
+                                            Sin valoraciones
+                                          </p>
+                                        }
                                         </CardItem>
 
                                         <CardItem
