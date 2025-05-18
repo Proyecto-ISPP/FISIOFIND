@@ -272,8 +272,8 @@ const PatientRegistrationForm = () => {
       if (!formData.username.trim()) {
         newErrors.username = "El nombre de usuario es obligatorio";
         isValid = false;
-      } else if(formData.username.trim().length > 150){
-        newErrors.username = "El nombre de usuario debe tener 150 caracteres o menos";
+      } else if(formData.username.trim().length > 30){
+        newErrors.username = "El nombre de usuario debe tener 30 caracteres o menos";
         isValid = false;
       } else if(/[`+´ç,<.,©℃®§]/.test(formData.username)) {
         newErrors.username = "El nombre de usuario no puede contener los siguientes caracteres especiales: `+´ç,<.,©℃®§";
@@ -547,17 +547,10 @@ const PatientRegistrationForm = () => {
                     <FormField
                       name="phone_number"
                       label="Número de teléfono"
-                      type="text"
-                      inputMode="tel"
-                      pattern="[0-9]*"
+                      type="tel"
                       required={false}
                       value={formData.phone_number || ""}
-                      onChange={(e) => {
-                        const onlyNumbers = e.target.value.replace(/\D/g, '');
-                        handleChange({
-                          target: { name: e.target.name, value: onlyNumbers }
-                        });
-                      }}
+                      onChange={handleChange}
                       error={errors.phone_number}
                     />
                     <FormField
