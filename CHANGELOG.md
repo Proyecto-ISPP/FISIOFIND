@@ -1,11 +1,11 @@
-## 🚀 Changelog - 9.0.0
+## 🚀 Changelog - 25.0.0
 
-### ✨ Features (1)
-- feat: despliegue continuo back PPL (@Ramón Gavira)
+### ✨ Features (0)
+
 ### 🐛 Fixes (0)
 
-### 📖 Documentation (0)
-
+### 📖 Documentation (1)
+- docs: typo en revision.md (@Delfin)
 ### 🌀 Other Changes (0)
 
 ### 🔗 Pull Requests

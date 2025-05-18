@@ -1,4 +1,4 @@
----
+<!-- ---
 title: "ISPP - PÍLDORA TEÓRICA 1"                         # CHANGE IF NEEDED
 subtitle: "FISIO FIND - Grupo 6 - #DP"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]
@@ -18,11 +18,11 @@ header-right: "17/02/2025"                                # CHANGE IF NEEDED
 footer-left: "FISIO FIND"
 documentclass: scrartcl
 classoption: "table"
----
+--- -->
 
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
 <p align="center">
-  <img src="../.img/Logo_FisioFind_Verde_sin_fondo.webp" alt="Logo FisioFind" width="300" />
+  <img src="../../.img/Logo_FisioFind_Verde_sin_fondo.webp" alt="Logo FisioFind" width="300" />
 </p>
 
 <h1 align="center" style="font-size: 30px; font-weight: bold;">
@@ -100,7 +100,7 @@ Cada sprint tiene eventos como:
 - **Sprint Review**: Presentación del trabajo completado.
 - **Sprint Retrospective**: Reflexión y mejora continua.
 
-![Desarrollo de la metodología Scrum](../.img/scrum.png)
+![Desarrollo de la metodología Scrum](../../.img/scrum.png)
 
 <br>
 
@@ -112,19 +112,19 @@ Cada sprint tiene eventos como:
 # **2. PMBOK**
 El PMBOK es un estándar para la gestión de proyectos que incluye:
 
-![Fases de un proyecto según PMBOK](../.img/pmbok_phases_02.png)
+![Fases de un proyecto según PMBOK](../../.img/pmbok_phases_02.png)
 
-![Intensidad de las fases de un proyecto según PMBOK](../.img/pmbok_phases_01.png)
+![Intensidad de las fases de un proyecto según PMBOK](../../.img/pmbok_phases_01.png)
 
 
 ## **Tabla de procesos**
 
-![Tabla de procesos según PMBOK](../.img/pmbok_process_table.png)
+![Tabla de procesos según PMBOK](../../.img/pmbok_process_table.png)
 
 
 ## **Áreas de conocimiento**
 
-![Áreas de conocimiento de PMBOK](../.img/pmbok_knowledge_fields.png)
+![Áreas de conocimiento de PMBOK](../../.img/pmbok_knowledge_fields.png)
 
 1. **Integración**: Procesos necesarios para coordinar las diferentes áreas, identificando, definiendo y coordinando los procesos y actividades de la dirección de proyectos.
 
@@ -185,7 +185,7 @@ El PMBOK es un estándar para la gestión de proyectos que incluye:
 - Sin equipo no hay proyecto. 
 - Fomentar la comunicación y la comunidad → base de conocimiento.
 
-![El manifiesto ágil](../.img/agile_principles.png)
+![El manifiesto ágil](../../.img/agile_principles.png)
 
 ## **6 formas de ser derrotado - El arte de la guerra (Sun Tzu)**
 
@@ -219,12 +219,12 @@ CIONES EXTERNAS
 
 ## **Pirámide de Maslow**
 
-![Pirámide de Maslow](../.img/mashlow_piramid.png)
+![Pirámide de Maslow](../../.img/mashlow_piramid.png)
 
 
 ## **Teoría de la autodeterminación**
 
-![Teoría de la autodeterminación](../.img/autodetermination_theory.png)
+![Teoría de la autodeterminación](../../.img/autodetermination_theory.png)
 
 <br>
 

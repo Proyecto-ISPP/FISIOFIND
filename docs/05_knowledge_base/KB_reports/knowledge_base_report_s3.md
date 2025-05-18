@@ -23,7 +23,7 @@ classoption: "table"
 
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
 <p align="center">
-  <img src="../.img/Logo_FisioFind_Verde_sin_fondo.webp" alt="Logo FisioFind" width="300" />
+  <img src="../../.img/Logo_FisioFind_Verde_sin_fondo.webp" alt="Logo FisioFind" width="300" />
 </p>
 
 <h1 align="center" style="font-size: 30px; font-weight: bold;">
@@ -139,7 +139,7 @@ classoption: "table"
 
 - **Fecha de Creación:** 10/04/2025
 
-- **Versión:** v1.0
+- **Versión:** v1.1
 
 <br>
 
@@ -426,7 +426,7 @@ A continuación, se muestran las contribuciones a la base de conocimiento genera
 
 ## 4.2.1. Feedback individual del grupo 6
 
-En este apartado se encuentra la información relacionada con el feedback de las semanas 6 y 7.
+En este apartado se encuentra la información relacionada con el feedback de las semanas 8 y 9.
 
 ### Semana 8
 #### Feedback relacionado con la presentación

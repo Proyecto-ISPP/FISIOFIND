@@ -10,18 +10,7 @@ import { HeroHighlight, Highlight } from "@/components/ui/hero-highlight";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { PhysioCallToAction } from "@/components/ui/physio-cta";
 import { DemoWindow } from "@/components/demo-window";
-
-function UserWayWidget() {
-    useEffect(() => {
-    const d = document;
-    const s = d.createElement("script");
-    s.setAttribute("data-account", "436w0GnIfK");
-    s.src = "https://cdn.userway.org/widget.js";
-    s.async = true;
-    (d.head || d.body).appendChild(s);
-  }, []);
-  return null;
-}
+import { CookieConsent } from "@/components/CookieConsent";
 
 
 const Home = () => {
@@ -77,7 +66,7 @@ const Home = () => {
       className="min-h-screen w-full z=90"
       style={{ backgroundColor: "rgb(238, 251, 250)" }}
     >
-      <UserWayWidget />
+      <CookieConsent />
 
       {!isAuthenticated && (
         <header className="bg-[rgb(238, 251, 250)] shadow-md py-4">
