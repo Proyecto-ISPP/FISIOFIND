@@ -168,8 +168,8 @@ const SearchPage = () => {
       );
       if (response.status === 200) {
         const { exactMatches, suggestedMatches } = response.data;
-        setResults(exactMatches);
-        setSuggested(suggestedMatches);
+        setResults(Array.isArray(exactMatches) ? exactMatches : []);
+        setSuggested(Array.isArray(suggestedMatches) ? suggestedMatches : []);
         setActiveIndex(0);
       }
     } catch (error) {
@@ -733,12 +733,12 @@ const SearchPage = () => {
                                       }}
                                       className="flex-grow focus:outline-none" // Quitamos focus:ring-2 focus:ring-teal-500
                                     >
-                                      <div className="relative w-full aspect-[4/3] overflow-hidden">
+                                      <div className="relative w-full aspect-[4/3] overflow-hidden bg-white">
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                                         <img
                                           src={getPhysioPhotoUrl(physio)}
                                           alt={"Physiotherapist's photo"}
-                                          className="object-cover transform group-hover:scale-110 transition-transform duration-700 ease-out"
+                                          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-full max-w-none object-contain group-hover:scale-110 transition-transform duration-700 ease-out"
                                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                                         />
                                       </div>

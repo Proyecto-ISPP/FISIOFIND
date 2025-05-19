@@ -2,18 +2,7 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import {
-  Camera,
-  Plus,
-  Trash2,
-  Edit,
-  Save,
-  StarIcon,
-  Film,
-  Bell,
-  BicepsFlexed,
-  ClipboardList
-} from "lucide-react";
+import { Camera, Plus, Trash2, Edit, Save, StarIcon, Film, Bell, BicepsFlexed, Lock, X, ClipboardList,Wallet, Banknote } from 'lucide-react';
 import ScheduleCalendar from "@/components/ui/ScheduleCalendar";
 import { getApiBaseUrl } from "@/utils/api";
 import { GradientButton } from "@/components/ui/gradient-button";
@@ -819,7 +808,7 @@ const FisioProfile = () => {
         }
       );
 
-      if (response.status === 200 && editingServiceIndex === null) {
+      if (response.status === 200 && editingServiceIndex === null && !showDeleteAccountModal) {
         showAlert("success", "Perfil actualizado correctamente");
       }
 
@@ -1886,6 +1875,31 @@ const FisioProfile = () => {
               </div>
             </div>
 
+             {/* Balance */}
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-6">
+              <div className="px-6 py-4 bg-gradient-to-r from-teal-500 to-blue-600">
+                <h2 className="text-xl font-bold text-white flex items-center">
+                  <Wallet  className="mr-2" size={20} />
+                  Balance
+                </h2>
+              </div>
+
+              <div className="p-6">
+                <p className="text-gray-600 mb-4">
+                  En este apartado podra ver el saldo de su cuenta y los ingresos obtenidos con fisiofind
+                </p>
+                <Link href={`/physio-management/balance`} passHref>
+                <GradientButton
+                    variant="create"
+                    className="w-full py-2 px-4 font-medium rounded-xl flex items-center justify-center gap-2"
+                >
+                  <Banknote size={16} />
+                    Ver Ingresos
+                  </GradientButton>
+                  </Link>
+              </div>
+            </div>
+            
             {/* Notification preferences - Moved here from below */}
             <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-6">
               <div className="px-6 py-4 bg-gradient-to-r from-teal-500 to-blue-600">
