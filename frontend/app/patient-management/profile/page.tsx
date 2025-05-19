@@ -306,7 +306,7 @@ const PatientProfile = () => {
         }
       );
 
-      if (response.status === 200) {
+      if (response.status === 200 && !showDeleteConfirmation) {
         showAlert("success", "Perfil actualizado correctamente");
         fetchPatientProfile();
       }
