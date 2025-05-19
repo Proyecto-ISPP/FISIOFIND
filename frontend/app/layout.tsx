@@ -32,6 +32,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           content="fisioterapeuta, fisioterapeuta online, fisioterapia, salud, telemedicina, rehabilitación de lesiones, fisioterapia para mayores, ejercicio físico"
         />
 
+         <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-WNVDSD7MBJ"
           strategy="afterInteractive"
