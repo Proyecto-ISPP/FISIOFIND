@@ -12,8 +12,7 @@ import {
   Film,
   Bell,
   BicepsFlexed,
-  Lock,
-  X,
+  ClipboardList
 } from "lucide-react";
 import ScheduleCalendar from "@/components/ui/ScheduleCalendar";
 import { getApiBaseUrl } from "@/utils/api";
@@ -2256,7 +2255,7 @@ const FisioProfile = () => {
                   <Plus className="w-4 h-4" /> Añadir
                 </GradientButton>
                 <div>
-                  <h3 className="text-lg font-semibold mb-2">Cuestionarios</h3>
+                  <h3 className="text-lg font-semibold mb-2 text-white">Cuestionarios</h3>
                   {id && (
                     <Link href={`/questionnaires`} passHref>
                     <GradientButton
