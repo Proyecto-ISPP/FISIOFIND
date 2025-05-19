@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import { getApiBaseUrl } from "@/utils/api";
 import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
@@ -27,6 +27,7 @@ const SearchPage = () => {
   const router = useRouter();
   const apiBaseurl = getApiBaseUrl();
   const scrollRef = useRef<HTMLDivElement>(null);
+  const searchParams = useSearchParams();
 
   const initialFilters = {
     specialization: "",
@@ -50,7 +51,11 @@ const SearchPage = () => {
   const [dragStartX, setDragStartX] = useState(0);
   const [dragOffset, setDragOffset] = useState(0);
   const [previewPhysio, setPreviewPhysio] = useState(-1); // Estado para el índice del fisioterapeuta en vista previa
-  const [previewPhysioData, setPreviewPhysioData] = useState<Physiotherapist | null>(null); // Estado para los datos del fisioterapeuta en vista previa
+  const [previewPhysioData, setPreviewPhysioData] =
+    useState<Physiotherapist | null>(null); // Estado para los datos del fisioterapeuta en vista previa
+  const [autoSearch, setAutoSearch] = useState(
+    searchParams.get("autoSearch") === "true"
+  );
 
   const getPhysioPhotoUrl = (physio: Physiotherapist | undefined) => {
     if (physio?.image) {
@@ -59,6 +64,13 @@ const SearchPage = () => {
     }
     return "/static/fisioterapeuta_sample.webp"; // Imagen por defecto
   };
+
+  useEffect(() => {
+    if (autoSearch || searchParams.has("autoSearch")) {
+      handleSearch();
+      setAutoSearch(false);
+    }
+  }, [autoSearch]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -79,7 +91,9 @@ const SearchPage = () => {
   useEffect(() => {
     const fetchSpecializations = async () => {
       try {
-        const response = await axios.get(`${apiBaseurl}/api/guest_session/specializations/`);
+        const response = await axios.get(
+          `${apiBaseurl}/api/guest_session/specializations/`
+        );
         if (response.status === 200 && response.data?.length) {
           setSpecializations(response.data);
         }
@@ -99,7 +113,8 @@ const SearchPage = () => {
       if (!el || displayResults.length <= cardsPerPage) return;
 
       const isTrackpad = Math.abs(e.deltaX) > Math.abs(e.deltaY); // movimiento horizontal
-      const isMouseScrollWithShift = e.shiftKey && Math.abs(e.deltaY) > Math.abs(e.deltaX);
+      const isMouseScrollWithShift =
+        e.shiftKey && Math.abs(e.deltaY) > Math.abs(e.deltaX);
 
       if (isTrackpad || isMouseScrollWithShift) {
         e.preventDefault();
@@ -107,7 +122,10 @@ const SearchPage = () => {
         const threshold = 30; // sensibilidad
         if (e.deltaX > threshold || (e.shiftKey && e.deltaY > threshold)) {
           nextSlide();
-        } else if (e.deltaX < -threshold || (e.shiftKey && e.deltaY < -threshold)) {
+        } else if (
+          e.deltaX < -threshold ||
+          (e.shiftKey && e.deltaY < -threshold)
+        ) {
           prevSlide();
         }
       }
@@ -133,7 +151,9 @@ const SearchPage = () => {
     setFilters(initialFilters);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
   };
@@ -142,7 +162,10 @@ const SearchPage = () => {
     setSearchAttempted(true);
     setIsLoading(true);
     try {
-      const response = await axios.post(`${apiBaseurl}/api/guest_session/advanced-search/`, filters);
+      const response = await axios.post(
+        `${apiBaseurl}/api/guest_session/advanced-search/`,
+        filters
+      );
       if (response.status === 200) {
         const { exactMatches, suggestedMatches } = response.data;
         setResults(Array.isArray(exactMatches) ? exactMatches : []);
@@ -162,7 +185,7 @@ const SearchPage = () => {
     if (displayResults.length <= cardsPerPage) return 0;
 
     const baseCardWidth = 100 / cardsPerPage;
-    const adjustmentFactor = 0.40;
+    const adjustmentFactor = 0.4;
 
     const cardWidth = baseCardWidth * (1 + adjustmentFactor);
 
@@ -216,9 +239,13 @@ const SearchPage = () => {
 
     for (let i = 1; i <= 5; i++) {
       if (i <= roundedRating) {
-        stars.push(<Star key={i} className="text-amber-400 fill-amber-400" size={16} />);
+        stars.push(
+          <Star key={i} className="text-amber-400 fill-amber-400" size={16} />
+        );
       } else if (i - 0.5 === roundedRating) {
-        stars.push(<Star key={i} className="text-amber-400 fill-amber-400" size={16} />);
+        stars.push(
+          <Star key={i} className="text-amber-400 fill-amber-400" size={16} />
+        );
       } else {
         stars.push(<Star key={i} className="text-gray-300" size={16} />);
       }
@@ -247,7 +274,8 @@ const SearchPage = () => {
             </span>
           </h1>
           <p className="text-center text-gray-500 text-lg max-w-2xl mx-auto">
-            Encuentra al fisioterapeuta perfecto para tus necesidades específicas
+            Encuentra al fisioterapeuta perfecto para tus necesidades
+            específicas
           </p>
         </div>
 
@@ -255,8 +283,19 @@ const SearchPage = () => {
         <section className="max-w-4xl mx-auto mb-12 bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
           <div className="px-8 py-6 bg-gradient-to-r from-teal-500 to-blue-600">
             <h2 className="text-xl font-bold text-white flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
               </svg>
               Filtros de búsqueda
             </h2>
@@ -266,7 +305,9 @@ const SearchPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Specialization */}
               <div className="relative">
-                <label className="block text-xs font-medium text-gray-700 mb-1 ml-1">Especialidad</label>
+                <label className="block text-xs font-medium text-gray-700 mb-1 ml-1">
+                  Especialidad
+                </label>
                 <div className="relative">
                   <select
                     name="specialization"
@@ -276,12 +317,24 @@ const SearchPage = () => {
                   >
                     <option value="">Todas las especialidades</option>
                     {specializations.map((spec, i) => (
-                      <option key={i} value={spec}>{spec}</option>
+                      <option key={i} value={spec}>
+                        {spec}
+                      </option>
                     ))}
                   </select>
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M19 9l-7 7-7-7"
+                      />
                     </svg>
                   </div>
                 </div>
@@ -289,7 +342,9 @@ const SearchPage = () => {
 
               {/* Schedule */}
               <div className="relative">
-                <label className="block text-xs font-medium text-gray-700 mb-1 ml-1">Preferencia horaria</label>
+                <label className="block text-xs font-medium text-gray-700 mb-1 ml-1">
+                  Preferencia horaria
+                </label>
                 <div className="relative">
                   <select
                     name="schedule"
@@ -303,8 +358,18 @@ const SearchPage = () => {
                     <option value="noche">Noche (20:00 - 23:00)</option>
                   </select>
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M19 9l-7 7-7-7"
+                      />
                     </svg>
                   </div>
                 </div>
@@ -312,7 +377,9 @@ const SearchPage = () => {
 
               {/* Price */}
               <div className="relative">
-                <label className="block text-xs font-medium text-gray-700 mb-1 ml-1">Precio máximo (€)</label>
+                <label className="block text-xs font-medium text-gray-700 mb-1 ml-1">
+                  Precio máximo (€)
+                </label>
                 <div className="relative flex items-center">
                   <div className="absolute left-4 text-gray-400">€</div>
                   <input
@@ -329,8 +396,17 @@ const SearchPage = () => {
                       onClick={() => clearField("maxPrice")}
                       className="absolute right-3 text-gray-400 hover:text-red-500 transition-colors"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                          clipRule="evenodd"
+                        />
                       </svg>
                     </button>
                   )}
@@ -339,11 +415,22 @@ const SearchPage = () => {
 
               {/* Postal Code */}
               <div className="relative">
-                <label className="block text-xs font-medium text-gray-700 mb-1 ml-1">Código Postal</label>
+                <label className="block text-xs font-medium text-gray-700 mb-1 ml-1">
+                  Código Postal
+                </label>
                 <div className="relative flex items-center">
                   <div className="absolute left-4 text-gray-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                   </div>
                   <input
@@ -358,8 +445,17 @@ const SearchPage = () => {
                       onClick={() => clearField("postalCode")}
                       className="absolute right-3 text-gray-400 hover:text-red-500 transition-colors"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                          clipRule="evenodd"
+                        />
                       </svg>
                     </button>
                   )}
@@ -368,7 +464,9 @@ const SearchPage = () => {
 
               {/* Gender */}
               <div className="relative">
-                <label className="block text-xs font-medium text-gray-700 mb-1 ml-1">Género del profesional</label>
+                <label className="block text-xs font-medium text-gray-700 mb-1 ml-1">
+                  Género del profesional
+                </label>
                 <div className="relative">
                   <select
                     name="gender"
@@ -382,8 +480,18 @@ const SearchPage = () => {
                     <option value="indifferent">Me da igual</option>
                   </select>
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M19 9l-7 7-7-7"
+                      />
                     </svg>
                   </div>
                 </div>
@@ -391,11 +499,22 @@ const SearchPage = () => {
 
               {/* Name */}
               <div className="relative">
-                <label className="block text-xs font-medium text-gray-700 mb-1 ml-1">Nombre del fisioterapeuta</label>
+                <label className="block text-xs font-medium text-gray-700 mb-1 ml-1">
+                  Nombre del fisioterapeuta
+                </label>
                 <div className="relative flex items-center">
                   <div className="absolute left-4 text-gray-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                   </div>
                   <input
@@ -410,8 +529,17 @@ const SearchPage = () => {
                       onClick={() => clearField("name")}
                       className="absolute right-3 text-gray-400 hover:text-red-500 transition-colors"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                          clipRule="evenodd"
+                        />
                       </svg>
                     </button>
                   )}
@@ -426,10 +554,7 @@ const SearchPage = () => {
               </div>
 
               <div className="flex justify-center md:justify-start order-1 md:order-2">
-                <SearchButton
-                  onClick={handleSearch}
-                  isLoading={isLoading}
-                />
+                <SearchButton onClick={handleSearch} isLoading={isLoading} />
               </div>
             </div>
           </div>
@@ -444,22 +569,36 @@ const SearchPage = () => {
                   <div className="absolute top-0 right-0 h-16 w-16 rounded-full border-4 border-t-teal-500 border-r-transparent border-b-blue-500 border-l-transparent animate-spin"></div>
                   <div className="absolute top-1 right-1 h-14 w-14 rounded-full border-4 border-t-transparent border-r-blue-400 border-b-transparent border-l-teal-400 animate-spin animation-delay-200"></div>
                 </div>
-                <p className="mt-4 text-gray-500 animate-pulse">Buscando los mejores profesionales...</p>
+                <p className="mt-4 text-gray-500 animate-pulse">
+                  Buscando los mejores profesionales...
+                </p>
               </div>
             ) : (
               <>
                 {results.length === 0 && suggested.length === 0 ? (
                   <div className="text-center py-16 bg-white rounded-2xl shadow-md">
                     <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-12 w-12 text-gray-400"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
                       </svg>
                     </div>
                     <h3 className="text-2xl font-bold text-gray-700 mb-2">
                       No se encontraron resultados
                     </h3>
                     <p className="text-gray-500 max-w-md mx-auto">
-                      Prueba con diferentes criterios de búsqueda o elimina algunos filtros para ampliar los resultados
+                      Prueba con diferentes criterios de búsqueda o elimina
+                      algunos filtros para ampliar los resultados
                     </p>
                     <div className="flex justify-center mt-6">
                       <RestoreFilters onClick={handleReset} />
@@ -485,13 +624,24 @@ const SearchPage = () => {
                       <div className="mb-8 bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-lg">
                         <div className="flex">
                           <div className="flex-shrink-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-amber-400" viewBox="0 0 20 20" fill="currentColor">
-                              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9a1 1 0 00-1-1z" clipRule="evenodd" />
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-5 w-5 text-amber-400"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9a1 1 0 00-1-1z"
+                                clipRule="evenodd"
+                              />
                             </svg>
                           </div>
                           <div className="ml-3">
                             <p className="text-sm text-amber-700">
-                              No se encontraron resultados exactos para tu búsqueda. Te mostramos algunas sugerencias que podrían interesarte.
+                              No se encontraron resultados exactos para tu
+                              búsqueda. Te mostramos algunas sugerencias que
+                              podrían interesarte.
                             </p>
                           </div>
                         </div>
@@ -512,10 +662,11 @@ const SearchPage = () => {
                           <button
                             onClick={prevSlide}
                             disabled={activeIndex === 0}
-                            className={`absolute left-4 top-1/2 -translate-y-1/2 z-20 p-4 rounded-full shadow-lg ${activeIndex === 0
-                              ? "bg-gray-100 text-gray-300 cursor-not-allowed"
-                              : "bg-white text-teal-500 hover:bg-gradient-to-r hover:from-teal-500 hover:to-blue-600 hover:text-white"
-                              } transition-all duration-300 focus:outline-none transform hover:scale-110`}
+                            className={`absolute left-4 top-1/2 -translate-y-1/2 z-20 p-4 rounded-full shadow-lg ${
+                              activeIndex === 0
+                                ? "bg-gray-100 text-gray-300 cursor-not-allowed"
+                                : "bg-white text-teal-500 hover:bg-gradient-to-r hover:from-teal-500 hover:to-blue-600 hover:text-white"
+                            } transition-all duration-300 focus:outline-none transform hover:scale-110`}
                             aria-label="Anterior"
                           >
                             <ChevronLeft size={24} />
@@ -523,10 +674,11 @@ const SearchPage = () => {
                           <button
                             onClick={nextSlide}
                             disabled={activeIndex >= maxIndex}
-                            className={`absolute right-4 top-1/2 -translate-y-1/2 z-20 p-4 rounded-full shadow-lg ${activeIndex >= maxIndex
-                              ? "bg-gray-100 text-gray-300 cursor-not-allowed"
-                              : "bg-white text-teal-500 hover:bg-gradient-to-r hover:from-teal-500 hover:to-blue-600 hover:text-white"
-                              } transition-all duration-300 focus:outline-none transform hover:scale-110`}
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 z-20 p-4 rounded-full shadow-lg ${
+                              activeIndex >= maxIndex
+                                ? "bg-gray-100 text-gray-300 cursor-not-allowed"
+                                : "bg-white text-teal-500 hover:bg-gradient-to-r hover:from-teal-500 hover:to-blue-600 hover:text-white"
+                            } transition-all duration-300 focus:outline-none transform hover:scale-110`}
                             aria-label="Siguiente"
                           >
                             <ChevronRight size={24} />
@@ -549,8 +701,8 @@ const SearchPage = () => {
                           className="flex transition-transform duration-500 ease-[cubic-bezier(0.2, 0.1, 0.2, 1)] gap-8"
                           style={{
                             transform: `translateX(-${calculateTranslateX()}%)`,
-                            paddingLeft: '4px',
-                            paddingRight: `${100 - (100 / cardsPerPage)}%`
+                            paddingLeft: "4px",
+                            paddingRight: `${100 - 100 / cardsPerPage}%`,
                           }}
                         >
                           <AnimatePresence>
@@ -561,12 +713,14 @@ const SearchPage = () => {
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -20 }}
                                 transition={{ duration: 0.3, delay: i * 0.1 }}
-                                className={`flex-shrink-0 p-4 ${displayResults.length === 1 ? "mx-auto" : ""}`}
+                                className={`flex-shrink-0 p-4 ${
+                                  displayResults.length === 1 ? "mx-auto" : ""
+                                }`}
                                 style={{
                                   width: `${100 / cardsPerPage}%`,
-                                  paddingLeft: '185px',
-                                  paddingRight: '185px',
-                                  boxSizing: 'border-box'
+                                  paddingLeft: "185px",
+                                  paddingRight: "185px",
+                                  boxSizing: "border-box",
                                 }}
                               >
                                 <CardContainer className="h-full">
@@ -604,7 +758,10 @@ const SearchPage = () => {
                                           {physio.specializations}
                                         </CardItem>
 
-                                        <CardItem translateZ="40" className="mt-2">
+                                        <CardItem
+                                          translateZ="40"
+                                          className="mt-2"
+                                        >
                                         { physio.rating &&
                                           renderStars(physio.rating)
                                         }
@@ -620,26 +777,35 @@ const SearchPage = () => {
                                           translateZ="30"
                                           className="text-xs text-gray-600 mt-1 line-clamp-1"
                                         >
-                                          {physio.postalCode ? `CP: ${physio.postalCode}` : ""}
+                                          {physio.postalCode
+                                            ? `CP: ${physio.postalCode}`
+                                            : ""}
                                         </CardItem>
 
                                         {/* Mostrar precio medio solo si no hay filtro de precio máximo */}
-                                        {!filters.maxPrice.trim() && physio.price && (
-                                          <div className="flex justify-between items-center mt-auto pt-3">
-                                            <CardItem
-                                              translateZ="20"
-                                              className="text-sm text-gray-600"
-                                            >
-                                              Precio medio: <span className="font-semibold text-[#4F46E5]">{physio.price}€</span>
-                                            </CardItem>
-                                          </div>
-                                        )}
+                                        {!filters.maxPrice.trim() &&
+                                          physio.price && (
+                                            <div className="flex justify-between items-center mt-auto pt-3">
+                                              <CardItem
+                                                translateZ="20"
+                                                className="text-sm text-gray-600"
+                                              >
+                                                Precio medio:{" "}
+                                                <span className="font-semibold text-[#4F46E5]">
+                                                  {physio.price}€
+                                                </span>
+                                              </CardItem>
+                                            </div>
+                                          )}
                                       </div>
                                     </button>
 
                                     {/* Botón para "Reservar cita" */}
                                     <div className="p-4 pt-0">
-                                      <CardItem translateZ="50" className="w-full">
+                                      <CardItem
+                                        translateZ="50"
+                                        className="w-full"
+                                      >
                                         <button
                                           onClick={() => {
                                             setPreviewPhysioData(physio);
@@ -666,10 +832,11 @@ const SearchPage = () => {
                           <button
                             key={idx}
                             onClick={() => goToSlide(idx)}
-                            className={`h-2 rounded-full transition-all transform ${activeIndex === idx
-                              ? "w-8 bg-[#4F46E5] scale-y-150"
-                              : "w-2 bg-gray-300 hover:bg-gray-400 hover:scale-125"
-                              }`}
+                            className={`h-2 rounded-full transition-all transform ${
+                              activeIndex === idx
+                                ? "w-8 bg-[#4F46E5] scale-y-150"
+                                : "w-2 bg-gray-300 hover:bg-gray-400 hover:scale-125"
+                            }`}
                             aria-label={`Ir a página ${idx + 1}`}
                           />
                         ))}

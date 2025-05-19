@@ -5,12 +5,12 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { useAppointment } from "@/context/appointmentContext";
-import { CookieConsent } from "@/components/CookieConsent";
 import TopRatings from "@/components/ratings";
 import { HeroHighlight, Highlight } from "@/components/ui/hero-highlight";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { PhysioCallToAction } from "@/components/ui/physio-cta";
 import { DemoWindow } from "@/components/demo-window";
+import { CookieConsent } from "@/components/CookieConsent";
 
 
 const Home = () => {

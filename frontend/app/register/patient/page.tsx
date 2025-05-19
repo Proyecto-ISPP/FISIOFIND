@@ -6,7 +6,7 @@ import axios from "axios";
 import Image from "next/image";
 import { getApiBaseUrl } from "@/utils/api";
 import { Eye, EyeOff, Info } from "lucide-react";
-import Alert from '@/components/ui/Alert';
+import Alert from "@/components/ui/Alert";
 
 interface FormData {
   username: string;
@@ -39,7 +39,7 @@ const FormField = ({
   value,
   onChange,
   error,
-  info
+  info,
 }: {
   name: string;
   label: string;
@@ -140,15 +140,9 @@ const FormField = ({
               className="absolute right-2 top-1/4 -translate-y-1/2 bg-transparent border-none cursor-pointer focus:outline-none z-10 hover:bg-transparent"
             >
               {showPassword ? (
-                <Eye
-                  className="text-blue-600"
-                  size={20}
-                />
+                <Eye className="text-blue-600" size={20} />
               ) : (
-                <EyeOff
-                  className="text-blue-600"
-                  size={20}
-                />
+                <EyeOff className="text-blue-600" size={20} />
               )}
             </button>
           )}
@@ -225,22 +219,26 @@ const PatientRegistrationForm = () => {
   }>({
     show: false,
     type: "info",
-    message: ""
+    message: "",
   });
   const [showModal, setShowModal] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Nuevo estado para rastrear el login
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
-  const showAlert = (type: "success" | "error" | "info" | "warning", message: string) => {
+  const showAlert = (
+    type: "success" | "error" | "info" | "warning",
+    message: string
+  ) => {
     setAlert({
       show: true,
       type,
-      message
+      message,
     });
     setTimeout(() => {
       setAlert({
         show: false,
         type: "info",
-        message: ""
+        message: "",
       });
     }, 5000);
   };
@@ -297,7 +295,8 @@ const PatientRegistrationForm = () => {
         isValid = false;
       }
       if (!formData.confirm_password.trim()) {
-        newErrors.confirm_password = "La confirmación de la contraseña es obligatoria";
+        newErrors.confirm_password =
+          "La confirmación de la contraseña es obligatoria";
         isValid = false;
       } else if (formData.confirm_password !== formData.password) {
         newErrors.confirm_password = "Las contraseñas no coinciden";
@@ -623,6 +622,27 @@ const PatientRegistrationForm = () => {
                       onChange={handleChange}
                       error={errors.postal_code}
                     />
+                    {/* Checkbox de Términos y Condiciones */}
+                    <div className="mb-4 relative flex items-center justify-center">
+                      <input
+                        type="checkbox"
+                        id="terms"
+                        checked={acceptedTerms}
+                        onChange={(e) => setAcceptedTerms(e.target.checked)}
+                        className="w-5 h-5 accent-[#1E5ACD] cursor-pointer mb-0"
+                      />
+                      <label htmlFor="terms" className="text-sm text-gray-600 mb-0 ml-3">
+                        Acepto los{" "}
+                        <a
+                          href="/terms"
+                          className="text-[#1E5ACD] hover:underline font-medium"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          términos y condiciones
+                        </a>
+                      </label>
+                    </div>
                   </div>
                 </div>
               )}
@@ -647,8 +667,12 @@ const PatientRegistrationForm = () => {
                 ) : (
                   <button
                     type="submit"
-                    disabled={isSubmitting}
-                    className="ml-auto px-6 py-2 bg-gradient-to-r from-[#05668D] to-[#0A7487] hover:from-[#0A7487] hover:to-[#05918F] text-white font-medium rounded-xl transition-colors disabled:from-blue-300 disabled:to-blue-400"
+                    disabled={isSubmitting || !acceptedTerms}
+                    className={`"ml-auto px-6 py-2 text-white font-medium rounded-xl ${
+                      !acceptedTerms
+                        ? "bg-gray-400 cursor-not-allowed hover:bg-gray-400"
+                        : "bg-gradient-to-r from-[#05668D] to-[#0A7487] hover:from-[#0A7487] hover:to-[#05918F] transition-colors disabled:from-blue-300 disabled:to-blue-400"
+                    }`}
                   >
                     {isSubmitting ? "Registrando..." : "Completar Registro"}
                   </button>

@@ -81,7 +81,7 @@ interface ExerciseLog {
 interface ExerciseSessionData {
   exercise: Exercise;
   exerciseSessionId: number;
-  series: SeriesData[]; 
+  series: SeriesData[];
 }
 
 const ExercisesPage = ({
@@ -89,10 +89,12 @@ const ExercisesPage = ({
 }: {
   params: { id: string; sessionId: string };
 }) => {
-  
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const unwrappedParams = use(params as any);
-  const { id, sessionId } = unwrappedParams as { id: string; sessionId: string };
+  const { id, sessionId } = unwrappedParams as {
+    id: string;
+    sessionId: string;
+  };
 
   const router = useRouter();
   const [exercises, setExercises] = useState<ExerciseSessionData[]>([]);
@@ -115,9 +117,7 @@ const ExercisesPage = ({
   >(null);
 
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-  const [seriesIdToDelete, setSeriesIdToDelete] = useState<number | null>(
-    null
-  );
+  const [seriesIdToDelete, setSeriesIdToDelete] = useState<number | null>(null);
 
   const [showEditSeriesForm, setShowEditSeriesForm] = useState(false);
   const [currentSeries, setCurrentSeries] = useState<SeriesData | null>(null);
@@ -215,9 +215,7 @@ const ExercisesPage = ({
       }
 
       const response = await fetch(
-        `${getApiBaseUrl()}/api/treatments/sessions/${
-          sessionId
-        }/assign-exercise/`,
+        `${getApiBaseUrl()}/api/treatments/sessions/${sessionId}/assign-exercise/`,
         {
           method: "POST",
           headers: {
@@ -321,9 +319,7 @@ const ExercisesPage = ({
       }
 
       const response = await fetch(
-        `${getApiBaseUrl()}/api/treatments/sessions/${
-          sessionId
-        }/exercises`,
+        `${getApiBaseUrl()}/api/treatments/sessions/${sessionId}/exercises`,
         {
           method: "GET",
           headers: {
@@ -418,9 +414,7 @@ const ExercisesPage = ({
 
       // Asignar el ejercicio creado a la sesión
       const assignResponse = await fetch(
-        `${getApiBaseUrl()}/api/treatments/sessions/${
-          sessionId
-        }/assign-exercise/`,
+        `${getApiBaseUrl()}/api/treatments/sessions/${sessionId}/assign-exercise/`,
         {
           method: "POST",
           headers: {
@@ -659,14 +653,16 @@ const ExercisesPage = ({
         ) {
           // This is the exercise containing the deleted series
           const updatedSeries = exercise.series.filter(
-(s: SeriesData) => s.id !== seriesIdToDelete
+            (s: SeriesData) => s.id !== seriesIdToDelete
           );
 
           // Reorder series numbers
-          const reorderedSeries = updatedSeries.map((s: SeriesData, index: number) => ({
-            ...s,
-            series_number: index + 1,
-          }));
+          const reorderedSeries = updatedSeries.map(
+            (s: SeriesData, index: number) => ({
+              ...s,
+              series_number: index + 1,
+            })
+          );
 
           return {
             ...exercise,
@@ -820,9 +816,23 @@ const ExercisesPage = ({
             onClick={() =>
               router.push(`/physio-management/follow-up/${id}/sessions`)
             }
-            className="bg-white hover:bg-gray-100 text-[#05668D] font-semibold py-2 px-4 rounded-xl inline-flex items-center shadow-md transition-all duration-300"
+            className="mb-6 flex items-center text-blue-600 hover:text-blue-800"
           >
-            ← Volver
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 mr-1"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+            Volver a las sesiones
           </button>
           <h1 className="text-3xl font-bold text-[#05668D]">
             Ejercicios de la Sesión
@@ -1624,7 +1634,10 @@ const ExercisesPage = ({
                     onChange={(e) =>
                       setCurrentSeries({
                         ...currentSeries,
-                        repetitions: parseInt(e.target.value) === 0 ? 1 : parseInt(e.target.value),
+                        repetitions:
+                          parseInt(e.target.value) === 0
+                            ? 1
+                            : parseInt(e.target.value),
                       })
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-xl"

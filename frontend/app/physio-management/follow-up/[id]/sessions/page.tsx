@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { getApiBaseUrl } from "@/utils/api";
+import { Pencil, Trash2 } from "lucide-react";
 // Se ha eliminado la importación de MultiSelectDropdown
 
 // First, let's update the Session interface to include progress tracking fields
@@ -43,14 +44,17 @@ const DaysDropdown = ({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setDropdownOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -66,19 +70,21 @@ const DaysDropdown = ({
     <div className="relative" ref={dropdownRef}>
       <div
         onClick={() => setDropdownOpen(!dropdownOpen)}
-        className="border border-gray-300 rounded-xl py-2 px-3 cursor-pointer text-lg" // Increased padding and text size
+        className="border border-gray-300 rounded-xl py-4 px-3 cursor-pointer text-lg"
       >
         {selected.length === 0
           ? placeholder
           : `${selected.length} seleccionado${selected.length > 1 ? "s" : ""}`}
       </div>
       {dropdownOpen && (
-        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-xl shadow-lg"> {/* Added max-height and scroll */}
+        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-xl shadow-lg">
+          {" "}
+          {/* Added max-height and scroll */}
           {options.map((option) => (
             <div
               key={option.value}
               onClick={() => toggleOption(option.value)}
-              className="flex items-center justify-between px-4 py-6 hover:bg-gray-100 cursor-pointer first:rounded-t-xl last:rounded-b-xl" // Increased padding and text size
+              className="flex items-center justify-between px-4 pb-4 pt-10 hover:bg-gray-100 cursor-pointer first:rounded-t-xl last:rounded-b-xl"
             >
               <span className="text-gray-700">{option.label}</span>
               {selected.includes(option.value) && (
@@ -117,7 +123,9 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
   const [editMode, setEditMode] = useState(false);
   const [sessionToEdit, setSessionToEdit] = useState<Session | null>(null);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-  const [sessionIdToDelete, setSessionIdToDelete] = useState<number | null>(null);
+  const [sessionIdToDelete, setSessionIdToDelete] = useState<number | null>(
+    null
+  );
 
   useEffect(() => {
     loadSessions();
@@ -132,7 +140,7 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
         setError("No se ha encontrado el token de autenticación");
         return;
       }
-  
+
       const response = await fetch(
         `${getApiBaseUrl()}/api/treatments/${treatmentId}/sessions/`,
         {
@@ -142,20 +150,22 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
           },
         }
       );
-  
+
       if (!response.ok) {
         throw new Error("Error al cargar las sesiones");
       }
-  
+
       const data = await response.json();
-      
+
       // Fetch test and exercise information for each session
       const sessionsWithInfo = await Promise.all(
         data.map(async (session: Session) => {
           try {
             // Check if the session has a test
             const testResponse = await fetch(
-              `${getApiBaseUrl()}/api/treatments/sessions/${session.id}/test/view/`,
+              `${getApiBaseUrl()}/api/treatments/sessions/${
+                session.id
+              }/test/view/`,
               {
                 headers: {
                   Authorization: `Bearer ${token}`,
@@ -163,14 +173,16 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
                 },
               }
             );
-            
+
             if (testResponse.ok) {
               // Session has a test
               session.tests_count = 1;
-              
+
               // Check if the patient has responded to the test
               const testResponsesResponse = await fetch(
-                `${getApiBaseUrl()}/api/treatments/sessions/${session.id}/test/responses/`,
+                `${getApiBaseUrl()}/api/treatments/sessions/${
+                  session.id
+                }/test/responses/`,
                 {
                   headers: {
                     Authorization: `Bearer ${token}`,
@@ -178,7 +190,7 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
                   },
                 }
               );
-              
+
               if (testResponsesResponse.ok) {
                 const testResponsesData = await testResponsesResponse.json();
                 session.completed_tests_count = testResponsesData.length;
@@ -190,10 +202,12 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
               session.tests_count = 0;
               session.completed_tests_count = 0;
             }
-  
+
             // Fetch exercises for the session
             const exercisesResponse = await fetch(
-              `${getApiBaseUrl()}/api/treatments/sessions/${session.id}/exercises/`,
+              `${getApiBaseUrl()}/api/treatments/sessions/${
+                session.id
+              }/exercises/`,
               {
                 headers: {
                   Authorization: `Bearer ${token}`,
@@ -201,19 +215,21 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
                 },
               }
             );
-  
+
             if (exercisesResponse.ok) {
               const exerciseSessions = await exercisesResponse.json();
               session.exercises_count = exerciseSessions.length;
-              
+
               // Calculate total series for all exercises in this session
               let totalSeries = 0;
               let totalLogs = 0;
-              
+
               // For each exercise session, get its series
               for (const exerciseSession of exerciseSessions) {
                 const seriesResponse = await fetch(
-                  `${getApiBaseUrl()}/api/treatments/exercise-sessions/${exerciseSession.id}/series/`,
+                  `${getApiBaseUrl()}/api/treatments/exercise-sessions/${
+                    exerciseSession.id
+                  }/series/`,
                   {
                     headers: {
                       Authorization: `Bearer ${token}`,
@@ -221,16 +237,18 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
                     },
                   }
                 );
-                
+
                 if (seriesResponse.ok) {
                   const seriesData = await seriesResponse.json();
                   totalSeries += seriesData.length;
-                  
+
                   // For each series, get its logs
                   for (const series of seriesData) {
                     try {
                       const logsResponse = await fetch(
-                        `${getApiBaseUrl()}/api/treatments/exercise-sessions/${exerciseSession.id}/logs/`,
+                        `${getApiBaseUrl()}/api/treatments/exercise-sessions/${
+                          exerciseSession.id
+                        }/logs/`,
                         {
                           headers: {
                             Authorization: `Bearer ${token}`,
@@ -238,32 +256,39 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
                           },
                         }
                       );
-                      
+
                       if (logsResponse.ok) {
                         const logsData = await logsResponse.json();
                         // Filter logs for this specific series
-                        const seriesLogs = logsData.filter((log: { series: number }) => log.series === series.id);
+                        const seriesLogs = logsData.filter(
+                          (log: { series: number }) => log.series === series.id
+                        );
                         totalLogs += seriesLogs.length;
                       }
                     } catch (error) {
-                      console.error(`Error fetching logs for series ${series.id}:`, error);
+                      console.error(
+                        `Error fetching logs for series ${series.id}:`,
+                        error
+                      );
                     }
                   }
                 }
               }
-              
+
               // Calculate the total expected logs (series * days of the week)
-              const totalExpectedLogs = totalSeries * session.day_of_week.length;
-              
+              const totalExpectedLogs =
+                totalSeries * session.day_of_week.length;
+
               // Store these values for progress calculation
               session.total_series = totalSeries;
               session.total_logs = totalLogs;
               session.total_expected_logs = totalExpectedLogs;
-              
+
               // Calculate completed exercises percentage
-              session.completed_exercises_count = totalExpectedLogs > 0 
-                ? Math.round((totalLogs / totalExpectedLogs) * 100) 
-                : 0;
+              session.completed_exercises_count =
+                totalExpectedLogs > 0
+                  ? Math.round((totalLogs / totalExpectedLogs) * 100)
+                  : 0;
             } else {
               session.exercises_count = 0;
               session.completed_exercises_count = 0;
@@ -272,24 +297,30 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
               session.total_expected_logs = 0;
             }
           } catch (error) {
-            console.error(`Error fetching info for session ${session.id}:`, error);
+            console.error(
+              `Error fetching info for session ${session.id}:`,
+              error
+            );
             // If there's an error, set default values
             session.tests_count = session.tests_count || 0;
             session.completed_tests_count = session.completed_tests_count || 0;
             session.exercises_count = session.exercises_count || 0;
-            session.completed_exercises_count = session.completed_exercises_count || 0;
+            session.completed_exercises_count =
+              session.completed_exercises_count || 0;
             session.total_series = session.total_series || 0;
             session.total_logs = session.total_logs || 0;
             session.total_expected_logs = session.total_expected_logs || 0;
           }
-          
+
           return session;
         })
       );
-      
+
       setSessions(sessionsWithInfo);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error al cargar las sesiones");
+      setError(
+        err instanceof Error ? err.message : "Error al cargar las sesiones"
+      );
     } finally {
       setLoading(false);
     }
@@ -370,7 +401,9 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
       setEditMode(false);
       setSessionToEdit(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error al actualizar la sesión");
+      setError(
+        err instanceof Error ? err.message : "Error al actualizar la sesión"
+      );
     }
   };
 
@@ -413,7 +446,9 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
       setShowDeleteConfirmation(false);
       setSessionIdToDelete(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error al eliminar la sesión");
+      setError(
+        err instanceof Error ? err.message : "Error al eliminar la sesión"
+      );
     }
   };
 
@@ -457,309 +492,321 @@ const SessionsContent = ({ treatmentId }: { treatmentId: string }) => {
     return Math.round(overallProgress);
   };
 
-  if (loading) return <div>Cargando...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center py-20">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#41B8D5]"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+        {error}
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen w-full" style={{ backgroundColor: "rgb(238, 251, 250)" }}>
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-6">
-          <button
-            onClick={() =>
-              router.push(`/physio-management/follow-up/${treatmentId}`)
-            }
-            className="bg-white hover:bg-gray-100 text-[#05668D] font-semibold py-2 px-4 rounded-xl inline-flex items-center shadow-md transition-all duration-300"
-          >
-            ← Volver
-          </button>
-          <h1 className="text-3xl font-bold text-[#05668D]">Sesiones del Tratamiento</h1>
-          <div className="w-24"></div> {/* Spacer for alignment */}
-        </div>
-
-        <form
-          onSubmit={handleCreateSession}
-          className="mb-8 p-6 bg-white rounded-2xl shadow-lg transition-all duration-300 hover:shadow-xl"
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex items-center mb-6 justify-between">
+        <button
+          onClick={() =>
+            router.push(`/physio-management/follow-up/${treatmentId}`)
+          }
+          className="mb-6 flex items-center text-blue-600 hover:text-blue-800"
         >
-          <h2 className="text-2xl font-semibold text-[#05668D] mb-6">
-            Crear Nueva Sesión
-          </h2>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Nombre de la sesión
-              </label>
-              <input
-                type="text"
-                value={newSession.name}
-                onChange={(e) =>
-                  setNewSession({ ...newSession, name: e.target.value })
-                }
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300"
-                placeholder="Nombre de la sesión"
-                maxLength={50}
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700 mb-3">
-                Días de la semana
-              </label>
-              <DaysDropdown
-                options={daysOfWeek}
-                selected={newSession.day_of_week}
-                setSelected={(value) =>
-                  setNewSession({ ...newSession, day_of_week: value })
-                }
-                placeholder="Selecciona los días de la semana"
-              />
-            </div>
-          </div>
-          <button
-            type="submit"
-            className="mt-8 px-6 py-3 bg-gradient-to-r from-[#6BC9BE] to-[#05668D] text-white font-medium rounded-xl hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#6BC9BE] focus:ring-offset-2 transition-all duration-300 shadow-md flex items-center space-x-2"
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5 mr-1"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
-            Crear Sesión
-          </button>
-        </form>
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+          Volver al tratamiento
+        </button>
+        <h1 className="text-3xl font-bold text-[#05668D]">
+          Sesiones del Tratamiento
+        </h1>
+        <div className="w-24"></div>
+      </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <form
+        onSubmit={handleCreateSession}
+        className="mb-8 p-6 bg-white rounded-2xl shadow-lg transition-all duration-300 hover:shadow-xl"
+      >
+        <h2 className="text-2xl font-semibold text-[#05668D] mb-6">
+          Crear Nueva Sesión
+        </h2>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div className="space-y-2">
+            <input
+              type="text"
+              value={newSession.name}
+              onChange={(e) =>
+                setNewSession({ ...newSession, name: e.target.value })
+              }
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300"
+              placeholder="Nombre de la sesión"
+              maxLength={50}
+            />
+          </div>
+          <div className="space-y-2">
+            <DaysDropdown
+              options={daysOfWeek}
+              selected={newSession.day_of_week}
+              setSelected={(value) =>
+                setNewSession({ ...newSession, day_of_week: value })
+              }
+              placeholder="Selecciona los días de la semana"
+            />
+          </div>
+        </div>
+        <button
+          type="submit"
+          className="mt-8 px-6 py-3 bg-gradient-to-r from-[#6BC9BE] to-[#05668D] text-white font-medium rounded-xl hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#6BC9BE] focus:ring-offset-2 transition-all duration-300 shadow-md flex items-center space-x-2"
+        >
+          Crear Sesión
+        </button>
+      </form>
+
+      {sessions.length === 0 && (
+        <div className="text-center py-10">
+          <p className="text-gray-500">
+            No hay sesiones disponibles para este tratamiento
+          </p>
+        </div>
+      )}
+
+      {sessions.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {sessions.map((session) => {
             const progress = getSessionProgress(session);
-
             return (
               <div
                 key={session.id}
-                className="bg-white p-6 rounded-2xl shadow-lg transition-all duration-300 hover:shadow-xl hover:transform hover:translate-y-[-2px] relative"
+                className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition cursor-pointer group relative"
               >
-                <div className="absolute top-4 right-4 flex space-x-2">
-                  <button
-                    onClick={() => handleEditClick(session)}
-                    className="p-2 text-gray-600 hover:text-[#05668D] transition-colors duration-300"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                    </svg>
-                  </button>
-                  <button
-                    onClick={() => handleDeleteClick(session.id)}
-                    className="p-2 text-gray-600 hover:text-red-500 transition-colors duration-300"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </button>
-                </div>
-
-                <h3 className="text-xl font-semibold text-[#05668D] mb-3 break-words w-full pr-12">
-                  {session.name || `Sesión ${session.id}`}
-                </h3>
-
-                {/* Progress section */}
-                <div className="mb-4">
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-sm font-medium text-gray-700">
-                      Progreso del paciente
-                    </span>
-                    <span className="text-sm font-medium text-gray-700">
+                <div className="p-6">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="text-xl font-bold mb-2 text-[#05668D]">
+                      {session.name || `Sesión ${session.id}`}
+                    </h3>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEditClick(session);
+                        }}
+                        className="p-2 rounded-full hover:bg-[#e6f7f6] text-[#41B8D5]"
+                        title="Editar sesión"
+                      >
+                        <Pencil size={18} />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteClick(session.id);
+                        }}
+                        className="p-2 rounded-full hover:bg-[#ffeaea] text-[#e57373]"
+                        title="Eliminar sesión"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-1 mb-2">
+                    <div className="flex gap-2">
+                      <span className="font-medium">Días de la semana:</span>
+                      <span className="text-gray-600">
+                        {session.day_of_week.join(", ")}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="flex-grow bg-gray-200 rounded-full h-2.5">
+                      <div
+                        className="bg-[#41B8D5] h-2.5 rounded-full"
+                        style={{ width: `${progress}%` }}
+                      ></div>
+                    </div>
+                    <span className="font-semibold whitespace-nowrap">
                       {progress}%
                     </span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2.5">
-                    <div
-                      className="bg-gradient-to-r from-[#41B8D5] to-[#1E5ACD] h-2.5 rounded-full"
-                      style={{ width: `${progress}%` }}
-                    ></div>
-                  </div>
-                </div>
-
-                {/* Details section */}
-                <div className="grid grid-cols-2 gap-3 mb-4">
-                  <div className="bg-gradient-to-br from-[#f8fdfc] to-[#edf8f7] p-3 rounded-xl shadow-sm">
-                    <p className="text-gray-600 border-b border-gray-200 pb-1 mb-2 text-sm">
-                      Ejercicios
-                    </p>
-                    <p className="font-medium text-[#05668D]">
-                      {session.exercises_count || 0} ejercicios
-                    </p>
-                    {session.total_logs !== undefined &&
-                      session.total_expected_logs !== undefined && (
-                        <p className="text-xs text-gray-500 mt-1">
-                          {session.total_logs} de {session.total_expected_logs}{" "}
-                          registros
+                  <div className="grid grid-cols-2 gap-4 mb-4 mt-4">
+                    <div className="bg-[#e6f7f6] p-3 rounded-lg text-center">
+                      <p className="text-sm text-gray-600">Ejercicios</p>
+                      <p className="font-bold text-lg">
+                        {session.exercises_count || 0}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {session.total_logs || 0}/
+                        {session.total_expected_logs || 0} registros
+                      </p>
+                      <div className="bg-gray-50 px-6 py-3 flex justify-center mt-6">
+                        <button
+                          onClick={() =>
+                            router.push(
+                              `/physio-management/follow-up/${treatmentId}/sessions/${session.id}/exercises/`
+                            )
+                          }
+                          className="text-[#41B8D5] hover:underline flex items-center font-medium"
+                        >
+                          Ver detalles
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-4 w-4 ml-1"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 5l7 7-7 7"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                    <div className="bg-[#f0f9e8] p-3 rounded-lg text-center flex flex-col justify-between">
+                      <p className="text-sm text-gray-600">Test</p>
+                      {session.tests_count && session.tests_count > 0 ? (
+                        <p
+                          className={`font-bold text-sm ${
+                            (session.completed_tests_count ?? 0) > 0
+                              ? "text-green-600"
+                              : "text-amber-600"
+                          }`}
+                        >
+                          {(session.completed_tests_count ?? 0) > 0
+                            ? `${session.completed_tests_count}/${session.day_of_week.length}`
+                            : "Pendiente"}
                         </p>
+                      ) : (
+                        <p className="text-gray-500 text-sm">No disponible</p>
                       )}
-                  </div>
-                  <div className="bg-gradient-to-br from-[#f8fdfc] to-[#edf8f7] p-3 rounded-xl shadow-sm">
-                    <p className="text-gray-600 border-b border-gray-200 pb-1 mb-2 text-sm">
-                      Cuestionarios
-                    </p>
-                    <p className="font-medium text-[#05668D]">
-                      {session.tests_count
-                        ? "1 cuestionario"
-                        : "Sin cuestionario"}
-                    </p>
-                    {session.tests_count &&
-                      session.completed_tests_count !== undefined && (
-                        <p className="text-xs text-gray-500 mt-1">
-                          {session.completed_tests_count} de{" "}
-                          {session.day_of_week.length} respuestas
-                        </p>
-                      )}
-                  </div>
-                </div>
-
-                <div className="bg-gradient-to-br from-[#f8fdfc] to-[#edf8f7] p-3 rounded-xl shadow-sm mb-4">
-                  <p className="text-gray-600 border-b border-gray-200 pb-1 mb-2 text-sm">
-                    Días programados
-                  </p>
-                  <p className="text-[#05668D]">
-                    {Array.isArray(session.day_of_week)
-                      ? session.day_of_week
-                          .map(
-                            (day) =>
-                              daysOfWeek.find((d) => d.value === day)?.label
-                          )
-                          .join(", ")
-                      : ""}
-                  </p>
-                </div>
-
-                <div className="flex flex-col space-y-2 mt-6">
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() =>
-                        router.push(
-                          `/physio-management/follow-up/${treatmentId}/sessions/${session.id}/exercises/`
-                        )
-                      }
-                      className="flex-1 px-4 py-3 bg-[#6BC9BE] text-white font-medium rounded-xl hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#6BC9BE] focus:ring-offset-2 transition-all duration-300 shadow-md"
-                    >
-                      Ejercicios
-                    </button>
-                    <button
-                      onClick={() =>
-                        router.push(
-                          `/physio-management/follow-up/${treatmentId}/sessions/${session.id}/tests/physio/`
-                        )
-                      }
-                      className="flex-1 px-4 py-3 bg-[#05668D] text-white font-medium rounded-xl hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#05668D] focus:ring-offset-2 transition-all duration-300 shadow-md"
-                    >
-                      Cuestionario
-                    </button>
+                      <div className="bg-gray-50 px-6 py-3 flex justify-center mt-6">
+                        <button
+                          onClick={() =>
+                            router.push(
+                              `/physio-management/follow-up/${treatmentId}/sessions/${session.id}/tests/physio/`
+                            )
+                          }
+                          className="text-[#8ba573] hover:underline flex items-center font-medium"
+                        >
+                          Ver detalles
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-4 w-4 ml-1"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 5l7 7-7 7"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             );
           })}
         </div>
+      )}
 
-        {/* Edit Session Modal */}
-        {editMode && sessionToEdit && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md">
-              <h2 className="text-2xl font-bold text-[#05668D] mb-6">
-                Editar Sesión
-              </h2>
-              <form onSubmit={handleUpdateSession} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Nombre de la Sesión
-                  </label>
-                  <input
-                    type="text"
-                    value={sessionToEdit.name}
-                    onChange={(e) =>
-                      setSessionToEdit({
-                        ...sessionToEdit,
-                        name: e.target.value,
-                      })
-                    }
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300"
-                    placeholder="Nombre de la sesión"
-                    maxLength={50}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Días de la semana
-                  </label>
-                  <DaysDropdown
-                    options={daysOfWeek}
-                    selected={sessionToEdit.day_of_week || []}
-                    setSelected={(value) =>
-                      setSessionToEdit((prev) =>
-                        prev ? { ...prev, day_of_week: value } : prev
-                      )
-                    }
-                    placeholder="Selecciona los días de la semana"
-                  />
-                </div>
+      {/* Edit Session Modal */}
+      {editMode && sessionToEdit && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <form
+            onSubmit={handleUpdateSession}
+            className="bg-white rounded-2xl p-8 shadow-xl w-full max-w-md"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-xl font-bold mb-4 text-[#05668D]">
+              Editar Sesión
+            </h2>
+            <input
+              type="text"
+              value={sessionToEdit.name}
+              onChange={(e) =>
+                setSessionToEdit({ ...sessionToEdit, name: e.target.value })
+              }
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl mb-4 focus:outline-none focus:ring-2 focus:ring-[#41B8D5]"
+              placeholder="Nombre de la sesión"
+              maxLength={50}
+            />
+            <DaysDropdown
+              options={daysOfWeek}
+              selected={sessionToEdit.day_of_week}
+              setSelected={(value) =>
+                setSessionToEdit({ ...sessionToEdit, day_of_week: value })
+              }
+              placeholder="Selecciona los días de la semana"
+            />
+            <div className="flex justify-end gap-2 mt-6">
+              <button
+                type="button"
+                onClick={handleCancelEdit}
+                className="px-4 py-2 rounded-xl bg-gray-200 text-gray-700 hover:bg-gray-300"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#6BC9BE] to-[#05668D] text-white font-semibold hover:opacity-90"
+              >
+                Guardar
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
 
-                <div className="flex justify-end space-x-3 mt-6">
-                  <button
-                    type="button"
-                    onClick={handleCancelEdit}
-                    className="px-4 py-2 bg-white border border-red-400 text-red-500 rounded-xl hover:bg-red-50 transition-all duration-300"
-                  >
-                    Cancelar
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 bg-gradient-to-r from-[#6BC9BE] to-[#05668D] text-white rounded-xl hover:opacity-90 transition-all duration-300"
-                  >
-                    Guardar Cambios
-                  </button>
-                </div>
-              </form>
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirmation && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-8 shadow-xl w-full max-w-md text-center">
+            <h2 className="text-xl font-bold mb-4 text-[#e57373]">
+              ¿Eliminar sesión?
+            </h2>
+            <p className="mb-6">
+              ¿Estás seguro de que deseas eliminar esta sesión? Esta acción no
+              se puede deshacer.
+            </p>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={handleCancelDelete}
+                className="px-4 py-2 rounded-xl bg-gray-200 text-gray-700 hover:bg-gray-300"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleDeleteSession}
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#e57373] to-[#ffb3b3] text-white font-semibold hover:opacity-90"
+              >
+                Eliminar
+              </button>
             </div>
           </div>
-        )}
-
-        {/* Delete Confirmation Modal */}
-        {showDeleteConfirmation && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-2xl shadow-2xl w-full max-w-md">
-              <h2 className="text-xl font-bold text-[#05668D] mb-4">
-                Confirmar eliminación
-              </h2>
-              <p className="text-gray-600 mb-6">
-                ¿Estás seguro de que deseas eliminar esta sesión? Esta acción no
-                se puede deshacer.
-              </p>
-              <div className="flex justify-end space-x-3">
-                <button
-                  onClick={handleCancelDelete}
-                  className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all duration-300"
-                >
-                  Cancelar
-                </button>
-                <button
-                  onClick={handleDeleteSession}
-                  className="px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-all duration-300"
-                >
-                  Eliminar
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

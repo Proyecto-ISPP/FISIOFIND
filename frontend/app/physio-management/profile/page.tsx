@@ -15,7 +15,6 @@ import PhysioterapistRating from "@/components/ui/PhysioterapistRating";
 import SubscriptionSlider from "@/components/ui/SubscriptionSlider";
 import { useRouter } from "next/navigation";
 
-
 const getAuthToken = () => {
   return localStorage.getItem("token"); // Obtiene el token JWT
 };
@@ -45,33 +44,33 @@ const FisioProfile = () => {
     duracion: number; // En minutos
     custom_questionnaire?: Questionary;
   }
-    const [profile, setProfile] = useState({
-        user: {
-            dni: "",
-            email: "",
-            first_name: "",
-            last_name: "",
-            phone_number: "",
-            photo: "",
-            postal_code: "",
-            user_id: "",
-            username: "",
-        },
-        autonomic_community: "",
-        bio: "",
-        birth_date: "",
-        collegiate_number: "",
-        gender: "",
-        rating_avg: "",
-        schedule: "",
-        specializations: "",
-        services: [] as Service[],
-        plan: 0,
-        degree: "",
-        university:"",
-        experience: "",
-        workplace:""
-    });
+  const [profile, setProfile] = useState({
+    user: {
+      dni: "",
+      email: "",
+      first_name: "",
+      last_name: "",
+      phone_number: "",
+      photo: "",
+      postal_code: "",
+      user_id: "",
+      username: "",
+    },
+    autonomic_community: "",
+    bio: "",
+    birth_date: "",
+    collegiate_number: "",
+    gender: "",
+    rating_avg: "",
+    schedule: "",
+    specializations: "",
+    services: [] as Service[],
+    plan: 0,
+    degree: "",
+    university: "",
+    experience: "",
+    workplace: "",
+  });
 
   if (profile) {
     console.log("type of plan", typeof profile.plan);
@@ -164,7 +163,7 @@ const FisioProfile = () => {
     useState<boolean>(false);
   const [id, setId] = useState<number | null>(null);
   const [physioterapistId, setPhysioterapistId] = useState(null);
-  
+
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -237,64 +236,67 @@ const FisioProfile = () => {
         console.log("response", response.data);
         setId(response.data.physio.id);
 
-                setProfile({
-                    user: {
-                        dni: response.data.physio.user_data.dni,
-                        email: response.data.physio.user_data.email,
-                        first_name: response.data.physio.user_data.first_name,
-                        last_name: response.data.physio.user_data.last_name,
-                        phone_number: response.data.physio.user_data.phone_number,
-                        photo: response.data.physio.user_data.photo,
-                        postal_code: response.data.physio.user_data.postal_code,
-                        user_id: response.data.physio.user_data.user_id,
-                        username: response.data.physio.user_data.username,
-                    },
-                    autonomic_community: response.data.physio.autonomic_community,
-                    bio: response.data.physio.bio,
-                    birth_date: response.data.physio.birth_date,
-                    collegiate_number: response.data.physio.collegiate_number,
-                    gender: response.data.physio.gender,
-                    rating_avg: response.data.physio.rating_avg,
-                    schedule: response.data.physio.schedule,
-                    specializations: response.data.physio.specializations,
-                    services: [],
-                    plan: response.data.physio.plan,
-                    degree: response.data.physio.degree,
-                    university: response.data.physio.university,
-                    experience: response.data.physio.experience,
-                    workplace: response.data.physio.workplace,
-                });
+        setProfile({
+          user: {
+            dni: response.data.physio.user_data.dni,
+            email: response.data.physio.user_data.email,
+            first_name: response.data.physio.user_data.first_name,
+            last_name: response.data.physio.user_data.last_name,
+            phone_number: response.data.physio.user_data.phone_number,
+            photo: response.data.physio.user_data.photo,
+            postal_code: response.data.physio.user_data.postal_code,
+            user_id: response.data.physio.user_data.user_id,
+            username: response.data.physio.user_data.username,
+          },
+          autonomic_community: response.data.physio.autonomic_community,
+          bio: response.data.physio.bio,
+          birth_date: response.data.physio.birth_date,
+          collegiate_number: response.data.physio.collegiate_number,
+          gender: response.data.physio.gender,
+          rating_avg: response.data.physio.rating_avg,
+          schedule: response.data.physio.schedule,
+          specializations: response.data.physio.specializations,
+          services: [],
+          plan: response.data.physio.plan,
+          degree: response.data.physio.degree,
+          university: response.data.physio.university,
+          experience: response.data.physio.experience,
+          workplace: response.data.physio.workplace,
+        });
 
-                // Verificar si faltan datos profesionales importantes
-                const missingFields = [];
-                if (!response.data.physio.degree) missingFields.push("titulación");
-                if (!response.data.physio.university) missingFields.push("universidad");
-                if (!response.data.physio.experience) missingFields.push("experiencia");
-                if (!response.data.physio.workplace) missingFields.push("centro de trabajo");
-        
-                // Mostrar alerta si faltan campos
-                if (missingFields.length > 0) {
-                  showAlert(
-                    "warning", 
-                    `Tu perfil profesional está incompleto. Por favor, completa los campos de ${missingFields.join(", ")} para mejorar tu visibilidad.`
-                );
-                }
+        // Verificar si faltan datos profesionales importantes
+        const missingFields = [];
+        if (!response.data.physio.degree) missingFields.push("titulación");
+        if (!response.data.physio.university) missingFields.push("universidad");
+        if (!response.data.physio.experience) missingFields.push("experiencia");
+        if (!response.data.physio.workplace)
+          missingFields.push("centro de trabajo");
 
-                try {
-                    let parsedServices = [];
-                    // Comprobar si los servicios son un string JSON o un array o un objeto
-                    if (typeof response.data.physio.services === 'string') {
-                        try {
-                            parsedServices = JSON.parse(response.data.physio.services);
-                        } catch (e) {
-                            console.error("Error al parsear los servicios:", e);
-                        }
-                    } else if (Array.isArray(response.data.physio.services)) {
-                        parsedServices = response.data.physio.services;
-                    } else if (typeof response.data.physio.services === 'object') {
-                        // Si es un objeto con claves (como en el ejemplo)
-                        parsedServices = response.data.physio.services;
-                    }
+        // Mostrar alerta si faltan campos
+        if (missingFields.length > 0) {
+          showAlert(
+            "warning",
+            `Tu perfil profesional está incompleto. Por favor, completa los campos de ${missingFields.join(
+              ", "
+            )} para mejorar tu visibilidad.`
+          );
+        }
+
+        try {
+          let parsedServices = [];
+          // Comprobar si los servicios son un string JSON o un array o un objeto
+          if (typeof response.data.physio.services === "string") {
+            try {
+              parsedServices = JSON.parse(response.data.physio.services);
+            } catch (e) {
+              console.error("Error al parsear los servicios:", e);
+            }
+          } else if (Array.isArray(response.data.physio.services)) {
+            parsedServices = response.data.physio.services;
+          } else if (typeof response.data.physio.services === "object") {
+            // Si es un objeto con claves (como en el ejemplo)
+            parsedServices = response.data.physio.services;
+          }
 
           // Procesar los servicios dependiendo de su formato
           let serviceList: Service[] = [];
@@ -369,7 +371,7 @@ const FisioProfile = () => {
 
   const changePasswordSendToApi = async (
     oldPassword: string,
-    newPassword: string,
+    newPassword: string
   ): Promise<number | null> => {
     try {
       // Preparar el servicio en el formato que espera el backend
@@ -383,7 +385,7 @@ const FisioProfile = () => {
         passwordsForBackend,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setShowUpdatePasswordModal(false)
+      setShowUpdatePasswordModal(false);
       showAlert("success", "Contraseña actualizada correctamente");
       return response.data;
     } catch (error: unknown) {
@@ -511,9 +513,9 @@ const FisioProfile = () => {
       const url = hasRated
         ? `${getApiBaseUrl()}/api/ratings/update/${rating?.id}/`
         : `${getApiBaseUrl()}/api/ratings/create/`;
-      
+
       const method = hasRated ? "put" : "post";
-      
+
       const payload = {
         punctuation: newRating.punctuation,
         opinion: newRating.opinion,
@@ -536,14 +538,14 @@ const FisioProfile = () => {
         } else {
           showAlert("success", "Valoración enviada correctamente.");
         }
-        
+
         // Update local state
         setRating({
           id: response.data.id || rating?.id,
           punctuation: newRating.punctuation,
           opinion: newRating.opinion,
         });
-        
+
         // Refresh rating data
         checkIfPhysioHasRated();
       }
@@ -686,22 +688,26 @@ const FisioProfile = () => {
         break;
       case "degree":
         if (!value) error = "La titulación es obligatoria.";
-        else if (value.length < 10) error = "Se requiere un mínimo de 10 caracteres.";
+        else if (value.length < 10)
+          error = "Se requiere un mínimo de 10 caracteres.";
         else if (value.length > 100) error = "Máximo 100 caracteres.";
         break;
       case "university":
         if (!value) error = "La universidad es obligatoria.";
-        else if (value.length < 10) error = "Se requiere un mínimo de 10 caracteres.";
+        else if (value.length < 10)
+          error = "Se requiere un mínimo de 10 caracteres.";
         else if (value.length > 100) error = "Máximo 100 caracteres.";
         break;
       case "experience":
         if (!value) error = "La experiencia es obligatoria.";
-        else if (value.length < 10) error = "Se requiere un mínimo de 10 caracteres.";
+        else if (value.length < 10)
+          error = "Se requiere un mínimo de 10 caracteres.";
         else if (value.length > 100) error = "Máximo 100 caracteres.";
         break;
       case "workplace":
         if (!value) error = "El lugar de trabajo es obligatorio.";
-        else if (value.length < 10) error = "Se requiere un mínimo de 10 caracteres.";
+        else if (value.length < 10)
+          error = "Se requiere un mínimo de 10 caracteres.";
         else if (value.length > 100) error = "Máximo 100 caracteres.";
         break;
     }
@@ -715,23 +721,25 @@ const FisioProfile = () => {
 
     validateField(name, value); // Validar cada campo en tiempo real
 
-        if (name === "bio") {
-            setProfile((prevProfile) => ({ ...prevProfile, bio: value }));
-        } // Si el campo es alguno de los otros, se actualiza dentro de "user"
-        else if (["degree", "university", "experience", "workplace"].includes(name)) {
-            setProfile((prevProfile) => ({
-                ...prevProfile,
-                [name]: value,  // Se actualiza directamente el campo del perfil
-            }));
-        }
-        // Para los campos dentro de "user" se hace de la forma habitual
-        else {
-            setProfile((prevProfile) => ({
-                ...prevProfile,
-                user: { ...prevProfile.user, [name]: value },
-            }));
-        }
-    };
+    if (name === "bio") {
+      setProfile((prevProfile) => ({ ...prevProfile, bio: value }));
+    } // Si el campo es alguno de los otros, se actualiza dentro de "user"
+    else if (
+      ["degree", "university", "experience", "workplace"].includes(name)
+    ) {
+      setProfile((prevProfile) => ({
+        ...prevProfile,
+        [name]: value, // Se actualiza directamente el campo del perfil
+      }));
+    }
+    // Para los campos dentro de "user" se hace de la forma habitual
+    else {
+      setProfile((prevProfile) => ({
+        ...prevProfile,
+        user: { ...prevProfile.user, [name]: value },
+      }));
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -1298,14 +1306,17 @@ const FisioProfile = () => {
                   onChange={(e) => {
                     // Allow user to type the full number before rounding
                     const inputValue = e.target.value;
-                    if (inputValue === '') {
-                      setDuracion('');
+                    if (inputValue === "") {
+                      setDuracion("");
                       return;
                     }
                     // Only round when user stops typing
                     const handleRounding = () => {
                       const numValue = parseInt(inputValue) || 0;
-                      const roundedValue = Math.max(5, Math.round(numValue / 5) * 5);
+                      const roundedValue = Math.max(
+                        5,
+                        Math.round(numValue / 5) * 5
+                      );
                       setDuracion(roundedValue.toString());
                     };
                     // Update with raw input value
@@ -1639,31 +1650,30 @@ const FisioProfile = () => {
           {/* Left column - Profile photo and basic info */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-6">
-              <div className="px-6 py-8 bg-gradient-to-r from-teal-500 to-blue-600">
-                <div className="flex justify-center">
-                  <div className="relative">
-                    <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg">
-                      <img
-                        src={getImageSrc()}
-                        alt="Profile"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <label
-                      htmlFor="photo-upload"
-                      className="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-md cursor-pointer hover:bg-gray-100 transition-colors"
-                    >
-                      <Camera size={18} className="text-gray-700" />
-                      <input
-                        id="photo-upload"
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={handleFileChange}
-                      />
-                    </label>
-                  </div>
-                </div>
+              <div className="relative w-full aspect-[4/3] overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <img
+                  alt="Physiotherapist's photo"
+                  className="min-w-[75%] h-full justify-self-center object-cover transform group-hover:scale-110 transition-transform duration-700 ease-out"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  src={getImageSrc()}
+                />
+                <label
+                  htmlFor="photo-upload"
+                  className="absolute bottom-[2px] right-[2px] bg-white rounded-full p-2 shadow-lg ring-2 ring-black/10 cursor-pointer hover:bg-gray-100 transition-colors z-50"
+                >
+                  <Camera size={24} className="text-gray-700" />
+                  <input
+                    id="photo-upload"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleFileChange}
+                  />
+                </label>
+              </div>
+
+              <div className="px-6 pb-8 pt-4 bg-gradient-to-r from-teal-500 to-blue-600">
                 <h2 className="text-white text-xl font-bold text-center mt-4">
                   {profile.user.first_name} {profile.user.last_name}
                 </h2>
@@ -1796,7 +1806,7 @@ const FisioProfile = () => {
                 </div>
               </div>
             </div>
-            
+
             {/* App Rating - Moved here from below */}
             <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-6">
               <div className="px-6 py-4 bg-gradient-to-r from-teal-500 to-blue-600">
@@ -1808,7 +1818,8 @@ const FisioProfile = () => {
 
               <div className="p-6">
                 <p className="text-gray-600 mb-4">
-                  Tu opinión nos ayuda a mejorar. ¿Qué te parece FisioFind hasta ahora?
+                  Tu opinión nos ayuda a mejorar. ¿Qué te parece FisioFind hasta
+                  ahora?
                 </p>
                 {hasRated ? (
                   <div className="space-y-4">
@@ -1957,15 +1968,20 @@ const FisioProfile = () => {
                           value={profile.user.phone_number}
                           onChange={handleChange}
                           className={`w-full px-4 py-3 border-2 ${
-                            (formErrors as {phone_number?: string})?.phone_number
+                            (formErrors as { phone_number?: string })
+                              ?.phone_number
                               ? "border-red-500"
                               : "border-gray-200"
                           } rounded-xl transition-all duration-200 outline-none focus:border-blue-500`}
                         />
                       </div>
-                      {(formErrors as {phone_number?: string}).phone_number && (
+                      {(formErrors as { phone_number?: string })
+                        .phone_number && (
                         <p className="mt-1 text-sm text-red-600">
-                          {(formErrors as {phone_number?: string})?.phone_number}
+                          {
+                            (formErrors as { phone_number?: string })
+                              ?.phone_number
+                          }
                         </p>
                       )}
                     </div>
@@ -1990,7 +2006,7 @@ const FisioProfile = () => {
                         setShowUpdatePasswordModal(true);
                       }}
                     >
-                      <Plus className="w-4 h-4"/> Actualizar contraseña
+                      <Plus className="w-4 h-4" /> Actualizar contraseña
                     </GradientButton>
                   </div>
 
@@ -2214,7 +2230,6 @@ const FisioProfile = () => {
 
                   {/* Submit and Delete buttons */}
                   <div className="mt-4 flex gap-4 items-center">
-                    
                     <GradientButton
                       variant="edit"
                       className="flex-1 py-4 px-6 font-semibold rounded-xl flex items-center justify-center gap-2"
@@ -2254,7 +2269,7 @@ const FisioProfile = () => {
                   <Plus className="w-4 h-4" /> Añadir
                 </GradientButton>
                 <div>
-                  <h3 className="text-lg font-semibold mb-2">Cuestionarios</h3>
+                  <h3 className="text-lg font-semibold mb-2 text-white">Cuestionarios</h3>
                   {id && (
                     <Link href={`/questionnaires`} passHref>
                     <GradientButton
@@ -2541,7 +2556,7 @@ const FisioProfile = () => {
           onConfirm={handleConfirmRatingDelete}
           onCancel={() => setConfirmRatingDelete(false)}
         />
-        
+
         {/* Rating Form Modal */}
         {showRatingForm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -2614,11 +2629,18 @@ const FisioProfile = () => {
         {showDeleteAccountModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-2xl p-8 max-w-2xl w-full mx-4 shadow-xl">
-              <h2 className="text-2xl font-bold mb-4 text-gray-800">¿Estás seguro de que quieres eliminar tu cuenta?</h2>
-              <p className="mb-4 text-gray-600">Esta acción no se podrá deshacer.</p>
+              <h2 className="text-2xl font-bold mb-4 text-gray-800">
+                ¿Estás seguro de que quieres eliminar tu cuenta?
+              </h2>
+              <p className="mb-4 text-gray-600">
+                Esta acción no se podrá deshacer.
+              </p>
               <p className="mb-6 text-gray-600">
-                Si eliminas tu cuenta todos tus datos personales, tratamientos, vídeos y archivos subidos e historial serán eliminados. 
-                Si realmente deseas ejercer el derecho a eliminar tus datos, escribe un correo a info@fisiofind.com con asunto [Eliminar mi cuenta] y procederemos a eliminar tus datos.
+                Si eliminas tu cuenta todos tus datos personales, tratamientos,
+                vídeos y archivos subidos e historial serán eliminados. Si
+                realmente deseas ejercer el derecho a eliminar tus datos,
+                escribe un correo a info@fisiofind.com con asunto [Eliminar mi
+                cuenta] y procederemos a eliminar tus datos.
               </p>
               <div className="flex justify-end gap-4">
                 <button
