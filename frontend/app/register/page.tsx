@@ -1,13 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
 
 export default function RegisterPage() {
   const router = useRouter();
-  const [acceptedTerms, setAcceptedTerms] = useState(false);
   
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -39,27 +38,6 @@ export default function RegisterPage() {
         <p className="text-lg text-gray-600 max-w-xl mx-auto">
           Selecciona tu rol para continuar con el registro en nuestra plataforma
         </p>
-        {/* Checkbox de Términos y Condiciones */}
-        <div className="mt-6 flex items-center justify-center gap-2">
-          <input
-            type="checkbox"
-            id="terms"
-            checked={acceptedTerms}
-            onChange={(e) => setAcceptedTerms(e.target.checked)}
-            className="w-5 h-5 accent-[#1E5ACD] cursor-pointer"
-          />
-          <label htmlFor="terms" className="text-sm text-gray-600">
-            Acepto los{" "}
-            <a
-              href="/terms"
-              className="text-[#1E5ACD] hover:underline font-medium"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              términos y condiciones
-            </a>
-          </label>
-        </div>
       </div>
 
       {/* Role Selection Cards */}
@@ -100,13 +78,8 @@ export default function RegisterPage() {
             <CardItem
               translateZ="30"
               as="button"
-              className={`w-full px-4 py-3 rounded-xl text-white font-bold transition-colors ${
-                !acceptedTerms 
-                  ? "bg-gray-400 cursor-not-allowed" 
-                  : "bg-gradient-to-r from-[#41B8D5] to-[#1E5ACD] hover:shadow-lg hover:shadow-blue-500/20"
-              }`}
+              className={"w-full px-4 py-3 rounded-xl text-white font-bold transition-colors bg-gradient-to-r from-[#41B8D5] to-[#1E5ACD] hover:shadow-lg hover:shadow-blue-500/20"}
               onClick={() => handleRoleSelection("patient")}
-              disabled={!acceptedTerms}
             >
               Registrarme como Paciente
             </CardItem>
@@ -149,13 +122,8 @@ export default function RegisterPage() {
             <CardItem
               translateZ="30"
               as="button"
-              className={`w-full px-4 py-3 rounded-xl text-white font-bold transition-colors ${
-                !acceptedTerms 
-                  ? "bg-gray-400 cursor-not-allowed" 
-                  : "bg-gradient-to-r from-[#6BC9BE] to-[#05668D] hover:shadow-lg hover:shadow-teal-500/20"
-              }`}
+              className={"w-full px-4 py-3 rounded-xl text-white font-bold transition-colors bg-gradient-to-r from-[#6BC9BE] to-[#05668D] hover:shadow-lg hover:shadow-teal-500/20"}
               onClick={() => handleRoleSelection("physio")}
-              disabled={!acceptedTerms}
             >
               Registrarme como Fisioterapeuta
             </CardItem>

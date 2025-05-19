@@ -129,7 +129,7 @@ export default function TermsPage(): React.ReactElement {
             },
           }
         );
-
+        console.log("User role check response:", response.data);
         if (response.data && response.data.user_role === "admin") {
           setIsAdmin(true);
           setAdminUsername(response.data.username);
@@ -543,6 +543,18 @@ export default function TermsPage(): React.ReactElement {
             No se pudieron cargar los términos y condiciones en este momento. Esto puede
             deberse a que:
           </p>
+          {isAdmin && (
+            <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-semibold mb-4">Panel de Administrador</h3>
+              <GradientButton
+                onClick={() => setShowAddForm(true)}
+                className="px-6 py-2 font-medium rounded-xl flex items-center gap-2 mx-auto"
+              >
+                <IconPlus className="h-5 w-5" />
+                Añadir Nuevo Término
+              </GradientButton>
+            </div>
+          )}
           <ul className="text-left text-gray-600 dark:text-gray-300 mb-4 pl-8 list-disc">
             <li>Los términos están siendo actualizados</li>
             <li>Se requiere iniciar sesión para acceder a esta información</li>

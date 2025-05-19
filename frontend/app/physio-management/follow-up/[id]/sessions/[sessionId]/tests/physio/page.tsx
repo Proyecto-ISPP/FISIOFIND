@@ -280,54 +280,68 @@ const TestPage = () => {
 
   // Update the render section to display all responses
   return (
-    <div className="container mx-auto p-6 bg-gray-50 min-h-screen">
+    <div className="min-h-screen bg-gradient-to-b from-cyan-50 to-white py-8 px-2">
       {alert.show && (
-        <Alert
-          type={alert.type}
-          message={alert.message}
-          onClose={() => setAlert({ ...alert, show: false })}
-        />
+        <div className="max-w-2xl mx-auto mb-6">
+          <Alert
+            type={alert.type}
+            message={alert.message}
+            onClose={() => setAlert({ ...alert, show: false })}
+          />
+        </div>
       )}
-      <div className="max-w-7xl mx-auto">
-        <button
-          onClick={handleGoBack}
-          className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-xl inline-flex items-center mb-6"
+      <div className="max-w-3xl mx-auto">
+      <button
+        onClick={handleGoBack}
+        className="mb-6 flex items-center text-blue-600 hover:text-blue-800"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-5 w-5 mr-1"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
         >
-          ← Volver
-        </button>
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M15 19l-7-7 7-7"
+          />
+        </svg>
+        Volver a las sesiones
+      </button>
+        <h1 className="text-3xl font-bold text-[#05668D] mb-8 text-center">
           Cuestionario de la {session}
         </h1>
 
-        <div className="rounded-lg p-6">
+        <div className="bg-white rounded-2xl shadow-lg p-8 border border-[#e0f2f1]">
           {loading ? (
             <div className="flex justify-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#41B8D5]"></div>
             </div>
           ) : (
             <>
               {testAnswered && (
-                <div className="bg-blue-50 border border-blue-200 text-blue-800 p-4 rounded-xl mb-6 max-w-2xl mx-auto">
-                  <h2 className="font-semibold text-lg mb-2">
+                <div className="bg-[#e6f7f6] border border-[#6BC9BE] text-[#05668D] p-4 rounded-xl mb-6 max-w-2xl mx-auto">
+                  <h2 className="font-semibold text-lg mb-2 text-[#05668D]">
                     Respuestas del paciente
                   </h2>
-                  
                   {patientResponses.length > 0 ? (
                     <div className="space-y-4">
                       {patientResponses.map((response, index) => (
-                        <div key={index} className="bg-white p-4 rounded-xl shadow-sm">
+                        <div key={index} className="bg-white p-4 rounded-xl shadow-sm border border-[#e0f2f1]">
                           <div className="flex justify-between items-center mb-2">
-                            <span className="font-medium text-gray-700">Respuesta {index + 1}</span>
+                            <span className="font-medium text-[#05668D]">Respuesta {index + 1}</span>
                             <span className="text-sm text-gray-500">
                               {response.submitted_at ? new Date(response.submitted_at).toLocaleString() : 'Fecha no disponible'}
                             </span>
                           </div>
-                          
                           {formData.test_type === "text" ? (
                             <p className="text-gray-700">{response.response_text}</p>
                           ) : (
                             <div className="flex items-center">
-                              <span className="font-bold text-lg mr-2">{response.response_scale}</span>
+                              <span className="font-bold text-lg mr-2 text-[#41B8D5]">{response.response_scale}</span>
                               <span className="text-gray-600">
                                 {formData.scale_labels.find(
                                   (label) => label.scale_value === response.response_scale?.toString()
@@ -344,24 +358,22 @@ const TestPage = () => {
                 </div>
               )}
 
-              <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
+              <form onSubmit={handleSubmit} className="max-w-2xl mx-auto">
                 {error && (
-                  <div className="bg-red-100 text-red-700 p-3 rounded mb-4">
+                  <div className="bg-red-100 text-red-700 p-3 rounded mb-4 border border-red-200">
                     {error}
                   </div>
                 )}
 
-                <div className="mb-4">
-                  <label className="block text-gray-700 mb-2" htmlFor="question">
+                <div className="mb-6">
+                  <label className="block text-[#05668D] font-medium mb-2" htmlFor="question">
                     Pregunta
                   </label>
                   <textarea
                     id="question"
                     name="question"
                     rows={3}
-                    className={`w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      testAnswered ? "bg-gray-100" : ""
-                    }`}
+                    className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-200 ${testAnswered ? "bg-gray-100" : ""}`}
                     placeholder="Ingrese la pregunta para el paciente"
                     value={formData.question}
                     onChange={handleInputChange}
@@ -370,41 +382,37 @@ const TestPage = () => {
                   />
                 </div>
 
-                <div className="mb-4">
-                  <label className="block text-gray-700 mb-2">
+                <div className="mb-6">
+                  <label className="block text-[#05668D] font-medium mb-2">
                     Tipo de respuesta
                   </label>
                   <div className="flex flex-wrap gap-4 mt-2 justify-center">
-                    <div 
-                      className={`px-6 py-3 border rounded-xl transition-all duration-200 text-center ${
+                    <div
+                      className={`px-6 py-2 border rounded-xl transition-all duration-200 text-center text-sm font-medium ${
                         formData.test_type === "text"
-                          ? "bg-[#05668d] border-[#05668d] shadow-md"
-                          : "bg-white border-gray-300"
+                          ? "bg-[#05668d] border-[#05668d] text-white shadow-md"
+                          : "bg-white border-gray-300 text-[#05668D]"
                       } ${testAnswered ? "opacity-70 cursor-not-allowed" : "cursor-pointer hover:bg-gray-50"}`}
                       onClick={() => !testAnswered && setFormData({...formData, test_type: "text"})}
                     >
-                      <span className={`font-medium ${formData.test_type === "text" ? "text-white" : "text-gray-700"}`}>
-                        Texto libre
-                      </span>
+                      Texto libre
                     </div>
-                    <div 
-                      className={`px-6 py-3 border rounded-xl transition-all duration-200 text-center ${
+                    <div
+                      className={`px-6 py-2 border rounded-xl transition-all duration-200 text-center text-sm font-medium ${
                         formData.test_type === "scale"
-                          ? "bg-[#05668d] border-[#05668d] shadow-md"
-                          : "bg-white border-gray-300"
+                          ? "bg-[#05668d] border-[#05668d] text-white shadow-md"
+                          : "bg-white border-gray-300 text-[#05668D]"
                       } ${testAnswered ? "opacity-70 cursor-not-allowed" : "cursor-pointer hover:bg-gray-50"}`}
                       onClick={() => !testAnswered && setFormData({...formData, test_type: "scale"})}
                     >
-                      <span className={`font-medium ${formData.test_type === "scale" ? "text-white" : "text-gray-700"}`}>
-                        Escala numérica
-                      </span>
+                      Escala numérica
                     </div>
                   </div>
                 </div>
 
                 {formData.test_type === "scale" && (
-                  <div className="mb-4">
-                    <p className="mb-2 text-gray-700">
+                  <div className="mb-6">
+                    <p className="mb-2 text-[#05668D] font-medium">
                       Etiquetas para la escala numérica:
                     </p>
                     {formData.scale_labels.map((item, index) => (
@@ -423,9 +431,7 @@ const TestPage = () => {
                                 e.target.value
                               )
                             }
-                            className={`w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                              testAnswered ? "bg-gray-100" : ""
-                            }`}
+                            className={`w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-200 ${testAnswered ? "bg-gray-100" : ""}`}
                             required
                             disabled={testAnswered}
                           />
@@ -442,9 +448,7 @@ const TestPage = () => {
                                 e.target.value
                               )
                             }
-                            className={`w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                              testAnswered ? "bg-gray-100" : ""
-                            }`}
+                            className={`w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-200 ${testAnswered ? "bg-gray-100" : ""}`}
                             required
                             disabled={testAnswered}
                           />
@@ -453,8 +457,9 @@ const TestPage = () => {
                           <div className="flex justify-between items-start">
                             <button
                               onClick={() => removeScaleLabel(index)}
-                              className="mb-1000 p-2 text-red-500 hover:text-red-700 transition-colors duration-200 bg-transparent hover:bg-transparent"
+                              className="p-2 text-red-500 hover:text-red-700 transition-colors duration-200 bg-transparent hover:bg-transparent"
                               title="Eliminar serie"
+                              type="button"
                             >
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -477,7 +482,7 @@ const TestPage = () => {
                       <button
                         type="button"
                         onClick={addScaleLabel}
-                        className="w-full py-2 border border-dashed border-gray-300 rounded-xl hover:border-gray-40 text-white"
+                        className="w-full py-2 border border-dashed border-[#41B8D5] rounded-xl hover:border-[#6BC9BE] text-[#41B8D5] font-medium mt-2"
                       >
                         + Añadir etiqueta
                       </button>
@@ -485,12 +490,12 @@ const TestPage = () => {
                   </div>
                 )}
 
-                <div className="flex justify-between mt-8">
+                <div className="flex flex-wrap justify-between mt-8 gap-2">
                   {existingTest && !testAnswered && (
                     <button
                       type="button"
                       onClick={handleDelete}
-                      className="px-4 py-2 bg-red-400 text-white rounded-xl hover:bg-red-500"
+                      className="px-4 py-2 bg-[#e57373] text-white rounded-xl hover:bg-[#d32f2f] transition-all duration-200"
                     >
                       Eliminar Test
                     </button>
@@ -499,7 +504,7 @@ const TestPage = () => {
                     <button
                       type="button"
                       onClick={handleGoBack}
-                      className="px-4 py-2 bg-[#05668d] border border-gray-300 rounded-xl hover:bg-[#045a7c]"
+                      className="px-4 py-2 bg-white border border-[#05668D] text-[#05668D] rounded-xl hover:bg-[#e6f7f6] transition-all duration-200 font-medium"
                     >
                       Cancelar
                     </button>
@@ -507,14 +512,13 @@ const TestPage = () => {
                       <button
                         type="submit"
                         disabled={submitting}
-                        className="px-4 py-2 bg-[#6bc9be] text-white rounded-xl hover:bg-[#5ab8ad] disabled:opacity-50"
+                        className="px-4 py-2 bg-gradient-to-r from-[#6BC9BE] to-[#05668D] text-white rounded-xl hover:opacity-90 disabled:opacity-50 font-medium shadow-md"
                       >
                         {submitting
                           ? "Procesando..."
                           : existingTest
                           ? "Actualizar"
-                          : "Crear"}{" "}
-                        Test
+                          : "Crear"} Test
                       </button>
                     )}
                   </div>

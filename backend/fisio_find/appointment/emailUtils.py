@@ -11,6 +11,7 @@ from django.conf import settings
 import requests
 from users.models import AppUser
 import cryptography.hazmat.primitives.padding as padding
+from datetime import timedelta
 
 logger = logging.getLogger(__name__)
 
@@ -71,6 +72,8 @@ def send_appointment_email(appointment_id, action_type, role=None):
         physio_name = appointment.physiotherapist.user.first_name
         physio_surname = appointment.physiotherapist.user.last_name
         appointment_date = appointment.start_time.strftime("%d/%m/%Y %H:%M")
+        corrected_start_time = appointment.start_time + timedelta(hours=2)
+        appointment_date = corrected_start_time.strftime("%d/%m/%Y %H:%M")
         patient_email = appointment.patient.user.email
         physio_email = appointment.physiotherapist.user.email
         frontend_domain = settings.FRONTEND_URL
@@ -207,8 +210,8 @@ def send_appointment_email(appointment_id, action_type, role=None):
                 """
                 send_email(subject_patient, message_patient, patient_email)
 
-        # if recipient_email:
-        #     send_email(subject, message, recipient_email)
+        if recipient_email:
+            send_email(subject, message, recipient_email)
 
     except Appointment.DoesNotExist:
         print("Error: Cita no encontrada")

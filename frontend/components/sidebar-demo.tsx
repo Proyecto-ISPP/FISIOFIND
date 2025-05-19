@@ -264,6 +264,24 @@ export function SidebarDemo() {
                   ))
                 }
               </div>
+              {isAuthenticated && (
+          <div className="mt-4 w-full">
+            <button
+              onClick={() => {
+                openLogoutConfirmation();
+                setIsMobileMenuOpen(false);
+              }}
+              className="flex flex-col items-center gap-2 py-3 px-2 rounded-xl hover:bg-red-50 transition-all duration-200 w-full"
+            >
+              <div className="w-8 h-8 min-w-[2rem] min-h-[2rem] rounded-full border-2 border-[#FA5C2B] flex items-center justify-center">
+                <IconArrowLeft className="text-[#FA5C2B] h-4 w-4 flex-shrink-0" />
+              </div>
+              <span className="text-[#253240] font-semibold text-xs text-center">
+                Cerrar Sesión
+              </span>
+            </button>
+          </div>
+        )}
             </div>
           </motion.div>
         )}
