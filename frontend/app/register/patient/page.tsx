@@ -275,6 +275,12 @@ const PatientRegistrationForm = () => {
       if (!formData.username.trim()) {
         newErrors.username = "El nombre de usuario es obligatorio";
         isValid = false;
+      } else if(formData.username.trim().length > 30){
+        newErrors.username = "El nombre de usuario debe tener 30 caracteres o menos";
+        isValid = false;
+      } else if(/[`+´ç,<.,©℃®§]/.test(formData.username)) {
+        newErrors.username = "El nombre de usuario no puede contener los siguientes caracteres especiales: `+´ç,<.,©℃®§";
+        isValid = false;
       }
       if (!formData.email.trim()) {
         newErrors.email = "El email es obligatorio";
@@ -313,13 +319,6 @@ const PatientRegistrationForm = () => {
         newErrors.dni = "Formato de DNI no válido";
         isValid = false;
       }
-      if (
-        formData.phone_number.trim() !== "" &&
-        !/^\d{9}$/.test(formData.phone_number)
-      ) {
-        newErrors.phone_number = "Número de teléfono no válido";
-        isValid = false;
-      }
       if (!formData.birth_date) {
         newErrors.birth_date = "La fecha de nacimiento es obligatoria";
         isValid = false;
@@ -330,9 +329,6 @@ const PatientRegistrationForm = () => {
       }
       if (!formData.postal_code.trim()) {
         newErrors.postal_code = "El código postal es obligatorio";
-        isValid = false;
-      } else if (!/^\d{5}$/.test(formData.postal_code)) {
-        newErrors.postal_code = "Código postal no válido (5 dígitos)";
         isValid = false;
       }
     }
