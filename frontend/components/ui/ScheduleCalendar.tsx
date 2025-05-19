@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import esLocale from "@fullcalendar/core/locales/es";
+import { EventClickArg, EventMountArg } from "@fullcalendar/core";
 
 // Importa FullCalendar de forma dinámica para evitar problemas con SSR
 const FullCalendar = dynamic(() => import("@fullcalendar/react"), {
@@ -32,9 +33,57 @@ const dayIndices = {
   saturday: 6,
 };
 
-export default function ScheduleCalendar({ initialSchedule = null, onScheduleChange }) {
+// Definición de tipos para el estado "schedule"
+interface Interval {
+  id: string;
+  start: string;
+  end: string;
+}
+
+interface Appointment {
+  id: string;
+  start: string;
+  end: string;
+  title: string;
+}
+
+interface Schedule {
+  exceptions: Record<string, Interval[]>;
+  appointments: Appointment[];
+  weekly_schedule: Record<
+    "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday",
+    Interval[]
+  >;
+  initialized: boolean;
+}
+
+// Definición de tipos para eventos del calendario
+interface CalendarEvent {
+  id: string;
+  title: string;
+  start?: string;
+  end?: string;
+  daysOfWeek?: number[];
+  startTime?: string;
+  endTime?: string;
+  backgroundColor: string;
+  borderColor: string;
+  extendedProps: {
+    source: "weekly" | "exception";
+    day?: string;
+    date?: string;
+  };
+}
+
+// Tipado de las propiedades del componente
+interface ScheduleCalendarProps {
+  initialSchedule?: string | Schedule | null;
+  onScheduleChange?: (schedule: Schedule) => void;
+}
+
+export default function ScheduleCalendar({ initialSchedule = null, onScheduleChange }: ScheduleCalendarProps) {
   // Estado de la agenda siguiendo la estructura deseada
-  const [schedule, setSchedule] = useState({
+  const [schedule, setSchedule] = useState<Schedule>({
     exceptions: {},
     appointments: [],
     weekly_schedule: {
@@ -53,7 +102,7 @@ export default function ScheduleCalendar({ initialSchedule = null, onScheduleCha
   useEffect(() => {
     if (initialSchedule && !schedule.initialized) {
       try {
-        const parsedSchedule = typeof initialSchedule === 'string'
+        const parsedSchedule = typeof initialSchedule === "string"
           ? JSON.parse(initialSchedule)
           : initialSchedule;
         setSchedule({ ...parsedSchedule, initialized: true });
@@ -61,7 +110,7 @@ export default function ScheduleCalendar({ initialSchedule = null, onScheduleCha
         console.error("Error parsing initial schedule:", error);
       }
     }
-  }, [initialSchedule]);
+  }, [initialSchedule, schedule.initialized]);
 
   // Notificar cambios en el schedule al componente padre
   useEffect(() => {
@@ -74,48 +123,83 @@ export default function ScheduleCalendar({ initialSchedule = null, onScheduleCha
   const [selectedEventType, setSelectedEventType] = useState("generic");
   // Estados para el modal de confirmación para eliminación
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedCalendarEvent, setSelectedCalendarEvent] = useState(null);
+  const [selectedCalendarEvent, setSelectedCalendarEvent] = useState<CalendarEvent | null>(null);
 
   // Función auxiliar para generar IDs únicos
-  const generateId = (prefix) =>
+  const generateId = (prefix: string) =>
     `${prefix}-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
   // Al seleccionar una franja en el calendario se actualiza el estado "schedule"
-  const handleSelect = (selectionInfo) => {
-    // Extraemos la hora en formato HH:MM de la cadena ISO
-    const extractTime = (isoStr) => isoStr.substr(11, 5);
-    const interval = {
+  const handleSelect = (selectionInfo: { startStr: string; endStr: string }) => {
+    const extractTime = (isoStr: string) => {
+      const time = isoStr.substr(11, 5);
+      const [hours, minutes] = time.split(":");
+      return `${hours.padStart(2, "0")}:${minutes.padStart(2, "0")}`;
+    };
+
+    // Detectar si el rango seleccionado cubre todo el día
+    const isFullDay = extractTime(selectionInfo.startStr) === "00:00" && extractTime(selectionInfo.endStr) === "00:00";
+
+    const interval: Interval = {
       id: generateId(selectedEventType === "generic" ? "ws" : "ex"),
-      start: extractTime(selectionInfo.startStr),
-      end: extractTime(selectionInfo.endStr),
+      start: isFullDay ? "00:00" : extractTime(selectionInfo.startStr),
+      end: isFullDay ? "23:59" : extractTime(selectionInfo.endStr),
     };
 
     if (selectedEventType === "generic") {
-      // Para el horario recurrente se determina el día de la semana
       const eventDate = new Date(selectionInfo.startStr);
-      const dayName = dayNames[eventDate.getDay()];
+      const dayName = dayNames[eventDate.getDay()] as keyof Schedule["weekly_schedule"];
+
+      const existingIntervals = schedule.weekly_schedule[dayName];
+
+      // Validar si la nueva franja horaria se solapa con alguna existente
+      const overlaps = existingIntervals.some((existing) => {
+        return (
+          (interval.start >= existing.start && interval.start < existing.end) ||
+          (interval.end > existing.start && interval.end <= existing.end) ||
+          (interval.start <= existing.start && interval.end >= existing.end)
+        );
+      });
+
+      if (overlaps) {
+        alert("La franja horaria se solapa con una existente. Por favor, elija otra hora.");
+        return;
+      }
+
       setSchedule((prev) => {
         const newSchedule = {
           ...prev,
           weekly_schedule: {
             ...prev.weekly_schedule,
-            // Se agrega el nuevo bloque (como un array con un único intervalo)
             [dayName]: [...prev.weekly_schedule[dayName], interval],
           },
         };
         return newSchedule;
       });
     } else {
-      // Para excepciones se utiliza la fecha completa (YYYY-MM-DD)
       const dateKey = selectionInfo.startStr.split("T")[0];
+      const existingIntervals = schedule.exceptions[dateKey] || [];
+
+      // Validar si la nueva franja horaria se solapa con alguna existente
+      const overlaps = existingIntervals.some((existing) => {
+        return (
+          (interval.start >= existing.start && interval.start < existing.end) ||
+          (interval.end > existing.start && interval.end <= existing.end) ||
+          (interval.start <= existing.start && interval.end >= existing.end)
+        );
+      });
+
+      if (overlaps) {
+        alert("La franja horaria se solapa con una existente. Por favor, elija otra hora.");
+        return;
+      }
+
       setSchedule((prev) => {
         const newSchedule = {
           ...prev,
           exceptions: {
             ...prev.exceptions,
-            [dateKey]: prev.exceptions[dateKey]
-              ? [...prev.exceptions[dateKey], interval]
-              : [interval],
+            [dateKey]: [...existingIntervals, interval],
           },
         };
         return newSchedule;
@@ -124,17 +208,17 @@ export default function ScheduleCalendar({ initialSchedule = null, onScheduleCha
   };
 
   // Genera los eventos que mostrará FullCalendar a partir del estado "schedule"
-  const getCalendarEvents = () => {
-    const events = [];
+  const getCalendarEvents = (): CalendarEvent[] => {
+    const events: CalendarEvent[] = [];
 
     // Eventos recurrentes (horario genérico)
     Object.entries(schedule.weekly_schedule).forEach(([dayName, blocks]) => {
-      // Para cada bloque (cada bloque es un array de intervalos)
+      const dayIndex = dayIndices[dayName as keyof typeof dayIndices];
       blocks.forEach((interval) => {
         events.push({
           id: interval.id,
           title: "Horario Laboral",
-          daysOfWeek: [dayIndices[dayName]], // evento recurrente para ese día
+          daysOfWeek: [dayIndex],
           startTime: interval.start,
           endTime: interval.end,
           backgroundColor: "green",
@@ -159,50 +243,43 @@ export default function ScheduleCalendar({ initialSchedule = null, onScheduleCha
       });
     });
 
-    // Las citas (appointments) ya vienen en formato ISO y se pueden agregar directamente si se requiriera
-
     return events;
   };
 
   // Al hacer clic en un evento se abre un modal para confirmar su eliminación
-  const handleEventClick = (clickInfo) => {
-    // Evitamos la acción por defecto para asegurar que se abra el modal al primer clic
+  const handleEventClick = (clickInfo: EventClickArg) => {
     clickInfo.jsEvent.preventDefault();
-    setSelectedCalendarEvent(clickInfo.event);
+    setSelectedCalendarEvent(clickInfo.event as unknown as CalendarEvent);
     setModalOpen(true);
   };
 
   // Confirma la eliminación del evento y actualiza el estado "schedule"
   const confirmDelete = () => {
     if (selectedCalendarEvent) {
-      const source = selectedCalendarEvent.extendedProps.source;
+      const source = (selectedCalendarEvent.extendedProps as CalendarEvent["extendedProps"]).source;
       if (source === "weekly") {
-        const day = selectedCalendarEvent.extendedProps.day;
-        // Se actualiza el array del día removiendo el bloque que contenga el intervalo con el id seleccionado
-        console.log("Eliminando evento semanal:", selectedCalendarEvent.id);
+        const day = (selectedCalendarEvent.extendedProps as CalendarEvent["extendedProps"]).day as keyof Schedule["weekly_schedule"];
         setSchedule((prev) => {
-          console.log("Schedule antes de eliminar:", prev);
-          console.log("Intervalos", prev.weekly_schedule[day]);
           const newSchedule = {
             ...prev,
             weekly_schedule: {
               ...prev.weekly_schedule,
               [day]: prev.weekly_schedule[day].filter(
-                (interval) => interval.id !== selectedCalendarEvent.id
+                (interval: Interval) => interval.id !== selectedCalendarEvent.id
               ),
             },
           };
           return newSchedule;
         });
       } else if (source === "exception") {
-        const dateKey = selectedCalendarEvent.extendedProps.date;
+        const dateKey = (selectedCalendarEvent.extendedProps as CalendarEvent["extendedProps"]).date!;
         setSchedule((prev) => {
           const newSchedule = {
             ...prev,
             exceptions: {
               ...prev.exceptions,
               [dateKey]: prev.exceptions[dateKey].filter(
-                (interval) => interval.id !== selectedCalendarEvent.id
+                (interval: Interval) => interval.id !== selectedCalendarEvent.id
               ),
             },
           };
@@ -221,10 +298,9 @@ export default function ScheduleCalendar({ initialSchedule = null, onScheduleCha
   };
 
   // Para ajustar visualmente los eventos "genéricos" y que no ocupen todo el ancho del día
-  const handleEventDidMount = (info) => {
-    if (info.event.extendedProps.source === "weekly") {
+  const handleEventDidMount = (info: EventMountArg) => {
+    if ((info.event.extendedProps as CalendarEvent["extendedProps"]).source === "weekly") {
       info.el.style.width = "80%";
-      //   info.el.style.marginLeft = "10%";
     }
   };
 
@@ -256,8 +332,8 @@ export default function ScheduleCalendar({ initialSchedule = null, onScheduleCha
         select={handleSelect}
         eventClick={handleEventClick}
         eventDidMount={handleEventDidMount}
-        // Se generan los eventos a partir del estado "schedule"
         events={getCalendarEvents()}
+        allDaySlot={false} // Elimina la fila de todo el día
       />
 
       {/* Modal de confirmación para eliminar un evento, estilizado con Tailwind CSS */}
