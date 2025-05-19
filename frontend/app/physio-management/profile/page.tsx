@@ -800,7 +800,7 @@ const FisioProfile = () => {
         }
       );
 
-      if (response.status === 200 && editingServiceIndex === null) {
+      if (response.status === 200 && editingServiceIndex === null && !showDeleteAccountModal) {
         showAlert("success", "Perfil actualizado correctamente");
       }
 
