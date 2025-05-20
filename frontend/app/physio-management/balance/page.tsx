@@ -402,7 +402,7 @@ const PaymentHistoryPage = () => {
                             <h4 className="font-semibold">Detalles de la Cita:</h4>
                             <p><strong>Fecha:</strong> {new Date(appointment.start_time).toLocaleDateString("es-ES")}</p>
                             <p><strong>Paciente:</strong> {appointment.patient_name}</p>
-                            <p><strong>Estado de la cita:</strong> {appointment.status}</p>
+                            <p><strong>Estado de la cita:</strong> {appointment.status ? status[appointment.status.toLocaleLowerCase()] : "Sin estado"}</p>
                             <p><strong>Tipo de servicio:</strong> {appointment.service.type}</p>
                             <p><strong>Duración:</strong> {appointment.service.duration} min</p>
                           </div>
@@ -443,7 +443,7 @@ const PaymentHistoryPage = () => {
                             <h4 className="font-semibold">Detalles de la Cita:</h4>
                             <p><strong>Fecha:</strong> {new Date(appointment.start_time).toLocaleDateString("es-ES")}</p>
                             <p><strong>Paciente:</strong> {appointment.patient_name}</p>
-                            <p><strong>Estado de la cita:</strong> {appointment.status}</p>
+                            <p><strong>Estado de la cita:</strong> {appointment.status ? status[appointment.status.toLocaleLowerCase()] : "Sin estado"}</p>
                             <p><strong>Tipo de servicio:</strong> {appointment.service.type}</p>
                             <p><strong>Duración:</strong> {appointment.service.duration} min</p>
                           </div>
