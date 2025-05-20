@@ -272,7 +272,14 @@ export default function VideoCallPage() {
                               {appointmentTime && (
                                 <p className="text-sm font-medium text-blue-600">
                                   Cita programada:{" "}
-                                  {appointmentTime.toLocaleString()}
+                                  {appointmentTime.toLocaleString('es-ES', {
+                                      timeZone: 'Europe/Madrid',
+                                      year: 'numeric',
+                                      month: '2-digit',
+                                      day: '2-digit',
+                                      hour: '2-digit',
+                                      minute: '2-digit',
+                                    })}
                                 </p>
                               )}
                               {!isActive && appointmentTime && (

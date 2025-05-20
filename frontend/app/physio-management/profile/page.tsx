@@ -84,6 +84,7 @@ const FisioProfile = () => {
   const [formErrors, setFormErrors] = useState({});
   const [showServiceModal, setShowServiceModal] = useState(false);
   const [services, setServices] = useState<Service[]>([]);
+  const [physioRating, setPhysioRating] = useState(null);
   const availableSpecializations = [
     "Deportiva",
     "Ortopédica y Traumatológica",
@@ -263,6 +264,20 @@ const FisioProfile = () => {
           experience: response.data.physio.experience,
           workplace: response.data.physio.workplace,
         });
+
+        try {
+          const response = await axios.get(
+            `${getApiBaseUrl()}/api/appointment_ratings/average/`,
+                      {
+            headers: { Authorization: `Bearer ${storedToken}` },
+          }
+          );
+          if (response.status === 200) {
+            setPhysioRating(response.data.rating);
+          }
+        } catch (error) {
+          console.log("Error setting rating:", error);
+        }
 
         // Verificar si faltan datos profesionales importantes
         const missingFields = [];
@@ -1650,7 +1665,7 @@ const FisioProfile = () => {
           {/* Left column - Profile photo and basic info */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-6">
-              <div className="relative w-full aspect-[4/3] overflow-hidden">
+              <div className="flex items-center justify-center relative w-full aspect-[4/3] overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 <img
                   alt="Physiotherapist's photo"
@@ -1690,19 +1705,19 @@ const FisioProfile = () => {
               <div className="p-6">
                 <div className="space-y-4">
                   {/* Rating display */}
-                  <div className="flex items-center mb-4">
-                    <div className="flex items-center text-yellow-400 mr-2">
-                      {profile.rating_avg ? (
-                        renderStars(parseFloat(profile.rating_avg))
+                  <div className="flex items-center mb-4 flex items-center justify-center">
+                    <div className="flex items-center justify-center text-yellow-400 mr-2">
+                      {physioRating ? (
+                        renderStars(parseFloat(physioRating))
                       ) : (
                         <p className="text-gray-500 text-sm">
                           Sin valoraciones
                         </p>
                       )}
                     </div>
-                    {profile.rating_avg && (
+                    {physioRating && (
                       <span className="text-gray-700 font-medium">
-                        {parseFloat(profile.rating_avg).toFixed(1)}
+                        {parseFloat(physioRating).toFixed(1)}
                       </span>
                     )}
                   </div>
@@ -1832,7 +1847,7 @@ const FisioProfile = () => {
                           {rating?.punctuation}/5
                         </span>
                       </div>
-                      <p className="text-gray-700">"{rating?.opinion}"</p>
+                      <p className="text-gray-700 break-all">"{rating?.opinion}"</p>
                     </div>
                     <div className="flex space-x-3">
                       <GradientButton
