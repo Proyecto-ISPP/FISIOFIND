@@ -1,5 +1,5 @@
 <!-- ---
-title: "REPORTE BASE DE CONOCIMIENTO #WPL"            # CHANGE IF NEEDED
+title: "INFORME BASE DE CONOCIMIENTO #WPL"            # CHANGE IF NEEDED
 subtitle: "FISIO FIND - Grupo 6 - #WPL"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]
 date: "22/05/2025"                                          # CHANGE IF NEEDED
@@ -14,7 +14,7 @@ titlepage-rule-height: 0
 colorlinks: true
 linkcolor: blue
 titlepage-background: "../.backgrounds/background2V.pdf"    # CHANGE IF NEEDED
-header-left: "REPORTE BASE DE CONOCIMIENTO #PPL"       # CHANGE IF NEEDED
+header-left: "INFORME BASE DE CONOCIMIENTO #PPL"       # CHANGE IF NEEDED
 header-right: "22/05/2025"                                  # CHANGE IF NEEDED
 footer-left: "FISIO FIND"
 documentclass: scrartcl
@@ -22,11 +22,11 @@ classoption: "table"
 ---  -->
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
 <p align="center">
-  <img src="../../.img/Logo_FisioFind_Verde_sin_fondo.webp" alt="Logo FisioFind" width="300" />
+  <img src="../.img/Logo_FisioFind_Verde_sin_fondo.webp" alt="Logo FisioFind" width="300" />
 </p>
 
 <h1 align="center" style="font-size: 30px; font-weight: bold;">
-  FISIO FIND  -  REPORTE BASE DE CONOCIMIENTO #WPL
+  FISIO FIND  -  INFORME BASE DE CONOCIMIENTO #WPL
 </h1>
 
 <br>
@@ -66,30 +66,39 @@ classoption: "table"
     - [4.1.12. WPL - Lanzamiento mundial del proyecto](#4112-wpl---lanzamiento-mundial-del-proyecto)
   - [4.2 CONTRIBUCIONES A LA BASE DE CONOCIMIENTO GENERAL](#42-contribuciones-a-la-base-de-conocimiento-general)
   - [4.2.1. Feedback individual del grupo 6](#421-feedback-individual-del-grupo-6)
-  - [Semana 13](#semana-13)
+    - [Semana 13](#semana-13)
       - [Feedback relacionado con la presentación](#feedback-relacionado-con-la-presentación)
       - [Feedback relacionado con el desarrollo del proyecto](#feedback-relacionado-con-el-desarrollo-del-proyecto)
       - [Tareas a realizar para la siguiente semana](#tareas-a-realizar-para-la-siguiente-semana)
   - [4.2.2. Aportaciones generales](#422-aportaciones-generales)
     - [4.2.2.1. Apartado Presentaciones](#4221-apartado-presentaciones)
+      - [Feedback del día 02/05](#feedback-del-día-0205)
+    - [4.2.2.2. Apartado Killer opener](#4222-apartado-killer-opener)
+      - [Feedback del día 02/05](#feedback-del-día-0205-1)
+    - [4.2.2.3. Apartado Idea de negocio](#4223-apartado-idea-de-negocio)
+      - [Feedback del día 02/05](#feedback-del-día-0205-2)
+    - [4.2.2.4. Apartado Usuarios piloto](#4224-apartado-usuarios-piloto)
+      - [Feedback del día 02/05](#feedback-del-día-0205-3)
+    - [4.2.2.5. Apartado Storyboards](#4225-apartado-storyboards)
+      - [Feedback del día 02/05](#feedback-del-día-0205-4)
 - [5. ACCIONES TOMADAS A PARTIR DEL FEEDBACK](#5-acciones-tomadas-a-partir-del-feedback)
   - [5.1. Resumen de mejoras tras el feedback del 02/05/2025](#51-resumen-de-mejoras-tras-el-feedback-del-02052025)
     - [5.1.1. Presentaciones](#511-presentaciones)
 - [**6. ANEXO - RESUMEN DEL FEEDBACK POR GRUPO**](#6-anexo---resumen-del-feedback-por-grupo)
-  - [6.1. Feedback del día 02/05/2025 (semana 13)](#61-feedback-del-día-02052025-semana-13)
-    - [**6.1.1. RESUMEN DEL FEEDBACK POR GRUPO**](#611-resumen-del-feedback-por-grupo)
-      - [**Primer grupo (Holos):**](#primer-grupo-holos)
-      - [**Segundo grupo (Gastrostock):**](#segundo-grupo-gastrostock)
-      - [**Tercer grupo (Eventbride):**](#tercer-grupo-eventbride)
-      - [**Cuarto grupo (BORROO):**](#cuarto-grupo-borroo)
-      - [**Quinto grupo (CAMYO):**](#quinto-grupo-camyo)
-      - [**Sexto grupo (FISIO FIND):**](#sexto-grupo-fisio-find)
-    - [**6.1.2. ANÁLISIS DEL FEEDBACK**](#612-análisis-del-feedback)
-    - [**6.1.2.1. TENDENCIAS GENERALES**](#6121-tendencias-generales)
-    - [**6.1.2.2. COMPARACIÓN DEL FEEDBACK DE NUESTRO GRUPO VS LOS OTROS**](#6122-comparación-del-feedback-de-nuestro-grupo-vs-los-otros)
-    - [**6.1.3. COMENTARIOS FINALES**](#613-comentarios-finales)
-    - [**6.1.4. PRÓXIMA SEMANA**](#614-próxima-semana)
-    - [**6.1.5. CONCLUSIONES Y OBSERVACIONES**](#615-conclusiones-y-observaciones)
+  - [**6.1. Feedback del día 02/05/2025 (semana 13)**](#61-feedback-del-día-02052025-semana-13)
+- [**6.1.1. RESUMEN DEL FEEDBACK POR GRUPO**](#611-resumen-del-feedback-por-grupo)
+  - [**Primer grupo (Holos):**](#primer-grupo-holos)
+  - [**Segundo grupo (Gastrostock):**](#segundo-grupo-gastrostock)
+  - [**Tercer grupo (Eventbride):**](#tercer-grupo-eventbride)
+  - [**Cuarto grupo (BORROO):**](#cuarto-grupo-borroo)
+  - [**Quinto grupo (CAMYO):**](#quinto-grupo-camyo)
+  - [**Sexto grupo (FISIO FIND):**](#sexto-grupo-fisio-find)
+- [**6.1.2. ANÁLISIS DEL FEEDBACK**](#612-análisis-del-feedback)
+  - [**6.1.2.1. TENDENCIAS GENERALES**](#6121-tendencias-generales)
+  - [**6.1.2.2. COMPARACIÓN DEL FEEDBACK DE NUESTRO GRUPO VS LOS OTROS**](#6122-comparación-del-feedback-de-nuestro-grupo-vs-los-otros)
+  - [6.1.3. COMENTARIOS FINALES](#613-comentarios-finales)
+      - [6.1.4. PRÓXIMA SEMANA](#614-próxima-semana)
+- [**6.1.5. CONCLUSIONES Y OBSERVACIONES**](#615-conclusiones-y-observaciones)
 <!-- COMMENT WHEN EXPORTING TO PDF -->
 
 <br>
@@ -163,7 +172,7 @@ A continuación, se muestra la información correspondiente a cada punto del esq
 
 ## 3.2.3. Informes
 
-Para optimizar la eficiencia en la documentación de informes, se establecieron equipos específicos responsables de cada tipo de reporte:
+Para optimizar la eficiencia en la documentación de informes, se establecieron equipos específicos responsables de cada tipo de informe:
 
 - **Informes de Tiempo**: Documentación del esfuerzo temporal del equipo de manera semanal.  
   - Responsables: Rafael Pulido y Alberto Carmona.  
@@ -381,19 +390,19 @@ En este apartado se encuentra la información relacionada con el feedback de la 
 
 - Nivel de presentación aceptable. 
 
-- El killer opener podría explorar alguna forma de interacción. Levantad la mano si habeis tenido algún problema físico, por ejemplo. Interactuar con la audiencia siempre capta atención. 
+- El killer opener podría explorar alguna forma de interacción. Levantad la mano si habéis tenido algún problema físico, por ejemplo. Interactuar con la audiencia siempre capta atención. 
 
-- El tema de la imagen de una persona haciendo deporte con un portatil al lado, a Pablo no le transmite que sea fisioterapia. 
+- El tema de la imagen de una persona haciendo deporte con un portátil al lado, a Pablo no le transmite que sea fisioterapia. 
 
-- Competidores: no la ha seguido bien, visualmente muy bien, pero no se entendía lo que querían transmitir. Parece que hay cosas simpelemente estéticas. Que se graben para ver cómo transmitan la información. Y que resalten en las diapositivas sobre lo que hablan. 
+- Competidores: no la ha seguido bien, visualmente muy bien, pero no se entendía lo que querían transmitir. Parece que hay cosas simplemente estéticas. Que se graben para ver cómo transmiten la información. Y que resalten en las diapositivas sobre lo que hablan. 
 
 - Raro lo de que se muestre el chatbot separado de la demo si es importante para nosotros. 
 
-- El video final le gusta, pero no le queda claro la parte de los packs de inversores. Pablo razonó de la siguiente forma: normalmente los inversores, si tienen packs es para categorizar que cada persona elija uno, pero eso no suele pasar, los inversores tienen algo en la cabeza y negocian según eso. Lo que se puede decir es que nosotros tenemos estas ofertas como tipo de negocio inicial, pero que el inversor también puede negociar a parte. El pack de inversión no es algo que puedes elegir o no, o al menos que no se transmita eso, si no que es algo inicial. 
+- El video final le gusta, pero no le queda clara la parte de los packs de inversores. Pablo razonó de la siguiente forma: normalmente los inversores, si tienen packs, es para categorizar que cada persona elija uno, pero eso no suele pasar; los inversores tienen algo en la cabeza y negocian según eso. Lo que se puede decir es que nosotros tenemos estas ofertas como tipo de negocio inicial, pero que el inversor también puede negociar aparte. El pack de inversión no es algo que puedas elegir o no, o al menos que no se transmita eso, sino que es algo inicial. 
 
-- El killer opener es más serio pero es todo muy en linea con lo profesional. 
+- El killer opener es más serio pero está todo muy en línea con lo profesional. 
 
-- La demo no gusta que lo enmarquemos dentro de la presentación y se vea más pequeño de lo normal. También pensar alguna otra alternativa a Antonio y Guadalupe hablando en video y ya. 
+- La demo no gusta que la enmarquemos dentro de la presentación y se vea más pequeña de lo normal. También pensar alguna otra alternativa a Antonio y Guadalupe hablando en video y ya. 
 
 - La segunda presentación es muy completa. La parte de la planificación está muy bioen. 
 
@@ -794,13 +803,13 @@ Dado que todo el feedback recibido para nuestro grupo fue acerca de mejoras en d
 
 - Raro lo de que se muestre el chatbot separado de la demo si es importante para nosotros. 
 
-- El video final le gusta, pero no le queda claro la parte de los packs de inversores. Pablo razonó de la siguiente forma: normalmente los inversores, si tienen packs es para categorizar que cada persona elija uno, pero eso no suele pasar, los inversores tienen algo en la cabeza y negocian según eso. Lo que se puede decir es que nosotros tenemos estas ofertas como tipo de negocio inicial, pero que el inversor también puede negociar a parte. El pack de inversión no es algo que puedes elegir o no, o al menos que no se transmita eso, si no que es algo inicial. 
+- El video final le gusta, pero no le queda clara la parte de los packs de inversores. Pablo razonó de la siguiente forma: normalmente los inversores, si tienen packs, es para categorizar que cada persona elija uno, pero eso no suele pasar; los inversores tienen algo en la cabeza y negocian según eso. Lo que se puede decir es que nosotros tenemos estas ofertas como tipo de negocio inicial, pero que el inversor también puede negociar aparte. El pack de inversión no es algo que puedas elegir o no, o al menos que no se transmita eso, sino que es algo inicial. 
 
 - Muy profesional todo, hay cosas que no se esperaban, como el chatbot. No se suele llegar a ese nivel. 
 
-- El killer opener es más serio pero es todo muy en linea con lo profesional. 
+- El killer opener es más serio pero está todo muy en línea con lo profesional. 
 
-- La demo no gusta que lo enmarquemos dentro de la presentación y se vea más pequeño de lo normal. También pensar alguna otra alternativa a Antonio y Guadalupe hablando en video y ya. 
+- La demo no gusta que la enmarquemos dentro de la presentación y se vea más pequeña de lo normal. También pensar alguna otra alternativa a Antonio y Guadalupe hablando en video y ya. 
 
 - La segunda presentación es muy completa. La parte de la planificación está muy bien. 
 
