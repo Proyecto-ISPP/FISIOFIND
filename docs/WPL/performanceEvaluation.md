@@ -1,6 +1,6 @@
 <!-- ---
-title: "ACUERDO DE EVALUACIÓN DEL RENDIMIENTO INDIVIDUAL"                                  # CHANGE IF NEEDED
-subtitle: "FISIO FIND - Grupo 6 - #PPL"
+title: "EVALUACIÓN DEL RENDIMIENTO INDIVIDUAL"            # CHANGE IF NEEDED
+subtitle: "FISIO FIND - Grupo 6 - #WPL"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]
 date: "20/02/2025"                                        # CHANGE IF NEEDED
 subject: "ISPP"
@@ -13,7 +13,7 @@ titlepage-rule-height: 0
 colorlinks: true
 linkcolor: blue
 titlepage-background: "../.backgrounds/background1V.pdf"  # CHANGE IF NEEDED
-header-left: "ACUERDO EVALUACIÓN-RENDIMIENTO"             # CHANGE IF NEEDED
+header-left: "EVALUACIÓN DEL RENDIMIENTO INDIVIDUAL"      # CHANGE IF NEEDED
 header-right: "01/05/2025"                                # CHANGE IF NEEDED
 footer-left: "FISIOFIND"
 documentclass: scrartcl
@@ -31,14 +31,17 @@ classoption: "table"
 
 <br>
 
+
 **ÍNDICE**
-- [**1. RESUMEN DE CONTRIBUCIÓN INDIVIDUAL**](#resumen-de-contribución-individual)
-  - [**1.1. DEVISING A PROJECT (#DP)**](#11-devising-a-project-dp)
-  - [**1.2. SPRINT 1 (#SPRINT 1)**](#12-sprint-1-s1)
-  - [**1.3. SPRINT 2 (#S2)**](#13-sprint-2-s2)
-  - [**1.4. SPRINT 3 (#S3)**](#14-sprint-3-s3)
-  - [**1.5. PREPARING PROJECT LAUNCH (#PPL)**](#15-preparing-project-launch-ppl)
-  - [**1.6. WORLD PROJECT LAUNCH (#WPL)**](#16-world-project-launch-wpl)
+
+- [**1. Resumen de Contribución Individual**](#1-resumen-de-contribución-individual)
+  - [1.1. Devising a Project (#DP)](#11-devising-a-project-dp)
+  - [1.2. Sprint 1 (#S1)](#12-sprint-1-s1)
+  - [1.3. Sprint 2 (#S2)](#13-sprint-2-s2)
+  - [1.4. Sprint 3 (#S3)](#14-sprint-3-s3)
+  - [1.5. Preparing Project Launch (#PPL)](#15-preparing-project-launch-ppl)
+  - [1.6. World Project Launch (#WPL)](#16-world-project-launch-wpl)
+
 <!-- COMMENT WHEN EXPORTING TO PDF -->
 
 <br>
@@ -58,7 +61,7 @@ classoption: "table"
 
 - **Fecha de Creación:** 22/05/2025  
 
-- **Versión:** v4.0
+- **Versión:** v5.0
 
 <br>
 
@@ -82,7 +85,7 @@ classoption: "table"
 
 <br>
 
-| Estudiante                        | #DP1 | #SPRINT 1 | #SPRINT2 | #S3 |   #PPL  |  #WPL  | Total | Weight |
+| Estudiante                        | #DP1 | #S1 | #S2 | #S3 |   #PPL  |  #WPL  | Total | Weight |
 | --------------------------------- | ---- | --------- | -------- | --- | ------- | ------ | ----- | ------ |
 | Alors Romero, Daniel              |  10  |    10     |    10    |  10 |   10    |   10   |   10  |    1   |
 | Capote García, Francisco          |  10  |    10     |    10    |  10 |   10    |   10   |   10  |    1   |
@@ -158,7 +161,7 @@ Agile Inception (Fisio Find), Investigación de tecnologías de videollamadas, A
 ### Vela Camacho, Daniel
 Agile Inception (Gallery Guide), DAFO (Gallery Guide), Presentación 07/02/2025, Análisis de competidores (Fisio Find), Recogida de feedback 14/02/2025, Historias de Usuario, Plan de Gestión de la Calidad, Plan de Gestión de las Comunicaciones, Mockups Navegables, Registro de acciones Correctivas, Uso de la base del conocimiento, EDT.
 
-## 1.2. Sprint 1 (#SPRINT 1)
+## 1.2. Sprint 1 (#S1)
 
 ### Alors Romero, Daniel
 Alors Romero, Daniel
@@ -236,7 +239,7 @@ HF-11 (modelo anatomico 3D), dashboard de seguimiento de fisioterapeuta, integra
 Sprint 2 planning, despliegue de la aplicación, planes de precio para fisioterapeutas.
 
 ### Macías Ferrera, Antonio
-Sprint 2 planning, Creación de canal de YT cuenta de LinkedIn, corrección de errores S1, Documentación Legal y Acuerdos, Elaboración Presentaciones Sprint 2, Integración de Cookies y Políticas, Gestión Usuarios Piloto Sprint 2, Refactorización Frontend.
+Sprint 2 planning, Creación de canal de YT cuenta de LinkedIn, corrección de errores #S1, Documentación Legal y Acuerdos, Elaboración Presentaciones Sprint 2, Integración de Cookies y Políticas, Gestión Usuarios Piloto Sprint 2, Refactorización Frontend.
 
 ### Mateos Villarejo, Francisco
 HF-012: Archivos en la nube, HA-001: Administración del sistema, Mid-term sprint retrospective del equipo de QA, Informe de rendimiento individual
@@ -251,7 +254,7 @@ Reunión de Sprint Planning 2, Organización de tareas del grupo 1, Ejercicios d
 Matriz RACI grupo 2 #S2 #204, HF-012: Archivos en la nube #270, URGENTE Edición de perfil del paciente #337, HF-012: Archivos en la nube #270
 
 ### Ridruejo Pineda, Guadalupe
-Elaboración Presentaciones Sprint 2 #111, Grabar anuncio fisioterapeutas #186, Tratamiento: pauta de ejercicios y tests #276, Reel promocional Fisio Find #123, Prueba S2 para usuarios piloto #105, Pauta de ejercicios y tests #276, Anuncio publicación prueba UP #S2 #123, Presentación final #S2 #111
+Elaboración Presentaciones Sprint 2 #111, Grabar anuncio fisioterapeutas #186, Tratamiento: pauta de ejercicios y tests #276, Reel promocional Fisio Find #123, Prueba #S2 para usuarios piloto #105, Pauta de ejercicios y tests #276, Anuncio publicación prueba UP #S2 #123, Presentación final #S2 #111
 
 ### Ruíz López, Daniel
 Refactorización Frontend #282, Integración de Cookies y Políticas #279, Documentación Legal y Acuerdos #280, Integración de Cookies y Políticas #279, Revisión de PR #342, Refactorizar frontend #282, Revisión PR #356, Reporte IA #141
@@ -304,7 +307,7 @@ Seguimiento de pacientes y ejercicios Feature #395, Tratamientos del paciente, B
 [Feature] Changelog automático #398, HF-017: Compartir archivos clínicos #393.
 
 ### Ridruejo Pineda, Guadalupe
-Presentación final #S2 #111, Recordatorios de ejercicio #392, Anuncio publicación prueba UP #S2 #123, Pauta de ejercicios y tests #276, Prueba S2 para usuarios piloto #105, Presentación 04/04 #429, Feature Seguimiento de Pacientes y Ejercicios #395, Reunión Sprint Planning 3 #103.
+Presentación final #S2 #111, Recordatorios de ejercicio #392, Anuncio publicación prueba UP #S2 #123, Pauta de ejercicios y tests #276, Prueba #S2 para usuarios piloto #105, Presentación 04/04 #429, Feature Seguimiento de Pacientes y Ejercicios #395, Reunión Sprint Planning 3 #103.
 
 ### Ruíz López, Daniel
 Reporte IA #141, Revisión PR #356, Refactorizar frontend #282, Revisión de PR #342, Integración de Cookies y Políticas #279, Documentación Legal y Acuerdos #280, Bugs en Calendarios, Reporte IA, Docusaurus.
@@ -330,7 +333,7 @@ Arreglo de bugs #510, Marketing brainroot, Arreglo de bugs II #564, Marketing br
 Elaborar documento feedback clase del 11/04 #535, Arreglo de Bugs #510, Elaborar documento feedback clase del 25/04 #558, Primera versión documento Stock Pitch #537, Knowledge Base Report #PPL #518, Informe de tiempo #PPL #521
 
 ### Encina Martínez, Miguel
-Historial del paciente #512	, Evaluación QA, Reunión de planificación PPL y WPL
+Historial del paciente #512	, Evaluación QA, Reunión de planificación #PPL y #WPL
 
 ### Fernández Caballero, Daniel
 Informe de uso de IA #PPL #523, Arreglo de bugs #510, Actualizar README #522, Resolución de conflictos pr arreglo-bugs, Arreglo de bugs #547, Página "Investors profile" #542
@@ -339,10 +342,10 @@ Informe de uso de IA #PPL #523, Arreglo de bugs #510, Actualizar README #522, Re
 Chatbot #396
 
 ### Gavira Sánchez, Ramón
-Despliegue #PPL #534, HF-018: Accesibilidad #394, Reunión planificación mid PPL, HF-018: Accesibilidad #394
+Despliegue #PPL #534, HF-018: Accesibilidad #394, Reunión planificación mid #PPL, HF-018: Accesibilidad #394
 
 ### Macías Ferrera, Antonio
-Campaña mediática y de lanzamiento #507, Video y presentación para el PPL #508, HF-017: Compartir archivos clínicos #393, Planificación #PPL #524, Campaña mediática y de lanzamiento #507, Video y presentación para el PPL #508, Creación de videotutoriales de la aplicación #541, Planificación #WPL #552, Pilot User Report #PPL #519
+Campaña mediática y de lanzamiento #507, Video y presentación para el #PPL #508, HF-017: Compartir archivos clínicos #393, Planificación #PPL #524, Campaña mediática y de lanzamiento #507, Video y presentación para el #PPL #508, Creación de videotutoriales de la aplicación #541, Planificación #WPL #552, Pilot User Report #PPL #519
 
 ### Mateos Villarejo, Francisco
 Informe de rendimiento individual para el #PPL #520, Test informales #511, Tests informales de los planes de precios #561
@@ -357,7 +360,7 @@ Refactorización del frontend II #534
 Adaptar archivos y vídeos a planes de precio#556
 
 ### Ridruejo Pineda, Guadalupe
-Usuarios piloto #519, Presentación PPL #508, Planificación marketing y publicidad #507, Creación de video tutoriales de la aplicación #541, Video y presentación para el PPL #508, Campaña mediática y de lanzamiento #507
+Usuarios piloto #519, Presentación #PPL #508, Planificación marketing y publicidad #507, Creación de video tutoriales de la aplicación #541, Video y presentación para el #PPL #508, Campaña mediática y de lanzamiento #507
 
 ### Ruíz López, Daniel
 Creando brainroot italia para fisiofind, Refactorización Frontend #383, Integración de manuales de usuario
@@ -377,7 +380,7 @@ Historial del paciente #512
 Creación de manuales de usuario #540, Primera versión Stock Pitch #537
 
 ### Capote García, Francisco
-Ya ha cumplido los objetivos en el PPL
+Ya ha cumplido los objetivos en el #PPL
 
 ### Carmona Sicre, Alberto
 Solución de bugs encontrados tras los tests informales #511, Primera versión documento Stock Pitch #537, Elaborar documento de feedback clase del 02/05 #586, Knowledge Base Report #WPL, Informe de tiempo #WPL
@@ -392,34 +395,34 @@ Arreglo de bugs II #564, Informe de uso de IA #WPL #525, Revisión de pr
 Subir fisioterapeutas de prueba al despliegue, Revisar PR #594
 
 ### Gavira Sánchez, Ramón
-SEO ON PAGE #550, Despliegue final WPL #533
+SEO ON PAGE #550, Despliegue final #WPL #533
 
 ### Macías Ferrera, Antonio
 Presentación Retrospective #543, Presentación para el #WPL #543, Vídeo para el #WPL #543, Manuales de usuario #543, Revisar documento feedback #586, Adaptar archivos y vídeos a planes de precio #556
 
 ### Mateos Villarejo, Francisco
-Ya ha cumplido los objetivos en el PPL
+Ya ha cumplido los objetivos en el #PPL
 
 ### Maureira Flores, Benjamín Ignacio
-SEO ON PAGE #550, Despliegue final WPL #533
+SEO ON PAGE #550, Despliegue final #WPL #533
 
 ### Pulido Cifuentes, Rafael
-Ya ha cumplido los objetivos en el PPL
+Ya ha cumplido los objetivos en el #PPL
 
 ### Redondo Pacheco, Julen
 Creación de manuales de usuario #540, Docusaurus
 
 ### Ridruejo Pineda, Guadalupe
-Preparar publicidad off-line #585, Preprar presentación WPL #543, Actividades de Marketing
+Preparar publicidad offline #585, Preparar presentación #WPL #543, Actividades de marketing
 
 ### Ruíz López, Daniel
-Ya ha cumplido los objetivos en el PPL
+Ya ha cumplido los objetivos en el #PPL
 
 ### Santana Rubio, Delfín
-Elaboración de documento revision.md #602, Revisar Fix/arreglo bugs ii #599, revisar fix: arreglar bugs 11, 12, 13, 14, 15 #591, Search.txt y Robots.txt #551, Arreglar errores de valoraciones #593, revisar Feat/historial paciente #566
+Elaboración de documento revision.md #602, Revisar Fix/arreglo bugs II #599, Revisar fix: arreglar bugs 11, 12, 13, 14, 15 #591, Search.txt y Robots.txt #551, Arreglar errores de valoraciones #593, Revisar Feat/historial paciente #566
 
 ### Tortorici Bartús, Daniel
-Ya ha cumplido los objetivos en el PPL
+Ya ha cumplido los objetivos en el #PPL
 
 ### Vela Camacho, Daniel
-Ya ha cumplido los objetivos en el PPL
+Ya ha cumplido los objetivos en el #PPL
