@@ -38,7 +38,6 @@ const PhysiotherapistModal = ({ physio, isOpen, onClose, renderStars }: Physioth
       return () => clearTimeout(timer);
     }
   }, [isOpen]);
-
   const handleCloseModal = () => {
     setIsAnimating(false);
     setTimeout(() => {
@@ -94,7 +93,16 @@ const PhysiotherapistModal = ({ physio, isOpen, onClose, renderStars }: Physioth
               <span className="font-medium">Especialidad:</span> {physio.specializations}
             </p>
             <div className="flex justify-center">
-              {renderStars(physio.rating || 4.5)}
+                                        
+            { physio.rating &&
+              renderStars(physio.rating)
+            }
+
+            { !physio.rating &&
+              <p className="text-gray-500 text-sm mb-[0.1rem]">
+              Sin valoraciones
+            </p>
+            }
             </div>
             <div className="grid grid-cols-2 gap-2">
               <p className="text-sm text-gray-600 bg-gray-50 p-2 rounded-lg">
@@ -107,7 +115,7 @@ const PhysiotherapistModal = ({ physio, isOpen, onClose, renderStars }: Physioth
               </p>
             </div>
             <p className="text-sm text-gray-600 bg-gray-50 p-2 rounded-lg">
-              <span className="font-medium">Género:</span> {physio.gender === "male" ? "Hombre" : physio.gender === "female" ? "Mujer" : "No especificado"}
+              <span className="font-medium">Género:</span> {physio.gender === "M" ? "Hombre" : physio.gender === "F" ? "Mujer" : "No especificado"}
             </p>
           </div>
 

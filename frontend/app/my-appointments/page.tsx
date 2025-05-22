@@ -57,7 +57,6 @@ export default function Home() {
         );
 
         const userRole = roleResponse.data.user_role;
-        console.log(userRole);
         setCurrentRole(userRole);
 
         // Obtener las citas según el rol
@@ -392,7 +391,7 @@ export default function Home() {
                     </div>
                   );
                 })}
-                {hasNoActiveEvents && (
+                {hasNoActiveEvents && currentRole === "patient" && (
                   <div className="mt-6 text-center">
                     <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden p-6">
                       <p className="text-gray-600 mb-4">
