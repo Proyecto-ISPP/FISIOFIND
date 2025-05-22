@@ -108,7 +108,10 @@ const PhysioFiles = () => {
           setMessage("No se encontraron archivos.");
         }
       } catch (error) {
-        showAlert("error", "Error al obtener los archivos.");
+        if (error.status != 404 && error.response.data.error != "No se han encontrado archivos a los que puedas acceder"){
+          showAlert("error", "Error al obtener los archivos.");
+        }
+        
       } finally {
         setLoading(false);
       }
