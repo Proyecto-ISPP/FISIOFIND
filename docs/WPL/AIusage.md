@@ -22,7 +22,7 @@ classoption: "table"
 
 <!-- Imagen del logo (comentar al exportar a PDF) -->
 <p align="center">
-  <img src="../../.img/Logo_FisioFind_Verde_sin_fondo.webp" alt="Logo FisioFind" width="300" />
+  <img src="../.img/Logo_FisioFind_Verde_sin_fondo.webp" alt="Logo FisioFind" width="300" />
 </p>
 
 <!-- Título centrado -->
@@ -31,6 +31,31 @@ classoption: "table"
 </h1>
 
 <br>
+
+**ÍNDICE**
+
+- [INTRODUCCIÓN](#introducción)
+- [PROMPTS UTILIZADOS](#prompts-utilizados)
+- [ANÁLISIS ESTADÍSTICO](#análisis-estadístico)
+  - [Datos iniciales](#datos-iniciales)
+  - [Análisis de las puntuaciones](#análisis-de-las-puntuaciones)
+    - [1. Promedio (Media)](#1-promedio-media)
+    - [2. Desviación estándar](#2-desviación-estándar)
+    - [3. Distribución de las puntuaciones](#3-distribución-de-las-puntuaciones)
+  - [Análisis del número de prompts](#análisis-del-número-de-prompts)
+    - [1. Promedio (Media)](#1-promedio-media-1)
+    - [2. Desviación estándar](#2-desviación-estándar-1)
+    - [3. Rango](#3-rango)
+  - [Análisis de las alucinaciones](#análisis-de-las-alucinaciones)
+    - [1. Promedio (Media)](#1-promedio-media-2)
+    - [2. Desviación estándar](#2-desviación-estándar-2)
+    - [3. Distribución de las alucinaciones](#3-distribución-de-las-alucinaciones)
+  - [Relación entre variables](#relación-entre-variables)
+    - [1. Puntuaciones y número de prompts](#1-puntuaciones-y-número-de-prompts)
+    - [2. Puntuaciones y alucinaciones](#2-puntuaciones-y-alucinaciones)
+    - [3. Número de prompts y alucinaciones](#3-número-de-prompts-y-alucinaciones)
+  - [Tendencias y observaciones](#tendencias-y-observaciones)
+  - [Conclusión del análisis estadístico](#conclusión-del-análisis-estadístico)
 
 **Ficha del documento**
 
@@ -126,7 +151,7 @@ El promedio de las puntuaciones es **4.667**. Esto indica un desempeño generalm
 
 La desviación estándar mide cuánto se alejan las puntuaciones del promedio. Primero calculamos la varianza.
 
-##### Paso 1: Calcular la varianza
+***- Paso 1: Calcular la varianza***
 
 Restamos el promedio (4.667) a cada puntuación, elevamos al cuadrado, sumamos y dividimos entre 3:  
 (5 - 4.667)² = 0.111111  
@@ -139,7 +164,7 @@ Suma de las diferencias al cuadrado:
 Varianza:  
 0.666667 ÷ 3 ≈ 0.222222  
 
-##### Paso 2: Calcular la desviación estándar
+***- Paso 2: Calcular la desviación estándar***
 
 Desviación estándar:  
 √0.222222 ≈ 0.471  
@@ -172,7 +197,7 @@ El promedio del número de prompts es **10.667**, sugiriendo interacciones de lo
 
 #### 2. Desviación estándar
 
-##### Paso 1: Calcular la varianza
+***- Paso 1: Calcular la varianza***
 
 Restamos el promedio (10.667) a cada valor, elevamos al cuadrado, sumamos y dividimos entre 3:  
 (3 - 10.667)² = 58.778689  
@@ -185,7 +210,7 @@ Suma:
 Varianza:  
 452.668067 ÷ 3 ≈ 150.889356  
 
-##### Paso 2: Calcular la desviación estándar
+***- Paso 2: Calcular la desviación estándar***
 
 Desviación estándar:  
 √150.889356 ≈ 12.283  
@@ -216,7 +241,7 @@ El promedio de alucinaciones es **5%**, indicando un nivel bajo de error en prom
 
 #### 2. Desviación estándar
 
-##### Paso 1: Calcular la varianza
+***- Paso 1: Calcular la varianza***
 
 Restamos el promedio (5) a cada valor, elevamos al cuadrado, sumamos y dividimos entre 3:  
 (0 - 5)² = 25  
@@ -229,7 +254,7 @@ Suma:
 Varianza:  
 150 ÷ 3 = 50  
 
-##### Paso 2: Calcular la desviación estándar
+***- Paso 2: Calcular la desviación estándar***
 
 Desviación estándar:  
 √50 ≈ 7.071  
@@ -288,6 +313,12 @@ El análisis revela varios aspectos importantes sobre el desempeño de la IA:
 2. **Extensión de las interacciones:** La variabilidad en el número de prompts (promedio 10.667, desviación 12.283) refleja la capacidad del sistema para manejar consultas de diferente complejidad, aunque interacciones más largas tienden a tener peores resultados.  
 3. **Control de alucinaciones:** El promedio de 5% en alucinaciones, con una desviación de 7.071, indica alta precisión, pero el caso con 15% sugiere que consultas extensas pueden ser propensas a errores.  
 
+<p>
+<br>
+<hr>
+<br>
+</p>
 
-## Aprobado por  
+***Aprobado por***
+
 **Scrum Master:** Antonio Macías Ferrera
