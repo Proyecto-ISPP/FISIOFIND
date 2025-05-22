@@ -147,7 +147,7 @@ Credenciales:
   - Password: 36372053Z36372053Z
 
 
-Vídeo demo: [https://github.com/Proyecto-ISPP/FISIOFIND/blob/main/docs/demo_5.webp](https://github.com/Proyecto-ISPP/FISIOFIND/blob/main/docs/demo_4.webm)
+Vídeo demo: [https://github.com/Proyecto-ISPP/FISIOFIND/blob/main/docs/demo_5.webp](https://github.com/Proyecto-ISPP/FISIOFIND/blob/main/docs/demo_5.webm)
 
 URL Clokify: [Tiempo WPL](https://app.clockify.me/shared/682e4249fa221513a5d50e4a)
 
@@ -179,7 +179,7 @@ La aplicación implementa validación de fisioterapeutas por número de colegiad
 
 # 3. DESCRIPCIÓN DE FUNCIONALIDADES NO TERMINADAS
 
-Actualmente, no tenemos implementado ningún mecanismo para que finalicen las citas. Por lo que solo se pueden finalizar las citas desde el panel de admin.
+La integración con Persona (validación de identidad en el registro de fisio) funciona a través de una api que dejará de estar disponible el 30 de mayo. Intentamos conseguir un contrato para estudiantes pero no lo conseguimos al final. También es importante notar que está mockeado, es decir, no valida el DNI realmente (no se deben de subir fotos del DNI).
 
 
 Por otro lado, tenemos implementado un chatbot, pero como tiene un número de llamadas limitadas, hemos preferido dejarlo en una pull request para evitar que se hable con él por error y se acaben las llamadas. El link a la pull request es: [https://github.com/Proyecto-ISPP/FISIOFIND/pull/567](https://github.com/Proyecto-ISPP/FISIOFIND/pull/567). El caso de uso del chatbot es el siguiente:
@@ -189,7 +189,7 @@ Por otro lado, tenemos implementado un chatbot, pero como tiene un número de ll
 
 # 4. DESCRIPCIÓN Y GUÍA DE LOS CASOS DE USO 
 
-En esta sección se explican los casos de uso entregados para el PPL y una guía detallada para probarlos. Muchos de estos casos ya se muestran en la demo.
+En esta sección se explican los casos de uso entregados para el WPL y una guía detallada para probarlos. Muchos de estos casos ya se muestran en la demo.
 
 Para comenzar, [en la pantalla principal del despliegue](https://fisiofind.com), encontrará una barra de navegación desplegable con distintos iconos y títulos descriptivos. Deberá navegar por estas pestañas para probar la aplicación.
 
