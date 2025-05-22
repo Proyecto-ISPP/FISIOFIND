@@ -98,7 +98,7 @@ class ExerciseLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExerciseLog
         fields = ['id', 'series', 'date', 'repetitions_done', 'weight_done', 'time_done', 'distance_done', 'notes', 'patient']
-        read_only_fields = ['id', 'date', 'patient']
+        read_only_fields = ['id', 'patient']
         
 class SessionTestSerializer(serializers.ModelSerializer):
     class Meta:

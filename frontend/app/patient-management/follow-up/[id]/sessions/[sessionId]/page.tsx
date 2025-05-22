@@ -402,9 +402,12 @@ const SessionDetailPage = ({
         throw new Error("No se ha encontrado el token de autenticación");
       }
 
+      const today = new Date().toISOString().split("T")[0];
+
       const payload = {
         series: logFormData.seriesId,
         repetitions_done: logFormData.repetitions,
+        date: today,
         ...(logFormData.weight !== undefined && {
           weight_done: logFormData.weight,
         }),
