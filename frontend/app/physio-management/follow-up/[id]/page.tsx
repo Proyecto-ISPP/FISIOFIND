@@ -481,16 +481,7 @@ const TreatmentDetailPage = ({ params }: { params: { id: string } }) => {
         );
       }
 
-      const updatedTreatment = await response.json();
-
-      // Actualizar el estado con los datos del servidor
-      setTreatment(updatedTreatment);
-
-      // Actualizar también el formulario de edición
-      setEditedTreatment({
-        ...editedTreatment,
-        is_active: newStatus,
-      });
+      await fetchTreatmentDetails();
 
       setSaveError(
         `Tratamiento marcado como ${
