@@ -179,7 +179,7 @@ La aplicación implementa validación de fisioterapeutas por número de colegiad
 
 # 3. DESCRIPCIÓN DE FUNCIONALIDADES NO TERMINADAS
 
-La integración con Persona (validación de identidad en el registro de fisio) funciona a través de una api que dejará de estar disponible el 30 de mayo. Intentamos conseguir un contrato para estudiantes pero no lo conseguimos al final. También es importante notar que está mockeado, es decir, no valida el DNI realmente (no se deben de subir fotos del DNI).
+La verificación de identidad de los fisioterapeutas funciona gracias a la integración de un servicio de la empresa PERSONA en la cual se deberá introducir una foto del DNI y escanear la cara de la persona que se quiere identificar. Este servicio actualmente está disponible, pero no verifica realmente la identidad de la persona que se quiere verificar para facilitar el inicio decisión como fisioterapeuta por parte de los docentes a la hora de realizar laa pruebas de la aplicación. Cabe mencionar que este servicio estará disponible hasta el 30 de mayo. Hemos intentado conseguir una licencia por más tiempo, pero nos requerían dar datos empresariales que, por razones obvias, a fecha de hoy no hemos podido proporcionar.
 
 
 Por otro lado, tenemos implementado un chatbot, pero como tiene un número de llamadas limitadas, hemos preferido dejarlo en una pull request para evitar que se hable con él por error y se acaben las llamadas. El link a la pull request es: [https://github.com/Proyecto-ISPP/FISIOFIND/pull/567](https://github.com/Proyecto-ISPP/FISIOFIND/pull/567). El caso de uso del chatbot es el siguiente:
