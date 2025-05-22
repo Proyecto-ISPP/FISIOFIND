@@ -749,6 +749,73 @@ const SeguimientoPage = () => {
           </div>
         </div>
       </div>
+          {/* Date selection modal */}
+          {showDateForm && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl">
+                <h3 className="text-xl font-bold mb-4 text-[#05668D]">
+                  Seleccionar fechas del tratamiento
+                </h3>
+
+                {dateError && (
+                  <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl mb-4">
+                    {dateError}
+                  </div>
+                )}
+
+                <div className="mb-4">
+                  <label
+                    htmlFor="start-date"
+                    className="block text-gray-700 mb-2 font-medium"
+                  >
+                    Fecha de inicio
+                  </label>
+                  <input
+                    type="date"
+                    id="start-date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300"
+                    min={new Date().toISOString().split("T")[0]}
+                  />
+                </div>
+
+                <div className="mb-6">
+                  <label
+                    htmlFor="end-date"
+                    className="block text-gray-700 mb-2 font-medium"
+                  >
+                    Fecha de fin
+                  </label>
+                  <input
+                    type="date"
+                    id="end-date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#41B8D5] transition-all duration-300"
+                    min={startDate}
+                  />
+                </div>
+
+                <div className="flex justify-end space-x-3">
+                  <button
+                    onClick={handleCancelDateForm}
+                    className="px-5 py-2 border border-gray-300 rounded-xl hover:bg-gray-100 transition-all duration-300"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={handleDateFormSubmit}
+                    disabled={creatingTreatment}
+                    className="px-5 py-2 bg-gradient-to-r from-[#6BC9BE] to-[#05668D] text-white rounded-xl hover:opacity-90 transition-all duration-300 disabled:opacity-50"
+                  >
+                    {creatingTreatment ? "Creando..." : "Crear tratamiento"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
         {filteredTreatments.length === 0 ? (
           <div className="text-center py-16 bg-white bg-opacity-60 rounded-2xl shadow-sm border border-cyan-100">
             <svg className="mx-auto h-16 w-16 text-gray-300 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
