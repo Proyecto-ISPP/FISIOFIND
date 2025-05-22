@@ -23,7 +23,7 @@ classoption: "table"
 
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
 <p align="center">
-  <img src="docs/.img/Logo_FisioFind_Verde_sin_fondo.webp" alt="Logo FisioFind" width="300" />
+  <img src="../.img/Logo_FisioFind_Verde_sin_fondo.webp" alt="Logo FisioFind" width="300" />
 </p>
 
 <h1 align="center" style="font-size: 30px; font-weight: bold;">
@@ -37,22 +37,21 @@ classoption: "table"
 - [2. ACCESO A LA APLICACIÓN](#2-acceso-a-la-aplicación)
 - [3. DESCRIPCIÓN DE FUNCIONALIDADES NO TERMINADAS](#3-descripción-de-funcionalidades-no-terminadas)
 - [4. DESCRIPCIÓN Y GUÍA DE LOS CASOS DE USO](#4-descripción-y-guía-de-los-casos-de-uso)
-- [**Búsqueda avanzada**](#búsqueda-avanzada)
-- [**Cuestionario de preintervención**](#cuestionario-de-preintervención)
-- [**Solicitud de una cita**](#solicitud-de-una-cita)
-- [**Gestión del calendario**](#gestión-del-calendario)
-- [**Videollamada y herramientas de la videollamada**](#videollamada-y-herramientas-de-la-videollamada)
-- [**Planes de precio**](#planes-de-precio)
-- [**Tratamientos**](#tratamientos)
-- [**Gestión de subida de archivos**](#gestión-de-subida-de-archivos)
-- [**Accesibilidad**](#accesibilidad)
+  - [**Búsqueda avanzada**](#búsqueda-avanzada)
+  - [**Cuestionario de preintervención**](#cuestionario-de-preintervención)
+  - [**Solicitud de una cita**](#solicitud-de-una-cita)
+  - [**Gestión del calendario**](#gestión-del-calendario)
+  - [**Videollamada y herramientas de la videollamada**](#videollamada-y-herramientas-de-la-videollamada)
+  - [**Planes de precio**](#planes-de-precio)
+  - [**Tratamientos**](#tratamientos)
+  - [**Gestión de subida de archivos**](#gestión-de-subida-de-archivos)
+  - [**Accesibilidad**](#accesibilidad)
 - [5. DESPLIEGUE LOCAL](#5-despliegue-local)
-  - [Despliegue Local](#despliegue-local)
-    - [Prerrequisitos](#prerrequisitos)
-    - [Instalación](#instalación)
-    - [Configuración de la Base de Datos](#configuración-de-la-base-de-datos)
-    - [Uso](#uso)
-    - [Ejecución de la Aplicación](#ejecución-de-la-aplicación)
+  - [Prerrequisitos](#prerrequisitos)
+  - [Instalación](#instalación)
+  - [Configuración de la Base de Datos](#configuración-de-la-base-de-datos)
+  - [Uso](#uso)
+  - [Ejecución de la Aplicación](#ejecución-de-la-aplicación)
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
 
 
@@ -88,7 +87,7 @@ classoption: "table"
 
 | Fecha          | Versión  | Realizada por            | Descripción de los cambios                |
 | -------------- | -------- | ------------------------ | ----------------------------------------- |
-|  21/05/2025    | v1.0     | Delfín Santana Rubio   | Versión inicial del documento             |
+| 21/05/2025     | v1.0     | Delfín Santana Rubio     | Versión inicial del documento             |
 
 <br>
 
@@ -96,10 +95,9 @@ classoption: "table"
 
 <br>
 
-
 # 1. INTRODUCCIÓN
 
-FISIOFIND es una plataforma de consulta en línea diseñada para conectar fisioterapeutas y pacientes. La aplicación permite la gestión de citas, realización de consultas virtuales y procesamiento de pagos, facilitando la organización y seguimiento de sesiones terapéuticas de forma segura y eficiente. La solución está orientada a dos grupos principales de usuarios: fisioterapeutas y pacientes.
+FISIOFIND es una plataforma de consulta en línea diseñada para conectar fisioterapeutas y pacientes. La aplicación permite la gestión de citas, realización de consultas virtuales y procesamiento de pagos, facilitando la organización y el seguimiento de sesiones terapéuticas de forma segura y eficiente. La solución está orientada a dos grupos principales de usuarios: fisioterapeutas y pacientes.
 
 En este documento se detalla una guía para el despliegue local de la aplicación, además de un desglose detallado para la realización de las pruebas del WPL.
 
@@ -197,6 +195,8 @@ Para comenzar, [en la pantalla principal del despliegue](https://fisiofind.com),
 
 Si se quiere hacer una cuenta, deberá de dar click en la sección superior de la home en la parte que pone registrarse. Igual para iniciar sesión. **Se recomienda poner un email real ya que hay funcionalidades que requieren validación por correo o que notifican a través del correo electrónico.**
 
+<img src="../.img/agendar_cita_paciente.png" alt="Agendar cita paciente" width="500"/>
+
 Si se registra como fisio, mientras se registra le aparecerá una sección para seleccionar el plan de pago a utilizar.
 
 Si inicia sesión como fisioterapeuta, en el navbar desplegable, verá un botón con título "Mi perfil". Si accede a esa vista verá el perfil de fisio, dónde podrá modificar su información, su horario y sus servicios. También, es en esta vista donde un fisio puede valorar la aplicación, dando al botón que aparece en la sección de "Tu valoración de la App" debajo del horario del fisio. Cuando el fisio crea una valoración, esta se verá en la home para todo aquel que visite la app. El fisio también puede editar y eliminar su valoración.
@@ -211,12 +211,14 @@ Cuando un paciente tiene una videollamada con un fisioterapeuta, al lado del bot
 
 Un paciente para buscar un fisioterapeuta puede acceder a la sección de buscar a través del botón de "Buscar" del desplegable.
 
-# **Búsqueda avanzada**
+## **Búsqueda avanzada**
 
 1. Un usuario accede a la sección de buscar de fisios
 2. Si rellena sus preferencias para la búsqueda y le da a buscar le aparecen fisios que cumplen esos valores.
 
-# **Cuestionario de preintervención**
+<img src="../.img/busqueda_avanzada.png" alt="Búsqueda avanzada" width="500"/>
+
+## **Cuestionario de preintervención**
 
 Caso de uso:
 1. Un usuario (paciente o que o ha iniciado sesión) accede a la vista de reservar una cita con un fisioterapeuta.
@@ -229,7 +231,9 @@ Caso de uso:
 3. El fisioterapeuta crea o edita un servicio o un cuestionario de preintervención.
 4. Cuando el fisioterapeuta guarda, el sistema queda actualizado.
 
-# **Solicitud de una cita**
+<img src="../.img/añadir_servicio.png" alt="Añadir servicio" width="500"/>
+
+## **Solicitud de una cita**
 
 Caso de uso:
 1. Un usuario con rol paciente busca por especialidad en la página principal.
@@ -240,7 +244,10 @@ Caso de uso:
 6. En el proceso, el usuario puede pagar y generar una factura.
 7. El paciente finalmente la acepta.
 
-# **Gestión del calendario**
+<img src="../.img/seleccionar_hora.png" alt="Seleccionar hora" width="500"/>
+
+
+## **Gestión del calendario**
 
 Caso de uso:
 1. Un fisioterapeuta entra en la sección de sus citas.
@@ -248,11 +255,13 @@ Caso de uso:
 3. El fisioterapeuta puede aceptar la cita, cancelarla o proponer un cambio. No puede cambiar el horario de la cita sin enviar una propuesta de cambio y que el paciente lo acepte.
 4. Si el paciente acepta el cambio, la cita queda confirmada.
 
-# **Videollamada y herramientas de la videollamada**
+## **Videollamada y herramientas de la videollamada**
 
 Caso de uso:
 1. Un fisioterapeuta abre la sección de videollamadas.
 2. Si tiene citas programadas para ese día, desde 2 horas previas y hasta 2 horas después, podrá acceder a la sala correspondiente a esa cita (las citas deben reservarse al menos con 48 horas de antelación).
+
+<img src="../.img/sala_de_espera_videollamada.png" alt="Sala de espera videollamada" width="500"/>
 
 Caso de uso:
 1. Un paciente abre la sección de videollamadas.
@@ -276,11 +285,17 @@ Caso de uso:
 4. Cuando el fisioterapeuta deja de necesitar el mapa de dolor, puede dejar de compartirlo.
 5. Si el fisioterapeuta vuelve a enviar el mapa de dolor, el estado en el que se dejó se recupera. Esto solo funciona durante la videollamada (hasta que se cuelga o se recarga la página).
 
+<img src="../.img/mapa_dolor_fisio.png" alt="Mapa de dolor fisio" width="500"/>
+<img src="../.img/mapa_dolor_paciente.png" alt="Mapa de dolor paciente" width="500"/>
+
 Caso de uso:
 1. Un fisioterapeuta se conecta con un paciente a una videollamada.
 2. El fisioterapeuta dispone de modelos 3D del cuerpo humano (sus músculos) y de ciertos músculos que resultan interesantes para un fisioterapeuta.
 3. El fisioterapeuta puede resolver sus dudas anatómicas o tener referencia para ayudar al paciente.
 4. El fisioterapeuta también puede compartir pantalla para poder enseñárselo al paciente.
+
+<img src="../.img/modelo_3d.png" alt="Modelo 3D" width="500"/>
+
 
 Caso de uso:
 1. Un fisioterapeuta se conecta con un paciente a una videollamada.
@@ -288,7 +303,11 @@ Caso de uso:
 3. Si el fisio decide enviarselo al paciente, al paciente le aparece.
 4. Cuando el paciente lo rellena, el fisio puede ver el resultado.
 
-# **Planes de precio**
+<img src="../.img/cuestionario_enviar.png" alt="Cuestionario enviar" width="500"/>
+<img src="../.img/cuestionario_recibido.png" alt="Cuestionario recibir" width="500"/>
+
+
+## **Planes de precio**
 
 Caso de uso:
 1. Un fisioterapeuta no registrado quiere abrirse una cuenta en fisio find
@@ -296,7 +315,7 @@ Caso de uso:
 3. Avanza rellenando campos hasta que se le da a elegir un plan de precio
 4. Cuando lo selecciona se permite seguir con el registro y finalmente completarlo
 
-# **Tratamientos**
+## **Tratamientos**
 
 Caso de uso:
 1. Un fisioterapeuta entra en la sección de tratamientos.
@@ -310,7 +329,10 @@ Caso de uso:
 3. El fisioterapeuta entra en uno de los tratamientos y modifica algún dato
 4. Cuanto termina, acepta el cambio y el sistema se actualiza
 
-# **Gestión de subida de archivos**
+<img src="../.img/sesion_test.png" alt="Test de sesión" width="500"/>
+<img src="../.img/ejercicios_sesion.png" alt="Ejercicio" width="500"/>
+
+## **Gestión de subida de archivos**
 
 Caso de uso:
 1. El fisioterapeuta entra en la sección de subida de vídeos o de archivos (son dos secciones diferentes pero funcionan de manera similar) dentro del tratamiento.
@@ -322,7 +344,9 @@ Caso de uso:
 2. Selecciona el archivo que quiere subir y rellena los datos necesarios.
 3. Cuando completa el formulario, el fisioterapeuta puede ver el vídeo desde su respectiva sección.
 
-# **Accesibilidad**
+<img src="../.img/archivo_tratamiento.png" alt="Subir archivo tratamiento" width="500"/>
+
+## **Accesibilidad**
 
 Caso de uso:
 1. Un usuario con diversidad funcional entra en fisio find.
@@ -340,9 +364,7 @@ Caso de uso:
 Por último, en este epígrade se muestran las instrucciones para la puesta en funcionamiento del proyecto en un entorno local. También se pueden consular estas instrucciones en el archivo README del proyecto: https://github.com/Proyecto-ISPP/FISIOFIND/blob/main/README.md 
 
 
-## Despliegue Local
-
-###  Prerrequisitos
+##  Prerrequisitos
 
 Antes de comenzar con FISIOFIND, asegúrese de que su entorno de ejecución cumpla con los siguientes requisitos:
 
@@ -351,7 +373,7 @@ Antes de comenzar con FISIOFIND, asegúrese de que su entorno de ejecución cump
 - **Base de Datos:** Postgres
 
 
-###  Instalación
+##  Instalación
 
 Instale FISIOFIND utilizando uno de los siguientes métodos:
 
@@ -390,7 +412,7 @@ Ahora instalamos las dependencias del framework frontend en el directorio `front
 ❯ npm install
 ```
 
-### Configuración de la Base de Datos
+## Configuración de la Base de Datos
 
 Para configurar la base de datos para FISIOFIND, siga estos pasos:
 
@@ -449,7 +471,7 @@ Para configurar la base de datos para FISIOFIND, siga estos pasos:
 Una vez completados estos pasos, su base de datos debería estar configurada y lista para usar con FISIOFIND.
 
 
-###  Uso
+##  Uso
 
 La primera vez que el proyecto se despliega localmente, necesitamos crear un archivo .env en el directorio `backend` según el archivo `.env.example`.
 
@@ -476,7 +498,7 @@ Después de que el servidor backend local esté en funcionamiento, podemos ejecu
 ❯ npm run dev
 ```
 
-### Ejecución de la Aplicación
+## Ejecución de la Aplicación
 
 Una vez que tanto el backend como el frontend estén corriendo, podrá acceder a la aplicación a través de la URL de la landing page (`http://localhost:3000`). Desde allí se podrá navegar entre las diferentes secciones de la aplicación, según el perfil de usuario (fisioterapeuta, paciente o administrador).
 
