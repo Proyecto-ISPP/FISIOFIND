@@ -1,5 +1,5 @@
----
-title: "REPORTE ANÁLISIS DE SEGURIDAD WPL"
+<!-- ---
+title: "INFORME ANÁLISIS DE SEGURIDAD WPL"
 subtitle: "FISIO FIND - Grupo 6 - #WPL"
 author: [Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes]                                                # CHANGE IF NEEDED
 date: "22/05/2025"
@@ -18,7 +18,7 @@ header-right: "22/05/2025"                                # CHANGE IF NEEDED
 footer-left: "FISIO FIND"
 documentclass: scrartcl
 classoption: "table"
----
+--- -->
 
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
 <p align="center">
@@ -26,7 +26,7 @@ classoption: "table"
 </p>
 
 <h1 align="center" style="font-size: 30px; font-weight: bold;">
-  REPORTE ANÁLISIS DE SEGURIDAD WPL
+  INFORME ANÁLISIS DE SEGURIDAD WPL
 </h1>
 
 **ÍNDICE**
@@ -45,15 +45,15 @@ classoption: "table"
 
 - **Número de Grupo:** Grupo 6
 
-- **Entregable:** #SPRINT 3
+- **Entregable:** #WPL
 
 - **Miembros del grupo:** Alberto Carmona Sicre, Antonio Macías Ferrera, Benjamín Ignacio Maureira Flores, Francisco Capote García, Daniel Alors Romero, Daniel Fernández Caballero, Daniel Ruiz López, Daniel Tortorici Bartús, Daniel Vela Camacho, Delfín Santana Rubio, Guadalupe Ridruejo Pineda, Julen Redondo Pacheco, Miguel Encina Martínez, Francisco Mateos Villarejo, Pablo Fernández Pérez, Ramón Gavira Sánchez, Rafael Pulido Cifuentes.
 
-- **Contribuidores:** [Delfín Santana Rubio](https://github.com/DelfinSR) (autor)
+- **Contribuidores:** [Delfín Santana Rubio](https://github.com/DelfinSR) (autor),  [Antonio Macías Ferrera](https://github.com/antoniommff) (revisor)
 
 - **Fecha de Creación:** 22/05/2025  
 
-- **Versión:** v1.0
+- **Versión:** v1.1
 
 <br>
 
@@ -64,6 +64,8 @@ classoption: "table"
 | Fecha      | Versión | Realizada por   | Descripción de los cambios                       |
 | ---------- | ------- | --------------- | ------------------------------------------------ |
 | 22/05/2025 | v1.0    | Delfín Santana Rubio | Primera versión del documento |
+| 22/05/2025 | v1.1    | Antonio Macías Ferrera | Correcciones ortográficas y de formato. |
+
 
 <br>
 
@@ -75,19 +77,19 @@ classoption: "table"
 El presente informe tiene como objetivo mostrar los resultados de utilizar una herramienta automática de análisis de seguridad. Este análisis es fundamental para evaluar la seguridad del proyecto, detectar posibles vulnerabilidades y garantizar la privacidad, autenticidad e integridad de nuestra aplicación y de los datos que manejamos.
 
 # 2. HERRAMIENTA UTILIZADA
-La herramienta utilizada es la herramienta [ZAP](https://www.zaproxy.org/). Esta herramienta es ampliamente utilizada en el sector, y permite hacer análisis automáticos de seguridad a aplicaciones web. El análisis lo hace descubriendo las rutas de la página web (mediante scraping y otras técnicas) y buscando de forma pasiva y activa patrones o evidencias de problemas de seguridad conocidos.
+La herramienta utilizada es [ZAP](https://www.zaproxy.org/). Esta herramienta es ampliamente utilizada en el sector y permite realizar análisis automáticos de seguridad en aplicaciones web. El análisis lo realiza descubriendo las rutas de la página web (mediante scraping y otras técnicas) y buscando de forma pasiva y activa patrones o evidencias de problemas de seguridad conocidos.
 
-Para el análisis hemos usado la configuración por defecto de la herramienta para facilitar la reproducibilidad del análisis.
+Para el análisis hemos usado la configuración predeterminada de la herramienta para facilitar la reproducibilidad del análisis.
 
 # 3. RESULTADOS DEL ANÁLISIS
 
-Los resultados del análisis se pueden ver en el archivo generado por ZAP. En este sprint hemos decidido hacer un solo análisis: uno al backend y al frontend al final del sprint:
+Los resultados del análisis se pueden consultar en el archivo generado por ZAP. En este sprint hemos decidido realizar un solo análisis: uno al backend y al frontend al final del sprint:
 - [2025-05-22-ZAP-Report-Backend.html](https://github.com/Proyecto-ISPP/FISIOFIND/blob/main/docs/03_reports/security_reports/2025-05-22-ZAP-Report-Backend.html)  
 - [2025-05-22-ZAP-Report-frontend.html](https://github.com/Proyecto-ISPP/FISIOFIND/blob/main/docs/03_reports/security_reports/2025-05-22-ZAP-Report-frontend.html) 
 
-ZAP categoriza los avisos en informativo, bajo, medio y alto en función del riesgo que suponen. A continuación, hacemos un resumen de lo más importante de los resultados. 
+ZAP categoriza los avisos en informativo, bajo, medio y alto en función del riesgo que suponen. A continuación, presentamos un resumen de lo más importante de los resultados. 
 
 En este sprint los resultados no han variado respecto al anterior. Esto es una buena noticia debido a que en el anterior no existían problemas. 
 
 # 4. CONCLUSIONES
-Después de este sprint, Fisio Find sigue sin presentar vulnerabilidades críticas que puedan ser encontradas con herramientas automáticas de análisis de seguridad. De hecho, realmente no tenemos vulnerabilidades, solo tenemos avisos, y los avisos que nos devuelve ZAP son genéricos (muchas otras webs lo tienen y no hay consecuencias inmediatas) y no necesitan de acciones inminentes. Sin embargo, se deben seguir tomando medidas correctivas para la siguiente entrega dado que se aspira a tener el mínimo número de avisos.
+Después de este sprint, Fisio Find sigue sin presentar vulnerabilidades críticas que puedan ser detectadas con herramientas automáticas de análisis de seguridad. De hecho, realmente no tenemos vulnerabilidades, solo tenemos avisos, y los avisos que nos devuelve ZAP son genéricos (muchas otras webs los tienen y no hay consecuencias inmediatas) y no requieren acciones inmediatas. Sin embargo, se deben seguir tomando medidas correctivas para la siguiente entrega, dado que se aspira a tener el mínimo número de avisos.
