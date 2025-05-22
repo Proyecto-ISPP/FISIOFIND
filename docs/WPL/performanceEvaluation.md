@@ -26,7 +26,7 @@ classoption: "table"
 </p>
 
 <h1 align="center" style="font-size: 30px; font-weight: bold;">
-  FISIOFIND  -  ACUERDO DE EVALUACIÓN DEL RENDIMIENTO INDIVIDUAL
+  FISIOFIND  -  EVALUACIÓN DEL RENDIMIENTO INDIVIDUAL
 </h1>
 
 <br>
