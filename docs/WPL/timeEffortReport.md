@@ -22,7 +22,7 @@ classoption: "table"
 
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
 <p align="center">
-  <img src="../../.img/Logo_FisioFind_Verde_sin_fondo.webp" alt="Logo FisioFind" width="300" />
+  <img src="../.img/Logo_FisioFind_Verde_sin_fondo.webp" alt="Logo FisioFind" width="300" />
 </p>
 
 <h1 align="center" style="font-size: 30px; font-weight: bold;">
@@ -118,9 +118,9 @@ A continuación, se muestran los posibles tipos de tareas en las que pueden trab
 
 - **Security:** tareas relacionadas con el análisis y recopilación de temas de seguridad del sistema.
 
-## 1.2. Proyectos realizados durante el sprint
+## 1.2. Proyectos realizados durante esta última iteración
 
-Durante estas semanas de trabajo se ha trabajado en los siguientes proyectos:  
+Durante estas semanas de trabajo se han desarrollado los siguientes proyectos:  
 
 1. feat  
 
@@ -150,13 +150,15 @@ Entre los proyectos más destacados, aquellos en los que se ha invertido más ti
 
 - **Redes sociales:** 34:41:37
 
+En esta última etapa del proyecto, se han concentrado los esfuerzos en finalizar la documentación y aumentar nuestra presencia en las redes sociales.
+
 Como última etapa del proyecto, se han centrado las energías en finiquitar documentos y mostrarnos al mundo mediante las redes sociales.
 
 <br>
 
 
 # 2. HORAS TOTALES
-Para este sprint, el tiempo total dedicado al proyecto ha sido de 229 horas y 23 minutos.
+Para esta iteración del proyecto, el tiempo total dedicado ha sido de 229 horas y 23 minutos.
 
 <br>
 
@@ -239,7 +241,7 @@ Ordenado de mayor a menor tiempo dedicado en cada proyecto:
 
 Diagrama de sectores para una mejor visualización de la división:
 
-![Diagrama de proyectos](../../.img/projects_diagram_wpl.png)
+![Diagrama de proyectos](../.img/projects_diagram_wpl.png)
 
 
 <br>
@@ -284,8 +286,8 @@ Ordenado por orden alfabético:
 
 Diagrama de sectores para una mejor visualización:
 
-![Diagrama de integrantes](../../.img/users_diagram_wpl_1.png)  
-![Diagrama de integrantes](../../.img/users_diagram_wpl_2.png)  
+![Diagrama de integrantes](../.img/users_diagram_wpl_1.png)  
+![Diagrama de integrantes](../.img/users_diagram_wpl_2.png)  
 
 <br>
 
