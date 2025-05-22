@@ -195,6 +195,8 @@ Para comenzar, [en la pantalla principal del despliegue](https://fisiofind.com),
 
 Si se quiere hacer una cuenta, deberá de dar click en la sección superior de la home en la parte que pone registrarse. Igual para iniciar sesión. **Se recomienda poner un email real ya que hay funcionalidades que requieren validación por correo o que notifican a través del correo electrónico.**
 
+<img src="../.img/agendar_cita_paciente.png" alt="Agendar cita paciente" width="500"/>
+
 Si se registra como fisio, mientras se registra le aparecerá una sección para seleccionar el plan de pago a utilizar.
 
 Si inicia sesión como fisioterapeuta, en el navbar desplegable, verá un botón con título "Mi perfil". Si accede a esa vista verá el perfil de fisio, dónde podrá modificar su información, su horario y sus servicios. También, es en esta vista donde un fisio puede valorar la aplicación, dando al botón que aparece en la sección de "Tu valoración de la App" debajo del horario del fisio. Cuando el fisio crea una valoración, esta se verá en la home para todo aquel que visite la app. El fisio también puede editar y eliminar su valoración.
@@ -214,6 +216,8 @@ Un paciente para buscar un fisioterapeuta puede acceder a la sección de buscar 
 1. Un usuario accede a la sección de buscar de fisios
 2. Si rellena sus preferencias para la búsqueda y le da a buscar le aparecen fisios que cumplen esos valores.
 
+<img src="../.img/busqueda_avanzada.png" alt="Búsqueda avanzada" width="500"/>
+
 ## **Cuestionario de preintervención**
 
 Caso de uso:
@@ -227,6 +231,8 @@ Caso de uso:
 3. El fisioterapeuta crea o edita un servicio o un cuestionario de preintervención.
 4. Cuando el fisioterapeuta guarda, el sistema queda actualizado.
 
+<img src="../.img/añadir_servicio.png" alt="Añadir servicio" width="500"/>
+
 ## **Solicitud de una cita**
 
 Caso de uso:
@@ -237,6 +243,9 @@ Caso de uso:
 5. Cuando la vista lo muestre en el proceso, el paciente rellena el cuestionario de preintervención asociado al servicio seleccionado.
 6. En el proceso, el usuario puede pagar y generar una factura.
 7. El paciente finalmente la acepta.
+
+<img src="../.img/seleccionar_hora.png" alt="Seleccionar hora" width="500"/>
+
 
 ## **Gestión del calendario**
 
@@ -251,6 +260,8 @@ Caso de uso:
 Caso de uso:
 1. Un fisioterapeuta abre la sección de videollamadas.
 2. Si tiene citas programadas para ese día, desde 2 horas previas y hasta 2 horas después, podrá acceder a la sala correspondiente a esa cita (las citas deben reservarse al menos con 48 horas de antelación).
+
+<img src="../.img/sala_de_espera_videollamada.png" alt="Sala de espera videollamada" width="500"/>
 
 Caso de uso:
 1. Un paciente abre la sección de videollamadas.
@@ -274,17 +285,27 @@ Caso de uso:
 4. Cuando el fisioterapeuta deja de necesitar el mapa de dolor, puede dejar de compartirlo.
 5. Si el fisioterapeuta vuelve a enviar el mapa de dolor, el estado en el que se dejó se recupera. Esto solo funciona durante la videollamada (hasta que se cuelga o se recarga la página).
 
+<img src="../.img/mapa_dolor_fisio.png" alt="Mapa de dolor fisio" width="500"/>
+<img src="../.img/mapa_dolor_paciente.png" alt="Mapa de dolor paciente" width="500"/>
+
 Caso de uso:
 1. Un fisioterapeuta se conecta con un paciente a una videollamada.
 2. El fisioterapeuta dispone de modelos 3D del cuerpo humano (sus músculos) y de ciertos músculos que resultan interesantes para un fisioterapeuta.
 3. El fisioterapeuta puede resolver sus dudas anatómicas o tener referencia para ayudar al paciente.
 4. El fisioterapeuta también puede compartir pantalla para poder enseñárselo al paciente.
 
+<img src="../.img/modelo_3d.png" alt="Modelo 3D" width="500"/>
+
+
 Caso de uso:
 1. Un fisioterapeuta se conecta con un paciente a una videollamada.
 2. El fisioterapeuta dispone de formularios que puede pasar al paciente, pudiendo crearlos desde la misma videollamada.
 3. Si el fisio decide enviarselo al paciente, al paciente le aparece.
 4. Cuando el paciente lo rellena, el fisio puede ver el resultado.
+
+<img src="../.img/cuestionario_enviar.png" alt="Cuestionario enviar" width="500"/>
+<img src="../.img/cuestionario_recibido.png" alt="Cuestionario recibir" width="500"/>
+
 
 ## **Planes de precio**
 
@@ -308,6 +329,9 @@ Caso de uso:
 3. El fisioterapeuta entra en uno de los tratamientos y modifica algún dato
 4. Cuanto termina, acepta el cambio y el sistema se actualiza
 
+<img src="../.img/sesion_test.png" alt="Test de sesión" width="500"/>
+<img src="../.img/ejercicios_sesion.png" alt="Ejercicio" width="500"/>
+
 ## **Gestión de subida de archivos**
 
 Caso de uso:
@@ -319,6 +343,8 @@ Caso de uso:
 1. El paciente entra en la sección de subida de archivos del tratamiento
 2. Selecciona el archivo que quiere subir y rellena los datos necesarios.
 3. Cuando completa el formulario, el fisioterapeuta puede ver el vídeo desde su respectiva sección.
+
+<img src="../.img/archivo_tratamiento.png" alt="Subir archivo tratamiento" width="500"/>
 
 ## **Accesibilidad**
 
