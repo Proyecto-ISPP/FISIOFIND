@@ -151,7 +151,10 @@ const PhysioVideo = () => {
       return;
     }
     if (/[`+´ç,<.,©℃®§]/.test(title)) {
-      showAlert("error", "El título no puede contener los siguientes caracteres especiales: ` + ´ ç , < . , © ℃ ® §");
+      showAlert(
+        "error",
+        "El título no puede contener los siguientes caracteres especiales: ` + ´ ç , < . , © ℃ ® §"
+      );
       return;
     }
     if (!description.trim()) {
@@ -163,7 +166,10 @@ const PhysioVideo = () => {
       return;
     }
     if (/[`+´ç,<.,©℃®§]/.test(description)) {
-      showAlert("error", "La descripción no puede contener los siguientes caracteres especiales: ` + ´ ç , < . , © ℃ ® §");
+      showAlert(
+        "error",
+        "La descripción no puede contener los siguientes caracteres especiales: ` + ´ ç , < . , © ℃ ® §"
+      );
       return;
     }
     if (!file && editingVideo === null) {
@@ -210,34 +216,54 @@ const PhysioVideo = () => {
       setEditingVideo(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
 
-      const response = await axios.get(`${getApiBaseUrl()}/api/cloud/videos/list-videos/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-        params: { treatment: id },
-      });
+      const response = await axios.get(
+        `${getApiBaseUrl()}/api/cloud/videos/list-videos/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          params: { treatment: id },
+        }
+      );
       setVideos(response.data);
     } catch (err: any) {
-    const errorDetail = err.response?.data?.detail;
-    console.log("Error detail:", errorDetail);
-  
-    if (
-      err.response?.status === 400 &&
-      typeof errorDetail === "string" &&
-      errorDetail.toLowerCase().includes("límite de archivos alcanzado")
-    ) {
-      showAlert("error", "Has alcanzado el límite de archivos y vídeos permitidos. Elimina algunos o mejora tu plan de precio.");
-    } else {
-      showAlert("error", "Hubo un error al guardar el archivo.");
+      const errorDetail = err.response?.data?.detail;
+      console.log("Error detail:", errorDetail);
+
+      if (
+        err.response?.status === 400 &&
+        typeof errorDetail === "string" &&
+        errorDetail.toLowerCase().includes("límite de archivos alcanzado")
+      ) {
+        showAlert(
+          "error",
+          "Has alcanzado el límite de archivos y vídeos permitidos. Elimina algunos o mejora tu plan de precio."
+        );
+      } else {
+        showAlert("error", "Hubo un error al guardar el archivo.");
+      }
+    } finally {
+      setLoading(false);
     }
-  
-  } finally {
-    setLoading(false);
-  }
+  };
+
+  const handleEdit = (video) => {
+    setEditingVideo(video.id);
+    setTitle(video.title);
+    setDescription(video.description);
+    setFileKey(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const [deleteConfirmation, setDeleteConfirmation] = useState({
     show: false,
     videoId: null,
   });
+
+  const confirmDelete = (videoId: number) => {
+    setDeleteConfirmation({
+      show: true,
+      videoId,
+    });
+  };
 
   const cancelDelete = () => {
     setDeleteConfirmation({ show: false, videoId: null });
@@ -469,11 +495,27 @@ const PhysioVideo = () => {
                   </p>
                   <button
                     onClick={() => handleVideoClick(video.id)}
-                    className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 flex items-center justify-center"
+                    className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 flex items-center justify-center mb-3" // Added mb-3 for spacing
                   >
                     <Play className="mr-2" size={20} />
                     Ver Video
                   </button>
+                  {/* Container for Edit and Delete buttons */}
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => handleEdit(video)}
+                      className="flex-1 bg-[#05AC9C] text-white py-2 px-3 rounded-xl hover:bg-[#05918F] transition-all duration-200 text-sm font-medium flex items-center justify-center"
+                      title="Editar video"
+                    >
+                      Editar
+                    </button>
+                    <button
+                      onClick={() => confirmDelete(video.id)}
+                      className="flex-1 bg-red-500 text-white py-2 px-3 rounded-xl hover:bg-red-600 transition-all duration-200 text-sm font-medium flex items-center justify-center"
+                    >
+                      Eliminar
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -559,7 +601,9 @@ const PhysioVideo = () => {
                   <div className="relative inline-flex items-center justify-center w-16 h-16 mb-4 rounded-full bg-blue-50 group-hover:bg-blue-100 transition-all duration-300">
                     <UploadCloud
                       className={`absolute transform transition-all duration-300 ${
-                        isDragging ? "text-blue-600 scale-110" : "text-blue-500 group-hover:scale-110"
+                        isDragging
+                          ? "text-blue-600 scale-110"
+                          : "text-blue-500 group-hover:scale-110"
                       }`}
                       size={32}
                     />
@@ -567,9 +611,7 @@ const PhysioVideo = () => {
                   <p className="text-lg font-semibold text-gray-700 mb-2">
                     {file ? file.name : "Arrastra y suelta tu video aquí"}
                   </p>
-                  <p className="text-sm text-gray-500 mb-2">
-                    o
-                  </p>
+                  <p className="text-sm text-gray-500 mb-2">o</p>
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
