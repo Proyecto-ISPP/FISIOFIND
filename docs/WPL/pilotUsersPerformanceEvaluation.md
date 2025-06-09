@@ -14,7 +14,7 @@ colorlinks: true
 linkcolor: blue
 titlepage-background: "../../.backgrounds/background1V.pdf"  # CHANGE IF NEEDED
 header-left: "INFORME DE USUARIOS PILOTO (#WPL)"                # CHANGE IF NEEDED
-header-right: "29/04/2025"                                # CHANGE IF NEEDED
+header-right: "30/04/2025"                                # CHANGE IF NEEDED
 footer-left: "FISIO FIND"
 documentclass: scrartcl
 classoption: "table"
@@ -35,21 +35,13 @@ classoption: "table"
 **ÍNDICE**
 - [1. INTRODUCCIÓN](#1-introducción)
 - [2. LISTA DE USUARIOS PILOTO](#2-lista-de-usuarios-piloto)
-    - [FISIOTERAPEUTAS](#fisioterapeutas)
-    - [PACIENTES](#pacientes)
     - [USUARIOS PILOTO TÉCNICOS](#usuarios-piloto-técnicos)
 - [3. FEEDBACK OBTENIDO](#3-feedback-obtenido)
-  - [3.1. PROBLEMAS DETECTADOS](#31-problemas-detectados)
-  - [3.2. FUNCIONALIDADES VALORADAS POSITIVAMENTE](#32-funcionalidades-valoradas-positivamente)
-  - [3.3. PRINCIPALES OBSERVACIONES Y SUGERENCIAS](#33-principales-observaciones-y-sugerencias)
-    - [Optimización Móvil](#optimización-móvil)
-    - [Mejoras en la Selección de Fisioterapeutas](#mejoras-en-la-selección-de-fisioterapeutas)
-    - [Accesibilidad y Documentación](#accesibilidad-y-documentación)
-    - [Proceso de Registro y Onboarding](#proceso-de-registro-y-onboarding)
-- [4. CONCLUSIONES, LECCIONES APRENDIDAS Y PROCESADO DEL FEEDBACK](#4-conclusiones-lecciones-aprendidas-y-procesado-del-feedback)
-  - [4.1. AJUSTES REALIZADOS EN BASE AL FEEDBACK](#41-ajustes-realizados-en-base-al-feedback)
-  - [4.2. ESTRATEGIAS DE MEJORA FUTURA](#42-estrategias-de-mejora-futura)
-- [5. EVALUACIÓN DE LA EXPERIENCIA PILOTO](#5-evaluación-de-la-experiencia-piloto)
+  - [3.1. PROBLEMAS DETECTADOS EN EL #SPRINT 1](#31-problemas-detectados-en-el-sprint-1)
+  - [3.2. PROBLEMAS DETECTADOS EN EL #SPRINT 2](#32-problemas-detectados-en-el-sprint-2)
+  - [3.3. PROBLEMAS DETECTADOS EN EL #SPRINT 3](#33-problemas-detectados-en-el-sprint-3)
+  - [3.4. PROBLEMAS DETECTADOS EN EL #PPL](#34-problemas-detectados-en-el-ppl)
+- [4. CALIFICACIÓN FINAL USUARIO PILOTO](#4-calificación-final-usuario-piloto)
 <!-- COMMENT THIS WHEN EXPORTING TO PDF -->
 
 <br>
@@ -70,7 +62,7 @@ classoption: "table"
 
 - **Fecha de Creación:** 30/04/2025  
 
-- **Versión:** v2.0
+- **Versión:** v2.1
 
 <br>
 
@@ -83,6 +75,8 @@ classoption: "table"
 | ------------ | -------- | ------------------------- | -------------------------------------------- |
 | 06/04/2025   | v1.0     | Antonio Macías Ferrera    | Versión inicial del documento con el *feedback* para el PPL. |
 | 01/05/2025  | v2.0 |  Guadalupe Ridruejo Pineda | Añadido *feedback* obtenido. |
+| 09/06/2025  | v2.1 |  Antonio Macías Ferrera, Guadalupe Ridruejo Pineda | Añadidos puntos de evaluación individual de los UP requeridos por los profesores. |
+
 
 
 <br>
@@ -114,53 +108,6 @@ Esta fase de pruebas se ha centrado en proporcionar a los usuarios piloto extern
 # 2. LISTA DE USUARIOS PILOTO
 
 Se presenta un listado de los usuarios piloto que participarán en las pruebas de FISIO FIND, detallando sus perfiles:
-
-### FISIOTERAPEUTAS
-
-| Nombre                          | Ámbito Profesional       | Especialidades                                                         | Experiencia    |
-| ------------------------------- | ------------------------ | ---------------------------------------------------------------------- | -------------- |
-| Cristina Gómez Ramos            | En una clínica           | Traumatológica y ortopédica                                            | 1-5 años       |
-| Carlos Solo de Zaldivar Liviano | En una clínica           | Traumatológica y ortopédica, Deportiva, Neurológica                    | Menos de 1 año |
-| Javier Rodriguez Hava           | Autónomo/a               | Deportiva                                                              | 1-5 años       |
-| Alba                            | En un centro de salud    | Traumatológica y ortopédica, Neurológica, Geriátrica, Cardiaca         | 5-10 años      |
-| Jorge García Chaparro           | En una clínica           | Traumatológica y ortopédica, Deportiva                                 | Menos de 1 año |
-| Gonzalo Herrera Fernández       | Autónomo/a               | Traumatológica y ortopédica, Deportiva                                 | 5-10 años      |
-| Pablo Ramírez Toro              | En una clínica           | Traumatológica y ortopédica, Deportiva                                 | Menos de 1 año |
-| Irene Bernal Martínez           | Autónomo/a               | Terapia manual, Miofascial, Osteopatía, General, Ejercicio Terapéutico | 5-10 años      |
-| Lidia Fernández Anselmo         | Autónomo/a               | Traumatológica y ortopédica, Deportiva, Suelo pélvico y/o Obstétrica   | 1-5 años       |
-| Cristina Sánchez Gómez          | Atención a la diversidad | Deportiva, Geriátrica                                                  | Más de 10 años |
-| José Antonio Martín Parada      | En un centro de salud    | Salud Comunitaria                                                      | Más de 10 años |
-| María Martín Aragón             | Atención a la diversidad | Traumatológica y ortopédica, Geriátrica, Suelo pélvico y/o Obstétrica  | Más de 10 años |
-| Isabel Valares Avís             | Atención a la diversidad | Neurológica                                                            | Más de 10 años |
-| María Vallejo                   | Autónomo/a               | Traumatológica y ortopédica, Deportiva, Suelo pélvico y/o Obstétrica   | 5-10 años      |
-| Eusebia Cano Gil                | En un hospital           | Traumatológica y ortopédica, Respiratoria, Rehabilitación Cardiaca     | Más de 10 años |
-| Marina Gonzalez Sanchez         | En un hospital           | Deportiva                                                              | Más de 10 años |
-| Alejandro Pedrido Galván        | Autónomo/a               | Traumatológica y ortopédica, Neurológica, Geriátrica                | 1-5 años   |
-
-<br>
-
-### PACIENTES
-
-| Nombre Completo        | Edad         | ¿Ha acudido al fisioterapeuta? | Frecuencia         | Motivo de consulta     | ¿Busca fisioterapeutas por internet? | Preferencias de selección |
-| ---------------------- | ------------ | ------------------------------ | ------------------ | ---------------------- | -------------------- | ------------------------- |
-| Pedro Pablo Gallego Mendoza     | Más de 60   | Sí                             | Ocasional      | Tendinitis, dolor muscular               | No                                   | Recomendaciones                                     |
-| Marta García Maldonado          | 18-25       | Sí                             | Ocasional      | Dolor de espalda                         | No                                   | Ubicación, Precio, Recomendaciones, Disponibilidad  |
-| Francisco Muñoz Sánchez         | 18-25       | Sí                             | Una vez al año      | Recuperación para oposiciones de bombero | No                                   | Ubicación, Precio, Recomendaciones                  |
-| Carmen Bilbao Marcos            | 18-25       | Sí                             | Una vez al año      | Suelo pélvico                            | No                                   | Ubicación, Precio, Especialización                  |
-| Andrea Ruiz                     | 18-25       | Sí                             | Ocasional      | Dolor de espalda                         | No                                   | Ubicación, Recomendaciones                          |
-| Antonio Macías Barrera          | 41-60       | Sí                             | Ocasional      | Recuperación posoperatoria               | No                                   | Ubicación, Precio, Recomendaciones                  |
-| M° Dolores Ferrera Ortiz        | 41-60       | Sí                             | Ocasional      | Problemas de rodilla                     | No                                   | Recomendaciones                                     |
-| Rodrigo Macías Ferrera          | Menos de 18 | No                             |                     | Nunca ha acudido a fisioterapia          | No                                   | Precio, Especialización                             |
-| Leonor Moreno Ortiz             | 26-40       | Sí                             | Ocasional      | Suelo pélvico                            | No                                   | Ubicación, Precio, Especialización, Recomendaciones |
-| Sara Allouani Mechfaoui         | 18-25       | Sí                             | Ocasional      | Dolor de espalda                         | Sí                                   | Precio, Especialización, Recomendaciones            |
-| Guadalupe Pineda Tejeda         | 41-60       | Sí                             | Ocasional      | Dolor de espalda                         | No                                   | Ubicación, Precio                                   |
-| Reyes Ismael Sánchez Parra      | 18-25       | Sí                             | Varias veces al año | Dolor de espalda, Lesión deportiva       | No                                   | Ubicación, Precio, Recomendaciones                  |
-| Laura Fuentes González          | 18-25       | Sí                             | Ocasional      | Dolor de espalda                         | No                                   | Precio, Especialización, Recomendaciones            |
-| Francisco Manuel Gómez Manzorro | 18-25       | Sí                             | Ocasional      | Dolor de espalda                         | No                                   | Especialización                                     |
-| Borja Lozano Marcos             | 18-25       | Sí                             | Ocasional      | Nudillo roto                             | No                                   | Precio                                              |
-| Ester Palomar Bonet             | 18-25       | Sí                             | Ocasional      | Dolor de espalda                         | No                                   | Ubicación, Recomendaciones, Disponibilidad          |
-| María Macías Barrera            | 41-60       | Sí                             | Ocasional      | Dolor de espalda                         | No                                   | Ubicación, Precio, Especialización                  |
-| Luis Manuel Martín Domínguez    | 41-60       | Sí                             | Ocasional      | Lesión deportiva                         | No                                   | Ubicación, Precio                                   |
 
 ### USUARIOS PILOTO TÉCNICOS
 
@@ -199,102 +146,41 @@ Para priorizar la corrección de los problemas detectados y sugerencias de mejor
 Este enfoque permitirá abordar de manera estructurada las áreas críticas de mejora, asegurando que la plataforma evolucione para satisfacer las necesidades tanto de los fisioterapeutas como de los pacientes y usuarios técnicos.
 
 
-## 3.1. PROBLEMAS DETECTADOS
+## 3.1. PROBLEMAS DETECTADOS EN EL #SPRINT 1
 
-| Error | Motivo | Solución | Prioridad | Impacto |
-|-------|---------|----------|-----------|----------|
-| Error en la verificación del registro, aunque el usuario ya estaba registrado | Inconsistencia en el proceso de validación durante el registro de pacientes | Revisar y optimizar la lógica de verificación del backend y mejorar los mensajes de retroalimentación al usuario | Alta (Gestión usuarios) | Alto |
-| Imposibilidad de iniciar sesión tras mensaje de registro exitoso | Error en el proceso de redirección posterior a la autenticación | Optimizar el flujo de inicio de sesión y garantizar una gestión adecuada de tokens de autenticación | Alta (Gestión usuarios) | Alto |
-| Fallo crítico en el proceso de registro inicial | Comportamiento inesperado del sistema tras un error inicial en el registro | Implementar un sistema robusto de validación de errores en el backend y habilitar reintentos seguros | Alta (Gestión usuarios) | Alto |
-| Error al eliminar la cuenta | Realmente esa lógica funciona, pero no se avisa en la vista al usuario de que debe confirmar la eliminación desde su correo electrónico. | Avisar al usuario en la vista de este requisito. | Alta (Gestión de usuarios) | Alta |
-| En accesibilidad: al resaltar enlaces no se resalta nada | La función de accesibilidad no ejecuta correctamente | Revisar funcionamiento del widget para accesibilidad visual | Media (UX) | Bajo |
-| Errores al cancelar una cita. | Fallo en la lógica de gestión de citas y mensajería. | Revisar la forma en la que se ha implementado esa funcionalidad. Probablemente la entidad se esté eliminando antes de que la información llegue al frontend para avisar al usuario. | Media (MVP) | Alta |
-| Error con el filtro de selección de horarios en la búsqueda de fisioterapeutas. | Mala gestión de la intersección entre los filtros de franjas horarias y la disponibilidad configurada por cada fisioterapeuta. Esto provoca que si el horario de un fisio no se ajusta dentro de las franjas horarias definidas en la búsqueda, no lo muestre como resultado. | Modificar la gestión de los horarios para que, si un fisioterapeuta tiene disponibilidad en alguna de sus horas dentro de la franja seleccionada, aparezca como resultado. También se reportaron otros errores menores como que los extremos quedan parcialmente cortados por las flechas de desplazamiento del carrusel. | MVP / UX (Media) | Media |   
+| Usuario piloto (uvus) | Fecha acceso al sistema | Fecha envío de feedback | Enlace Clockify | Fallos encontrados | Recomendaciones de mejora | Otros comentarios |
+|----------------------|------------------------|------------------------|----------------|-------------------|------------------------|------------------|
+| Antonio Daniel Porcar Aragón (antporara) | 12/03/2025 18:30 | 12/03/2025 18:45 | [antporara](https://app.clockify.me/shared/67d18452becbe07bd98ec838) | - | Asegurarse de que cualquiera de las versiones desplegadas se encuentre disponible en todo momento | Me ha parecido bastante interesante el contenido realizado por redes sociales y de buena calidad. |
+| Antonio Jiménez Ortega (antjimort) | 11/03/2025 15:30 | 11/03/2025 15:41 | [antjimort](https://app.clockify.me/shared/67d1d1a8ef0d12419bbe3b19) | • En la parte de inicio, cuando bajas, en la parte de enlaces sale "Acerca de" y está duplicado.<br>• Cuando le das a "Probar demo", si bajas aparecen palabras en inglés encima de los iconos de las redes sociales.<br>• En la demo, si le das a inicio, desaparecen las demás opciones del header.<br>• Puedes registrar procesos sin añadir número de series o dolor.<br>• En los ejercicios no se ven los vídeos. | De momento, si fuera posible intentaría conseguir desplegar la app en algún sitio que tuviera mejores tiempos de carga (aunque entiendo que sería difícil puesto que en la mayoría de las plataformas es necesario pagar para ello) | En general, la landing page es muy bonita, sencilla, fácil de usar y no es complicado encontrar la información en ella. Bajo mi opinión, tenéis mi 10. |
+| David Guillén Fernández (davguifer) | 11/03/2025 20:25 | 11/03/2025 21:00 | [davguifer](https://app.clockify.me/shared/67d08fd1becbe07bd98cb6a8) | • En la parte de inicio, "Acerca de" está duplicado<br>• Palabras en inglés en iconos de redes sociales en demo<br>• Más iconos de redes sociales en demo que en inicio<br>• Desaparecen opciones del header al dar a inicio<br>• Se pueden registrar procesos sin series o dolor<br>• Videos de ejercicios no visibles | • Mejorar reordenamiento en búsquedas con filtros<br>• Cambiar color de fechas disponibles a verde en calendario<br>• Sombrear días no laborables<br>• Añadir fotos de fisios en reserva de citas | Lo veo bastante bien en general, he comentado cosas que seguramente en un futuro se solucionarían. Me gusta bastante. |
+| Jaime Linares Barrera (jailinbar) | 11/03/2025 20:27 | 11/03/2025 21:08 | [jailinbar](https://app.clockify.me/shared/67d09057becbe07bd98cb84d) | • Sección "Acerca de" duplicada tres veces<br>• Términos en inglés en demo (footer)<br>• Videos de ejercicios no cargan<br>• Permite registros sin series ni dolor<br>• Sistema permite reservas en fechas pasadas | • Ajustar color de fondo en sección "Sobre nosotros"<br>• Optimizar rendimiento y tiempos de carga | Muy completa y buen diseño en general. |
+| Javier Ulecia García (javulegar) | 12/03/2025 11:30 | 12/03/2025 12:15 | [javulegar](https://app.clockify.me/shared/67d0567e06a063047ed3554d) | En la demo, al ver el listado de pacientes siendo fisio los detalles llevan a una página que no existe | • Reducir tamaño de fotos de perfil de fisios<br>• Mostrar todas las citas con botón de gestión | - |
+| José Manuel Miret Martín (josmirmar2) | 12/03/2025 14:55 | 12/03/2025 15:04 | [josmirmar2](https://app.clockify.me/shared/67d08d5e06a063047ed41c21) | Ninguno. Da las funcionalidades principales que me gustaría que tuviera | Añadir información de contacto y dirección del fisioterapeuta para atención presencial | Me gusta la idea, la usaría |
 
-## 3.2. FUNCIONALIDADES VALORADAS POSITIVAMENTE
+## 3.2. PROBLEMAS DETECTADOS EN EL #SPRINT 2
 
-- Los usuarios destacaron especialmente la interfaz intuitiva y fácil de usar de la plataforma, señalando su excelente adaptación tanto para ordenador como para dispositivos móviles.
+| Usuario (uvus) | Fecha acceso | Feedback | Clockify | Fallos encontrados | Recomendaciones / Comentarios |
+|----------------|--------------|----------|----------|---------------------|-------------------------------|
+| Antonio Daniel Porcar Aragón (**antporara**) | 23/03/2025 | 23/03/2025 | [antporara](https://app.clockify.me/shared/67e42125f62c693dbbcbb42e) | Videollamadas no funcionaban correctamente | Interfaz sencilla y cómoda. La barra lateral podría integrarse mejor con el calendario. |
+| Antonio Jiménez Ortega (**antjimort**) | 11/03/2025 | 11/03/2025 | [antjimort](https://app.clockify.me/shared/67e47e6cf62c693dbbccd7ca) | Ningún bug | Diseño y UX agradables. Sugerencia: uso coherente de mayúsculas en títulos. |
+| David Guillén Fernández (**davguifer**) | 23/03/2025 | 23/03/2025 | [davguifer](https://app.clockify.me/shared/67e52417d7264d5caa205e43) | Varios bugs en validación de formularios, errores al actualizar perfil, visualización del calendario incompleta | Visualmente atractiva. Mejorar espaciado entre botones y validaciones de campos. |
+| Jaime Linares Barrera (**jailinbar**) | 23/03/2025 | 23/03/2025 | [jailinbar](https://app.clockify.me/shared/67e3e19bf562c161b726c9f1) | Errores al registrarse, cargar perfil, reservar cita, mostrar métodos de pago | Interfaz intuitiva. Sugerencia: unificar campos de registro en una sola pantalla. |
+| Javier Ulecia García (**javulegar**) | 12/03/2025 | 12/03/2025 |[javulegar](https://app.clockify.me/shared/67e431c1f62c693dbbcbfaf7) | No pudo registrarse | Interfaz bonita, buena usabilidad. |
+| José Manuel Miret Martín (**josmirmar2**) | 26/03/2025 | 26/03/2025 | [josmirmar2](https://app.clockify.me/shared/67e42154f562c161b727e4ca) | Fallos en visualización y edición del perfil, registro incompleto, reservas no funcionales | Buen diseño general. Mejorar perfil de usuario y revisar funcionalidad completa de registro/reserva. |
 
-- La estética general de la plataforma recibió valoraciones muy positivas, siendo descrita como "profesional", "agradable" y "muy conseguida". Los usuarios apreciaron particularmente la coherencia en el diseño y la paleta de colores utilizada.
+## 3.3. PROBLEMAS DETECTADOS EN EL #SPRINT 3
 
-- La implementación de funciones de accesibilidad, especialmente la transcripción en tiempo real durante las videollamadas, fue altamente valorada por los usuarios técnicos, quienes destacaron tanto su utilidad práctica como su carácter innovador.
+| Usuario (uvus) | Fecha acceso | Feedback | Clockify | Fallos encontrados | Recomendaciones / Comentarios |
+|----------------|--------------|----------|----------|---------------------|-------------------------------|
+| Jaime Linares Barrera (**jailinbar**) | 09/04/2025 | 09/04/2025 | [jailinbar](https://app.clockify.me/shared/67f643b8158238116c386f37) | No lo veo como un error, pero com cliente si le doy al chat no me deja por así decirlo salirme del chat porque tendría que pulsar en los emojis del chat pero no me deja pulsar porque el chat ocupa la mitad de la pantalla | En principio lo veo todo muy bien e intuitivo. También es cierto que somos personas que estamos acostumbrado a usar la tecnología, quizás para una persona mayor le va a costar mucho usarlo. En este caso os recomiendo en la parte de videollamadas poner como un manual de usuario muy corto en el que se explique para que sirve cada cosa y que puede y que no puede hacer desde su rol. Por lo demás esta todo de lujo me ha gustado mucho como lo tenéis planteado. La interacción de los modelos 3D y los mapas de dolor van muy rápido, las videollamadas no van con retardo. Enhorabuena!! Muy buen trabajo. |
+| David Guillén Fernández (**davguifer**) | 09/04/2025 | 09/04/2025 | [davguifer](https://app.clockify.me/shared/67f64abca9299523b438a6a4) | El chat no me funciona, estoy escribiendo y al darle al enter no aparece mi mensaje. Respecto a la vista de cliente no he podido acceder ya que las credenciales que se me han proporcionado eran incorrectas, voy a dar solo feedback de la vista de fisio. Si creas una pregunta con carácter invisible se lo come, vaya tampoco es un gran problema. En la vista de historial, en general, al darle "ver detalles" no hace nada, al igual que si le doy a nueva entrada , compartir historial, notas... intuyo que se está haciendo todavía pero lo pongo por si acaso
+| David Guillén Fernández (**davguifer**) | 09/04/2025 | 09/04/2025 | [davguifer](https://app.clockify.me/shared/67f64abca9299523b438a6a4) | Yo creo que es bastante intuitiva, aunque yo quizás pondría en algunas zonas por ejemplo en Mapa Color cuando le das a la derecha del titulito pondría un símbolo de  i (información), o algo así para que cuando pases por encima con el ratón haya una pequeña descripción | |
+|  José Manuel Miret Martín (**josmirmar2**) | 09/04/2025 | 09/04/2025 | [josmirmar2](https://app.clockify.me/shared/67f6d5ed703cb37f10882c96) | N/A | A lo mejor (No se, solo supongo) para los pacientes predeterminados que tenga un fisioterapeuta que le sea más fácil el acceder a la videollamada. Por ejemplo que en la parte del fisioterapeuta ponga con que paciente quiere hacer la videollamada |
+| Antonio Daniel Porcar Aragón (**antporara**) | 09/04/2025 | 09/04/2025 | [antporara](https://app.clockify.me/shared/67f6f77e703cb37f108872d8) | En el historial clínico del paciente no me permite ver los detalles de la ficha del paciente en una determinada ficha | No cambiaría nada, es sencillo de utilizar y muy completa. |
+| Antonio Jiménez Ortega (**antjimort**) | 10/04/2025 | 10/04/2025 | [antjimort](https://app.clockify.me/shared/67f7abbb703cb37f1089da62) | El chat tapa el resto del contenido en móvil. Además, es complicado de cerrar desde el movil, yo pondría un botón para cerrarlo en el mismo chat para que sea más accesible. | Como mucho, que se puedan enviar imágenes que el fisio deba guardar sobre alguna dolencia del paciente o algo similar. |
+| Javier Ulecia García (**javulegar**) | 10/04/2025 | 10/04/2025 | [javulegar](https://app.clockify.me/shared/67f7b515d6e4ee46994da5ad) | En el fisio, en la pestaña de historial los botones de notas y resultados no llevan a ningun lado y en el general el de ver detalles tampoco al igual que el de nueva entrada y compartir historial. Si me salgo y vuelvo a entrar no consigo reconectarme bien con el fisio estando en navegacion privada. | Yo la veo bastante bien y se entiende todo a la perfeccion |
 
-- El formato y la estructura de la prueba piloto recibieron puntuaciones entre 4 y 5 sobre 5, indicando que la experiencia de evaluación fue clara, bien organizada y fluida para los participantes.
-
-## 3.3. PRINCIPALES OBSERVACIONES Y SUGERENCIAS
-
-Las sugerencias más frecuentes y relevantes se pueden agrupar en las siguientes categorías:
-
-### Optimización Móvil
-- Desarrollar una versión específica para aplicación móvil
-- Mejorar aún más la adaptabilidad del diseño responsive
-- Optimizar la experiencia de usuario en dispositivos móviles
-
-### Mejoras en la Selección de Fisioterapeutas
-- Implementar un sistema de comparación visual más eficiente entre perfiles
-- Añadir filtros de búsqueda más específicos
-- Mejorar la visualización de disponibilidad horaria
-
-### Accesibilidad y Documentación
-- Implementar la función de descarga de transcripciones post-videollamada
-- Mejorar la documentación de las funciones de accesibilidad
-- Añadir más opciones de personalización para usuarios con necesidades específicas
-
-### Proceso de Registro y Onboarding
-- Optimizar el flujo post-registro para una mejor experiencia de usuario
-- Simplificar el proceso de verificación
-- Añadir más información guía durante el proceso inicial
-
-
-<br>
-
-<!-- \newpage -->
-
-<hr>
-
-<br>
-
-# 4. CONCLUSIONES, LECCIONES APRENDIDAS Y PROCESADO DEL FEEDBACK
-
-La fase piloto ha sido especialmente útil para validar tanto las funcionalidades centrales como los aspectos de accesibilidad y usabilidad. Las valoraciones recibidas han sido, en su mayoría, muy positivas. No obstante, se han identificado áreas clave de mejora, como el proceso de registro/login, ciertos errores de accesibilidad visual y algunas propuestas de mejora en la interfaz.
-
-Gracias a este feedback, se pudieron priorizar tareas de cara al próximo sprint de desarrollo, garantizando un producto más sólido, accesible y ajustado a las expectativas de los usuarios reales.
-
-## 4.1. AJUSTES REALIZADOS EN BASE AL FEEDBACK
-
-Tras la evaluación del feedback, se está trabajando en los siguientes cambios en la plataforma:
-
-- Corrección del flujo de registro e inicio de sesión, incluyendo validación más robusta y mensajes claros al usuario.
-
-- Se revisará el widget de accesibilidad, corrigiendo errores en la función de resaltar enlaces.
-
-- Incorporación de mejoras visuales menores en la vista móvil para facilitar la navegación.
-
-- Estudio de viabilidad técnica para añadir descarga de transcripción de las videollamadas en futuras versiones.
-
-- Corregir los errores reportados en la búsqueda de fisioterapeutas y la gestión de citas. 
-
-
-## 4.2. ESTRATEGIAS DE MEJORA FUTURA
-
-- Desarrollar una versión app (PWA) para optimizar el rendimiento móvil y permitir instalación directa.
-
-- Añadir filtros avanzados y visualización comparativa en el buscador de fisioterapeutas.
-
-- Continuar con testeo iterativo de accesibilidad, incluyendo nuevas funciones para usuarios con diversidad funcional.
-
-- Introducir métricas de satisfacción integradas en el sistema para recoger feedback continuo post-sesión.
-
-<br>
-
-<!-- \newpage -->
-
-<hr>
-
-<br>
-
-
-# 5. EVALUACIÓN DE LA EXPERIENCIA PILOTO
+## 3.4. PROBLEMAS DETECTADOS EN EL #PPL
 
 | Usuario (uvus) | Fecha acceso | *feedback* | Clockify | Fallos encontrados | Recomendaciones / Comentarios |
 |----------------|--------------|------------|----------|--------------------|-------------------------------|
@@ -304,3 +190,24 @@ Tras la evaluación del feedback, se está trabajando en los siguientes cambios 
 | José Manuel Miret Martín (**josmirmar2**) | 30/04/2025 | Visualmente muy clara. Buen trabajo. | [josmirmar2](https://app.clockify.me/shared/68128463f68324299536bf1b) | Cámara no funcionó en ordenador, sí en móvil. | Añadir opción de traducir interfaz si se expande a otros países. Muy buena estética. |
 | Antonio Jiménez Ortega (**antjimort**) | 30/04/2025 | Diseño estético y sin bugs graves. | [antjimort](https://app.clockify.me/shared/681287346f3d3766021432bc) | Política de privacidad y términos no se cargan. | Mejorar sensibilidad de reconocimiento de voz. Funciona bien en general. |
 | Javier Ulecia García (**javulegar**) | 30/04/2025 | Intuitiva y bonita. | [javulegar](https://app.clockify.me/shared/681298c26f3d37660214894c) | Ctrl+U requiere dos pulsaciones para cerrar. | Ajustar comportamiento del atajo Ctrl+U. Todo muy bien. |
+
+<br>
+
+<!-- \newpage -->
+
+<hr>
+
+<br>
+
+# 4. CALIFICACIÓN FINAL USUARIO PILOTO
+
+| Usuario (uvus) | #SPRINT 1 | #SPRINT 2 | #SPRINT 3 | #PPL | Nota media |
+|----------------|-----------|-----------|----------|-------|------------|
+| Antonio Daniel Porcar Aragón (**antporara**)| 9.0      | 8.5      | 9.0      | 9.0  | **8.9**       |
+| Jaime Linares Barrera (**jailinbar**)         | 10 | 10 | 9.5 | 10 | **9.88** |
+| David Guillén Fernández (**davguifer**)       | 10 | 9 | 8.5 | 10 | **9.38** |
+| José Manuel Miret Martín (**josmirmar2**)    | 9.0      | 9.5      | 9.0      | 9.5  | **9.3**      |
+| Antonio Jiménez Ortega (**antjimort**)      | 9.5      | 9.0      | 9.5      | 9.5  | **9.4**       |
+| Javier Ulecia García (**javulegar**)          | 9 | 9.5 | 9.5 | 9 | **9.25** |
+
+
